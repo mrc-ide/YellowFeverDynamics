@@ -16,9 +16,14 @@ LinkingTo:
     dust
 Imports:
     assertthat,
+    ggplot2,
+    graphics,
+    maptree,
     mvtnorm,
     stats,
-    testthat
+    testthat,
+    tgp,
+    truncdist
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,

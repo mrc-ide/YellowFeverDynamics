@@ -1,8 +1,14 @@
 #------------------------------------------------
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @import assertthat
-#' @import stats
+#' @import ggplot2
+#' @import graphics
+#' @import maptree
 #' @import mvtnorm
+#' @import stats
+#' @import tgp
+#' @import truncdist
+#' @import utils
 #-------------------------------------------------------------------------------
 #' @title Full_Model_Run_OD
 #'
