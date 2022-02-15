@@ -1,10 +1,12 @@
 #------------------------------------------------
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
+#' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @import assertthat
 #' @import ggplot2
 #' @import graphics
 #' @import maptree
 #' @import mvtnorm
+#' @import qpdf
 #' @import stats
 #' @import tgp
 #' @import truncdist
