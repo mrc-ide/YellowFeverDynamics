@@ -4,13 +4,7 @@
 \alias{plot_mcmc_FOI_R0_data}
 \title{plot_mcmc_FOI_R0_data}
 \usage{
-plot_mcmc_FOI_R0_data(
-  data_frame,
-  regions,
-  plot_type = "box",
-  output_file_prefix = NULL,
-  margin = 0.95
-)
+plot_mcmc_FOI_R0_data(data_frame, regions, plot_type = "box", margin = 0.95)
 }
 \arguments{
 \item{data_frame}{TBA}
@@ -18,8 +12,6 @@ plot_mcmc_FOI_R0_data(
 \item{regions}{TBA}
 
 \item{plot_type}{TBA}
-
-\item{output_file_prefix}{TBA}
 
 \item{margin}{TBA}
 }

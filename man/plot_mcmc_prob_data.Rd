@@ -8,7 +8,6 @@ plot_mcmc_prob_data(
   input_frame,
   plot_type = "box",
   values = c("vacc_eff"),
-  output_file_prefix = NULL,
   margin = 0.95
 )
 }
@@ -18,8 +17,6 @@ plot_mcmc_prob_data(
 \item{plot_type}{TBA}
 
 \item{values}{TBA}
-
-\item{output_file_prefix}{TBA}
 
 \item{margin}{TBA}
 }
