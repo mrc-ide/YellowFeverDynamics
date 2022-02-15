@@ -29,3 +29,7 @@ Remotes:
     mrc-ide/dust,
     mrc-ide/odin,
     mrc-ide/odin.dust
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
