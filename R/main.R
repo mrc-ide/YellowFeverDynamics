@@ -10,7 +10,6 @@
 #'
 #' @details TBA
 #'
-#' @param model_new model compiled using odin.dust::odin_dust_()
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
 #' @param vacc_data Vaccination coverage in each age group by year
@@ -27,7 +26,7 @@
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
-Full_Model_Run_OD <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
+Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
                               vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0) {
 
@@ -36,7 +35,7 @@ Full_Model_Run_OD <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data=
   assert_that(n_threads<=n_particles)
   assert_that(n_threads>0)
 
-  x <- model_new$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
+  x <- FullModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                           year_data_begin,vaccine_efficacy,start_SEIRVC,dt),
                      step = 1,n_particles = n_particles,n_threads = n_threads)
 
@@ -65,7 +64,6 @@ Full_Model_Run_OD <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data=
 #'
 #' @details TBA
 #'
-#' @param model_new model compiled using odin.dust::odin_dust_()
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
 #' @param vacc_data Vaccination coverage in each age group by year
@@ -82,7 +80,7 @@ Full_Model_Run_OD <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data=
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
-Basic_Model_Run_OD <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
+Basic_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                                mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
                                vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0) {
 
@@ -91,7 +89,7 @@ Basic_Model_Run_OD <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data
   assert_that(n_threads<=n_particles)
   assert_that(n_threads>0)
 
-  x <- model_new$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
+  x <- BasicModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                           year_data_begin,vaccine_efficacy,start_SEIRVC,dt),
                      step = 1,n_particles = n_particles,n_threads = n_threads)
 

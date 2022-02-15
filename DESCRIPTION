@@ -11,12 +11,16 @@ License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
-Remotes:
-    mrc-ide/odin.dust
 LinkingTo:
     cpp11,
     dust
 Imports:
     assertthat,
+    mvtnorm,
     stats,
-    mvtnorm
+    testthat
+SystemRequirements: C++11
+Remotes:
+    mrc-ide/dust,
+    mrc-ide/odin,
+    mrc-ide/odin.dust

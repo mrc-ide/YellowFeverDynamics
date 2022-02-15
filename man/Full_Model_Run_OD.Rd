@@ -5,7 +5,6 @@
 \title{Full_Model_Run_OD}
 \usage{
 Full_Model_Run_OD(
-  model_new = NULL,
   FOI_spillover = 0,
   R0 = 1,
   vacc_data = list(),
@@ -22,8 +21,6 @@ Full_Model_Run_OD(
 )
 }
 \arguments{
-\item{model_new}{model compiled using odin.dust::odin_dust_()}
-
 \item{FOI_spillover}{Force of infection due to spillover from sylvatic reservoir}
 
 \item{R0}{Reproduction number for urban spread of infection}
