@@ -14,9 +14,11 @@
 #-------------------------------------------------------------------------------
 #' @title Full_Model_Run_OD
 #'
-#' @description Run full model [TBA]
+#' @description Run full version of SEIRV model
 #'
-#' @details TBA
+#' @details Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+#' values, infection numbers and total force of infection values.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
@@ -68,9 +70,11 @@ Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data
 #-------------------------------------------------------------------------------
 #' @title Basic_Model_Run_OD
 #'
-#' @description Run full model with fewer outputs (no new infection data, no total force of infection)
+#' @description Run basic version of SEIRV model
 #'
-#' @details TBA
+#' @details Accepts epidemiological + population parameters and model settings; runs basic version of SEIRV model
+#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+#' values. (Differs from Full_Model_Run_OD in not recording new infection numbers or total force of infection.)
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
@@ -124,7 +128,7 @@ Basic_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 #'
 #' @description Set up parameters to input into model
 #'
-#' @details Takes in multiple inputs, outputs list for use by functions ()
+#' @details Takes in multiple inputs, outputs list for use by odin.dust SEIRV model versions.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
@@ -213,9 +217,11 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #-------------------------------------------------------------------------------
 #' @title mcmc_FOI_R0_setup
 #'
-#' @description Setup FOI and R0 values and calculate some prior probability values for MCMC calculation
+#' @description Set up FOI and R0 values and calculate some prior probability values for MCMC calculation
 #'
-#' @details TODO
+#' @details Takes in parameter values used for Markov Chain Monte Carlo fitting, calculates spillover force of
+#' infection and (optionally) reproduction number values either directly or from environmental covariates. Also
+#' calculates related components of prior probability.
 #'
 #' @param type Type of MCMC fit to use (should be one of "FOI", "FOI+R0", "FOI enviro" or "FOI+R0 enviro"
 #' @param prior_type Text indicating which type of calculation to use for prior probability
@@ -284,7 +290,9 @@ mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),en
 #'
 #' @description Parameter calculation from environmental variables
 #'
-#' @details TBA
+#' @details Takes in parameter set used for Markov Chain Monte Carlo fitting and calculates values of spillover
+#' force of infection and reproduction number.
+#'
 #' @param param Parameter values
 #' @param enviro_data Environmental data frame line, containing only relevant environmental variables
 param_calc_enviro <- function(param=c(),enviro_data=c()){
@@ -300,7 +308,6 @@ param_calc_enviro <- function(param=c(),enviro_data=c()){
     if(i+n_vars<=length(param)){output$R0=output$R0+(variable_value*exp(param[i+n_vars]))}
   }
 
-
   return(output)
 }
 #-------------------------------------------------------------------------------
@@ -308,7 +315,9 @@ param_calc_enviro <- function(param=c(),enviro_data=c()){
 #'
 #' @description Set up proposed new parameter values for next step in chain
 #'
-#' @details TBA
+#' @details Takes in current values of parameter set used for Markov Chain Monte Carlo fitting and proposes new values
+#' from multivariate normal distribution where the existing values form the mean and the standard deviation is
+#' based on the chain covariance or (if the flag "adapt" is set to 1) a flat value based on the number of parameters.
 #'
 #' @param param Previous parameter values used as input
 #' @param chain_cov Covariance calculated from previous steps in chain
@@ -331,7 +340,7 @@ param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 #-------------------------------------------------------------------------------
 #' @title create_param_labels
 #'
-#' @description TBA
+#' @description Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting
 #'
 #' @details TBA
 #'

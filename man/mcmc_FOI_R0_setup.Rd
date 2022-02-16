@@ -37,8 +37,10 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 \item{pars_max}{Upper limits of parameter values if specified}
 }
 \description{
-Setup FOI and R0 values and calculate some prior probability values for MCMC calculation
+Set up FOI and R0 values and calculate some prior probability values for MCMC calculation
 }
 \details{
-TODO
+Takes in parameter values used for Markov Chain Monte Carlo fitting, calculates spillover force of
+infection and (optionally) reproduction number values either directly or from environmental covariates. Also
+calculates related components of prior probability.
 }

@@ -2,9 +2,9 @@
 % Please edit documentation in R/FullModelOD.R
 \name{FullModelOD}
 \alias{FullModelOD}
-\title{The Full Model 
-This is an odin.dust model.}
+\title{The Full Model
+The odin.dust SEIRV model, full version (documentation TBA)}
 \description{
-The Full Model 
-This is an odin.dust model.
+The Full Model
+The odin.dust SEIRV model, full version (documentation TBA)
 }

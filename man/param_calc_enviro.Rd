@@ -15,5 +15,6 @@ param_calc_enviro(param = c(), enviro_data = c())
 Parameter calculation from environmental variables
 }
 \details{
-TBA
+Takes in parameter set used for Markov Chain Monte Carlo fitting and calculates values of spillover
+force of infection and reproduction number.
 }

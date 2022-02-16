@@ -2,9 +2,9 @@
 % Please edit documentation in R/BasicModelOD.R
 \name{BasicModelOD}
 \alias{BasicModelOD}
-\title{The Basic Model 
-This is an odin.dust model.}
+\title{The Basic Model
+The odin.dust SEIRV model, basic version (documentation TBA)}
 \description{
-The Basic Model 
-This is an odin.dust model.
+The Basic Model
+The odin.dust SEIRV model, basic version (documentation TBA)
 }

@@ -17,5 +17,7 @@ param_prop_setup(param = c(), chain_cov = 1, adapt = 0)
 Set up proposed new parameter values for next step in chain
 }
 \details{
-TBA
+Takes in current values of parameter set used for Markov Chain Monte Carlo fitting and proposes new values
+from multivariate normal distribution where the existing values form the mean and the standard deviation is
+based on the chain covariance or (if the flag "adapt" is set to 1) a flat value based on the number of parameters.
 }

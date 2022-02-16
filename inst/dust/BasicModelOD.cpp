@@ -81,6 +81,7 @@ public:
     std::vector<real_type> dP2_all;
     real_type dt;
     std::vector<real_type> Exp0;
+    real_type FOI_max;
     real_type FOI_spillover;
     std::vector<real_type> Inf0;
     real_type initial_day;
@@ -187,9 +188,9 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.F_V[i - 1] = V[i - 1] * internal.inv_P[i - 1];
     }
-    real_type FOI_sum = ((shared->beta * odin_sum1<real_type>(I, 0, shared->dim_I)) / (real_type) P_tot) + (shared->FOI_spillover * shared->dt);
+    real_type FOI_sum = std::min(shared->FOI_max, shared->beta * (odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot) + (shared->FOI_spillover * shared->dt));
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.E_new[i - 1] = dust::random::binomial<real_type>(rng_state, std::max(0, static_cast<int>(S[i - 1])), FOI_sum);
+      internal.E_new[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), FOI_sum);
     }
     {
        int i = 1;
@@ -451,6 +452,7 @@ dust::pars_type<BasicModelOD> dust_pars<BasicModelOD>(cpp11::list user) {
   using real_type = typename BasicModelOD::real_type;
   auto shared = std::make_shared<BasicModelOD::shared_type>();
   BasicModelOD::internal_type internal;
+  shared->FOI_max = 1;
   shared->initial_day = 0;
   shared->initial_time = 0;
   shared->Pmin = 0;

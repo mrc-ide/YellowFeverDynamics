@@ -51,8 +51,10 @@ If mode_start=2, use SEIRVC input in list from previous run(s)}
 \item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)}
 }
 \description{
-Run full model [TBA]
+Run full version of SEIRV model
 }
 \details{
-TBA
+Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+values, infection numbers and total force of infection values.
 }

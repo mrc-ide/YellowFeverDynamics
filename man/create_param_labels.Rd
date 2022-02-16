@@ -23,7 +23,7 @@ code and usually loaded from RDS file)}
 efficacy and/or infection/death reporting probabilities)}
 }
 \description{
-TBA
+Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting
 }
 \details{
 TBA

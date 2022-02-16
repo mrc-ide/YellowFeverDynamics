@@ -1,5 +1,5 @@
 ##' @name FullModelOD
-##' @title The Full Model 
-##'This is an odin.dust model.
+##' @title The Full Model
+##' The odin.dust SEIRV model, full version (documentation TBA)
 ##' @export FullModelOD
 NULL

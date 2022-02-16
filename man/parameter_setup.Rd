@@ -48,5 +48,5 @@ If mode_start=2, use SEIRVC input in list from previous run(s)}
 Set up parameters to input into model
 }
 \details{
-Takes in multiple inputs, outputs list for use by functions ()
+Takes in multiple inputs, outputs list for use by odin.dust SEIRV model versions.
 }
