@@ -17,3 +17,7 @@ Take model results from multi-particle run using OD version of model, calculate
 seroprevalence for comparison with observed seroprevalence  and  calculate likelihood value (single region,
 multiple years/age ranges) for each particle; return as vector of values
 }
+\details{
+Calculates logarithmic likelihood of observing observed seroprevalence given modelled data, similar to
+sero_compare(), but using modelled data for multiple particles.
+}

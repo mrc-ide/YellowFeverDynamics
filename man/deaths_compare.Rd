@@ -7,7 +7,7 @@
 deaths_compare(model_data = list(), obs_data = list())
 }
 \arguments{
-\item{model_data}{Modelled data in format [TBA]}
+\item{model_data}{Modelled data in data frame format (list of years and number of observed deaths in each)}
 
 \item{obs_data}{Observed annual number of outbreaks}
 }
@@ -15,5 +15,6 @@ deaths_compare(model_data = list(), obs_data = list())
 Compare modelled and observed deaths using negative binomial
 }
 \details{
-TBA
+Compares modelled data on fatal cases per year and compared with observed data, calculating logarithmic
+likelihood of observing the latter given the former, using a negative binomial formula.
 }

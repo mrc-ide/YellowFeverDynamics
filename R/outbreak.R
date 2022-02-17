@@ -1,9 +1,13 @@
+# R file for functions relating to annual case and outbreak data in YellowFeverDynamics package
 #-------------------------------------------------------------------------------
 #' @title get_outbreak_data
 #'
 #' @description Generate outbreak data from model output
 #'
-#' @details TBA
+#' @details Takes in case (infection) data output by Full_Model_OD() or case_data_generate(), uses severe and fatal
+#' infection rates and reporting probabilities to calculate the number of reported cases, and outputs a list of
+#' reported outbreaks. An outbreak is assumed to be reported when one or more cases is reported, and continues until
+#' no new cases have been reported for 10 days.
 #'
 #' @param case_data Vector of daily cases summed over age
 #' @param year_data Vector of year values corresponding to case data
@@ -29,7 +33,8 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
     daily_mild_cases[i]=case_data[i]-daily_severe_cases[i]
     daily_deaths[i]=rbinom(1,daily_severe_cases[i],p_death_severe_case)
     daily_obs_deaths[i]=rbinom(1,daily_deaths[i],p_obs_death)
-    daily_obs_cases[i]=rbinom(1,daily_mild_cases,p_obs_mild)+rbinom(1,daily_severe_cases[i]-daily_obs_deaths[i],p_obs_severe)+daily_obs_deaths[i]
+    daily_obs_cases[i]=rbinom(1,daily_mild_cases,p_obs_mild)+rbinom(1,daily_severe_cases[i]-daily_obs_deaths[i],
+                                                                    p_obs_severe)+daily_obs_deaths[i]
     annual_obs_cases[year]=annual_obs_cases[year]+daily_obs_cases[i]
     annual_obs_deaths[year]=annual_obs_deaths[year]+daily_obs_deaths[i]
   }
@@ -80,10 +85,12 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
 #'
 #' @description Calculate likelihood of observed outbreak data based on modelled outbreak risk
 #'
-#' @details TBA
+#' @details Takes in modelled outbreak risk data (probabilities of one or more outbreaks being reported in given
+#' years) and compared with observed data on whether 1 or more outbreaks were reported in given years, calculating
+#' logarithmic likelihood of observing the latter given the former.
 #'
 #' @param model_outbreak_risk Modelled annual outbreak risk (0-1)
-#' @param obs_data Observed annual number of outbreaks
+#' @param obs_data Observed annual outbreak Y/N data
 outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
 
   assert_that(length(model_outbreak_risk)==length(obs_data))
@@ -110,9 +117,10 @@ outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
 #'
 #' @description Compare modelled and observed deaths using negative binomial
 #'
-#' @details TBA
+#' @details Compares modelled data on fatal cases per year and compared with observed data, calculating logarithmic
+#' likelihood of observing the latter given the former, using a negative binomial formula.
 #'
-#' @param model_data Modelled data in format [TBA]
+#' @param model_data Modelled data in data frame format (list of years and number of observed deaths in each)
 #' @param obs_data Observed annual number of outbreaks
 deaths_compare <- function(model_data=list(),obs_data=list()){
 
@@ -132,9 +140,10 @@ deaths_compare <- function(model_data=list(),obs_data=list()){
 #'
 #' @description Compare modelled and observed severe cases using negative binomial
 #'
-#' @details TBA
+#' @details Compares modelled data on severe cases per year and compared with observed data, calculating logarithmic
+#' likelihood of observing the latter given the former, using a negative binomial formula.
 #'
-#' @param model_data Modelled data in format [TBA]
+#' @param model_data Modelled data in data frame format (list of years and number of observed severe cases in each)
 #' @param obs_data Observed annual number of outbreaks
 cases_compare <- function(model_data=list(),obs_data=list()){
 
@@ -154,9 +163,10 @@ cases_compare <- function(model_data=list(),obs_data=list()){
 #'
 #' @description Take in single set of population data and model parameters, output infection data only
 #'
-#' @details TBA
+#' @details Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+#' for one region over a specified time period for a number of particles/threads and infection numbers at each time
+#' increment only; optimized for running a large number of repetitions
 #'
-#' @param model_new model compiled using odin.dust::odin_dust_()
 #' @param FOI_spillover = Force of infection due to spillover from sylvatic reservoir
 #' @param R0 = Reproduction number for urban spread of infection
 #' @param vacc_data Vaccination coverage in each age group by year
@@ -172,7 +182,7 @@ cases_compare <- function(model_data=list(),obs_data=list()){
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
-case_data_generate <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
+case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_reps=1,year_end=2000,year_data_begin=1999,
                               vaccine_efficacy=vaccine_efficacy,start_SEIRVC=list(),dt=1.0) {
 
@@ -204,7 +214,7 @@ case_data_generate <- function(model_new=NULL,FOI_spillover=0.0,R0=1.0,vacc_data
   for(div in 1:n_divs){
     n_particles=n_particles_list[div]
     reps=c(1:n_particles)+((div-1)*division)
-    x <- model_new$new(pars=pars,step = 1,n_particles = n_particles,n_threads = n_threads)
+    x <- FullModelOD$new(pars=pars,step = 1,n_particles = n_particles,n_threads = n_threads)
 
     x_res <- array(NA, dim = c(n_data_pts, n_particles))
     for(t in step0:n_steps){

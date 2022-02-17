@@ -1,3 +1,4 @@
+# R file for functions relating to processing of Markov Chain Monte Carlo output data in YellowFeverDynamics package
 #-------------------------------------------------------------------------------
 #' @title get_mcmc_data
 #'

@@ -7,7 +7,7 @@
 sero_compare(model_data = list(), obs_sero_data = list())
 }
 \arguments{
-\item{model_data}{= Output of Basic_Model_Run or Full_Model_Run}
+\item{model_data}{= Output of Basic_Model_Run_OD or Full_Model_Run_OD}
 
 \item{obs_sero_data}{= Seroprevalence data for comparison, by year and age group, in format
 no. samples/no. positives}
@@ -17,5 +17,7 @@ Take model results, calculate seroprevalence for comparison with observed seropr
 calculate likelihood (single region, multiple years/age ranges)
 }
 \details{
-TBA
+Takes in SEIRV model output data and observed seroprevalence data, calculates seroprevalence from modelled
+data, and compares modelled and observed data, calculating logarithmic likelihood of observing the latter given the
+former, using a binomial formula.
 }

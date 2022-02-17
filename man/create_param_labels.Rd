@@ -26,5 +26,6 @@ efficacy and/or infection/death reporting probabilities)}
 Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting
 }
 \details{
-TBA
+Takes in input list and environmental data along with names of additional parameters (vaccine efficacy
+and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
 }

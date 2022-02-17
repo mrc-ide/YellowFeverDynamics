@@ -28,5 +28,7 @@ Calculate seroprevalence in unvaccinated people from modelled data for one or mo
 range
 }
 \details{
-TBA
+Takes in information on minimum and maximum ages of desired range, year(s) for which to calculate
+seroprevalence, factor representing proportion of patients with unknown vaccine status, and SEIRV model output
+data, and calculates seroprevalence in unvaccinated people in specified age range for specified year(s).
 }

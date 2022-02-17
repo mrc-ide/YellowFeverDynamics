@@ -9,11 +9,13 @@ outbreak_risk_compare(model_outbreak_risk = list(), obs_data = list())
 \arguments{
 \item{model_outbreak_risk}{Modelled annual outbreak risk (0-1)}
 
-\item{obs_data}{Observed annual number of outbreaks}
+\item{obs_data}{Observed annual outbreak Y/N data}
 }
 \description{
 Calculate likelihood of observed outbreak data based on modelled outbreak risk
 }
 \details{
-TBA
+Takes in modelled outbreak risk data (probabilities of one or more outbreaks being reported in given
+years) and compared with observed data on whether 1 or more outbreaks were reported in given years, calculating
+logarithmic likelihood of observing the latter given the former.
 }

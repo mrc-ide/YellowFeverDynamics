@@ -1,10 +1,13 @@
+# R file for functions relating to serological data in YellowFeverDynamics package
 #-------------------------------------------------------------------------------
 #' @title sero_calculate
 #'
 #' @description Calculate seroprevalence in unvaccinated people from modelled data for one or more years and one age
 #' range
 #'
-#' @details TBA
+#' @details Takes in information on minimum and maximum ages of desired range, year(s) for which to calculate
+#' seroprevalence, factor representing proportion of patients with unknown vaccine status, and SEIRV model output
+#' data, and calculates seroprevalence in unvaccinated people in specified age range for specified year(s).
 #'
 #' @param age_min = Minimum age of age group
 #' @param age_max = Maximum age of age group
@@ -55,8 +58,11 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
 #' @description Take model results, calculate seroprevalence for comparison with observed seroprevalence and
 #' calculate likelihood (single region, multiple years/age ranges)
 #'
-#' @details TBA
-#' @param model_data = Output of Basic_Model_Run or Full_Model_Run
+#' @details Takes in SEIRV model output data and observed seroprevalence data, calculates seroprevalence from modelled
+#' data, and compares modelled and observed data, calculating logarithmic likelihood of observing the latter given the
+#' former, using a binomial formula.
+#'
+#' @param model_data = Output of Basic_Model_Run_OD or Full_Model_Run_OD
 #' @param obs_sero_data = Seroprevalence data for comparison, by year and age group, in format
 #' no. samples/no. positives
 sero_compare <- function(model_data=list(),obs_sero_data=list()){
@@ -92,6 +98,10 @@ sero_compare <- function(model_data=list(),obs_sero_data=list()){
 #' @description Take model results from multi-particle run using OD version of model, calculate
 #' seroprevalence for comparison with observed seroprevalence  and  calculate likelihood value (single region,
 #' multiple years/age ranges) for each particle; return as vector of values
+#'
+#' @details Calculates logarithmic likelihood of observing observed seroprevalence given modelled data, similar to
+#' sero_compare(), but using modelled data for multiple particles.
+#'
 #' @param model_data = Output of Basic_Model_Run or Full_Model_Run
 #' @param obs_sero_data = Seroprevalence data for comparison, by year and age group, in format no. samples/no.
 #' positives

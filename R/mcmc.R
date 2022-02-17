@@ -1,3 +1,5 @@
+# R file for functions used for Markov Chain Monte Carlo fitting (and preliminary maximum-likelihood fitting) in
+# YellowFeverDynamics package
 #-------------------------------------------------------------------------------
 #' @title MCMC
 #'

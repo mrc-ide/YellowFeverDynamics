@@ -1,3 +1,4 @@
+# R file for general functions in YellowFeverDynamics package
 #------------------------------------------------
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
@@ -342,7 +343,8 @@ param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 #'
 #' @description Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting
 #'
-#' @details TBA
+#' @details Takes in input list and environmental data along with names of additional parameters (vaccine efficacy
+#' and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
 #'
 #' @param type = Type of MCMC fit to use (should be one of "FOI", "FOI+R0", "FOI enviro" or "FOI+R0 enviro"
 #' @param input_data = List of population and vaccination data for multiple regions (created using data input creation

@@ -5,7 +5,6 @@
 \title{case_data_generate}
 \usage{
 case_data_generate(
-  model_new = NULL,
   FOI_spillover = 0,
   R0 = 1,
   vacc_data = list(),
@@ -21,8 +20,6 @@ case_data_generate(
 )
 }
 \arguments{
-\item{model_new}{model compiled using odin.dust::odin_dust_()}
-
 \item{FOI_spillover}{= Force of infection due to spillover from sylvatic reservoir}
 
 \item{R0}{= Reproduction number for urban spread of infection}
@@ -54,5 +51,7 @@ If mode_start=2, use SEIRVC input in list from previous run(s)}
 Take in single set of population data and model parameters, output infection data only
 }
 \details{
-TBA
+Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+for one region over a specified time period for a number of particles/threads and infection numbers at each time
+increment only; optimized for running a large number of repetitions
 }
