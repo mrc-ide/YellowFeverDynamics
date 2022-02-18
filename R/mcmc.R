@@ -5,7 +5,8 @@
 #'
 #' @description Combined MCMC Multi-Region - series of MCMC steps for one or more regions
 #'
-#' @details TBA
+#' @details This is the master function for running a Markov chain to optimize the parameters of the yellow fever model
+#' based on the calculated likelihood of observing supplied data given a particular set of parameters. [TBC]
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
@@ -122,7 +123,10 @@ MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=l
 #'
 #' @description Single MCMC step - one or more regions
 #'
-#' @details TBA
+#' @details This function runs a single step in a Markov chain set up using the function mcmc(). It proposes a
+#' set of parameters using the param_prop_setup() function, calculates the likelihood of observing the observed data
+#' based on that proposed parameter set, accepts or rejects the proposed parameter set based on the calculated
+#' likelihood and existing chain information, then returns the next line of information for the chain to mcmc(). [TBC]
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
@@ -194,7 +198,8 @@ MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data
 #'
 #' @description Function which calculates and outputs likelihood
 #'
-#' @details TBA
+#' @details This function calculates the total likelihood of observing a set of observations (across multiple regions
+#' and data types) for a given proposed parameter set. [TBC]
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
@@ -392,7 +397,8 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
 #'
 #' @description Perform checks on MCMC inputs
 #'
-#' @details TBA
+#' @details This function, which is called by mcmc(), performs a number of checks on data input to mcmc() to ensure
+#' that that function will run correctly. [TBC]
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
@@ -460,6 +466,9 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
 #'
 #' @description Test multiple sets of parameters randomly drawn from range between maximum and minimum
 #' values in order to find approximate values giving maximum likelihood
+#'
+#' @details TBA
+#'
 #' @param n_iterations = Number of times to run and adjust maximum/minimum
 #' @param n_param_sets = Number of parameter sets to run in each iteration
 #' @param n_bounds = Number of parameter sets (with highest likelihood values) to take at each iteration to create new
