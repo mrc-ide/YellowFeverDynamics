@@ -7,15 +7,19 @@
 #'
 #' @details TBA
 #'
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param pars_ini Initial log values of parameters
 #' @param pars_min Lower limits of parameter values if specified
 #' @param pars_max Upper limits of parameter values if specified
-#' @param input_data List of population and vaccination data for multiple regions (created using data input creation code
-#' and usually loaded from RDS file)
-#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file)
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no.
+#'   cases/no. deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
 #' @param n_reps Number of times to repeat calculations to get average likelihood at each step
 #' @param Niter Total number of steps to run
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
@@ -120,15 +124,19 @@ MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=l
 #'
 #' @details TBA
 #'
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param param Log values of parameters
 #' @param pars_min Lower limits of parameter values if specified
 #' @param pars_max Upper limits of parameter values if specified
-#' @param input_data List of population and vaccination data for multiple regions (created using data input creation code
-#' and usually loaded from RDS file)
-#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file)
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
 #' @param chain_cov = Chain covariance
 #' @param adapt = 0/1 flag indicating which type of calculation to use for proposition value
 #' @param like_current = Current accepted likelihood value
@@ -188,15 +196,19 @@ MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data
 #'
 #' @details TBA
 #'
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param param_prop Log values of proposed parameters
 #' @param pars_min Lower limits of parameter values if specified
 #' @param pars_max Upper limits of parameter values if specified
-#' @param input_data List of population and vaccination data for multiple regions (created using data input creation code
-#' and usually loaded from RDS file)
-#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file)
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
 #' @param n_reps Number of times to repeat calculations to get average likelihood at each step
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start = 0, only vaccinated individuals
@@ -382,7 +394,8 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
 #'
 #' @details TBA
 #'
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param pars_ini = Initial parameter values
 #' @param n_params = Number of parameters (equal to length of pars_ini)
 #' @param prior_type = Text indicating which type of calculation to use for prior probability
@@ -451,14 +464,18 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
 #' @param n_param_sets = Number of parameter sets to run in each iteration
 #' @param n_bounds = Number of parameter sets (with highest likelihood values) to take at each iteration to create new
 #' maximum/minimum values
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param pars_min Initial lower limits of parameter values
 #' @param pars_max Initial upper limits of parameter values
-#' @param input_data List of population and vaccination data for multiple regions (created using data input creation code
-#' and usually loaded from RDS file)
-#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file)
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
 #' @param n_reps Number of times to repeat calculations to get average likelihood at each step
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start = 0, only vaccinated individuals

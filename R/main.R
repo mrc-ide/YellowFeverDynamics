@@ -224,7 +224,8 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #' infection and (optionally) reproduction number values either directly or from environmental covariates. Also
 #' calculates related components of prior probability.
 #'
-#' @param type Type of MCMC fit to use (should be one of "FOI", "FOI+R0", "FOI enviro" or "FOI+R0 enviro"
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param prior_type Text indicating which type of calculation to use for prior probability
 #'  If prior_type = "zero", prior probability is always zero
 #'  If prior_type = "flat", prior probability is zero if FOI/R0 in designated ranges, -Inf otherwise
@@ -346,7 +347,8 @@ param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 #' @details Takes in input list and environmental data along with names of additional parameters (vaccine efficacy
 #' and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
 #'
-#' @param type = Type of MCMC fit to use (should be one of "FOI", "FOI+R0", "FOI enviro" or "FOI+R0 enviro"
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param input_data = List of population and vaccination data for multiple regions (created using data input creation
 #' code and usually loaded from RDS file)
 #' @param enviro_data = Environmental data frame, containing only relevant environmental variables
