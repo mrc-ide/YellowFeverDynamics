@@ -18,7 +18,8 @@ mcmc_checks(
 )
 }
 \arguments{
-\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)}
+\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{pars_ini}{= Initial parameter values}
 
@@ -46,5 +47,6 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 Perform checks on MCMC inputs
 }
 \details{
-TBA
+This function, which is called by mcmc(), performs a number of checks on data input to mcmc() to ensure
+that that function will run correctly. [TBC]
 }

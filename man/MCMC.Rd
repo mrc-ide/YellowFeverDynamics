@@ -27,7 +27,8 @@ MCMC(
 )
 }
 \arguments{
-\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)}
+\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{pars_ini}{Initial log values of parameters}
 
@@ -35,14 +36,17 @@ MCMC(
 
 \item{pars_max}{Upper limits of parameter values if specified}
 
-\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation code
-and usually loaded from RDS file)}
+\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
+code and usually loaded from RDS file)}
 
-\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives}
+\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+positives}
 
-\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths}
+\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no.
+cases/no. deaths}
 
-\item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)}
+\item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+1 = 1 or more outbreak(s)}
 
 \item{n_reps}{Number of times to repeat calculations to get average likelihood at each step}
 
@@ -76,5 +80,6 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 Combined MCMC Multi-Region - series of MCMC steps for one or more regions
 }
 \details{
-TBA
+This is the master function for running a Markov chain to optimize the parameters of the yellow fever model
+based on the calculated likelihood of observing supplied data given a particular set of parameters. [TBC]
 }

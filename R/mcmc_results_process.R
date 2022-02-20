@@ -133,8 +133,8 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
 #' @param regions List of region names
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars","scatter")
 #' @param margin For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-#' expressed as a fraction (e.g. 0.95 for 95%)
-plot_mcmc_FOI_R0_data <- function(data_frame,regions,plot_type="box",margin=0.95){
+#'   expressed as a fraction
+plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",margin=0.95){
   #TODO - Add assertthat checks
   if(is.null(data_frame$R0)==TRUE){
     assert_that(plot_type %in% c("box","violin","error_bars"))
@@ -233,8 +233,8 @@ plot_mcmc_FOI_R0_data <- function(data_frame,regions,plot_type="box",margin=0.95
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars")
 #' @param values List of names of parameters to plot (must be parameters appearing in the data)
 #' @param margin For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-#' expressed as a fraction (e.g. 0.95 for 95%)
-plot_mcmc_prob_data <- function(input_frame,plot_type="box",values=c("vacc_eff"),margin=0.95){
+#'   expressed as a fraction
+plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vacc_eff"),margin=0.95){
   assert_that(plot_type %in% c("box","violin","error_bars"))
 
   n_values=length(values)

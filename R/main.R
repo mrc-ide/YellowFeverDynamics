@@ -50,23 +50,27 @@ Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data
                                           year_data_begin,vaccine_efficacy,start_SEIRVC,dt),
                      step = 1,n_particles = n_particles,n_threads = n_threads)
 
-  n=4 #Number of non-vector outputs
-  N_age=length(pop_data[1,])
-  t_pts=c(1:((year_end-year0)*(365/dt)))
-  n_data_pts=(6*N_age)+n
-  n_steps=length(t_pts)
-  step0=(year_data_begin-year0)*(365/dt)
-  x_res <- array(NA, dim = c(n_data_pts, n_particles, n_steps-step0))
+  n_nv=4 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  t_pts_all=c(1:((year_end-year0)*(365/dt))) #All output time points
+  n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
+  n_steps=length(t_pts_all) #Total number of output time points
+  step0=(year_data_begin-year0)*(365/dt) #Step at which data starts being saved for final output
+  t_pts_out=n_steps-step0 #Number of time points in final output data
+  x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
   for(t in step0:n_steps){
     x_res[,,t-step0] <- x$run(t)
   }
 
-  results_data=list(day=x_res[2,,],year=x_res[3,,],FOI_total=x_res[4,,],
-                    S=x_res[c((1+n):(N_age+n)),,],E=x_res[c((N_age+1+n):((2*N_age)+n)),,],
-                    I=x_res[c(((2*N_age)+1+n):((3*N_age)+n)),,],R=x_res[c(((3*N_age)+1+n):((4*N_age)+n)),,],
-                    V=x_res[c(((4*N_age)+1+n):((5*N_age)+n)),,],C=x_res[c(((5*N_age)+1+n):((6*N_age)+n)),,])
-
-  return(results_data)
+  return(list(day=array(x_res[2,,],dim=c(n_particles,t_pts_out)),
+              year=array(x_res[3,,],dim=c(n_particles,t_pts_out)),
+              FOI_total=array(x_res[4,,],dim=c(n_particles,t_pts_out)),
+              S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out))))
 }
 #-------------------------------------------------------------------------------
 #' @title Basic_Model_Run_OD
@@ -106,23 +110,25 @@ Basic_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
                                           year_data_begin,vaccine_efficacy,start_SEIRVC,dt),
                      step = 1,n_particles = n_particles,n_threads = n_threads)
 
-  n=3 #Number of non-vector outputs
-  N_age=length(pop_data[1,])
-  t_pts=c(1:((year_end-year0)*(365/dt)))
-  n_data_pts=(5*N_age)+n
-  n_steps=length(t_pts)
-  step0=(year_data_begin-year0)*(365/dt)
-  x_res <- array(NA, dim = c(n_data_pts, n_particles, n_steps-step0))
+  n_nv=3 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  t_pts_all=c(1:((year_end-year0)*(365/dt))) #All output time points
+  n_data_pts=(5*N_age)+n_nv #Number of data values per time point in output
+  n_steps=length(t_pts_all) #Total number of output time points
+  step0=(year_data_begin-year0)*(365/dt) #Step at which data starts being saved for final output
+  t_pts_out=n_steps-step0 #Number of time points in final output data
+  x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
   for(t in step0:n_steps){
     x_res[,,t-step0] <- x$run(t)
   }
 
-  results_data=list(day=x_res[2,,],year=x_res[3,,],
-                    S=x_res[c((1+n):(N_age+n)),,],E=x_res[c((N_age+1+n):((2*N_age)+n)),,],
-                    I=x_res[c(((2*N_age)+1+n):((3*N_age)+n)),,],R=x_res[c(((3*N_age)+1+n):((4*N_age)+n)),,],
-                    V=x_res[c(((4*N_age)+1+n):((5*N_age)+n)),,])
-
-  return(results_data)
+  return(list(day=array(x_res[2,,],dim=c(n_particles,t_pts_out)),
+              year=array(x_res[3,,],dim=c(n_particles,t_pts_out)),
+              S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
+              V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out))))
 }
 #-------------------------------------------------------------------------------
 #' @title Parameter setup

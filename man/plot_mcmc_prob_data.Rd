@@ -5,24 +5,28 @@
 \title{plot_mcmc_prob_data}
 \usage{
 plot_mcmc_prob_data(
-  input_frame,
+  input_frame = list(),
   plot_type = "box",
   values = c("vacc_eff"),
   margin = 0.95
 )
 }
 \arguments{
-\item{input_frame}{TBA}
+\item{input_frame}{Data frame of MCMC output data}
 
-\item{plot_type}{TBA}
+\item{plot_type}{Type of plots to create (choose from "box","violin","error_bars")}
 
-\item{values}{TBA}
+\item{values}{List of names of parameters to plot (must be parameters appearing in the data)}
 
-\item{margin}{TBA}
+\item{margin}{For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
+expressed as a fraction}
 }
 \description{
-TBA
+Plot values of vaccine efficacy and/or reporting probabilities from MCMC output data
 }
 \details{
-TBA
+This function takes in a data frame produced by functions get_mcmc_data() and/or truncate_mcmc_data(),
+calculates the values of additional parameters fitted using the function besides spillover force of infection (FOI)
+and reproduction number (R0) plots the values in one of a number of different ways to display the spread of values
+obtained (box plots, violin plots, simple plots with error bars).
 }

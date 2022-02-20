@@ -34,20 +34,24 @@ mcmc_prelim_fit(
 \item{n_bounds}{= Number of parameter sets (with highest likelihood values) to take at each iteration to create new
 maximum/minimum values}
 
-\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)}
+\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{pars_min}{Initial lower limits of parameter values}
 
 \item{pars_max}{Initial upper limits of parameter values}
 
-\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation code
-and usually loaded from RDS file)}
+\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
+code and usually loaded from RDS file)}
 
-\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives}
+\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+positives}
 
-\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths}
+\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+deaths}
 
-\item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)}
+\item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+1 = 1 or more outbreak(s)}
 
 \item{n_reps}{Number of times to repeat calculations to get average likelihood at each step}
 
@@ -76,4 +80,9 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 \description{
 Test multiple sets of parameters randomly drawn from range between maximum and minimum
 values in order to find approximate values giving maximum likelihood
+}
+\details{
+This function is used to estimate the model parameter values giving maximum likelihood; it is primarily
+intended to be used to generate initial parameter values for Markov Chain Monte Carlo fitting (using the mcmc()
+function). [TBC]
 }

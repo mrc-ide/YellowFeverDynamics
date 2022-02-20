@@ -16,7 +16,8 @@ mcmc_FOI_R0_setup(
 )
 }
 \arguments{
-\item{type}{Type of MCMC fit to use (should be one of "FOI", "FOI+R0", "FOI enviro" or "FOI+R0 enviro"}
+\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{prior_type}{Text indicating which type of calculation to use for prior probability
 If prior_type = "zero", prior probability is always zero

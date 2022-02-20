@@ -17,5 +17,7 @@ get_mcmc_data(input_folder = "", plot_graph = TRUE, output_data = TRUE)
 Read MCMC results from CSV files in folder; plot likelihood graph and/or output data set
 }
 \details{
-TBA
+This function is intended to read the output of the mcmc() function saved as CSV files over the course of
+a run. It reads all CSV files in specified folder (ignoring subfolders) in alphabetical order and combines them
+into a single data frame. It  outputs the data frame and optionally plots the posterior likelihood on a graph.
 }

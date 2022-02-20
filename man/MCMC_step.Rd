@@ -28,7 +28,8 @@ MCMC_step(
 )
 }
 \arguments{
-\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental covariates)}
+\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{param}{Log values of parameters}
 
@@ -36,14 +37,17 @@ MCMC_step(
 
 \item{pars_max}{Upper limits of parameter values if specified}
 
-\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation code
-and usually loaded from RDS file)}
+\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
+code and usually loaded from RDS file)}
 
-\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives}
+\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+positives}
 
-\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths}
+\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+deaths}
 
-\item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0=no outbreaks, 1=1+ outbreak(s)}
+\item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+1 = 1 or more outbreak(s)}
 
 \item{chain_cov}{= Chain covariance}
 
@@ -79,5 +83,8 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 Single MCMC step - one or more regions
 }
 \details{
-TBA
+This function runs a single step in a Markov chain set up using the function mcmc(). It proposes a
+set of parameters using the param_prop_setup() function, calculates the likelihood of observing the observed data
+based on that proposed parameter set, accepts or rejects the proposed parameter set based on the calculated
+likelihood and existing chain information, then returns the next line of information for the chain to mcmc(). [TBC]
 }

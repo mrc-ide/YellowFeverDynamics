@@ -467,7 +467,9 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
 #' @description Test multiple sets of parameters randomly drawn from range between maximum and minimum
 #' values in order to find approximate values giving maximum likelihood
 #'
-#' @details TBA
+#' @details This function is used to estimate the model parameter values giving maximum likelihood; it is primarily
+#' intended to be used to generate initial parameter values for Markov Chain Monte Carlo fitting (using the mcmc()
+#' function). [TBC]
 #'
 #' @param n_iterations = Number of times to run and adjust maximum/minimum
 #' @param n_param_sets = Number of parameter sets to run in each iteration
