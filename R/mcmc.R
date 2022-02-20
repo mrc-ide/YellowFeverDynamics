@@ -47,7 +47,7 @@ MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=l
   n_regions=length(regions)
   n_params=length(pars_ini)
   ###########################################
-  checks<-mcmc_checks(pars_ini,n_params,type,prior_type,n_regions,enviro_data,R0_fixed_values,
+  checks<-mcmc_checks(type,pars_ini,n_params,prior_type,n_regions,enviro_data,R0_fixed_values,
                       vaccine_efficacy,p_obs_severe,p_obs_death)
   ###########################################
 
@@ -255,8 +255,6 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
     if(p_obs_death<exp(pars_min[names(pars_min)=="p_obs_death"])){prior_report=-Inf}
     if(p_obs_death>exp(pars_max[names(pars_max)=="p_obs_death"])){prior_report=-Inf}
     }
-  #if(min(p_obs_severe,p_obs_death)<0){prior_report=-Inf}
-  #if(max(p_obs_severe,p_obs_death)>1){prior_report=-Inf}
 
   #Get FOI and R0 values and calculate associated prior
   FOI_R0_data=mcmc_FOI_R0_setup(type,prior_type,regions,param_prop,enviro_data,R0_fixed_values,pars_min,pars_max)
@@ -264,8 +262,6 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
   R0_values=FOI_R0_data$R0_values
   prior_prop=prior_vacc+prior_report+FOI_R0_data$prior+sum(dnorm(log(c(p_obs_severe,p_obs_death)),
                                                                  mean = 0,sd = 30,log = TRUE))
-  #if(min(FOI_values)<1.0e-8){prior_prop=-Inf}
-  #if(type %in% c("FOI+R0","FOI+R0 enviro")){if(min(R0_values)<0.1){prior_prop=-Inf}}
 
   ### if prior finite, evaluate likelihood ###
   if (is.finite(prior_prop)) {

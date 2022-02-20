@@ -120,17 +120,11 @@ sero_compare_multiparticle <- function(model_data=list(),obs_sero_data=list()){
 
   like_values=rep(0,n_particles)
 
-  if(n_particles>1){
-    for(i in 1:n_particles){
-      data_1set=list(day=model_data$day[i,],year=model_data$year[i,],S=t(model_data$S[,i,]),E=t(model_data$E[,i,]),
-                     I=t(model_data$I[,i,]),R=t(model_data$R[,i,]),V=t(model_data$V[,i,]))
-      like_values[i]=sero_compare(data_1set,obs_sero_data)
-    }
-  } else {data_1set=list(day=model_data$day,year=model_data$year,S=t(model_data$S),E=t(model_data$E),
-                         I=t(model_data$I),R=t(model_data$R),V=t(model_data$V))
-  like_values[1]=sero_compare(data_1set,obs_sero_data)
+  for(i in 1:n_particles){
+    data_1set=list(day=model_data$day[i,],year=model_data$year[i,],S=t(model_data$S[,i,]),E=t(model_data$E[,i,]),
+                   I=t(model_data$I[,i,]),R=t(model_data$R[,i,]),V=t(model_data$V[,i,]))
+    like_values[i]=sero_compare(data_1set,obs_sero_data)
   }
-
 
   return(like_values)
 }
