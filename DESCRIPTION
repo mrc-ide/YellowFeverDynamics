@@ -20,6 +20,7 @@ Imports:
     graphics,
     maptree,
     mvtnorm,
+    qpdf,
     stats,
     testthat,
     tgp,

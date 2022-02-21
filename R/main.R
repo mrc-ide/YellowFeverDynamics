@@ -7,6 +7,7 @@
 #' @import graphics
 #' @import maptree
 #' @import mvtnorm
+#' @import qpdf
 #' @import stats
 #' @import tgp
 #' @import truncdist
@@ -18,7 +19,7 @@
   library.dynam.unload("YellowFeverDynamics", libpath)
 }
 #-------------------------------------------------------------------------------
-#' @title Full_Model_Run_OD
+#' @title Full_Model_Run
 #'
 #' @description Run full version of SEIRV model
 #'
@@ -45,9 +46,9 @@
 #' '
 #' @export
 #'
-Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
-                              mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
-                              vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0) {
+Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
+                           n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
+                           start_SEIRVC=list(),dt=1.0) {
 
   assert_that(n_particles>0)
   assert_that(n_particles<=20)
@@ -81,13 +82,13 @@ Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data
               C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out))))
 }
 #-------------------------------------------------------------------------------
-#' @title Basic_Model_Run_OD
+#' @title Basic_Model_Run
 #'
 #' @description Run basic version of SEIRV model
 #'
 #' @details Accepts epidemiological + population parameters and model settings; runs basic version of SEIRV model
 #' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-#' values. (Differs from Full_Model_Run_OD in not recording new infection numbers or total force of infection.)
+#' values. (Differs from Full_Model_Run in not recording new infection numbers or total force of infection.)
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
@@ -108,9 +109,9 @@ Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data
 #' '
 #' @export
 #'
-Basic_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
-                               mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
-                               vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0) {
+Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
+                            n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
+                            start_SEIRVC=list(),dt=1.0) {
 
   assert_that(n_particles>0)
   assert_that(n_particles<=20)

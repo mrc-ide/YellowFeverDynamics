@@ -319,9 +319,9 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
 
           #Run model
           if(flag_sero==1){
-            model_output=Full_Model_Run_OD(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
-                                           year0=min(input_data$years_labels),mode_start,n_particles=n_reps,
-                                           n_threads=n_reps,year_end,year_data_begin,vaccine_efficacy,dt=dt)
+            model_output=Full_Model_Run(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
+                                        year0=min(input_data$years_labels),mode_start,n_particles=n_reps,
+                                        n_threads=n_reps,year_end,year_data_begin,vaccine_efficacy,dt=dt)
           } else {
             model_output=case_data_generate(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
                                             year0=min(input_data$years_labels),mode_start,n_reps,
