@@ -7,11 +7,16 @@
 #' @import graphics
 #' @import maptree
 #' @import mvtnorm
-#' @import qpdf
 #' @import stats
 #' @import tgp
 #' @import truncdist
 #' @import utils
+#------------------------------------------------
+# unload DLL when package is unloaded
+#' @noRd
+.onUnload <- function(libpath) {
+  library.dynam.unload("YellowFeverDynamics", libpath)
+}
 #-------------------------------------------------------------------------------
 #' @title Full_Model_Run_OD
 #'
@@ -37,6 +42,9 @@
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' '
+#' @export
+#'
 Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
                               vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0) {
@@ -97,6 +105,9 @@ Full_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' '
+#' @export
+#'
 Basic_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                                mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
                                vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0) {
@@ -151,6 +162,9 @@ Basic_Model_Run_OD <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' '
+#' @export
+#'
 parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
                             year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0){
 
@@ -243,6 +257,9 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #' @param R0_fixed_values Values of R0 to use if not being fitted
 #' @param pars_min Lower limits of parameter values if specified
 #' @param pars_max Upper limits of parameter values if specified
+#' '
+#' @export
+#'
 mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),enviro_data=list(),R0_fixed_values=c(),
                               pars_min=c(),pars_max=c()){
 
@@ -303,6 +320,9 @@ mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),en
 #'
 #' @param param Parameter values
 #' @param enviro_data Environmental data frame line, containing only relevant environmental variables
+#' '
+#' @export
+#'
 param_calc_enviro <- function(param=c(),enviro_data=c()){
 
   n_vars=dim(enviro_data)[2]-1
@@ -330,6 +350,9 @@ param_calc_enviro <- function(param=c(),enviro_data=c()){
 #' @param param Previous parameter values used as input
 #' @param chain_cov Covariance calculated from previous steps in chain
 #' @param adapt 0/1 flag indicating which type of calculation to use for proposition value
+#' '
+#' @export
+#'
 param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 
   n_params = length(param)
@@ -360,6 +383,9 @@ param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 #' @param enviro_data = Environmental data frame, containing only relevant environmental variables
 #' @param extra_params = Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
 #' efficacy and/or infection/death reporting probabilities)
+#' '
+#' @export
+#'
 create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){
   #TODO - Add assert_that functions
 

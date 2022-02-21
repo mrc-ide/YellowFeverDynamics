@@ -10,7 +10,8 @@ sero_compare_multiparticle(model_data = list(), obs_sero_data = list())
 \item{model_data}{= Output of Basic_Model_Run or Full_Model_Run}
 
 \item{obs_sero_data}{= Seroprevalence data for comparison, by year and age group, in format no. samples/no.
-positives}
+  positives
+'}
 }
 \description{
 Take model results from multi-particle run using OD version of model, calculate

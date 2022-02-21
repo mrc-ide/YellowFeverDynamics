@@ -14,6 +14,9 @@
 #' @param years = Years for which to calculate average annual seroprevalence
 #' @param vc_factor = Proportion of patients tested for whom vaccine status unknown
 #' @param data = Output of Basic_Model_Run or Full_Model_Run
+#' '
+#' @export
+#'
 sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=list()){
 
   assertthat::assert_that(age_min>=0)
@@ -65,6 +68,9 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
 #' @param model_data = Output of Basic_Model_Run_OD or Full_Model_Run_OD
 #' @param obs_sero_data = Seroprevalence data for comparison, by year and age group, in format
 #' no. samples/no. positives
+#' '
+#' @export
+#'
 sero_compare <- function(model_data=list(),obs_sero_data=list()){
 
   assertthat::assert_that(is.null(model_data$S)==FALSE)
@@ -104,7 +110,10 @@ sero_compare <- function(model_data=list(),obs_sero_data=list()){
 #'
 #' @param model_data = Output of Basic_Model_Run or Full_Model_Run
 #' @param obs_sero_data = Seroprevalence data for comparison, by year and age group, in format no. samples/no.
-#' positives
+#'   positives
+#' '
+#' @export
+#'
 sero_compare_multiparticle <- function(model_data=list(),obs_sero_data=list()){
 
   dimensions=dim(model_data$S)

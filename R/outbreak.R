@@ -14,6 +14,9 @@
 #' @param p_obs_mild probability of a mild infection being observed
 #' @param p_obs_severe probability of a severe infection being observed
 #' @param p_obs_death probability of a death being observed
+#' '
+#' @export
+#'
 get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_severe=1.0,p_obs_death=1.0){
 
   #TODO - Add assert_that functions
@@ -91,6 +94,9 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
 #'
 #' @param model_outbreak_risk Modelled annual outbreak risk (0-1)
 #' @param obs_data Observed annual outbreak Y/N data
+#' '
+#' @export
+#'
 outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
 
   assert_that(length(model_outbreak_risk)==length(obs_data))
@@ -122,6 +128,9 @@ outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
 #'
 #' @param model_data Modelled data in data frame format (list of years and number of observed deaths in each)
 #' @param obs_data Observed annual number of outbreaks
+#' '
+#' @export
+#'
 deaths_compare <- function(model_data=list(),obs_data=list()){
 
   assert_that(is.null(model_data$obs_deaths)==FALSE)
@@ -145,6 +154,9 @@ deaths_compare <- function(model_data=list(),obs_data=list()){
 #'
 #' @param model_data Modelled data in data frame format (list of years and number of observed severe cases in each)
 #' @param obs_data Observed annual number of outbreaks
+#' '
+#' @export
+#'
 cases_compare <- function(model_data=list(),obs_data=list()){
 
   assert_that(is.null(model_data$obs_cases)==FALSE)
@@ -182,6 +194,9 @@ cases_compare <- function(model_data=list(),obs_data=list()){
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' '
+#' @export
+#'
 case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_reps=1,year_end=2000,year_data_begin=1999,
                               vaccine_efficacy=vaccine_efficacy,start_SEIRVC=list(),dt=1.0) {

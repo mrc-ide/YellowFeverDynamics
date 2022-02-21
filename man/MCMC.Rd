@@ -74,7 +74,8 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{p_obs_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
 
-\item{filename_prefix}{Prefix of names for output files}
+\item{filename_prefix}{Prefix of names for output files
+'}
 }
 \description{
 Combined MCMC Multi-Region - series of MCMC steps for one or more regions

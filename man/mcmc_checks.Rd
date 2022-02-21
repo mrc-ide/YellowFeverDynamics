@@ -41,7 +41,8 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{p_obs_severe}{= Input value of severe case reporting probability if fixed}
 
-\item{p_obs_death}{= Input value of fatal case reporting probability if fixed}
+\item{p_obs_death}{= Input value of fatal case reporting probability if fixed
+'}
 }
 \description{
 Perform checks on MCMC inputs

@@ -19,7 +19,8 @@ plot_mcmc_prob_data(
 \item{values}{List of names of parameters to plot (must be parameters appearing in the data)}
 
 \item{margin}{For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-expressed as a fraction}
+  expressed as a fraction
+'}
 }
 \description{
 Plot values of vaccine efficacy and/or reporting probabilities from MCMC output data

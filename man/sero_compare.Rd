@@ -10,7 +10,8 @@ sero_compare(model_data = list(), obs_sero_data = list())
 \item{model_data}{= Output of Basic_Model_Run_OD or Full_Model_Run_OD}
 
 \item{obs_sero_data}{= Seroprevalence data for comparison, by year and age group, in format
-no. samples/no. positives}
+no. samples/no. positives
+'}
 }
 \description{
 Take model results, calculate seroprevalence for comparison with observed seroprevalence and

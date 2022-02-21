@@ -11,7 +11,8 @@ param_prop_setup(param = c(), chain_cov = 1, adapt = 0)
 
 \item{chain_cov}{Covariance calculated from previous steps in chain}
 
-\item{adapt}{0/1 flag indicating which type of calculation to use for proposition value}
+\item{adapt}{0/1 flag indicating which type of calculation to use for proposition value
+'}
 }
 \description{
 Set up proposed new parameter values for next step in chain

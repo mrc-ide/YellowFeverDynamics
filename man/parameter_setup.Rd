@@ -42,7 +42,8 @@ If mode_start=2, use SEIRVC input in list from previous run(s)}
 
 \item{start_SEIRVC}{SEIRVC data from end of a previous run to use as input}
 
-\item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)}
+\item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)
+'}
 }
 \description{
 Set up parameters to input into model

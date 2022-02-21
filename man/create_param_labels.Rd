@@ -21,7 +21,8 @@ code and usually loaded from RDS file)}
 \item{enviro_data}{= Environmental data frame, containing only relevant environmental variables}
 
 \item{extra_params}{= Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
-efficacy and/or infection/death reporting probabilities)}
+efficacy and/or infection/death reporting probabilities)
+'}
 }
 \description{
 Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting

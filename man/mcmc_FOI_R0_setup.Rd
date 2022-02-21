@@ -35,7 +35,8 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{pars_min}{Lower limits of parameter values if specified}
 
-\item{pars_max}{Upper limits of parameter values if specified}
+\item{pars_max}{Upper limits of parameter values if specified
+'}
 }
 \description{
 Set up FOI and R0 values and calculate some prior probability values for MCMC calculation

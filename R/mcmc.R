@@ -38,6 +38,9 @@
 #' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
 #' @param filename_prefix Prefix of names for output files
+#' '
+#' @export
+#'
 MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=list(),
                           obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,n_reps=1,Niter=1,
                           mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=NULL,
@@ -159,6 +162,9 @@ MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=l
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' '
+#' @export
+#'
 MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data=list(),
                                obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,chain_cov=1,adapt=0,
                                like_current=-Inf,n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,
@@ -229,6 +235,9 @@ MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' '
+#' @export
+#'
 single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NULL,input_data=list(),
                              obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
                              n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
@@ -411,6 +420,9 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
 #' @param vaccine_efficacy = Input value of vaccine efficacy if fixed
 #' @param p_obs_severe = Input value of severe case reporting probability if fixed
 #' @param p_obs_death = Input value of fatal case reporting probability if fixed
+#' '
+#' @export
+#'
 mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regions=1,enviro_data=NULL,
                         R0_fixed_values=NULL,vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL){
 
@@ -498,6 +510,9 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' '
+#' @export
+#'
 mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
                             type=NULL,pars_min=NULL,pars_max=NULL,input_data=list(),
                             obs_sero_data=list(),obs_case_data=list(),obs_outbreak_data=list(),

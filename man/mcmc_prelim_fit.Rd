@@ -75,7 +75,8 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{p_obs_severe}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
-\item{p_obs_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
+\item{p_obs_death}{Probability of observation of death (set to NULL if being varied as a parameter)
+'}
 }
 \description{
 Test multiple sets of parameters randomly drawn from range between maximum and minimum

@@ -9,7 +9,8 @@ param_calc_enviro(param = c(), enviro_data = c())
 \arguments{
 \item{param}{Parameter values}
 
-\item{enviro_data}{Environmental data frame line, containing only relevant environmental variables}
+\item{enviro_data}{Environmental data frame line, containing only relevant environmental variables
+'}
 }
 \description{
 Parameter calculation from environmental variables

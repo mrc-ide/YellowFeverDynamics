@@ -11,7 +11,8 @@ get_mcmc_data(input_folder = "", plot_graph = TRUE, output_data = TRUE)
 
 \item{plot_graph}{TRUE/FALSE flag indicating whether to plot results graph}
 
-\item{output_data}{TRUE/FALSE flag indicating whether to output results as data frame}
+\item{output_data}{TRUE/FALSE flag indicating whether to output results as data frame
+'}
 }
 \description{
 Read MCMC results from CSV files in folder; plot likelihood graph and/or output data set

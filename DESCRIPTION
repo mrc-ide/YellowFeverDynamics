@@ -20,7 +20,6 @@ Imports:
     graphics,
     maptree,
     mvtnorm,
-    qpdf,
     stats,
     testthat,
     tgp,
@@ -31,6 +30,6 @@ Remotes:
     mrc-ide/odin,
     mrc-ide/odin.dust
 Suggests: 
-    rmarkdown,
-    knitr
+    knitr,
+    rmarkdown
 VignetteBuilder: knitr

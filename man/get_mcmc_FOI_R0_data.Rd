@@ -17,8 +17,9 @@ get_mcmc_FOI_R0_data(
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{enviro_data}{Data frame of environmental covariate values used to calculate FOI and R0 in MCMC run, by region
-(NOTE: the data frame should include only the relevant environmental covariates; any not used in the MCMC fit
- should be removed)}
+  (NOTE: the data frame should include only the relevant environmental covariates; any not used in the MCMC fit
+   should be removed)
+'}
 }
 \description{
 Extract spillover force of infection (FOI) and reproduction number (R0) values from MCMC output data

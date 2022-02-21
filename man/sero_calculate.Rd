@@ -21,7 +21,8 @@ sero_calculate(
 
 \item{vc_factor}{= Proportion of patients tested for whom vaccine status unknown}
 
-\item{data}{= Output of Basic_Model_Run or Full_Model_Run}
+\item{data}{= Output of Basic_Model_Run or Full_Model_Run
+'}
 }
 \description{
 Calculate seroprevalence in unvaccinated people from modelled data for one or more years and one age

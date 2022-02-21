@@ -19,7 +19,8 @@ plot_mcmc_FOI_R0_data(
 \item{plot_type}{Type of plots to create (choose from "box","violin","error_bars","scatter")}
 
 \item{margin}{For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-expressed as a fraction}
+  expressed as a fraction
+'}
 }
 \description{
 Plot spillover force of infection (FOI) and reproduction number (R0) values from MCMC output data

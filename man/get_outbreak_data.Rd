@@ -21,7 +21,8 @@ get_outbreak_data(
 
 \item{p_obs_severe}{probability of a severe infection being observed}
 
-\item{p_obs_death}{probability of a death being observed}
+\item{p_obs_death}{probability of a death being observed
+'}
 }
 \description{
 Generate outbreak data from model output

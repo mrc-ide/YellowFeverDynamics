@@ -11,6 +11,9 @@
 #' @param input_folder Folder containing CSV files output by mcmc()
 #' @param plot_graph TRUE/FALSE flag indicating whether to plot results graph
 #' @param output_data TRUE/FALSE flag indicating whether to output results as data frame
+#' '
+#' @export
+#'
 get_mcmc_data <- function(input_folder="",plot_graph=TRUE,output_data=TRUE){
   assert_that(file.exists(input_folder))
   setwd(input_folder)
@@ -42,6 +45,9 @@ get_mcmc_data <- function(input_folder="",plot_graph=TRUE,output_data=TRUE){
 #' @param selection Vector of line numbers to extract from input_frame
 #' @param plot_graph TRUE/FALSE flag indicating whether to plot results graph
 #' @param output_data TRUE/FALSE flag indicating whether to output results as data frame
+#' '
+#' @export
+#'
 truncate_mcmc_data <- function(input_frame=list(),selection=c(1),plot_graph=TRUE,output_data=TRUE){
   assert_that(is.data.frame(input_frame))
   assert_that(is.integer(selection))
@@ -70,6 +76,9 @@ truncate_mcmc_data <- function(input_frame=list(),selection=c(1),plot_graph=TRUE
 #' @param enviro_data Data frame of environmental covariate values used to calculate FOI and R0 in MCMC run, by region
 #'   (NOTE: the data frame should include only the relevant environmental covariates; any not used in the MCMC fit
 #'    should be removed)
+#' '
+#' @export
+#'
 get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
   #TODO - Add assertthat checks
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
@@ -134,6 +143,9 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars","scatter")
 #' @param margin For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
 #'   expressed as a fraction
+#' '
+#' @export
+#'
 plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",margin=0.95){
   #TODO - Add assertthat checks
   if(is.null(data_frame$R0)==TRUE){
@@ -234,6 +246,9 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #' @param values List of names of parameters to plot (must be parameters appearing in the data)
 #' @param margin For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
 #'   expressed as a fraction
+#' '
+#' @export
+#'
 plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vacc_eff"),margin=0.95){
   assert_that(plot_type %in% c("box","violin","error_bars"))
 
