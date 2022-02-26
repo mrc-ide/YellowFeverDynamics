@@ -341,9 +341,9 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
                   cases=model_output$C[i,model_output$year==year]
                 }
                 severe_cases=rbinom(1,floor(cases),p_severe)
-                deaths=rbinom(1,floor(severe_cases),p_death_severe)
-                annual_data$obs_deaths[i,n_year]=rbinom(1,floor(deaths),p_obs_death)
-                annual_data$obs_cases[i,n_year]=annual_data$obs_deaths[i,n_year]+rbinom(1,floor(severe_cases-deaths),
+                deaths=rbinom(1,severe_cases,p_death_severe)
+                annual_data$obs_deaths[i,n_year]=rbinom(1,deaths,p_obs_death)
+                annual_data$obs_cases[i,n_year]=annual_data$obs_deaths[i,n_year]+rbinom(1,severe_cases-deaths,
                                                                                         p_obs_severe)
               }
             }
