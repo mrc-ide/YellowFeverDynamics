@@ -48,7 +48,7 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
        sero_values[i]=((1.0-vc_factor)*sum(positives))/sum(samples)
        samples=samples+data$V[days,ages]
        positives=positives+data$V[days,ages]
-       sero_values[i]=(vc_factor*sum(positives))/sum(samples)
+       sero_values[i]=sero_values[i]+((vc_factor*sum(positives))/sum(samples))
      }
     }
   }
