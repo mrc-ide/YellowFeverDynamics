@@ -54,7 +54,7 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
   if(is.null(p_obs_severe)==TRUE){extra_params=append(extra_params,"p_obs_severe")}
   if(is.null(p_obs_death)==TRUE){extra_params=append(extra_params,"p_obs_death")}
   param_names=create_param_labels(type,input_data,enviro_data,extra_params)
-  names(pars_min)=names(pars_max)=param_names
+  names(pars_ini)=names(pars_min)=names(pars_max)=param_names
 
   checks<-mcmc_checks(type,pars_ini,n_params,prior_type,n_regions,enviro_data,R0_fixed_values,
                       vaccine_efficacy,p_obs_severe,p_obs_death)
