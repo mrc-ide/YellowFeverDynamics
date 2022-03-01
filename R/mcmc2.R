@@ -49,6 +49,12 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
   regions=names(table(input_data$region_labels))
   n_regions=length(regions)
   n_params=length(pars_ini)
+  extra_params=c()
+  if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vacc_eff")}
+  if(is.null(p_obs_severe)==TRUE){extra_params=append(extra_params,"p_obs_severe")}
+  if(is.null(p_obs_death)==TRUE){extra_params=append(extra_params,"p_obs_death")}
+  param_names=create_param_labels(type,input_data,enviro_data,extra_params)
+  names(pars_min)=names(pars_max)=param_names
 
   checks<-mcmc_checks(type,pars_ini,n_params,prior_type,n_regions,enviro_data,R0_fixed_values,
                       vaccine_efficacy,p_obs_severe,p_obs_death)
@@ -213,18 +219,27 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   if(is.numeric(const_list$vaccine_efficacy)==FALSE){
     vaccine_efficacy=exp(param_prop[names(param_prop)=="vacc_eff"])
     prior_vacc=log(dtrunc(vaccine_efficacy,"norm",a=0,b=1,mean=0.975,sd=0.05))
-  } else {prior_vacc=0}
+  } else {
+    vaccine_efficacy=const_list$vaccine_efficacy
+    prior_vacc=0
+  }
+
+  #Get reporting probabilities
   prior_report=0
   if(is.numeric(const_list$p_obs_severe)==FALSE){
     p_obs_severe=as.numeric(exp(param_prop[names(param_prop)=="p_obs_severe"]))
-    if(p_obs_severe<exp(pars_min[names(pars_min)=="p_obs_severe"])){prior_report=-Inf}
-    if(p_obs_severe>exp(pars_max[names(pars_max)=="p_obs_severe"])){prior_report=-Inf}
-    }
+    if(p_obs_severe<exp(const_list$pars_min[names(const_list$pars_min)=="p_obs_severe"])){prior_report=-Inf}
+    if(p_obs_severe>exp(const_list$pars_max[names(const_list$pars_max)=="p_obs_severe"])){prior_report=-Inf}
+  } else {
+    p_obs_severe=const_list$p_obs_severe
+  }
   if(is.numeric(const_list$p_obs_death)==FALSE){
     p_obs_death=as.numeric(exp(param_prop[names(param_prop)=="p_obs_death"]))
-    if(p_obs_death<exp(pars_min[names(pars_min)=="p_obs_death"])){prior_report=-Inf}
-    if(p_obs_death>exp(pars_max[names(pars_max)=="p_obs_death"])){prior_report=-Inf}
-    }
+    if(p_obs_death<exp(const_list$pars_min[names(const_list$pars_min)=="p_obs_death"])){prior_report=-Inf}
+    if(p_obs_death>exp(const_list$pars_max[names(const_list$pars_max)=="p_obs_death"])){prior_report=-Inf}
+  } else {
+    p_obs_death=const_list$p_obs_death
+  }
 
   #Get FOI and R0 values and calculate associated prior
   FOI_R0_data=mcmc_FOI_R0_setup(const_list$type,const_list$prior_type,regions,param_prop,const_list$enviro_data,
@@ -236,32 +251,35 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
   ### if prior finite, evaluate likelihood ###
   if (is.finite(prior_prop)) {
-    sero_like_values=array(NA,dim=c(nrow(obs_sero_data),n_reps))
-    cases_like_values=deaths_like_values=array(NA,dim=c(nrow(obs_case_data),n_reps))
-    outbreak_like_values=array(NA,dim=c(nrow(obs_outbreak_data),n_reps))
+
     if(is.null(obs_sero_data)==FALSE){
+      sero_like_values=rep(0,nrow(obs_sero_data))
       model_sero_data=list()
       blank1=rep(0,nrow(obs_sero_data))
       blank2=data.frame(samples=blank1,positives=blank1,sero=blank1)
-      for(rep in 1:n_reps){
+      for(rep in 1:const_list$n_reps){
         model_sero_data[[rep]]=blank2
       }
-    }
+    } else {sero_like_values=NA}
+
     if(is.null(obs_case_data)==FALSE){
+      cases_like_values=deaths_like_values=rep(0,nrow(obs_case_data))
       model_case_data=list()
       blank1=rep(0,nrow(obs_case_data))
       blank2=data.frame(obs_cases=blank1,obs_deaths=blank1)
-      for(rep in 1:n_reps){
+      for(rep in 1:const_list$n_reps){
         model_case_data[[rep]]=blank2
       }
-    }
+    } else {cases_like_values=deaths_like_values=NA}
+
     if(is.null(obs_outbreak_data)==FALSE){
+      outbreak_like_values=rep(0,nrow(obs_outbreak_data))
       model_outbreak_data=list()
       blank1=rep(0,nrow(obs_outbreak_data))
-      for(rep in 1:n_reps){
+      for(rep in 1:const_list$n_reps){
         model_sero_data[[rep]]=blank1
       }
-    }
+    } else {outbreak_like_values=NA}
 
     for(n_region in 1:n_regions){
 
@@ -317,8 +335,8 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
         if(flag_case==1){
           for(rep in 1:const_list$n_reps){
-            model_case_data[[rep]]$obs_cases[case_line_list]=model_case_data[[rep]]$cases[case_line_list]+annual_data$obs_cases[rep,]
-            model_case_data[[rep]]$obs_deaths[case_line_list]=model_case_data[[rep]]$deaths[case_line_list]+annual_data$obs_deaths[rep,]
+            model_case_data[[rep]]$obs_cases[case_line_list]=model_case_data[[rep]]$obs_cases[case_line_list]+annual_data$obs_cases[rep,]
+            model_case_data[[rep]]$obs_deaths[case_line_list]=model_case_data[[rep]]$obs_deaths[case_line_list]+annual_data$obs_deaths[rep,]
           }
         }
 
@@ -344,8 +362,8 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
         sero_line_list=input_data$sero_line_list[[n_region]]
         for(i in 1:const_list$n_reps){
           sero_results=sero_calculate2(obs_sero_data[sero_line_list,],model_data=list(day=model_output$day[i,],
-                        year=model_output$year[i,],S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
-                        I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),V=t(model_output$V[,i,])))
+                                                                                      year=model_output$year[i,],S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
+                                                                                      I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),V=t(model_output$V[,i,])))
           model_sero_data[[i]]$samples[sero_line_list]=model_sero_data[[i]]$samples[sero_line_list]+sero_results$samples
           model_sero_data[[i]]$positives[sero_line_list]=model_sero_data[[i]]$positives[sero_line_list]+sero_results$positives
         }
@@ -353,30 +371,40 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
       model_output<-NULL
     }
 
+    #Likelihood of observing serological data
     if(is.null(obs_sero_data)==FALSE){
       for(i in 1:const_list$n_reps){
         model_sero_data[[i]]$sero=model_sero_data[[i]]$positives/model_sero_data[[i]]$samples
-        sero_like_values[,i]=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)
-                            -lgamma(obs_sero_data$samples-obs_sero_data$positives+1) +
-                            obs_sero_data$positives*log(model_sero_data[[i]]$sero) +
-                            (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero_data[[i]]$sero)
+        sero_like_values=sero_like_values+lgamma(obs_sero_data$samples+1)-
+          lgamma(obs_sero_data$positives+1)-lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+
+          obs_sero_data$positives*log(model_sero_data[[i]]$sero)+
+          (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero_data[[i]]$sero)
       }
+      sero_like_values=sero_like_values*frac
     }
+    #Likelihood of observing annual case/death data
     if(is.null(obs_case_data)==FALSE){
       for(i in 1:const_list$n_reps){
-        cases_like_values[,i]=dnbinom(x=obs_case_data$cases,mu=model_case_data[[i]]$obs_cases,
-                                      size=rep(1,length(obs_case_data$cases)),log=TRUE)
-        deaths_like_values[,i]=dnbinom(x=obs_case_data$deaths,mu=model_case_data[[i]]$obs_deaths,
-                                       size=rep(1,length(obs_case_data$deaths)),log=TRUE)
+        for(j in 1:length(model_case_data[[i]]$obs_cases)){
+          model_case_data[[i]]$obs_cases[j]=max(model_case_data[[i]]$obs_cases[j],0.1)
+          model_case_data[[i]]$obs_deaths[j]=max(model_case_data[[i]]$obs_deaths[j],0.1)
+        }
+        cases_like_values=cases_like_values+dnbinom(x=obs_case_data$cases,mu=model_case_data[[i]]$obs_cases,
+                                                    size=rep(1,length(obs_case_data$cases)),log=TRUE)
+        deaths_like_values=deaths_like_values+dnbinom(x=obs_case_data$deaths,mu=model_case_data[[i]]$obs_deaths,
+                                                      size=rep(1,length(obs_case_data$deaths)),log=TRUE)
       }
+      cases_like_values=cases_like_values*frac
+      deaths_like_values=deaths_like_values*frac
     }
+    #Likelihood of observing annual outbreak Y/N data
     if(is.null(obs_outbreak_data)==FALSE){
-        outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_outbreak_data,
-                                                   obs_data=obs_outbreak_data_selected$outbreak_yn)
+      outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_outbreak_data,
+                                                 obs_data=obs_outbreak_data$outbreak_yn)
     }
 
     likelihood=sum(c(prior_prop,mean(sero_like_values,na.rm=TRUE),mean(cases_like_values,na.rm=TRUE),
-                   mean(deaths_like_values,na.rm=TRUE),mean(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
+                     mean(deaths_like_values,na.rm=TRUE),mean(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
 
   } else {
     likelihood=-Inf
@@ -392,7 +420,6 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 #' @details This function calculates the total likelihood of observing a set of observations (across multiple regions
 #' and data types) for a given proposed parameter set. [TBC]
 #'
-#' @param param_prop Log values of proposed parameters
 #' @param input_data List of population and vaccination data for multiple regions (created using data input creation
 #'   code and usually loaded from RDS file)
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
@@ -401,8 +428,6 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 #'   deaths
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
-#' @param const_list = List of constant parameters/flags/etc. loaded to mcmc2() (type,pars_min,pars_max,n_reps,
-#' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_obs_severe,p_obs_death)
 #'
 #' @export
 #'
@@ -478,4 +503,115 @@ input_data_process2 <- function(input_data=list(),obs_sero_data=NULL,obs_case_da
 
 
   return(input_data_new)
+}
+#-------------------------------------------------------------------------------
+#' @title mcmc_prelim_fit2
+#'
+#' @description Test multiple sets of parameters randomly drawn from range between maximum and minimum
+#' values in order to find approximate values giving maximum likelihood
+#'
+#' @details This function is used to estimate the model parameter values giving maximum likelihood; it is primarily
+#' intended to be used to generate initial parameter values for Markov Chain Monte Carlo fitting (using the mcmc()
+#' function). [TBC]
+#'
+#' @param n_iterations = Number of times to run and adjust maximum/minimum
+#' @param n_param_sets = Number of parameter sets to run in each iteration
+#' @param n_bounds = Number of parameter sets (with highest likelihood values) to take at each iteration to create new
+#' maximum/minimum values
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
+#' @param pars_min Initial lower limits of parameter values
+#' @param pars_max Initial upper limits of parameter values
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file)
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
+#' @param n_reps Number of times to repeat calculations to get average likelihood at each step
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start = 0, only vaccinated individuals
+#'  If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
+#' @param prior_type Text indicating which type of calculation to use for prior probability
+#'  If prior_type = "zero", prior probability is always zero
+#'  If prior_type = "flat", prior probability is zero if FOI/R0 in designated ranges, -Inf otherwise
+#'  If prior_type = "exp", prior probability is given by dexp calculation on FOI/R0 values
+#'  If prior_type = "norm", prior probability is given by dnorm calculation on parameter values
+#' @param dt time increment in days (must be 1 or 5)
+#' @param enviro_data Values of environmental variables (if in use)
+#' @param R0_fixed_values Values of R0 to use if not being fitted
+#' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
+#' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' '
+#' @export
+#'
+mcmc_prelim_fit2 <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
+                            type=NULL,pars_min=NULL,pars_max=NULL,input_data=list(),
+                            obs_sero_data=list(),obs_case_data=list(),obs_outbreak_data=list(),
+                            n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
+                            vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL){
+
+  #TODO - Add assertthat functions
+  assert_that(length(pars_min)==length(pars_max))
+  assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
+  assert_that(prior_type %in% c("zero","flat","exp","norm"))
+
+  best_fit_results=list()
+  n_params=length(pars_min)
+  extra_params=c()
+  if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vacc_eff")}
+  if(is.null(p_obs_severe)==TRUE){extra_params=append(extra_params,"p_obs_severe")}
+  if(is.null(p_obs_death)==TRUE){extra_params=append(extra_params,"p_obs_death")}
+  param_names=create_param_labels(type,input_data,enviro_data,extra_params)
+  assert_that(length(param_names)==n_params)
+  names(pars_min)=names(pars_max)=param_names
+  xlabels=param_names
+  for(i in 1:n_params){xlabels[i]=substr(xlabels[i],1,15)}
+  ylabels=10^c(-8,-6,-4,-3,-2,-1,0,1)
+  par(mar=c(6,2,1,1))
+  ylim=c(min(pars_min),max(pars_max))
+
+  for(iteration in 1:n_iterations){
+    cat("\nIteration: ",iteration,"\n",sep="")
+    all_param_sets <- lhs(n=n_param_sets,rect=cbind(pars_min,pars_max))
+    results=data.frame()
+    const_list=list(type=type,pars_min=pars_min,pars_max=pars_max,n_reps=n_reps,mode_start=mode_start,
+                    prior_type=prior_type,dt=dt,enviro_data=enviro_data,R0_fixed_values=R0_fixed_values,
+                    vaccine_efficacy=vaccine_efficacy,p_obs_severe=p_obs_severe,p_obs_death=p_obs_death)
+
+    for(set in 1:n_param_sets){
+      cat(set,"\t",sep="")
+      param_prop=all_param_sets[set,]
+      names(param_prop)=param_names
+      like_prop=single_like_calc2(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+      results<-rbind(results,c(set,exp(param_prop),like_prop))
+      if(set==1){colnames(results)=c("set",param_names,"LogLikelihood")}
+    }
+    results<-results[order(results$LogLikelihood,decreasing=TRUE), ]
+    best_fit_results[[iteration]]=results
+
+    pars_min_new=pars_max_new=rep(0,n_params)
+    for(i in 1:n_params){
+      pars_min_new[i]=min(log(results[c(1:n_bounds),i+1]))
+      pars_max_new[i]=max(log(results[c(1:n_bounds),i+1]))
+    }
+    names(pars_min_new)=names(pars_max_new)=param_names
+
+    matplot(x=c(1:n_params),y=log(t(results[c(1:n_bounds),c(1:n_params)+1])),type="p",pch=16,col=1,
+            xaxt="n",yaxt="n",xlab="",ylab="",ylim=ylim)
+    axis(side=1,at=c(1:n_params),labels=xlabels,las=2,cex.axis=0.7)
+    axis(side=2,at=log(ylabels),labels=ylabels)
+    matplot(x=c(1:n_params),y=pars_min,type="l",col=1,lty=2,add=TRUE)
+    matplot(x=c(1:n_params),y=pars_max,type="l",col=1,lty=2,add=TRUE)
+    matplot(x=c(1:n_params),y=pars_min_new,type="l",col=2,add=TRUE)
+    matplot(x=c(1:n_params),y=pars_max_new,type="l",col=2,add=TRUE)
+
+    pars_min=pars_min_new
+    pars_max=pars_max_new
+  }
+
+  return(best_fit_results)
 }

@@ -23,11 +23,6 @@ deaths}
 
 \item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 1 = 1 or more outbreak(s)}
-
-\item{param_prop}{Log values of proposed parameters}
-
-\item{const_list}{= List of constant parameters/flags/etc. loaded to mcmc2() (type,pars_min,pars_max,n_reps,
-mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_obs_severe,p_obs_death)}
 }
 \description{
 Function which calculates and outputs likelihood
