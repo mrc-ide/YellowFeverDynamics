@@ -56,6 +56,7 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
   param_names=create_param_labels(type,input_data,enviro_data,extra_params)
   names(pars_min)=names(pars_max)=param_names
 
+  input_data=input_data_process2(input_data,obs_sero_data,obs_case_data,obs_outbreak_data)
   checks<-mcmc_checks(type,pars_ini,n_params,prior_type,n_regions,enviro_data,R0_fixed_values,
                       vaccine_efficacy,p_obs_severe,p_obs_death)
   const_list=list(type=type,pars_min=pars_min,pars_max=pars_max,n_reps=n_reps,mode_start=mode_start,
@@ -455,7 +456,7 @@ input_data_process2 <- function(input_data=list(),obs_sero_data=NULL,obs_case_da
   year_data_begin=rep(Inf,n_regions_input_data)
   sero_line_list=case_line_list=outbreak_line_list=list()
   for(i in 1:n_regions_input_data){
-    region=regions_input_data[i]
+    region=regions_input_data_new[i]
     if(region %in% regions_sero_unc){
       flag_sero[i]=1
       sero_line_list[[i]]=c(0)
