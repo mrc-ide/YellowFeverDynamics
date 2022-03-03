@@ -27,7 +27,23 @@ MCMC2(
 )
 }
 \arguments{
-\item{pars_ini}{Initial log values of parameters}
+\item{pars_ini}{Initial values of parameters to be fitted. These should always be the log() values of the actual
+epidemiological parameters, ordered as follows:
+1) Parameters controlling the value of spillover force of infection FOI, either a) a number of FOI values equal to
+the total number of regions to be considered or b) a number of environmental coefficients used to calculate FOI
+values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
+frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
+environmental data frame in case (b).
+2) If the basic reproduction number for human-human transmission R0 is to be fitted (i.e. type is set to
+"FOI+R0" or "FOI+R0 enviro"), parameters controlling the value of R0, either a) a number of R0 values equal to
+the total number of regions to be considered or b) a number of environmental coefficients used to calculate R0
+values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
+frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
+environmental data frame in case (b).
+3) Values of the additional parameters (vaccine efficacy vaccine_efficacy, severe case reporting probability
+p_obs_severe and fatal case reporting probability p_obs_death) if these are to be fitted, in the order
+vaccine_efficacy->p_obs_severe->p_obs_death. If these parameters are to be fitted, the values separately supplied
+to this function (see below) should be set to NULL, the default.}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
 code and usually loaded from RDS file)}
@@ -64,9 +80,10 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{dt}{time increment in days (must be 1 or 5)}
 
-\item{enviro_data}{Values of environmental variables (if in use)}
+\item{enviro_data}{Data frame containing values of environmental covariates; set to NULL if not in use}
 
-\item{R0_fixed_values}{Values of R0 to use if not being fitted}
+\item{R0_fixed_values}{Values of R0 to use if only FOI is subject to fitting (i.e. type set to "FOI" or "FOI
+enviro"); set to NULL if not in use}
 
 \item{vaccine_efficacy}{Vaccine efficacy (set to NULL if being varied as a parameter)}
 

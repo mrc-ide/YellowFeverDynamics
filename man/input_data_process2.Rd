@@ -2,7 +2,7 @@
 % Please edit documentation in R/mcmc2.R
 \name{input_data_process2}
 \alias{input_data_process2}
-\title{single_like_calc2}
+\title{input_data_process2}
 \usage{
 input_data_process2(
   input_data = list(),
@@ -25,9 +25,8 @@ deaths}
 1 = 1 or more outbreak(s)}
 }
 \description{
-Function which calculates and outputs likelihood
+TBA
 }
 \details{
-This function calculates the total likelihood of observing a set of observations (across multiple regions
-and data types) for a given proposed parameter set. [TBC]
+TBA
 }

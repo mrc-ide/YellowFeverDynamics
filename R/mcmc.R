@@ -430,7 +430,6 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
   assert_that(is.null(param_names)==FALSE)
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
   assert_that(prior_type %in% c("zero","flat","exp","norm"))
-  n_params=length(pars_ini)
   if(is.numeric(vaccine_efficacy)==TRUE){flag_vacc_eff=0} else {
     flag_vacc_eff=1
     assert_that("vacc_eff" %in% param_names)

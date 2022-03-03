@@ -87,7 +87,7 @@ sero_calculate2 <- function(sero_data=list(),model_data=list()){
     I_sum=sum(model_data$I[days,ages])
     R_sum=sum(model_data$R[days,ages])
     samples=S_sum+E_sum+I_sum+R_sum
-    if(vc_factor>1){
+    if(vc_factor>0){
       V_sum=sum(model_data$V[days,ages])
       if(vc_factor==1){
         samples=samples+V_sum
