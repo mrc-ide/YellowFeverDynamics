@@ -17,7 +17,7 @@ single_like_calc2(
 \item{param_prop}{Log values of proposed parameters}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
-code and usually loaded from RDS file)}
+code and usually loaded from RDS file), with cross-reference tables added using input_data_process2 in MCMC2}
 
 \item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 positives}

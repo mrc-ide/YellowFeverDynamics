@@ -67,6 +67,9 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
   n_params=length(pars_ini)
   assert_that(length(pars_min)==n_params)
   assert_that(length(pars_max)==n_params)
+
+  #TODO - Assert that environmental variables must be in alphabetical order?
+
   extra_params=c()
   if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
   if(is.null(p_obs_severe)==TRUE){extra_params=append(extra_params,"p_obs_severe")}
@@ -227,7 +230,7 @@ MCMC_step2 <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_d
 #'
 #' @param param_prop Log values of proposed parameters
 #' @param input_data List of population and vaccination data for multiple regions (created using data input creation
-#'   code and usually loaded from RDS file)
+#'   code and usually loaded from RDS file), with cross-reference tables added using input_data_process2 in MCMC2
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 #'   positives
 #' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
@@ -309,7 +312,7 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
       model_outbreak_data=list()
       blank1=rep(0,nrow(obs_outbreak_data))
       for(rep in 1:const_list$n_reps){
-        model_sero_data[[rep]]=blank1
+        model_outbreak_data[[rep]]=blank1
       }
     } else {outbreak_like_values=NA}
 
@@ -468,6 +471,8 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 input_data_process2 <- function(input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL){
 
   regions_input_data=input_data$region_labels
+  #TODO - Make sure regions always in alphabetical order?
+  #if(table(sort(regions_input_data)==regions_input_data)[[TRUE]]==length(regions_input_data)){}
   regions_sero_com=names(table(obs_sero_data$gadm36))
   regions_case_com=names(table(obs_case_data$region))
   regions_outbreak_com=names(table(obs_outbreak_data$region))
@@ -480,9 +485,19 @@ input_data_process2 <- function(input_data=list(),obs_sero_data=NULL,obs_case_da
   regions_case_unc=names(table(regions_case_unc))
   regions_outbreak_unc=names(table(regions_outbreak_unc))
   regions_all_data_unc=names(table(c(regions_sero_unc,regions_case_unc,regions_outbreak_unc)))
+
+  for(region in regions_all_data_unc){
+    if(region %in% regions_input_data==FALSE){
+      cat("\nInput data error - ",region," does not appear in input data\n",sep="")
+      stop()
+    }
+  }
+
   input_regions_check=regions_input_data %in% regions_all_data_unc
   regions_input_data_new=regions_input_data[input_regions_check]
   n_regions_input_data=length(regions_input_data_new)
+
+  #TODO - Skip steps below if the input data already has the same set of regions and the cross-reference tables
 
   blank=rep(0,n_regions_input_data)
   flag_sero=flag_case=flag_outbreak=year_end=blank
@@ -618,6 +633,7 @@ mcmc_prelim_fit2 <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
                     vaccine_efficacy=vaccine_efficacy,p_obs_severe=p_obs_severe,p_obs_death=p_obs_death)
 
     for(set in 1:n_param_sets){
+      if(set %% 10 == 0){cat("\n")}
       cat(set,"\t",sep="")
       param_prop=all_param_sets[set,]
       names(param_prop)=param_names

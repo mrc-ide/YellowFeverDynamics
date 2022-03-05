@@ -109,7 +109,7 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
         params=input_frame[j,c(3:(n_params+2))]
         FOI=R0=rep(0,n_regions)
         for(n_region in 1:n_regions){
-          variable_values=enviro_data[n_region,c(2:(n_env_vars+1))]
+          variable_values=as.numeric(enviro_data[n_region,c(2:(n_env_vars+1))])
           FOI[n_region]=sum(variable_values*params[c(1:n_env_vars)])
           if(type == "FOI+R0 enviro"){R0[n_region]=sum(variable_values*params[c(1:n_env_vars)+n_env_vars])}
         }
