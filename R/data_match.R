@@ -220,3 +220,202 @@ data_match <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_c
               regions_outbreak=regions_outbreak,model_outbreak_data=model_outbreak_data,
               regions_sero=regions_sero,model_sero_data=model_sero_data))
 }
+#-------------------------------------------------------------------------------
+#' @title data_match2
+#'
+#' @description Function which runs the model to create simulated data corresponding to supplied observed data for
+#'   multiple parameter sets
+#'
+#' @details TBA
+#'
+#' @param param_prop Data frame of log values of proposed parameters, one set per row
+#' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
+#' with observed data, added using input_data_process2
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
+#' @param const_list = List of constant parameters/flags/etc. (type,n_reps,mode_start,dt,enviro_data,R0_fixed_values,
+#'   vaccine_efficacy,p_obs_severe,p_obs_death)
+#'
+#' @export
+#'
+data_match2 <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
+                       obs_outbreak_data=NULL,const_list=list()){
+  #TODO - Add assert_that functions
+
+  n_param_sets=nrow(param_sets)
+  frac=1.0/const_list$n_reps
+  model_data_all=list()
+  for(i in 1:n_param_sets){
+    param_prop=as.numeric(param_sets[i,])
+    model_data <- data_match(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+    model_data_all[[i]]=list(regions_case=model_data$regions_case,model_case_data=model_data$model_case_data[[1]],
+                             regions_outbreak=model_data$regions_outbreak,model_outbreak_data=model_data$model_outbreak_data[[1]],
+                             regions_sero=model_data$regions_sero,model_sero_data=model_data$model_sero_data[[1]])
+
+    if(is.null(obs_sero_data)==FALSE){
+      model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$sero=0
+      for(rep in 1:const_list$n_reps){
+        model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives+model_data$model_sero_data[[rep]]$positives
+      }
+      model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives*frac
+      model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
+    }
+    if(is.null(obs_case_data)==FALSE){
+      model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$deaths=0
+      for(rep in 1:const_list$n_reps){
+        model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$cases+model_data$model_case_data[[rep]]$cases
+        model_data_all[[i]]$model_case_data$deaths=model_data_all[[i]]$model_case_data$deaths+model_data$model_case_data[[rep]]$deaths
+      }
+      model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$cases*frac
+      model_data_all[[i]]$model_case_data$deaths=model_data_all[[i]]$model_case_data$deaths*frac
+    }
+    if(is.null(obs_outbreak_data)==FALSE){
+      #TODO
+    }
+  }
+
+  return(model_data_all)
+}
+#-------------------------------------------------------------------------------
+#' @title sero_match_graphs
+#'
+#' @description Function to create a series of graphs comparing modelled and observed serological data using results
+#'   from data_match
+#'
+#' @details TBA
+#'
+#' @param model_data TBA
+#' @param obs_sero_data TBA
+#'
+#' @export
+#'
+sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
+  #TODO - Add assert_that functions
+
+  n_reps=length(model_data$model_sero_data)
+  obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
+  obs_sero_values[is.nan(obs_sero_values)]=0.0
+  model_sero_values=array(NA,dim=c(length(obs_sero_values),n_reps))
+  model_CI=array(NA,dim=c(3,length(obs_sero_values)))
+  for(rep in 1:n_reps){
+    model_sero_values[,rep]=model_data$model_sero_data[[rep]]$sero
+  }
+  for(i in 1:length(obs_sero_values)){
+    model_CI[,i]=Rmisc::CI(model_sero_values[i,])
+  }
+
+  data_regions=names(table(obs_sero_data$gadm36))
+  n_graphs=length(data_regions)
+  nrows=floor(sqrt(n_graphs))
+  ncols=ceiling(n_graphs/nrows)
+
+  par(mfrow=c(nrows,ncols),mar=c(2,2,1,0))
+  for(region in data_regions){
+    lines=obs_sero_data$gadm36==region
+    matplot(x=obs_sero_data$age_min[lines],y=obs_sero_values[lines],type="b",pch=16,col=1,
+            ylim=c(0,max(obs_sero_values[lines])),cex.lab=0.5,cex.axis=0.5)
+    matplot(x=obs_sero_data$age_min[lines],y=model_CI[2,lines],type="l",pch=1,col=2,add=TRUE)
+    matplot(x=obs_sero_data$age_min[lines],y=model_CI[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=obs_sero_data$age_min[lines],y=model_CI[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    title(main=region,cex.main=0.5)
+  }
+  par(mfrow=c(1,1))
+
+}
+#-------------------------------------------------------------------------------
+#' @title sero_match_graphs2
+#'
+#' @description Function to create a series of graphs comparing modelled and observed serological data from results
+#'   generated from data_match2
+#'
+#' @details TBA
+#'
+#' @param model_data TBA
+#' @param obs_sero_data TBA
+#'
+#' @export
+#'
+sero_match_graphs2 <- function(model_data=list(),obs_sero_data=list()){
+  #TODO - Add assert_that functions
+
+  n_param_sets=length(model_data)
+  obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
+  obs_sero_values[is.nan(obs_sero_values)]=0.0
+  model_sero_values=array(NA,dim=c(length(obs_sero_values),n_param_sets))
+  model_CI=array(NA,dim=c(3,length(obs_sero_values)))
+  for(i in 1:n_param_sets){
+    model_sero_values[,i]=model_data[[i]]$model_sero_data$sero
+  }
+  model_sero_values
+  for(i in 1:length(obs_sero_values)){
+    model_CI[,i]=Rmisc::CI(model_sero_values[i,])
+  }
+
+  data_regions=names(table(obs_sero_data$gadm36))
+  n_graphs=length(data_regions)
+  nrows=floor(sqrt(n_graphs))
+  ncols=ceiling(n_graphs/nrows)
+
+  par(mfrow=c(nrows,ncols),mar=c(2,2,1,0))
+  for(region in data_regions){
+    lines=obs_sero_data$gadm36==region
+    matplot(x=obs_sero_data$age_min[lines],y=obs_sero_values[lines],type="b",pch=16,col=1,
+            ylim=c(0,max(obs_sero_values[lines],model_CI[1,lines],na.rm=TRUE)),cex.lab=0.5,cex.axis=0.5)
+    matplot(x=obs_sero_data$age_min[lines],y=model_CI[2,lines],type="l",pch=1,col=2,add=TRUE)
+    matplot(x=obs_sero_data$age_min[lines],y=model_CI[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=obs_sero_data$age_min[lines],y=model_CI[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    title(main=region,cex.main=0.5)
+  }
+  par(mfrow=c(1,1))
+
+}
+
+#-------------------------------------------------------------------------------
+#' @title case_match_graphs2
+#'
+#' @description Function to create a series of graphs comparing modelled and observed case data from results
+#'   generated from data_match2
+#'
+#' @details TBA
+#'
+#' @param model_data TBA
+#' @param obs_sero_data TBA
+#'
+#' @export
+#'
+case_match_graphs2 <- function(model_data=list(),obs_case_data=list()){
+  #TODO - Add assert_that functions
+
+  n_param_sets=length(model_data)
+  obs_case_values=obs_case_data$cases
+  model_case_values=array(NA,dim=c(length(obs_case_values),n_param_sets))
+  model_CI=array(NA,dim=c(3,length(obs_case_values)))
+  for(i in 1:n_param_sets){
+    model_case_values[,i]=model_data[[i]]$model_case_data$cases
+  }
+  for(i in 1:length(obs_case_values)){
+    model_CI[,i]=Rmisc::CI(model_case_values[i,])
+  }
+
+  data_regions=names(table(obs_case_data$region))
+  n_graphs=length(data_regions)
+  nrows=floor(sqrt(n_graphs))
+  ncols=ceiling(n_graphs/nrows)
+
+  par(mfrow=c(nrows,ncols),mar=c(2,2,1,0))
+  for(region in data_regions){
+    lines=obs_case_data$region==region
+    matplot(x=obs_case_data$year[lines],y=obs_case_values[lines],type="b",pch=16,col=1,
+            ylim=c(0,max(obs_case_values[lines],model_CI[1,lines])),cex.lab=0.5,cex.axis=0.5)
+    matplot(x=obs_case_data$year[lines],y=model_CI[2,lines],type="l",pch=1,col=2,add=TRUE)
+    matplot(x=obs_case_data$year[lines],y=model_CI[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=obs_case_data$year[lines],y=model_CI[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    title(main=region,cex.main=0.5)
+  }
+  par(mfrow=c(1,1))
+
+}
