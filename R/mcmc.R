@@ -578,3 +578,97 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
 
   return(best_fit_results)
 }
+#-------------------------------------------------------------------------------
+#' @title input_data_process
+#'
+#' @description TBA
+#'
+#' @details TBA
+#'
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file)
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
+#'
+#' @export
+#'
+input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL){
+
+  regions_input_data=input_data$region_labels
+  regions_sero=names(table(obs_sero_data$gadm36))
+  regions_case=names(table(obs_case_data$region))
+  regions_outbreak=names(table(obs_outbreak_data$region))
+
+  regions_all_data=names(table(c(regions_sero,regions_case,regions_outbreak)))
+
+  for(region in regions_all_data){
+    if(region %in% regions_input_data==FALSE){
+      cat("\nInput data error - ",region," does not appear in input data\n",sep="")
+      stop()
+    }
+  }
+
+  input_regions_check=regions_input_data %in% regions_all_data
+  regions_input_data_new=regions_input_data[input_regions_check]
+  n_regions_input_data=length(regions_input_data_new)
+
+  #TODO - Skip steps below if the input data already has the same set of regions and the cross-reference tables
+
+  blank=rep(0,n_regions_input_data)
+  flag_sero=flag_case=flag_outbreak=year_end=blank
+  year_data_begin=rep(Inf,n_regions_input_data)
+  sero_line_list=case_line_list=outbreak_line_list=list()
+  for(i in 1:n_regions_input_data){
+    region=regions_input_data_new[i]
+    if(region %in% regions_sero){
+      flag_sero[i]=1
+      sero_line_list[[i]]=c(0)
+      for(j in 1:nrow(obs_sero_data)){
+        if(grepl(region,obs_sero_data$gadm36[j])==TRUE){
+          sero_line_list[[i]]=append(sero_line_list[[i]],j)
+          year_data_begin[i]=min(obs_sero_data$year[j],year_data_begin[i])
+          year_end[i]=max(obs_sero_data$year[j]+1,year_end[i])
+        }
+      }
+      sero_line_list[[i]]=sero_line_list[[i]][c(2:length(sero_line_list[[i]]))]
+    }
+    if(region %in% regions_case){
+      flag_case[i]=1
+      case_line_list[[i]]=c(0)
+      for(j in 1:nrow(obs_case_data)){
+        if(grepl(region,obs_case_data$region[j])==TRUE){
+          case_line_list[[i]]=append(case_line_list[[i]],j)
+          year_data_begin[i]=min(obs_case_data$year[j],year_data_begin[i])
+          year_end[i]=max(obs_case_data$year[j]+1,year_end[i])
+        }
+      }
+      case_line_list[[i]]=case_line_list[[i]][c(2:length(case_line_list[[i]]))]
+    }
+    if(region %in% regions_outbreak){
+      flag_outbreak[i]=1
+      outbreak_line_list[[i]]=c(0)
+      for(j in 1:nrow(obs_outbreak_data)){
+        if(grepl(region,obs_outbreak_data$region[j])==TRUE){
+          outbreak_line_list[[i]]=append(outbreak_line_list[[i]],j)
+          year_data_begin[i]=min(obs_outbreak_data$year[j],year_data_begin[i])
+          year_end[i]=max(obs_outbreak_data$year[j]+1,year_end[i])
+        }
+      }
+      outbreak_line_list[[i]]=outbreak_line_list[[i]][c(2:length(outbreak_line_list[[i]]))]
+    }
+  }
+
+  input_data_new=list(region_labels=input_data$region_labels[input_regions_check],
+                      years_labels=input_data$years_labels,age_labels=input_data$age_labels,
+                      vacc_data=input_data$vacc_data[input_regions_check,,],
+                      pop_data=input_data$pop_data[input_regions_check,,],year_data_begin=year_data_begin,
+                      year_end=year_end,flag_sero=flag_sero,flag_case=flag_case,flag_outbreak=flag_outbreak,
+                      sero_line_list=sero_line_list,case_line_list=case_line_list,outbreak_line_list=outbreak_line_list)
+
+
+  return(input_data_new)
+}

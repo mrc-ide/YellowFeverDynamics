@@ -22,6 +22,7 @@
 data_match <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
 
+  enviro_data=const_list$enviro_data
   regions=input_data$region_labels
   n_regions=length(regions)
   p_severe=0.12

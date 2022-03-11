@@ -21,6 +21,7 @@ Imports:
     maptree,
     mvtnorm,
     qpdf,
+    Rmisc,
     stats,
     testthat,
     tgp,
