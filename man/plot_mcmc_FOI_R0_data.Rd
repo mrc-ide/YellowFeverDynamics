@@ -4,22 +4,14 @@
 \alias{plot_mcmc_FOI_R0_data}
 \title{plot_mcmc_FOI_R0_data}
 \usage{
-plot_mcmc_FOI_R0_data(
-  data_frame = list(),
-  regions = c(),
-  plot_type = "box",
-  margin = 0.95
-)
+plot_mcmc_FOI_R0_data(data_frame = list(), regions = c(), plot_type = "box")
 }
 \arguments{
 \item{data_frame}{Data frame of FOI/R0 values obtained using get_mcmc_FOI_R0_data()}
 
 \item{regions}{List of region names}
 
-\item{plot_type}{Type of plots to create (choose from "box","violin","error_bars","scatter")}
-
-\item{margin}{For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-  expressed as a fraction
+\item{plot_type}{Type of plots to create (choose from "box","violin","error_bars","scatter")
 '}
 }
 \description{

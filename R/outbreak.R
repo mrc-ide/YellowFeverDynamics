@@ -9,7 +9,7 @@
 #' reported outbreaks. An outbreak is assumed to be reported when one or more cases is reported, and continues until
 #' no new cases have been reported for 10 days.
 #'
-#' @param case_data Vector of daily cases summed over age
+#' @param case_data Vector of cases by time point summed over age
 #' @param year_data Vector of year values corresponding to case data
 #' @param p_obs_mild probability of a mild infection being observed
 #' @param p_obs_severe probability of a severe infection being observed
@@ -26,20 +26,20 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
   p_death_severe_case=0.47
 
   year0=min(year_data)
-  days=length(year_data)
-  years=floor(days/365)
-  daily_severe_cases=daily_mild_cases=daily_obs_cases=daily_deaths=daily_obs_deaths=rep(0,days)
-  annual_obs_cases=annual_obs_deaths=rep(0,years)
-  for(i in 1:days){
-    year=year_data[i]-year0+1
-    daily_severe_cases[i]=rbinom(1,case_data[i],p_severe_case)
-    daily_mild_cases[i]=case_data[i]-daily_severe_cases[i]
-    daily_deaths[i]=rbinom(1,daily_severe_cases[i],p_death_severe_case)
-    daily_obs_deaths[i]=rbinom(1,daily_deaths[i],p_obs_death)
-    daily_obs_cases[i]=rbinom(1,daily_mild_cases,p_obs_mild)+rbinom(1,daily_severe_cases[i]-daily_obs_deaths[i],
-                                                                    p_obs_severe)+daily_obs_deaths[i]
-    annual_obs_cases[year]=annual_obs_cases[year]+daily_obs_cases[i]
-    annual_obs_deaths[year]=annual_obs_deaths[year]+daily_obs_deaths[i]
+  t_pts=length(year_data)
+  n_years=length(table(year_data))
+  pt_severe_cases=pt_mild_cases=pt_obs_cases=pt_deaths=pt_obs_deaths=rep(0,days)
+  annual_obs_cases=annual_obs_deaths=rep(0,n_years)
+  for(i in 1:t_pts){
+    n_year=year_data[i]-year0+1
+    pt_severe_cases[i]=rbinom(1,case_data[i],p_severe_case)
+    pt_mild_cases[i]=case_data[i]-pt_severe_cases[i]
+    pt_deaths[i]=rbinom(1,pt_severe_cases[i],p_death_severe_case)
+    pt_obs_deaths[i]=rbinom(1,pt_deaths[i],p_obs_death)
+    pt_obs_cases[i]=rbinom(1,pt_mild_cases,p_obs_mild)+rbinom(1,pt_severe_cases[i]-pt_obs_deaths[i],
+                                                                    p_obs_severe)+pt_obs_deaths[i]
+    annual_obs_cases[n_year]=annual_obs_cases[n_year]+pt_obs_cases[i]
+    annual_obs_deaths[n_year]=annual_obs_deaths[n_year]+pt_obs_deaths[i]
   }
 
   n_outbreaks=0
@@ -51,15 +51,15 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
   caseless_days=0
   for(i in 1:days){
     if(flag_outbreak==0){
-      if(daily_obs_cases[i]>0){
+      if(pt_obs_cases[i]>0){
         flag_outbreak=1
         n_outbreaks=n_outbreaks+1
-        sizes=append(sizes,daily_obs_cases[i],after=length(sizes))
+        sizes=append(sizes,pt_obs_cases[i],after=length(sizes))
         start_days=append(start_days,i,after=length(start_days))
         caseless_days=0
       }
     } else {
-      if(daily_obs_cases[i]==0){
+      if(pt_obs_cases[i]==0){
         caseless_days=caseless_days+1
         if(caseless_days==10){
           flag_outbreak=0
@@ -67,7 +67,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
         }
       } else {
         caseless_days=0
-        sizes[n_outbreaks]=sizes[n_outbreaks]+daily_obs_cases[i]
+        sizes[n_outbreaks]=sizes[n_outbreaks]+pt_obs_cases[i]
       }
     }
   }
@@ -78,7 +78,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
 
   outbreak_data=list(n_outbreaks=n_outbreaks,sizes=sizes,
                      start_days=start_days,end_days=end_days,start_years=start_years,end_years=end_years,
-                     daily_obs_cases=daily_obs_cases,daily_obs_deaths=daily_obs_deaths,
+                     pt_obs_cases=pt_obs_cases,pt_obs_deaths=pt_obs_deaths,
                      annual_obs_cases=annual_obs_cases,annual_obs_deaths=annual_obs_deaths)
 
   return(outbreak_data)
@@ -187,19 +187,19 @@ cases_compare <- function(model_data=list(),obs_data=list()){
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRVC input in list from previous run(s)
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param n_reps Number of runs
 #' @param year_end year to run up to
 #' @param year_data_begin year to begin saving data
 #' @param vaccine_efficacy Proportional vaccine efficacy
-#' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' '
 #' @export
 #'
 case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_reps=1,year_end=2000,year_data_begin=1999,
-                              vaccine_efficacy=vaccine_efficacy,start_SEIRVC=list(),dt=1.0) {
+                              vaccine_efficacy=vaccine_efficacy,start_SEIRV=list(),dt=1.0) {
 
   assert_that(n_reps>0)
   division=10
@@ -213,7 +213,7 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
   }
 
   pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
-                       year_data_begin,vaccine_efficacy,start_SEIRVC,dt)
+                       year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 
   n=4 #Number of non-vector outputs
   N_age=length(pop_data[1,])

@@ -2,7 +2,7 @@
 % Please edit documentation in R/mcmc.R
 \name{input_data_process}
 \alias{input_data_process}
-\title{input_data_process2}
+\title{input_data_process}
 \usage{
 input_data_process(
   input_data = list(),

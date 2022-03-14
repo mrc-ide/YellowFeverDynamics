@@ -15,7 +15,7 @@ case_data_generate(
   year_end = 2000,
   year_data_begin = 1999,
   vaccine_efficacy = vaccine_efficacy,
-  start_SEIRVC = list(),
+  start_SEIRV = list(),
   dt = 1
 )
 }
@@ -33,7 +33,7 @@ case_data_generate(
 \item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination
 If mode_start=0, only vaccinated individuals
 If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-If mode_start=2, use SEIRVC input in list from previous run(s)}
+If mode_start=2, use SEIRV input in list from previous run(s)}
 
 \item{n_reps}{Number of runs}
 
@@ -43,7 +43,7 @@ If mode_start=2, use SEIRVC input in list from previous run(s)}
 
 \item{vaccine_efficacy}{Proportional vaccine efficacy}
 
-\item{start_SEIRVC}{SEIRVC data from end of a previous run to use as input}
+\item{start_SEIRV}{SEIRV data from end of a previous run to use as input}
 
 \item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)
 '}

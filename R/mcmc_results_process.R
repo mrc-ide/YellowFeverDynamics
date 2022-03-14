@@ -157,8 +157,10 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
   for(i in 1:n_regions){output_labels[i]=substr(regions[i],1,5)}
 
   FOI_labels=10^c(-10:1)
+  n_region=NULL
 
   if(plot_type %in% c("box","violin")){
+    FOI=NULL
     p_FOI <- ggplot(data=data_frame,aes(x=n_region,y=log(FOI))) + theme_bw()
     if(plot_type=="box"){p_FOI <- p_FOI+geom_boxplot(outlier.size = 0)} else {p_FOI <- p_FOI+geom_violin(trim=FALSE)}
     p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
@@ -166,6 +168,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
     p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1))
 
     if(is.null(data_frame$R0)==FALSE){
+      R0=NULL
       p_R0 <- ggplot(data=data_frame,aes(x=n_region,y=R0)) + theme_bw()
       if(plot_type=="box"){p_R0 <- p_R0+geom_boxplot(outlier.size = 0)} else {p_R0 <- p_R0+geom_violin(trim=FALSE)}
       p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
@@ -182,13 +185,15 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
     for(i in 1:n_regions){
       subset=data_frame[data_frame$n_region==i,]
       names(subset)[names(subset)=="n_region"]="Region"
-      p_FOI_R0 <- p_FOI_R0 + geom_point(data=subset,aes(x=log(~FOI),y=~R0,colour=~Region))
+      Region=NULL
+      p_FOI_R0 <- p_FOI_R0 + geom_point(data=subset,aes(x=log(FOI),y=R0,colour=Region))
     }
     output<-list(p_FOI_R0=p_FOI_R0)
   }
 
   if(plot_type=="error_bars"){
     blank=rep(NA,n_regions)
+    lower=upper=NULL
     summary_frame_FOI=data.frame(n_region=c(1:n_regions),mean=blank,lower=blank,upper=blank)
     if(is.null(data_frame$R0)==FALSE){summary_frame_R0=summary_frame_FOI}
     for(i in 1:n_regions){
@@ -260,7 +265,8 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
   }
 
   if(plot_type %in% c("box","violin")){
-    p_probs <- ggplot(data=output_frame,aes(x=~n_param,y=log(~p))) + theme_bw()
+    n_param=p=NULL
+    p_probs <- ggplot(data=output_frame,aes(x=n_param,y=log(p))) + theme_bw()
     if(plot_type=="box"){
       p_probs <- p_probs+geom_boxplot(outlier.size=0)
     } else {
@@ -271,20 +277,20 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
   }
   if(plot_type=="error_bars"){
     blank=rep(NA,n_values)
-    p_lower=ceiling((0.5*(1.0-margin)*nrow(output_frame))/n_values)
-    p_upper=floor(((margin+(0.5*(1.0-margin)))*nrow(output_frame))/n_values)
-    summary_frame=data.frame(n_value=c(1:n_values),median=blank,lower=blank,upper=blank)
+    lower=upper=NULL
+    summary_frame=data.frame(n_value=c(1:n_values),mean=blank,lower=blank,upper=blank)
     for(i in 1:n_values){
-      subset=subset(output_frame,as.numeric(n_param)==i)
-      probs_sorted=sort(subset$p)
-      summary_frame$median[i]=median(probs_sorted)
-      summary_frame$lower[i]=probs_sorted[p_lower]
-      summary_frame$upper[i]=probs_sorted[p_upper]
+      subset=subset(output_frame,as.numeric(output_frame$n_param)==i)
+      probs_CI=CI(subset$p)
+      summary_frame$mean[i]=probs_CI[[2]]
+      summary_frame$lower[i]=probs_CI[[3]]
+      summary_frame$upper[i]=probs_CI[[1]]
     }
-    p_probs <- ggplot(data=summary_frame,aes(x=n_value,y=log(median))) + theme_bw()
+    n_value=NULL
+    p_probs <- ggplot(data=summary_frame,aes(x=n_value,y=log(mean))) + theme_bw()
     p_probs <- p_probs + scale_x_continuous(name="",breaks=c(1:n_values),labels=values)
     p_probs <- p_probs + scale_y_continuous(name="",breaks=log(labels),labels=labels)
-    p_probs <- p_probs + geom_line(data=summary_frame,aes(x=n_value,y=log(median)))
+    p_probs <- p_probs + geom_line(data=summary_frame,aes(x=n_value,y=log(mean)))
     p_probs <- p_probs + geom_errorbar(data=summary_frame,aes(ymin=log(lower),ymax=log(upper)),width=0.5)
     p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1))
 

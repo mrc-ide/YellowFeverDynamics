@@ -1,7 +1,8 @@
 #-------------------------------------------------------------------------------
-#' @title data_match
+#' @title data_match_single
 #'
-#' @description Function which runs the model to create simulated data corresponding to supplied observed data
+#' @description Function which runs the model to create simulated data corresponding to supplied observed data for a
+#'   single set of parameters with one or more repetitions
 #'
 #' @details TBA
 #'
@@ -19,7 +20,7 @@
 #'
 #' @export
 #'
-data_match <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
+data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
 
   enviro_data=const_list$enviro_data
@@ -57,17 +58,17 @@ data_match <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_c
 
   #Get FOI and R0 values
   FOI_values=R0_values=rep(0,n_regions)
-  if(type %in% c("FOI+R0 enviro","FOI enviro")){
+  if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
     for(i in 1:n_regions){
       model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$adm1==regions[i],])
       FOI_values[i]=model_params$FOI
-      if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
+      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=const_list$R0_fixed_values[i]}
     }
   }
-  if(type %in% c("FOI+R0","FOI")){
+  if(const_list$type %in% c("FOI+R0","FOI")){
     FOI_values=exp(param_prop[c(1:n_regions)])
-    if(type=="FOI+R0"){R0_values=exp(param_prop[c((n_regions+1):(2*n_regions))])
-    } else {R0_values=R0_fixed_values}
+    if(const_list$type=="FOI+R0"){R0_values=exp(param_prop[c((n_regions+1):(2*n_regions))])
+    } else {R0_values=const_list$R0_fixed_values}
   }
 
 
@@ -222,14 +223,14 @@ data_match <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_c
               regions_sero=regions_sero,model_sero_data=model_sero_data))
 }
 #-------------------------------------------------------------------------------
-#' @title data_match2
+#' @title data_match_multi
 #'
 #' @description Function which runs the model to create simulated data corresponding to supplied observed data for
 #'   multiple parameter sets
 #'
 #' @details TBA
 #'
-#' @param param_prop Data frame of log values of proposed parameters, one set per row
+#' @param param_sets Data frame of log values of proposed parameters, one set per row
 #' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
 #' with observed data, added using input_data_process2
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
@@ -243,16 +244,18 @@ data_match <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_c
 #'
 #' @export
 #'
-data_match2 <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
+data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                        obs_outbreak_data=NULL,const_list=list()){
   #TODO - Add assert_that functions
 
   n_param_sets=nrow(param_sets)
   frac=1.0/const_list$n_reps
   model_data_all=list()
+  cat("\nSet:\n")
   for(i in 1:n_param_sets){
+    cat("\t",i)
     param_prop=as.numeric(param_sets[i,])
-    model_data <- data_match(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+    model_data <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
     model_data_all[[i]]=list(regions_case=model_data$regions_case,model_case_data=model_data$model_case_data[[1]],
                              regions_outbreak=model_data$regions_outbreak,model_outbreak_data=model_data$model_outbreak_data[[1]],
                              regions_sero=model_data$regions_sero,model_sero_data=model_data$model_sero_data[[1]])
@@ -284,8 +287,8 @@ data_match2 <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,o
 #-------------------------------------------------------------------------------
 #' @title sero_match_graphs
 #'
-#' @description Function to create a series of graphs comparing modelled and observed serological data using results
-#'   from data_match
+#' @description Function to create a series of graphs comparing modelled and observed serological data from results
+#'   generated from data_match_multi
 #'
 #' @details TBA
 #'
@@ -295,52 +298,6 @@ data_match2 <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,o
 #' @export
 #'
 sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
-  #TODO - Add assert_that functions
-
-  n_reps=length(model_data$model_sero_data)
-  obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
-  obs_sero_values[is.nan(obs_sero_values)]=0.0
-  model_sero_values=array(NA,dim=c(length(obs_sero_values),n_reps))
-  model_CI=array(NA,dim=c(3,length(obs_sero_values)))
-  for(rep in 1:n_reps){
-    model_sero_values[,rep]=model_data$model_sero_data[[rep]]$sero
-  }
-  for(i in 1:length(obs_sero_values)){
-    model_CI[,i]=Rmisc::CI(model_sero_values[i,])
-  }
-
-  data_regions=names(table(obs_sero_data$gadm36))
-  n_graphs=length(data_regions)
-  nrows=floor(sqrt(n_graphs))
-  ncols=ceiling(n_graphs/nrows)
-
-  par(mfrow=c(nrows,ncols),mar=c(2,2,1,0))
-  for(region in data_regions){
-    lines=obs_sero_data$gadm36==region
-    matplot(x=obs_sero_data$age_min[lines],y=obs_sero_values[lines],type="b",pch=16,col=1,
-            ylim=c(0,max(obs_sero_values[lines])),cex.lab=0.5,cex.axis=0.5)
-    matplot(x=obs_sero_data$age_min[lines],y=model_CI[2,lines],type="l",pch=1,col=2,add=TRUE)
-    matplot(x=obs_sero_data$age_min[lines],y=model_CI[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
-    matplot(x=obs_sero_data$age_min[lines],y=model_CI[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
-    title(main=region,cex.main=0.5)
-  }
-  par(mfrow=c(1,1))
-
-}
-#-------------------------------------------------------------------------------
-#' @title sero_match_graphs2
-#'
-#' @description Function to create a series of graphs comparing modelled and observed serological data from results
-#'   generated from data_match2
-#'
-#' @details TBA
-#'
-#' @param model_data TBA
-#' @param obs_sero_data TBA
-#'
-#' @export
-#'
-sero_match_graphs2 <- function(model_data=list(),obs_sero_data=list()){
   #TODO - Add assert_that functions
 
   n_param_sets=length(model_data)
@@ -376,19 +333,19 @@ sero_match_graphs2 <- function(model_data=list(),obs_sero_data=list()){
 }
 
 #-------------------------------------------------------------------------------
-#' @title case_match_graphs2
+#' @title case_match_graphs
 #'
 #' @description Function to create a series of graphs comparing modelled and observed case data from results
-#'   generated from data_match2
+#'   generated from data_match_multi
 #'
 #' @details TBA
 #'
 #' @param model_data TBA
-#' @param obs_sero_data TBA
+#' @param obs_case_data TBA
 #'
 #' @export
 #'
-case_match_graphs2 <- function(model_data=list(),obs_case_data=list()){
+case_match_graphs <- function(model_data=list(),obs_case_data=list()){
   #TODO - Add assert_that functions
 
   n_param_sets=length(model_data)

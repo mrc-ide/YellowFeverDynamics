@@ -7,7 +7,7 @@
 plot_mcmc_prob_data(
   input_frame = list(),
   plot_type = "box",
-  values = c("vacc_eff"),
+  values = c("vaccine_efficacy"),
   margin = 0.95
 )
 }

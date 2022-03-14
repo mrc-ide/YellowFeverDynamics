@@ -12,8 +12,8 @@ sero_match_graphs(model_data = list(), obs_sero_data = list())
 \item{obs_sero_data}{TBA}
 }
 \description{
-Function to create a series of graphs comparing modelled and observed serological data using results
-  from data_match
+Function to create a series of graphs comparing modelled and observed serological data from results
+  generated from data_match_multi
 }
 \details{
 TBA

@@ -8,6 +8,7 @@
 #' @import maptree
 #' @import mvtnorm
 #' @import qpdf
+#' @import Rmisc
 #' @import stats
 #' @import tgp
 #' @import truncdist
@@ -41,14 +42,14 @@
 #' @param year_end year to run up to
 #' @param year_data_begin year to begin saving data
 #' @param vaccine_efficacy Proportional vaccine efficacy
-#' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' '
 #' @export
 #'
 Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
                            n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
-                           start_SEIRVC=list(),dt=1.0) {
+                           start_SEIRV=list(),dt=1.0) {
 
   assert_that(n_particles>0)
   assert_that(n_particles<=20)
@@ -56,7 +57,7 @@ Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=li
   assert_that(n_threads>0)
 
   x <- FullModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
-                                          year_data_begin,vaccine_efficacy,start_SEIRVC,dt),
+                                          year_data_begin,vaccine_efficacy,start_SEIRV,dt),
                      step = 1,n_particles = n_particles,n_threads = n_threads)
 
   n_nv=4 #Number of non-vector outputs
@@ -104,14 +105,14 @@ Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=li
 #' @param year_end year to run up to
 #' @param year_data_begin year to begin saving data
 #' @param vaccine_efficacy Proportional vaccine efficacy
-#' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' '
 #' @export
 #'
 Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
                             n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
-                            start_SEIRVC=list(),dt=1.0) {
+                            start_SEIRV=list(),dt=1.0) {
 
   assert_that(n_particles>0)
   assert_that(n_particles<=20)
@@ -119,7 +120,7 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
   assert_that(n_threads>0)
 
   x <- BasicModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
-                                          year_data_begin,vaccine_efficacy,start_SEIRVC,dt),
+                                          year_data_begin,vaccine_efficacy,start_SEIRV,dt),
                      step = 1,n_particles = n_particles,n_threads = n_threads)
 
   n_nv=3 #Number of non-vector outputs
@@ -161,13 +162,13 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #' @param year_end year to run up to
 #' @param year_data_begin year to begin saving data
 #' @param vaccine_efficacy Proportional vaccine efficacy
-#' @param start_SEIRVC SEIRVC data from end of a previous run to use as input
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' '
 #' @export
 #'
 parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
-                            year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,start_SEIRVC=list(),dt=1.0){
+                            year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0){
 
   assert_that(length(pop_data[,1])>1)
   assert_that(length(pop_data[1,])>1)
@@ -176,7 +177,7 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
   assert_that(length(vacc_data[,1])==n_years+1)
   assert_that(length(vacc_data[1,])==N_age)
   assert_that(mode_start %in% c(0,1,2))
-  if(mode_start==2){assert_that(is.null(start_SEIRVC$S)==FALSE)}
+  if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE)}
   assert_that(year_data_begin>=year0)
   assert_that(year_data_begin<year_end)
   assert_that(year_end-year0<=n_years)
@@ -221,12 +222,12 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
     }
   }
   if(mode_start==2){
-    Sus0=start_SEIRVC$S
-    Exp0=start_SEIRVC$E
-    Inf0=start_SEIRVC$I
-    Rec0=start_SEIRVC$R
-    Vac0=start_SEIRVC$V
-    Cas0=start_SEIRVC$C
+    Sus0=start_SEIRV$S
+    Exp0=start_SEIRV$E
+    Inf0=start_SEIRV$I
+    Rec0=start_SEIRV$R
+    Vac0=start_SEIRV$V
+    Cas0=rep(0,N_age)
   } else {
     assert_that(length(vacc_initial)==N_age)
     Vac0=P0*vacc_initial

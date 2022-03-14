@@ -13,7 +13,7 @@ get_outbreak_data(
 )
 }
 \arguments{
-\item{case_data}{Vector of daily cases summed over age}
+\item{case_data}{Vector of cases by time point summed over age}
 
 \item{year_data}{Vector of year values corresponding to case data}
 
