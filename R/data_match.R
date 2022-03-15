@@ -16,7 +16,7 @@
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
 #' @param const_list = List of constant parameters/flags/etc. (type,n_reps,mode_start,dt,enviro_data,R0_fixed_values,
-#'   vaccine_efficacy,p_obs_severe,p_obs_death)
+#'   vaccine_efficacy,p_rep_severe,p_rep_death)
 #'
 #' @export
 #'
@@ -33,8 +33,8 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   n_params=length(param_prop)
   extra_params=c()
   if(is.null(const_list$vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
-  if(is.null(const_list$p_obs_severe)==TRUE){extra_params=append(extra_params,"p_obs_severe")}
-  if(is.null(const_list$p_obs_death)==TRUE){extra_params=append(extra_params,"p_obs_death")}
+  if(is.null(const_list$p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
+  if(is.null(const_list$p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
   names(param_prop)=create_param_labels(const_list$type,input_data,const_list$enviro_data,extra_params)
 
   #Get vaccine efficacy
@@ -45,15 +45,15 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   }
 
   #Get reporting probabilities and check they are within specified bounds
-  if(is.numeric(const_list$p_obs_severe)==FALSE){
-    p_obs_severe=as.numeric(exp(param_prop[names(param_prop)=="p_obs_severe"]))
+  if(is.numeric(const_list$p_rep_severe)==FALSE){
+    p_rep_severe=as.numeric(exp(param_prop[names(param_prop)=="p_rep_severe"]))
   } else {
-    p_obs_severe=const_list$p_obs_severe
+    p_rep_severe=const_list$p_rep_severe
   }
-  if(is.numeric(const_list$p_obs_death)==FALSE){
-    p_obs_death=as.numeric(exp(param_prop[names(param_prop)=="p_obs_death"]))
+  if(is.numeric(const_list$p_rep_death)==FALSE){
+    p_rep_death=as.numeric(exp(param_prop[names(param_prop)=="p_rep_death"]))
   } else {
-    p_obs_death=const_list$p_obs_death
+    p_rep_death=const_list$p_rep_death
   }
 
   #Get FOI and R0 values
@@ -90,7 +90,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
     regions_case=names(table(obs_case_data$region))
     model_case_data=list()
     blank1=rep(0,nrow(obs_case_data))
-    blank2=data.frame(region=obs_case_data$region,year=obs_case_data$year,cases=blank1,deaths=blank1)
+    blank2=data.frame(region=obs_case_data$region,year=obs_case_data$year,infs=blank1,deaths=blank1)
     for(rep in 1:const_list$n_reps){
       model_case_data[[rep]]=blank2
     }
@@ -148,27 +148,27 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
         n_years_outbreak=length(input_data$outbreak_line_list[[n_region]])
       }
       blank=array(data=rep(0,const_list$n_reps*n_years_outbreak),dim=c(const_list$n_reps,n_years_outbreak))
-      annual_data=list(obs_cases=blank,obs_deaths=blank)
+      annual_data=list(rep_cases=blank,rep_deaths=blank)
       for(i in 1:const_list$n_reps){
         for(n_year in 1:n_years_outbreak){
           year=years_outbreak[n_year]
           if(flag_sero==1){
-            cases=sum(model_output$C[,i,model_output$year[1,]==year])
+            infs=sum(model_output$C[,i,model_output$year[1,]==year])
           } else {
-            cases=model_output$C[i,model_output$year==year]
+            infs=model_output$C[i,model_output$year==year]
           }
-          severe_cases=rbinom(1,floor(cases),p_severe)
-          deaths=rbinom(1,severe_cases,p_death_severe)
-          annual_data$obs_deaths[i,n_year]=rbinom(1,deaths,p_obs_death)
-          annual_data$obs_cases[i,n_year]=annual_data$obs_deaths[i,n_year]+rbinom(1,severe_cases-deaths,
-                                                                                  p_obs_severe)
+          severe_infs=rbinom(1,floor(infs),p_severe)
+          deaths=rbinom(1,severe_infs,p_death_severe)
+          annual_data$rep_deaths[i,n_year]=rbinom(1,deaths,p_rep_death)
+          annual_data$rep_cases[i,n_year]=annual_data$rep_deaths[i,n_year]+rbinom(1,severe_infs-deaths,
+                                                                                  p_rep_severe)
         }
       }
 
       if(flag_case==1){
         for(rep in 1:const_list$n_reps){
-          model_case_data[[rep]]$cases[case_line_list]=model_case_data[[rep]]$cases[case_line_list]+annual_data$obs_cases[rep,]
-          model_case_data[[rep]]$deaths[case_line_list]=model_case_data[[rep]]$deaths[case_line_list]+annual_data$obs_deaths[rep,]
+          model_case_data[[rep]]$cases[case_line_list]=model_case_data[[rep]]$cases[case_line_list]+annual_data$rep_cases[rep,]
+          model_case_data[[rep]]$deaths[case_line_list]=model_case_data[[rep]]$deaths[case_line_list]+annual_data$rep_deaths[rep,]
         }
       }
 
@@ -176,7 +176,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
         outbreak_risk=rep(0,n_years_outbreak)
         for(i in 1:const_list$n_reps){
           for(n_year in 1:n_years_outbreak){
-            if(annual_data$obs_cases[i,n_year]>0){outbreak_risk[n_year]=outbreak_risk[n_year]+frac}
+            if(annual_data$rep_cases[i,n_year]>0){outbreak_risk[n_year]=outbreak_risk[n_year]+frac}
           }
         }
         for(n_year in 1:n_years_outbreak){
@@ -240,7 +240,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
 #' @param const_list = List of constant parameters/flags/etc. (type,n_reps,mode_start,dt,enviro_data,R0_fixed_values,
-#'   vaccine_efficacy,p_obs_severe,p_obs_death)
+#'   vaccine_efficacy,p_rep_severe,p_rep_death)
 #'
 #' @export
 #'

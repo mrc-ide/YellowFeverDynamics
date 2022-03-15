@@ -21,8 +21,8 @@ MCMC2(
   enviro_data = NULL,
   R0_fixed_values = NULL,
   vaccine_efficacy = NULL,
-  p_obs_severe = NULL,
-  p_obs_death = NULL,
+  p_rep_severe = NULL,
+  p_rep_death = NULL,
   filename_prefix = "Chain"
 )
 }
@@ -41,8 +41,8 @@ values from environmental covariates equal to the number of environmental covari
 frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
 environmental data frame in case (b).
 3) Values of the additional parameters (vaccine efficacy vaccine_efficacy, severe case reporting probability
-p_obs_severe and fatal case reporting probability p_obs_death) if these are to be fitted, in the order
-vaccine_efficacy->p_obs_severe->p_obs_death. If these parameters are to be fitted, the values separately supplied
+p_rep_severe and fatal case reporting probability p_rep_death) if these are to be fitted, in the order
+vaccine_efficacy->p_rep_severe->p_rep_death. If these parameters are to be fitted, the values separately supplied
 to this function (see below) should be set to NULL, the default.}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
@@ -87,9 +87,9 @@ enviro"); set to NULL if not in use}
 
 \item{vaccine_efficacy}{Vaccine efficacy (set to NULL if being varied as a parameter)}
 
-\item{p_obs_severe}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
+\item{p_rep_severe}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
-\item{p_obs_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
+\item{p_rep_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
 
 \item{filename_prefix}{Prefix of names for output files
 '}

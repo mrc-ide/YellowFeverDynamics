@@ -13,8 +13,8 @@ mcmc_checks(
   enviro_data = NULL,
   R0_fixed_values = NULL,
   vaccine_efficacy = NULL,
-  p_obs_severe = NULL,
-  p_obs_death = NULL
+  p_rep_severe = NULL,
+  p_rep_death = NULL
 )
 }
 \arguments{
@@ -39,9 +39,9 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{vaccine_efficacy}{= Input value of vaccine efficacy if fixed}
 
-\item{p_obs_severe}{= Input value of severe case reporting probability if fixed}
+\item{p_rep_severe}{= Input value of severe case reporting probability if fixed}
 
-\item{p_obs_death}{= Input value of fatal case reporting probability if fixed
+\item{p_rep_death}{= Input value of fatal case reporting probability if fixed
 '}
 }
 \description{

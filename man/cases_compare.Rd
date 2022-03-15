@@ -7,9 +7,9 @@
 cases_compare(model_data = list(), obs_data = list())
 }
 \arguments{
-\item{model_data}{Modelled data in data frame format (list of years and number of observed severe cases in each)}
+\item{model_data}{Modelled data in data frame format (list of years and number of reported severe cases in each)}
 
-\item{obs_data}{Observed annual number of outbreaks
+\item{obs_data}{Data frame containing annual observed case data
 '}
 }
 \description{

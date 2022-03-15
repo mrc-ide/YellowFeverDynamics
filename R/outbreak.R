@@ -11,63 +11,58 @@
 #'
 #' @param case_data Vector of cases by time point summed over age
 #' @param year_data Vector of year values corresponding to case data
-#' @param p_obs_mild probability of a mild infection being observed
-#' @param p_obs_severe probability of a severe infection being observed
-#' @param p_obs_death probability of a death being observed
+#' @param p_rep_mild probability of a mild infection being reported
+#' @param p_rep_severe probability of a severe infection being reported
+#' @param p_rep_death probability of a death being reported
 #' '
 #' @export
 #'
-get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_severe=1.0,p_obs_death=1.0){
+get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_mild=0.0,p_rep_severe=1.0,p_rep_death=1.0){
 
   #TODO - Add assert_that functions
   assert_that(length(case_data)==length(year_data))
 
-  p_severe_case=0.12
-  p_death_severe_case=0.47
-
   year0=min(year_data)
   t_pts=length(year_data)
   n_years=length(table(year_data))
-  pt_severe_cases=pt_mild_cases=pt_obs_cases=pt_deaths=pt_obs_deaths=rep(0,days)
-  annual_obs_cases=annual_obs_deaths=rep(0,n_years)
+  dt=(n_years*365.0)/t_pts
+  pt_severe_infs=pt_mild_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
+  annual_rep_cases=annual_rep_deaths=rep(0,n_years)
   for(i in 1:t_pts){
     n_year=year_data[i]-year0+1
-    pt_severe_cases[i]=rbinom(1,case_data[i],p_severe_case)
-    pt_mild_cases[i]=case_data[i]-pt_severe_cases[i]
-    pt_deaths[i]=rbinom(1,pt_severe_cases[i],p_death_severe_case)
-    pt_obs_deaths[i]=rbinom(1,pt_deaths[i],p_obs_death)
-    pt_obs_cases[i]=rbinom(1,pt_mild_cases,p_obs_mild)+rbinom(1,pt_severe_cases[i]-pt_obs_deaths[i],
-                                                                    p_obs_severe)+pt_obs_deaths[i]
-    annual_obs_cases[n_year]=annual_obs_cases[n_year]+pt_obs_cases[i]
-    annual_obs_deaths[n_year]=annual_obs_deaths[n_year]+pt_obs_deaths[i]
+    pt_severe_infs[i]=rbinom(1,case_data[i],p_severe_inf)
+    pt_mild_infs[i]=case_data[i]-pt_severe_infs[i]
+    pt_deaths[i]=rbinom(1,pt_severe_infs[i],p_death_severe_inf)
+    pt_rep_deaths[i]=rbinom(1,pt_deaths[i],p_rep_death)
+    pt_rep_cases[i]=rbinom(1,pt_mild_infs,p_rep_mild)+rbinom(1,pt_severe_infs[i]-pt_rep_deaths[i],
+                                                                    p_rep_severe)+pt_rep_deaths[i]
+    annual_rep_cases[n_year]=annual_rep_cases[n_year]+pt_rep_cases[i]
+    annual_rep_deaths[n_year]=annual_rep_deaths[n_year]+pt_rep_deaths[i]
   }
 
   n_outbreaks=0
-  sizes=c()
-  start_days=c()
-  end_days=c()
-
+  sizes=start_days=end_days=c()
   flag_outbreak=0
   caseless_days=0
-  for(i in 1:days){
+  for(i in 1:t_pts){
     if(flag_outbreak==0){
-      if(pt_obs_cases[i]>0){
+      if(pt_rep_cases[i]>0){
         flag_outbreak=1
         n_outbreaks=n_outbreaks+1
-        sizes=append(sizes,pt_obs_cases[i],after=length(sizes))
-        start_days=append(start_days,i,after=length(start_days))
+        sizes=append(sizes,pt_rep_cases[i],after=length(sizes))
+        start_days=append(start_days,i*dt,after=length(start_days))
         caseless_days=0
       }
     } else {
-      if(pt_obs_cases[i]==0){
-        caseless_days=caseless_days+1
+      if(pt_rep_cases[i]==0){
+        caseless_days=caseless_days+dt
         if(caseless_days==10){
           flag_outbreak=0
-          end_days=append(end_days,i,after=length(end_days))
+          end_days=append(end_days,i*dt,after=length(end_days))
         }
       } else {
         caseless_days=0
-        sizes[n_outbreaks]=sizes[n_outbreaks]+pt_obs_cases[i]
+        sizes[n_outbreaks]=sizes[n_outbreaks]+pt_rep_cases[i]
       }
     }
   }
@@ -78,8 +73,8 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_obs_mild=0.0,p_obs_s
 
   outbreak_data=list(n_outbreaks=n_outbreaks,sizes=sizes,
                      start_days=start_days,end_days=end_days,start_years=start_years,end_years=end_years,
-                     pt_obs_cases=pt_obs_cases,pt_obs_deaths=pt_obs_deaths,
-                     annual_obs_cases=annual_obs_cases,annual_obs_deaths=annual_obs_deaths)
+                     pt_rep_cases=pt_rep_cases,pt_rep_deaths=pt_rep_deaths,
+                     annual_rep_cases=annual_rep_cases,annual_rep_deaths=annual_rep_deaths)
 
   return(outbreak_data)
 }
@@ -126,19 +121,19 @@ outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
 #' @details Compares modelled data on fatal cases per year and compared with observed data, calculating logarithmic
 #' likelihood of observing the latter given the former, using a negative binomial formula.
 #'
-#' @param model_data Modelled data in data frame format (list of years and number of observed deaths in each)
-#' @param obs_data Observed annual number of outbreaks
+#' @param model_data Modelled data in data frame format (list of years and number of reported deaths in each)
+#' @param obs_data Data frame containing observed death data
 #' '
 #' @export
 #'
 deaths_compare <- function(model_data=list(),obs_data=list()){
 
-  assert_that(is.null(model_data$obs_deaths)==FALSE)
+  assert_that(is.null(model_data$rep_deaths)==FALSE)
   assert_that(is.null(obs_data$deaths)==FALSE)
-  assert_that(length(model_data$obs_deaths[1,])==length(obs_data$deaths))
-  model_data$obs_deaths[model_data$obs_deaths==0]=0.1
+  assert_that(length(model_data$rep_deaths[1,])==length(obs_data$deaths))
+  model_data$rep_deaths[model_data$rep_deaths==0]=0.1
 
-  like_values=dnbinom(x=obs_data$deaths,mu=model_data$obs_deaths,size=rep(1,length(obs_data$deaths)),log=TRUE)
+  like_values=dnbinom(x=obs_data$deaths,mu=model_data$rep_deaths,size=rep(1,length(obs_data$deaths)),log=TRUE)
   #like_values[like_values==-Inf]=NA
   LogLikelihood=sum(like_values,na.rm=TRUE)
 
@@ -152,20 +147,19 @@ deaths_compare <- function(model_data=list(),obs_data=list()){
 #' @details Compares modelled data on severe cases per year and compared with observed data, calculating logarithmic
 #' likelihood of observing the latter given the former, using a negative binomial formula.
 #'
-#' @param model_data Modelled data in data frame format (list of years and number of observed severe cases in each)
-#' @param obs_data Observed annual number of outbreaks
+#' @param model_data Modelled data in data frame format (list of years and number of reported severe cases in each)
+#' @param obs_data Data frame containing annual observed case data
 #' '
 #' @export
 #'
 cases_compare <- function(model_data=list(),obs_data=list()){
 
-  assert_that(is.null(model_data$obs_cases)==FALSE)
+  assert_that(is.null(model_data$rep_cases)==FALSE)
   assert_that(is.null(obs_data$cases)==FALSE)
-  assert_that(length(model_data$obs_cases[1,])==length(obs_data$cases))
-  model_data$obs_cases[model_data$obs_cases==0]=0.1
+  assert_that(length(model_data$rep_cases[1,])==length(obs_data$cases))
+  model_data$rep_cases[model_data$rep_cases==0]=0.1
 
-  like_values=dnbinom(x=obs_data$cases,mu=model_data$obs_cases,size=rep(1,length(obs_data$cases)),log=TRUE)
-  #like_values[like_values==-Inf]=NA
+  like_values=dnbinom(x=obs_data$cases,mu=model_data$rep_cases,size=rep(1,length(obs_data$cases)),log=TRUE)
   LogLikelihood=sum(like_values,na.rm=TRUE)
 
   return(LogLikelihood)
@@ -243,4 +237,73 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
   }
 
   return(results_data)
+}
+#-------------------------------------------------------------------------------
+#' @title outbreak_risk_generate
+#'
+#' @description Generate outbreak risk data
+#'
+#' @details [TBA]
+#'
+#' @param FOI_spillover = Force of infection due to spillover from sylvatic reservoir
+#' @param R0 = Reproduction number for urban spread of infection
+#' @param vacc_data Vaccination coverage in each age group by year
+#' @param pop_data Population in each age group by year
+#' @param year0 First year in population/vaccination data
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param n_sets Number of datasets to run pre-data period for and output
+#' @param n_reps Number of repetitions to run per dataset
+#' @param year_end year to run up to
+#' @param year_data_begin year to begin saving data
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' @param p_rep_severe Probability of a severe case being reported
+#' @param p_rep_death Probability of a fatal case being reported
+#' '
+#' @export
+#'
+outbreak_risk_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
+                              mode_start=0,n_sets=1,n_reps=1,year_end=2000,year_data_begin=1999,
+                              vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0,p_rep_severe=1.0,p_rep_death=1.0){
+  #TODO - Add assert_that functions
+  assert_that(p_rep_severe>=0.0 && p_rep_severe<=1.0)
+  assert_that(p_rep_death>=0.0 && p_rep_death<=1.0)
+
+  years=c(year_data_begin:(year_end-1))
+  n_years=length(years)
+  frac=1.0/n_reps
+  outbreak_risk=array(0,dim=c(n_sets,n_years))
+
+  #Generate n_sets sets of starting data
+  start_data <- Basic_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles=n_sets,
+                                n_threads=n_sets,year_end=year_data_begin+1,year_data_begin,vaccine_efficacy,
+                                start_SEIRV,dt)
+
+  n_end=dim(start_data$S)[3]
+  for(set in 1:n_sets){
+    start_SEIRV_set=list(S=start_data$S[,set,n_end],E=start_data$E[,set,n_end],I=start_data$I[,set,n_end],
+                     R=start_data$R[,set,n_end],V=start_data$V[,set,n_end])
+
+    #Generate n_reps sets of data for period of interest for each set
+    case_data_all <- case_data_generate(FOI_spillover,R0,vacc_data,pop_data,year0=year_data_begin,mode_start=2,
+                                        n_reps=n_reps,year_end,year_data_begin,vaccine_efficacy,
+                                        start_SEIRV=start_SEIRV_set,dt)
+
+    for(rep in 1:n_reps){
+      for(n_year in 1:n_years){
+        annual_cases=floor(sum(case_data_all$C[rep,case_data_all$year==years[n_year]]))
+        severe_infs=rbinom(1,annual_cases,p_severe_inf)
+        deaths=rbinom(1,severe_infs,p_death_severe_inf)
+        rep_deaths=rbinom(1,deaths,p_rep_death)
+        rep_cases=rbinom(1,severe_infs-rep_deaths,p_rep_severe)+rep_deaths
+        if(rep_cases>0){outbreak_risk[set,n_year]=outbreak_risk[set,n_year]+frac}
+      }
+    }
+  }
+
+  return(outbreak_risk)
 }

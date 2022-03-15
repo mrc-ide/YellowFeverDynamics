@@ -35,8 +35,8 @@
 #' @param enviro_data Values of environmental variables (if in use)
 #' @param R0_fixed_values Values of R0 to use if not being fitted
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
-#' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
-#' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
 #' @param filename_prefix Prefix of names for output files
 #' '
 #' @export
@@ -44,20 +44,20 @@
 MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=list(),
                           obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,n_reps=1,Niter=1,
                           mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=NULL,
-                          vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL,filename_prefix="Chain"){
+                          vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,filename_prefix="Chain"){
 
   regions=names(table(input_data$region_labels))
   n_regions=length(regions)
   n_params=length(pars_ini)
   ###########################################
   checks<-mcmc_checks(type,pars_ini,n_params,prior_type,n_regions,enviro_data,R0_fixed_values,
-                      vaccine_efficacy,p_obs_severe,p_obs_death)
+                      vaccine_efficacy,p_rep_severe,p_rep_death)
   ###########################################
 
   ### find posterior probability at start ###
   out = MCMC_step(type,param=pars_ini,pars_min,pars_max,input_data,obs_sero_data,obs_case_data,
                            obs_outbreak_data,chain_cov=1,adapt=0,like_current=-Inf,n_reps,mode_start,prior_type,dt,
-                           enviro_data,R0_fixed_values,vaccine_efficacy,p_obs_severe,p_obs_death)
+                           enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
 
   #mcmc setup
   chain=chain_prop=posterior_current=posterior_prop=flag_accept=chain_cov_all=NULL
@@ -113,7 +113,7 @@ MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=l
     #new step
     out = MCMC_step(type,param,pars_min,pars_max,input_data,obs_sero_data,obs_case_data,
                              obs_outbreak_data,chain_cov,adapt,like_current,n_reps,mode_start,prior_type,dt,
-                             enviro_data,R0_fixed_values,vaccine_efficacy,p_obs_severe,p_obs_death)
+                             enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
   }
 
   param_out=exp(out$param)
@@ -160,15 +160,15 @@ MCMC <- function(type=NULL,pars_ini=c(),pars_min=NULL,pars_max=NULL,input_data=l
 #' @param enviro_data Values of environmental variables (if in use)
 #' @param R0_fixed_values Values of R0 to use if not being fitted
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
-#' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
-#' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
 #' '
 #' @export
 #'
 MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data=list(),
                                obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,chain_cov=1,adapt=0,
                                like_current=-Inf,n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,
-                               R0_fixed_values=c(),vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL) {
+                               R0_fixed_values=c(),vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL) {
 
   #Propose new parameter values
   param_prop=param_prop_setup(param,chain_cov,adapt)
@@ -176,7 +176,7 @@ MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data
   #Calculate likelihood using single_like_calc function
   like_prop=single_like_calc(type,param_prop,pars_min,pars_max,input_data,obs_sero_data,obs_case_data,
                              obs_outbreak_data,n_reps,mode_start,prior_type,dt,enviro_data,R0_fixed_values,
-                             vaccine_efficacy,p_obs_severe,p_obs_death)
+                             vaccine_efficacy,p_rep_severe,p_rep_death)
 
   if(is.finite(like_prop)==FALSE) {
     p_accept = -Inf
@@ -233,20 +233,18 @@ MCMC_step <- function(type=NULL,param=c(),pars_min=NULL,pars_max=NULL,input_data
 #' @param enviro_data Values of environmental variables (if in use)
 #' @param R0_fixed_values Values of R0 to use if not being fitted
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
-#' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
-#' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
 #' '
 #' @export
 #'
 single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NULL,input_data=list(),
                              obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
                              n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
-                             vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL) {
+                             vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL) {
 
   regions=names(table(input_data$region_labels))
   n_regions=length(regions)
-  p_severe=0.12
-  p_death_severe=0.47
 
   #Get vaccine efficacy and calculate associated prior
   if(is.numeric(vaccine_efficacy)==FALSE){
@@ -254,22 +252,22 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
     prior_vacc=log(dtrunc(vaccine_efficacy,"norm",a=0,b=1,mean=0.975,sd=0.05))
   } else {prior_vacc=0}
   prior_report=0
-  if(is.numeric(p_obs_severe)==FALSE){
-    p_obs_severe=as.numeric(exp(param_prop[names(param_prop)=="p_obs_severe"]))
-    if(p_obs_severe<exp(pars_min[names(pars_min)=="p_obs_severe"])){prior_report=-Inf}
-    if(p_obs_severe>exp(pars_max[names(pars_max)=="p_obs_severe"])){prior_report=-Inf}
+  if(is.numeric(p_rep_severe)==FALSE){
+    p_rep_severe=as.numeric(exp(param_prop[names(param_prop)=="p_rep_severe"]))
+    if(p_rep_severe<exp(pars_min[names(pars_min)=="p_rep_severe"])){prior_report=-Inf}
+    if(p_rep_severe>exp(pars_max[names(pars_max)=="p_rep_severe"])){prior_report=-Inf}
     }
-  if(is.numeric(p_obs_death)==FALSE){
-    p_obs_death=as.numeric(exp(param_prop[names(param_prop)=="p_obs_death"]))
-    if(p_obs_death<exp(pars_min[names(pars_min)=="p_obs_death"])){prior_report=-Inf}
-    if(p_obs_death>exp(pars_max[names(pars_max)=="p_obs_death"])){prior_report=-Inf}
+  if(is.numeric(p_rep_death)==FALSE){
+    p_rep_death=as.numeric(exp(param_prop[names(param_prop)=="p_rep_death"]))
+    if(p_rep_death<exp(pars_min[names(pars_min)=="p_rep_death"])){prior_report=-Inf}
+    if(p_rep_death>exp(pars_max[names(pars_max)=="p_rep_death"])){prior_report=-Inf}
     }
 
   #Get FOI and R0 values and calculate associated prior
   FOI_R0_data=mcmc_FOI_R0_setup(type,prior_type,regions,param_prop,enviro_data,R0_fixed_values,pars_min,pars_max)
   FOI_values=FOI_R0_data$FOI_values
   R0_values=FOI_R0_data$R0_values
-  prior_prop=prior_vacc+prior_report+FOI_R0_data$prior+sum(dnorm(log(c(p_obs_severe,p_obs_death)),
+  prior_prop=prior_vacc+prior_report+FOI_R0_data$prior+sum(dnorm(log(c(p_rep_severe,p_rep_death)),
                                                                  mean = 0,sd = 30,log = TRUE))
 
   ### if prior finite, evaluate likelihood ###
@@ -331,20 +329,20 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
           #Compile outbreak/case data and calculate likelihood, if outbreak/case data available
           if(max(flag_cases,flag_outbreak_risk)==1){
             blank=array(data=rep(0,n_reps*n_years_outbreak),dim=c(n_reps,n_years_outbreak))
-            annual_data=list(obs_cases=blank,obs_deaths=blank)
+            annual_data=list(rep_cases=blank,rep_deaths=blank)
             for(i in 1:n_reps){
               for(n_year in 1:n_years_outbreak){
                 year=years_outbreak[n_year]
                 if(flag_sero==1){
-                  cases=sum(model_output$C[,i,model_output$year[1,]==year])
+                  infs=sum(model_output$C[,i,model_output$year[1,]==year])
                 } else {
-                  cases=model_output$C[i,model_output$year==year]
+                  infs=model_output$C[i,model_output$year==year]
                 }
-                severe_cases=rbinom(1,floor(cases),p_severe)
-                deaths=rbinom(1,severe_cases,p_death_severe)
-                annual_data$obs_deaths[i,n_year]=rbinom(1,deaths,p_obs_death)
-                annual_data$obs_cases[i,n_year]=annual_data$obs_deaths[i,n_year]+rbinom(1,severe_cases-deaths,
-                                                                                        p_obs_severe)
+                severe_infs=rbinom(1,floor(infs),p_severe_inf)
+                deaths=rbinom(1,severe_infs,p_death_severe_inf)
+                annual_data$rep_deaths[i,n_year]=rbinom(1,deaths,p_rep_death)
+                annual_data$rep_cases[i,n_year]=annual_data$rep_deaths[i,n_year]+rbinom(1,severe_infs-deaths,
+                                                                                        p_rep_severe)
               }
             }
 
@@ -360,7 +358,7 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
               outbreak_risk=rep(0,n_years_outbreak)
               for(i in 1:n_reps){
                 for(n_year in 1:n_years_outbreak){
-                  if(annual_data$obs_cases[i,n_year]>0){outbreak_risk[n_year]=outbreak_risk[n_year]+frac}
+                  if(annual_data$rep_cases[i,n_year]>0){outbreak_risk[n_year]=outbreak_risk[n_year]+frac}
                 }
               }
               for(n_year in 1:n_years_outbreak){
@@ -418,13 +416,13 @@ single_like_calc <- function(type=NULL,param_prop=c(),pars_min=NULL,pars_max=NUL
 #' @param enviro_data = Values of environmental variables (if in use)
 #' @param R0_fixed_values = Values of R0 to use if not being fitted
 #' @param vaccine_efficacy = Input value of vaccine efficacy if fixed
-#' @param p_obs_severe = Input value of severe case reporting probability if fixed
-#' @param p_obs_death = Input value of fatal case reporting probability if fixed
+#' @param p_rep_severe = Input value of severe case reporting probability if fixed
+#' @param p_rep_death = Input value of fatal case reporting probability if fixed
 #' '
 #' @export
 #'
 mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regions=1,enviro_data=NULL,
-                        R0_fixed_values=NULL,vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL){
+                        R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL){
 
   param_names=names(pars_ini)
   assert_that(is.null(param_names)==FALSE)
@@ -434,13 +432,13 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
     flag_vacc_eff=1
     assert_that("vacc_eff" %in% param_names)
   }
-  if(is.numeric(p_obs_severe)==TRUE){flag_severe=0} else {
+  if(is.numeric(p_rep_severe)==TRUE){flag_severe=0} else {
     flag_severe=1
-    assert_that("p_obs_severe" %in% param_names)
+    assert_that("p_rep_severe" %in% param_names)
   }
-  if(is.numeric(p_obs_death)==TRUE){flag_death=0} else {
+  if(is.numeric(p_rep_death)==TRUE){flag_death=0} else {
     flag_death=1
-    assert_that("p_obs_death" %in% param_names)
+    assert_that("p_rep_death" %in% param_names)
   }
   if(is.null(enviro_data)==FALSE){
     vars=names(enviro_data[c(2:ncol(enviro_data))])
@@ -507,8 +505,8 @@ mcmc_checks <- function(type=NULL,pars_ini=c(),n_params=1,prior_type=NULL,n_regi
 #' @param enviro_data Values of environmental variables (if in use)
 #' @param R0_fixed_values Values of R0 to use if not being fitted
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
-#' @param p_obs_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
-#' @param p_obs_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
 #' '
 #' @export
 #'
@@ -516,7 +514,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
                             type=NULL,pars_min=NULL,pars_max=NULL,input_data=list(),
                             obs_sero_data=list(),obs_case_data=list(),obs_outbreak_data=list(),
                             n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
-                            vaccine_efficacy=NULL,p_obs_severe=NULL,p_obs_death=NULL){
+                            vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL){
   #TODO - Add assertthat functions
   assert_that(length(pars_min)==length(pars_max))
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
@@ -526,8 +524,8 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
   n_params=length(pars_min)
   extra_params=c()
   if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vacc_eff")}
-  if(is.null(p_obs_severe)==TRUE){extra_params=append(extra_params,"p_obs_severe")}
-  if(is.null(p_obs_death)==TRUE){extra_params=append(extra_params,"p_obs_death")}
+  if(is.null(p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
+  if(is.null(p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
   param_names=create_param_labels(type,input_data,enviro_data,extra_params)
   assert_that(length(param_names)==n_params)
   names(pars_min)=names(pars_max)=param_names
@@ -548,7 +546,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
       names(param_prop)=param_names
       like_prop=single_like_calc(type,param_prop,pars_min,pars_max,input_data,obs_sero_data,obs_case_data,
                                  obs_outbreak_data,n_reps,mode_start,prior_type,dt,enviro_data,R0_fixed_values,
-                                 vaccine_efficacy,p_obs_severe,p_obs_death)
+                                 vaccine_efficacy,p_rep_severe,p_rep_death)
       results<-rbind(results,c(set,exp(param_prop),like_prop))
       if(set==1){colnames(results)=c("set",param_names,"LogLikelihood")}
 

@@ -7,9 +7,9 @@
 get_outbreak_data(
   case_data = c(),
   year_data = c(),
-  p_obs_mild = 0,
-  p_obs_severe = 1,
-  p_obs_death = 1
+  p_rep_mild = 0,
+  p_rep_severe = 1,
+  p_rep_death = 1
 )
 }
 \arguments{
@@ -17,11 +17,11 @@ get_outbreak_data(
 
 \item{year_data}{Vector of year values corresponding to case data}
 
-\item{p_obs_mild}{probability of a mild infection being observed}
+\item{p_rep_mild}{probability of a mild infection being reported}
 
-\item{p_obs_severe}{probability of a severe infection being observed}
+\item{p_rep_severe}{probability of a severe infection being reported}
 
-\item{p_obs_death}{probability of a death being observed
+\item{p_rep_death}{probability of a death being reported
 '}
 }
 \description{

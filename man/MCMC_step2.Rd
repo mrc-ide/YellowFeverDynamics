@@ -38,7 +38,7 @@ deaths}
 \item{like_current}{= Current accepted likelihood value}
 
 \item{const_list}{= List of constant parameters/flags/etc. loaded to mcmc2() (type,pars_min,pars_max,n_reps,
-mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_obs_severe,p_obs_death)}
+mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)}
 }
 \description{
 Single MCMC step - one or more regions

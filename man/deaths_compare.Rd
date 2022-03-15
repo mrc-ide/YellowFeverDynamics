@@ -7,9 +7,9 @@
 deaths_compare(model_data = list(), obs_data = list())
 }
 \arguments{
-\item{model_data}{Modelled data in data frame format (list of years and number of observed deaths in each)}
+\item{model_data}{Modelled data in data frame format (list of years and number of reported deaths in each)}
 
-\item{obs_data}{Observed annual number of outbreaks
+\item{obs_data}{Data frame containing observed death data
 '}
 }
 \description{
