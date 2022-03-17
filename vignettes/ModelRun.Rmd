@@ -18,13 +18,13 @@ This vignette demonstrates how to set up and carry out a single run of the model
 
 First load the package:
 
-```{r}
+```{r,eval=FALSE}
 library(YellowFeverDynamics)
 ```
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
 regions=input_data_all$region_labels[1]
 check=input_data_all$region_labels %in% regions
@@ -35,7 +35,7 @@ input_data=list(region_labels=input_data_all$region_labels[check],years_labels=i
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 FOI_spillover=1.0e-6            #
 R0=1.0                          #
 vacc_data=input_data$vacc_data  #
@@ -53,14 +53,14 @@ dt=1.0                          #
 
 The Full_Model_Run function is normally used to run the model for the inputs above:
 
-```{r}
+```{r,eval=FALSE}
 test1<-Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                      year_data_begin,vaccine_efficacy,start_SEIRVC,dt)
 ```
 
 For some applications, the Basic_Model_Run function can be used instead. This is identical to Full_Model_Run but does not output the total FOI at each time point or the number of new infections at each time point.
 
-```{r}
+```{r,eval=FALSE}
 test2<-Basic_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                      year_data_begin,vaccine_efficacy,start_SEIRVC,dt)
 ```
