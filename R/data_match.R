@@ -321,7 +321,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$country_zone==region]
-      subset=subset(obs_sero_data,country_zone==region)
+      subset=subset(obs_sero_data,obs_sero_data$country_zone==region)
       years=names(table(subset$year))
       for(year in years){
         lines2=lines[subset$year==year]
@@ -335,7 +335,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$gadm36==region]
-      subset=subset(obs_sero_data,gadm36==region)
+      subset=subset(obs_sero_data,obs_sero_data$gadm36==region)
       years=names(table(subset$year))
       for(year in years){
         lines2=lines[subset$year==year]
