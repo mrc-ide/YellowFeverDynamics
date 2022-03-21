@@ -22,7 +22,7 @@ First load the package:
 library(YellowFeverDynamics)
 ```
 
-[TBA]
+Population and vaccination data for one or more regions to be considered are stored in a list object along with a list of regions, the years included, and the age groups into which the population is divided. Here an example data set is loaded from the package and a data set for a single region is constructed:
 
 ```{r}
 input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
@@ -33,7 +33,7 @@ input_data=list(region_labels=input_data_all$region_labels[check],years_labels=i
                 pop_data=input_data_all$pop_data[check,,])
 ```
 
-[TBA]
+The other input parameters to the functions which run the model are as follows:
 
 ```{r}
 FOI_spillover=1.0e-6            #
@@ -56,6 +56,12 @@ The Full_Model_Run function is normally used to run the model for the inputs abo
 ```{r}
 test1<-Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                      year_data_begin,vaccine_efficacy,start_SEIRVC,dt)
+```
+
+The output of Full_Model_Run includes, for each repetition, date information, the total force of infection FOI_total at each data point, the numbers of susceptible (S), exposed (E), infectious (I), recovered (R) and vaccinated (V) people at each time point and the number of new infections (C) at each time point organized by age group.
+
+```{r}
+#TBA
 ```
 
 For some applications, the Basic_Model_Run function can be used instead. This is identical to Full_Model_Run but does not output the total FOI at each time point or the number of new infections at each time point.

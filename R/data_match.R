@@ -265,11 +265,13 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
         model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives+model_data$model_sero_data[[rep]]$positives
       }
       model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives*frac
-      if(model_data_all[[i]]$model_sero_data$samples==0){
-        model_data_all[[i]]$model_sero_data$sero=0
-      } else {
-        model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
-      }
+      model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
+      model_data_all[[i]]$model_sero_data$sero[is.na(model_data_all[[i]]$model_sero_data$sero)]=0.0
+      # if(model_data_all[[i]]$model_sero_data$samples==0){
+      #   model_data_all[[i]]$model_sero_data$sero=0
+      # } else {
+      #   model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
+      # }
     }
     if(is.null(obs_case_data)==FALSE){
       model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$deaths=0

@@ -14,6 +14,7 @@ p_death_severe_inf=0.47 #Probability that a severe infection becomes fatal
 #' @import qpdf
 #' @import Rmisc
 #' @import stats
+#' @import testthat
 #' @import tgp
 #' @import truncdist
 #' @import utils

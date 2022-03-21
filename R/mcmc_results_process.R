@@ -84,10 +84,19 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
 
   n_lines=nrow(input_frame)
-  n_env_vars=ncol(enviro_data)-1
-  env_vars=colnames(enviro_data)[c(2:(n_env_vars+1))]
-  regions=enviro_data$adm1
-  n_regions=length(regions)
+  if(type %in% c("FOI enviro","FOI+R0 enviro")){
+    n_env_vars=ncol(enviro_data)-1
+    env_vars=colnames(enviro_data)[c(2:(n_env_vars+1))]
+    regions=enviro_data$adm1
+    n_regions=length(regions)
+  } else {
+    colnames=colnames(input_frame)
+    n_regions=0
+    for(i in 1:length(colnames)){
+      prefix=substr(colnames[i],1,3)
+      if(prefix=="FOI"){n_regions=n_regions+1}
+    }
+  }
   blank=rep(NA,n_regions*n_lines)
   output_frame=data.frame(n_region=as.factor(rep(c(1:n_regions),n_lines)),FOI=blank)
   if(type %in% c("FOI+R0","FOI+R0 enviro")){

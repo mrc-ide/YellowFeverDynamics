@@ -33,5 +33,7 @@ Remotes:
     mrc-ide/odin.dust
 Suggests: 
     knitr,
+    odin,
+    odin.dust,
     rmarkdown
 VignetteBuilder: knitr
