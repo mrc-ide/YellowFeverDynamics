@@ -421,3 +421,67 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 
   return(param_names)
 }
+#-------------------------------------------------------------------------------
+#' @title plot_model_output
+#'
+#' @description Plot output of Full_Model_Run or Basic_Model_Run
+#'
+#' @details TBA
+#'
+#' @param model_output TBA
+#' '
+#' @export
+#'
+plot_model_output <- function(model_output=list()){
+  #TODO - Assert_that functions
+
+  N_age=dim(model_output$S)[1]
+  n_particles=dim(model_output$S)[2]
+  t_pts=dim(model_output$S)[3]
+  date_values=model_output$year[1,1]+((model_output$day[1,]-model_output$day[1,1]+1)/365.0)
+  blank=array(0,dim=c(n_particles,t_pts))
+  S_sum=R_sum=V_sum=blank
+  for(i in 1:N_age){
+    S_sum=S_sum+model_output$S[i,,]
+    # E_sum=E_sum+model_output$E[i,,]
+    # I_sum=I_sum+model_output$I[i,,]
+    R_sum=R_sum+model_output$R[i,,]
+    V_sum=V_sum+model_output$V[i,,]
+  }
+  xlabels=c(model_output$year[1,1]:(model_output$year[1,t_pts]+1))
+  ylabels=10^c(0:10)
+
+  if(n_particles==1){
+    data_combined=data.frame(date_values=rep(date_values,3),label=c(rep("S",t_pts),rep("R",t_pts),rep("V",t_pts)),
+                             values=c(S_sum[1,],R_sum[1,],V_sum[1,]))
+    plot1 <- ggplot(data=data_combined,aes(x=date_values,y=log(values),group=label))+theme_bw()
+    plot1 <- plot1 + geom_line(aes(colour=label),size=1) + theme(legend.title=element_blank())
+    plot1 <- plot1 + scale_x_continuous(name="",breaks=xlabels,labels=xlabels)
+    plot1 <- plot1 + scale_y_continuous(name="",breaks=log(ylabels),labels=ylabels)
+  } else {
+    data_combined=data.frame(date_values=rep(date_values,3),label=c(rep("S",t_pts),rep("R",t_pts),rep("V",t_pts)),
+                             values_mean=rep(NA,t_pts*3),values_low=rep(NA,t_pts*3),values_high=rep(NA,t_pts*3))
+    for(i in 1:t_pts){
+      S_CI=CI(S_sum[,i])
+      R_CI=CI(R_sum[,i])
+      V_CI=CI(V_sum[,i])
+      data_combined$values_mean[i]=as.numeric(S_CI[2])
+      data_combined$values_mean[i+t_pts]=as.numeric(R_CI[2])
+      data_combined$values_mean[i+(2*t_pts)]=as.numeric(V_CI[2])
+      data_combined$values_low[i]=as.numeric(S_CI[3])
+      data_combined$values_low[i+t_pts]=as.numeric(R_CI[3])
+      data_combined$values_low[i+(2*t_pts)]=as.numeric(V_CI[3])
+      data_combined$values_high[i]=as.numeric(S_CI[1])
+      data_combined$values_high[i+t_pts]=as.numeric(R_CI[1])
+      data_combined$values_high[i+(2*t_pts)]=as.numeric(V_CI[1])
+    }
+    plot1 <- ggplot(data=data_combined,aes(x=date_values,y=log(values_mean),group=label))+theme_bw()
+    plot1 <- plot1 + geom_line(aes(colour=label),size=1) + theme(legend.title=element_blank())
+    plot1 <- plot1 + geom_errorbar(data=data_combined,aes(ymin=log(values_low),ymax=log(values_high),colour=label),
+                                   width=(model_output$day[1,2]-model_output$day[1,1])/365.0)
+    plot1 <- plot1 + scale_x_continuous(name="",breaks=xlabels,labels=xlabels)
+    plot1 <- plot1 + scale_y_continuous(name="",breaks=log(ylabels),labels=ylabels)
+  }
+
+  return(plot1)
+}
