@@ -16,6 +16,7 @@ LinkingTo:
     dust
 Imports:
     assertthat,
+    coda,
     ggplot2,
     graphics,
     maptree,

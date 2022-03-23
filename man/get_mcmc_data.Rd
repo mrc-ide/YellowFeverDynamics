@@ -4,14 +4,12 @@
 \alias{get_mcmc_data}
 \title{get_mcmc_data}
 \usage{
-get_mcmc_data(input_folder = "", plot_graph = TRUE, output_data = TRUE)
+get_mcmc_data(input_folder = "", plot_graph = TRUE)
 }
 \arguments{
 \item{input_folder}{Folder containing CSV files output by mcmc()}
 
-\item{plot_graph}{TRUE/FALSE flag indicating whether to plot results graph}
-
-\item{output_data}{TRUE/FALSE flag indicating whether to output results as data frame
+\item{plot_graph}{TRUE/FALSE flag indicating whether to plot graph of likelihood values
 '}
 }
 \description{

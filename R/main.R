@@ -7,6 +7,7 @@ p_death_severe_inf=0.47 #Probability that a severe infection becomes fatal
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @import assertthat
+#' @import coda
 #' @import ggplot2
 #' @import graphics
 #' @import maptree

@@ -1,3 +1,4 @@
+#Functions for generating sets of modelled data to compare with observed data and displaying comparative graphs
 #-------------------------------------------------------------------------------
 #' @title data_match_single
 #'
@@ -246,6 +247,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                        obs_outbreak_data=NULL,const_list=list()){
   #TODO - Add assert_that functions
+  assert_that(TRUE %in% names(table(is.na(param_sets))) == FALSE)
 
   n_param_sets=nrow(param_sets)
   frac=1.0/const_list$n_reps

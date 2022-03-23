@@ -1,4 +1,4 @@
-# R file for functions relating to processing of Markov Chain Monte Carlo output data in YellowFeverDynamics package
+# Functions relating to processing of Markov Chain Monte Carlo output data
 #-------------------------------------------------------------------------------
 #' @title get_mcmc_data
 #'
@@ -9,12 +9,11 @@
 #' into a single data frame. It  outputs the data frame and optionally plots the posterior likelihood on a graph.
 #'
 #' @param input_folder Folder containing CSV files output by mcmc()
-#' @param plot_graph TRUE/FALSE flag indicating whether to plot results graph
-#' @param output_data TRUE/FALSE flag indicating whether to output results as data frame
+#' @param plot_graph TRUE/FALSE flag indicating whether to plot graph of likelihood values
 #' '
 #' @export
 #'
-get_mcmc_data <- function(input_folder="",plot_graph=TRUE,output_data=TRUE){
+get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
   assert_that(file.exists(input_folder))
   setwd(input_folder)
 
