@@ -2,6 +2,31 @@
 #-------------------------------------------------------------------------------
 #' @title get_mcmc_data
 #'
+#' @description Identify columns in MCMC output data containing fitted parameter values and get parameter names
+#'
+#' @details TBA
+#'
+#' @param chain Data frame containing MCMC output
+#' '
+#' @export
+#'
+get_mcmc_params <- function(chain=list()){
+  assert_that(is.data.frame(chain))
+
+  column_names=colnames(chain)
+  assert_that("posterior_current" %in% column_names)
+  assert_that("flag_accept" %in% column_names)
+
+  if("posterior_prop" %in% column_names){n_start=3} else {n_start=2}
+  n_end=match("flag_accept",column_names)-1
+  columns=c(n_start:n_end)
+  param_names=column_names[columns]
+
+  return(param_names)
+}
+#-------------------------------------------------------------------------------
+#' @title get_mcmc_data
+#'
 #' @description Read MCMC results from CSV files in folder; plot likelihood graph and/or output data set
 #'
 #' @details This function is intended to read the output of the mcmc() function saved as CSV files over the course of
@@ -21,7 +46,11 @@ get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
   input_frame=data.frame()
   for(i in 1:length(file_list)){
     data=read.csv(file_list[i],header=TRUE)
-    input_frame<-rbind(input_frame,data)
+    if(i==1){
+      param_names=get_mcmc_params(data)
+      columns=colnames(data) %in% c("posterior_current",param_names)
+    }
+    input_frame<-rbind(input_frame,data[,columns])
   }
 
   if(plot_graph==TRUE){
@@ -41,21 +70,20 @@ get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
 #' truncated data frame can optionally be plotted.
 #'
 #' @param input_frame Data frame of output data
-#' @param selection Vector of line numbers to extract from input_frame
+#' @param rows Vector of line numbers to extract from input_frame
 #' @param plot_graph TRUE/FALSE flag indicating whether to plot results graph
-#' @param output_data TRUE/FALSE flag indicating whether to output results as data frame
 #' '
 #' @export
 #'
-truncate_mcmc_data <- function(input_frame=list(),selection=c(1),plot_graph=TRUE,output_data=TRUE){
+truncate_mcmc_data <- function(input_frame=list(),rows=c(1),plot_graph=TRUE){
   assert_that(is.data.frame(input_frame))
-  assert_that(is.integer(selection))
+  assert_that(is.integer(rows))
 
   line_list=c(1:nrow(input_frame))
   input_frame <- cbind(input_frame,line_list)
-  input_frame_truncated=input_frame[selection,]
+  input_frame_truncated=input_frame[rows,]
 
-  if(plot_graph==TRUE){matplot(x=selection,y=input_frame_truncated$posterior_current,
+  if(plot_graph==TRUE){matplot(x=rows,y=input_frame_truncated$posterior_current,
                                type="l",xlab="Iteration",ylab="LogLikelihood")}
 
   return(input_frame_truncated)
@@ -80,7 +108,14 @@ truncate_mcmc_data <- function(input_frame=list(),selection=c(1),plot_graph=TRUE
 #'
 get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
   #TODO - Add assertthat checks
+  assert_that(is.data.frame((input_frame)))
+  assert_that(is.data.frame((enviro_data)))
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
+  assert_that(is.null(enviro_data$adm1)==FALSE)
+
+  if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
+    param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
+  columns=which(colnames(input_frame) %in% param_names)
 
   n_lines=nrow(input_frame)
   if(type %in% c("FOI enviro","FOI+R0 enviro")){
@@ -89,10 +124,9 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
     regions=enviro_data$adm1
     n_regions=length(regions)
   } else {
-    colnames=colnames(input_frame)
     n_regions=0
-    for(i in 1:length(colnames)){
-      prefix=substr(colnames[i],1,3)
+    for(i in 1:length(param_names)){
+      prefix=substr(param_names[i],1,3)
       if(prefix=="FOI"){n_regions=n_regions+1}
     }
   }
@@ -103,35 +137,17 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
     output_frame=cbind(output_frame,R0)}
 
   if(type %in% c("FOI enviro","FOI+R0 enviro")){
-    if(type=="FOI enviro"){n_params=n_env_vars}
-    if(type=="FOI+R0 enviro"){n_params=2*n_env_vars}
-    line0=-Inf
-    for(j in 1:n_lines){
-      line1=input_frame$line_list[j]
-      output_lines=((j-1)*n_regions)+c(1:n_regions)
-      if(j>1 && line1==line0+1 && input_frame$flag_accept[j]==0){
-        output_frame$FOI[output_lines]=output_frame$FOI[output_lines-n_regions]
-        if(type == "FOI+R0 enviro"){output_frame$R0[output_lines]=output_frame$R0[output_lines-n_regions]}
-        output_frame$FOI[output_lines]=output_frame$FOI[output_lines-n_regions]
-      } else {
-        params=input_frame[j,c(3:(n_params+2))]
-        FOI=R0=rep(0,n_regions)
-        for(n_region in 1:n_regions){
-          variable_values=as.numeric(enviro_data[n_region,c(2:(n_env_vars+1))])
-          FOI[n_region]=sum(variable_values*params[c(1:n_env_vars)])
-          if(type == "FOI+R0 enviro"){R0[n_region]=sum(variable_values*params[c(1:n_env_vars)+n_env_vars])}
-        }
-        output_frame$FOI[output_lines]=FOI
-        if(type == "FOI+R0 enviro"){output_frame$R0[output_lines]=R0}
-      }
-      line0=line1
+
+    columns1=columns[c(1:n_env_vars)]
+    output_frame$FOI=as.vector(as.matrix(enviro_data[,c(2:(n_env_vars+1))]) %*% t(as.matrix(input_frame[,columns1])))
+    if(type=="FOI+R0 enviro"){
+      columns2=columns[c(1:n_env_vars)]+n_env_vars
+      output_frame$R0=as.vector(as.matrix(enviro_data[,c(2:(n_env_vars+1))]) %*% t(as.matrix(input_frame[,columns2])))
     }
+
   } else {
-    for(j in 1:n_lines){
-      output_lines=((j-1)*n_regions)+c(1:n_regions)
-      output_frame$FOI[output_lines]=as.numeric(input_frame[j,c(3:(n_regions+2))])
-      if(type=="FOI+R0"){output_frame$R0[output_lines]=as.numeric(input_frame[j,c((n_regions+3):((2*n_regions)+2))])}
-    }
+    output_frame$FOI=as.vector(input_frame[,columns[c(1:n_regions)]])
+    if(type=="FOI+R0"){output_frame$R0=as.vector(input_frame[,columns[c(1:n_regions)+n_regions]])}
   }
 
   return(output_frame)

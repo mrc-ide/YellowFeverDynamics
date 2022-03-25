@@ -4,21 +4,14 @@
 \alias{truncate_mcmc_data}
 \title{truncate_mcmc_data}
 \usage{
-truncate_mcmc_data(
-  input_frame = list(),
-  selection = c(1),
-  plot_graph = TRUE,
-  output_data = TRUE
-)
+truncate_mcmc_data(input_frame = list(), rows = c(1), plot_graph = TRUE)
 }
 \arguments{
 \item{input_frame}{Data frame of output data}
 
-\item{selection}{Vector of line numbers to extract from input_frame}
+\item{rows}{Vector of line numbers to extract from input_frame}
 
-\item{plot_graph}{TRUE/FALSE flag indicating whether to plot results graph}
-
-\item{output_data}{TRUE/FALSE flag indicating whether to output results as data frame
+\item{plot_graph}{TRUE/FALSE flag indicating whether to plot results graph
 '}
 }
 \description{

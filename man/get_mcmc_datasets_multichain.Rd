@@ -10,7 +10,7 @@ get_mcmc_datasets_multichain(input_folders = c())
 \item{input_folders}{Vector of folders to get chain data}
 }
 \description{
-TBA
+Get MCMC output data from multiple chains
 }
 \details{
 TBA
