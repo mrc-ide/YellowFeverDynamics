@@ -109,9 +109,11 @@ truncate_mcmc_data <- function(input_frame=list(),rows=c(1),plot_graph=TRUE){
 get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
   #TODO - Add assertthat checks
   assert_that(is.data.frame((input_frame)))
-  assert_that(is.data.frame((enviro_data)))
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
-  assert_that(is.null(enviro_data$adm1)==FALSE)
+  if(type %in% c("FOI enviro","FOI+R0 enviro")){
+    assert_that(is.data.frame((enviro_data)))
+    assert_that(is.null(enviro_data$adm1)==FALSE)
+  }
 
   if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
     param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
@@ -146,8 +148,8 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
     }
 
   } else {
-    output_frame$FOI=as.vector(input_frame[,columns[c(1:n_regions)]])
-    if(type=="FOI+R0"){output_frame$R0=as.vector(input_frame[,columns[c(1:n_regions)+n_regions]])}
+    output_frame$FOI=as.vector(t(as.matrix(input_frame[,columns[c(1:n_regions)]])))
+    if(type=="FOI+R0"){output_frame$R0=as.vector(t(as.matrix(input_frame[,columns[c(1:n_regions)+n_regions]])))}
   }
 
   return(output_frame)
@@ -222,7 +224,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
     if(is.null(data_frame$R0)==FALSE){summary_frame_R0=summary_frame_FOI}
     for(i in 1:n_regions){
       subset=data_frame[data_frame$n_region==i,]
-      FOI_CI=CI(subset$FOI)
+      FOI_CI=exp(CI(log(subset$FOI)))
       summary_frame_FOI$mean[i]=FOI_CI[[2]]
       summary_frame_FOI$lower[i]=FOI_CI[[3]]
       summary_frame_FOI$upper[i]=FOI_CI[[1]]

@@ -1,4 +1,4 @@
-region,year,cases,deaths
+adm1,year,cases,deaths
 IGL01,1990,57,40
 IGL01,1991,63,37
 IGL01,1992,80,57
