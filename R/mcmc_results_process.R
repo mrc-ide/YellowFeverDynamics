@@ -324,3 +324,34 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
 
   return(p_probs)
 }
+#-------------------------------------------------------------------------------
+#' @title get_MCMC_data_CI
+#'
+#' @description Get confidence interval of selected MCMC output parameter values
+#'
+#' @details TBA... Takes logarithms of MCMC output values (actual fitted values) and calculate CI for each parameter,
+#'          then returns exponentials to return to original output format
+#'
+#' @param input_frame TBA
+#' @param margin
+#' '
+#' @export
+#'
+get_MCMC_data_CI <- function(input_frame=list(),margin=0.95){
+  #TODO Add assert_that function
+
+  if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
+    param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
+  columns=which(colnames(input_frame) %in% param_names)
+  n_columns=length(param_names)
+  params=log(input_frame[,columns])
+
+  CI_frame=data.frame(matrix(ncol = n_columns, nrow = 3))
+  colnames(CI_frame)=param_names
+  for(i in c(1:n_columns)){
+    CI=CI(params[,i],ci=margin)
+    CI_frame[,i]=exp(c(CI[[3]],CI[[2]],CI[[1]]))
+  }
+
+  return(CI_frame)
+}

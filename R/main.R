@@ -436,6 +436,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 plot_model_output <- function(model_output=list()){
   #TODO - Assert_that functions
 
+  values=label=values_mean=values_low=values_high=NULL
   N_age=dim(model_output$S)[1]
   n_particles=dim(model_output$S)[2]
   t_pts=dim(model_output$S)[3]
