@@ -432,4 +432,5 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list()){
   }
   par(mfrow=c(1,1))
 
+  return(NULL)
 }
