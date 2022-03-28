@@ -309,15 +309,24 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
 
   n_param_sets=length(model_data)
   obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
+  n_sero_values=length(obs_sero_values)
   obs_sero_values[is.nan(obs_sero_values)]=0.0
+  obs_sero_values_low=obs_sero_values_high=rep(NA,n_sero_values)
+  for(i in 1:n_sero_values){
+    CI=prop.test(x=obs_sero_data$positives[i],n=obs_sero_data$samples[i])
+    obs_sero_values_low[i]=CI$conf.int[1]
+    obs_sero_values_high[i]=CI$conf.int[2]
+  }
+
   model_sero_values=array(NA,dim=c(length(obs_sero_values),n_param_sets))
-  model_CI=array(NA,dim=c(3,length(obs_sero_values)))
+  model_CI95=model_CI50=array(NA,dim=c(3,length(obs_sero_values)))
   for(i in 1:n_param_sets){
     model_sero_values[,i]=model_data[[i]]$model_sero_data$sero
   }
   lines_all=graph_lines=c(1:length(obs_sero_values))
   for(i in lines_all){
-    model_CI[,i]=CI(model_sero_values[i,])
+    model_CI95[,i]=CI(model_sero_values[i,],ci=0.95)
+    model_CI50[,i]=CI(model_sero_values[i,],ci=0.50)
   }
 
   if(is.null(obs_sero_data$country_zone)==FALSE){
@@ -361,11 +370,18 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
     } else{
       region=obs_sero_data$adm1[lines[1]]
     }
-    matplot(x=obs_sero_data$age_min[lines],y=obs_sero_values[lines],type="b",pch=16,col=1,
-            ylim=c(0,max(obs_sero_values[lines],model_CI[1,lines],na.rm=TRUE)),cex.lab=0.5,cex.axis=0.5)
-    matplot(x=obs_sero_data$age_min[lines],y=model_CI[2,lines],type="l",pch=1,col=2,add=TRUE)
-    matplot(x=obs_sero_data$age_min[lines],y=model_CI[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
-    matplot(x=obs_sero_data$age_min[lines],y=model_CI[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    age_values=obs_sero_data$age_min[lines]
+    matplot(x=age_values,y=obs_sero_values[lines],type="p",col=0,
+            ylim=c(0,max(obs_sero_values_high[lines],model_CI95[1,lines],model_CI50[1,lines],na.rm=TRUE)),cex.lab=0.5,cex.axis=0.5)
+    #matplot(x=age_values,y=obs_sero_values_low[lines],type="l",col=1,lty=2,add=TRUE)
+    #matplot(x=age_values,y=obs_sero_values_high[lines],type="l",col=1,lty=2,add=TRUE)
+    polygon(x=c(age_values,rev(age_values)),y=c(obs_sero_values_low[lines],rev(obs_sero_values_high[lines])),col="grey")
+    matplot(x=age_values,y=obs_sero_values[lines],type="b",pch=16,col=1,add=TRUE)
+    matplot(x=age_values,y=model_CI95[2,lines],type="l",pch=1,col=2,add=TRUE)
+    matplot(x=age_values,y=model_CI95[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=age_values,y=model_CI95[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=age_values,y=model_CI50[1,lines],type="l",pch=1,col=2,lty=3,add=TRUE)
+    matplot(x=age_values,y=model_CI50[3,lines],type="l",pch=1,col=2,lty=3,add=TRUE)
     title(main=region,cex.main=0.5)
   }
   par(mfrow=c(1,1))
@@ -382,24 +398,38 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
 #'
 #' @param model_data TBA
 #' @param obs_case_data TBA
+#' @param input_data TBA
 #'
 #' @export
 #'
-case_match_graphs <- function(model_data=list(),obs_case_data=list()){
+case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list()){
   #TODO - Add assert_that functions
 
   n_param_sets=length(model_data)
   obs_case_values=obs_case_data$cases
   obs_death_values=obs_case_data$deaths
+  n_case_values=length(obs_case_values)
+  n_year_values=match(obs_case_data$year,input_data$years_labels)
+  n_region_values=match(obs_case_data$adm1,input_data$region_labels)
+  obs_case_values_low=obs_case_values_high=obs_death_values_low=obs_death_values_high=rep(NA,n_case_values)
+  for(i in 1:n_case_values){
+    population=round(sum(input_data$pop_data[n_region_values[i],n_year_values[i],]),digits=0)
+    CI=prop.test(x=obs_case_data$cases[i],n=population)
+    obs_case_values_low[i]=round(CI$conf.int[1]*population,digits=0)
+    obs_case_values_high[i]=round(CI$conf.int[2]*population,digits=0)
+  }
+
   model_case_values=model_death_values=array(NA,dim=c(length(obs_case_values),n_param_sets))
-  model_CI_cases=model_CI_deaths=array(NA,dim=c(3,length(obs_case_values)))
+  model_CI_cases95=model_CI_deaths95=model_CI_cases50=model_CI_deaths50=array(NA,dim=c(3,length(obs_case_values)))
   for(i in 1:n_param_sets){
     model_case_values[,i]=model_data[[i]]$model_case_data$cases
     model_death_values[,i]=model_data[[i]]$model_case_data$deaths
   }
-  for(i in 1:length(obs_case_values)){
-    model_CI_cases[,i]=CI(model_case_values[i,])
-    model_CI_deaths[,i]=CI(model_death_values[i,])
+  for(i in 1:n_case_values){
+    model_CI_cases95[,i]=CI(model_case_values[i,],ci=0.95)
+    model_CI_deaths95[,i]=CI(model_death_values[i,],ci=0.95)
+    model_CI_cases50[,i]=CI(model_case_values[i,],ci=0.50)
+    model_CI_deaths50[,i]=CI(model_death_values[i,],ci=0.50)
   }
 
   data_regions=names(table(obs_case_data$adm1))
@@ -410,11 +440,17 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list()){
   par(mfrow=c(nrows,ncols),mar=c(2,2,1,0))
   for(region in data_regions){
     lines=obs_case_data$adm1==region
-    matplot(x=obs_case_data$year[lines],y=obs_case_values[lines],type="b",pch=16,col=1,
-            ylim=c(0,max(obs_case_values[lines],model_CI_cases[1,lines])),cex.lab=0.5,cex.axis=0.5)
-    matplot(x=obs_case_data$year[lines],y=model_CI_cases[2,lines],type="l",pch=1,col=2,add=TRUE)
-    matplot(x=obs_case_data$year[lines],y=model_CI_cases[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
-    matplot(x=obs_case_data$year[lines],y=model_CI_cases[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    year_values=obs_case_data$year[lines]
+    matplot(x=year_values,y=obs_case_values[lines],type="b",col=0,cex.lab=0.5,cex.axis=0.5,
+            ylim=c(0,max(obs_case_values[lines],model_CI_cases95[1,lines],model_CI_cases50[1,lines])))
+    polygon(x=c(year_values,rev(year_values)),y=c(obs_case_values_high[lines],rev(obs_case_values_low[lines])),
+            col="grey")
+    matplot(x=year_values,y=obs_case_values[lines],type="b",pch=16,col=1,add=TRUE)
+    matplot(x=year_values,y=model_CI_cases95[2,lines],type="l",pch=1,col=2,add=TRUE)
+    matplot(x=year_values,y=model_CI_cases95[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=year_values,y=model_CI_cases95[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=year_values,y=model_CI_cases50[1,lines],type="l",pch=1,col=2,lty=3,add=TRUE)
+    matplot(x=year_values,y=model_CI_cases50[3,lines],type="l",pch=1,col=2,lty=3,add=TRUE)
     title(main=region,cex.main=0.5)
   }
   par(mfrow=c(1,1))
@@ -423,11 +459,12 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list()){
   par(mfrow=c(nrows,ncols),mar=c(2,2,1,0))
   for(region in data_regions){
     lines=obs_case_data$adm1==region
-    matplot(x=obs_case_data$year[lines],y=obs_death_values[lines],type="b",pch=16,col=1,
+    year_values=obs_case_data$year[lines]
+    matplot(x=year_values,y=obs_death_values[lines],type="b",pch=16,col=1,
             ylim=c(0,max(obs_death_values[lines],model_CI_deaths[1,lines])),cex.lab=0.5,cex.axis=0.5)
-    matplot(x=obs_case_data$year[lines],y=model_CI_deaths[2,lines],type="l",pch=1,col=2,add=TRUE)
-    matplot(x=obs_case_data$year[lines],y=model_CI_deaths[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
-    matplot(x=obs_case_data$year[lines],y=model_CI_deaths[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=year_values,y=model_CI_deaths[2,lines],type="l",pch=1,col=2,add=TRUE)
+    matplot(x=year_values,y=model_CI_deaths[1,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
+    matplot(x=year_values,y=model_CI_deaths[3,lines],type="l",pch=1,col=2,lty=2,add=TRUE)
     title(main=region,cex.main=0.5)
   }
   par(mfrow=c(1,1))
