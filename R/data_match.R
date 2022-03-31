@@ -369,17 +369,17 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
     } else{
       region=obs_sero_data$adm1[lines[1]]
     }
-    age_values=obs_sero_data$age_min[lines]
 
     df=data.frame(age_values=obs_sero_data$age_min[lines],sero_obs=obs_sero_values[lines],
-                  sero_obs_low=obs_sero_values_low[lines],sero_obs_high=obs_sero_values_high[lines])
-    df2=data.frame(age_values=c(df$age_values,rev(df$age_values)),
-                   sero_model_CI95=c(model_CI95[1,lines],rev(model_CI95[3,lines])),
-                   sero_model_CI50=c(model_CI50[1,lines],rev(model_CI50[3,lines])))
+                  sero_obs_low=obs_sero_values_low[lines],sero_obs_high=obs_sero_values_high[lines],
+                  sero_model_low95=model_CI95[3,lines],sero_model_high95=model_CI95[1,lines],
+                  sero_model_low50=model_CI50[3,lines],sero_model_high50=model_CI50[1,lines])
 
     sero_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
-    sero_graphs[[i]] <- sero_graphs[[i]]+geom_polygon(data=df2,aes(x=age_values,y=sero_model_CI95),fill="blue")
-    sero_graphs[[i]] <- sero_graphs[[i]]+geom_polygon(data=df2,aes(x=age_values,y=sero_model_CI50),fill="green")
+    sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low95,
+                                                                 ymax=sero_model_high95),fill="blue",alpha=0.5)
+    sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low50,
+                                                                 ymax=sero_model_high50),fill="green",alpha=0.5)
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_line(data=df,aes(x=age_values,y=sero_obs))
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_errorbar(data=df,aes(x=age_values,ymin=sero_obs_low,ymax=sero_obs_high),
                                                        width=1.0)
@@ -448,16 +448,17 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
 
     df=data.frame(years=obs_case_data$year[lines],case_obs=obs_case_values[lines],death_obs=obs_death_values[lines],
                   case_obs_low=obs_case_values_low[lines],case_obs_high=obs_case_values_high[lines],
-                  death_obs_low=obs_death_values_low[lines],death_obs_high=obs_death_values_high[lines])
-    df2=data.frame(years=c(df$years,rev(df$years)),
-                   case_model_CI95=c(model_CI_cases95[1,lines],rev(model_CI_cases95[3,lines])),
-                   case_model_CI50=c(model_CI_cases50[1,lines],rev(model_CI_cases50[3,lines])),
-                   death_model_CI95=c(model_CI_deaths95[1,lines],rev(model_CI_deaths95[3,lines])),
-                   death_model_CI50=c(model_CI_deaths50[1,lines],rev(model_CI_deaths50[3,lines])))
+                  case_model_low95=model_CI_cases95[3,lines],case_model_high95=model_CI_cases95[1,lines],
+                  case_model_low50=model_CI_cases50[3,lines],case_model_high50=model_CI_cases50[1,lines],
+                  death_obs_low=obs_death_values_low[lines],death_obs_high=obs_death_values_high[lines],
+                  death_model_low95=model_CI_deaths95[3,lines],death_model_high95=model_CI_deaths95[1,lines],
+                  death_model_low50=model_CI_deaths50[3,lines],death_model_high50=model_CI_deaths50[1,lines])
 
     cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
-    cases_graphs[[i]] <- cases_graphs[[i]]+geom_polygon(data=df2,aes(x=years,y=case_model_CI95),fill="blue")
-    cases_graphs[[i]] <- cases_graphs[[i]]+geom_polygon(data=df2,aes(x=years,y=case_model_CI50),fill="green")
+    cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low95,
+                                                                 ymax=case_model_high95),fill="blue",alpha=0.5)
+    cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low50,
+                                                                 ymax=case_model_high50),fill="green",alpha=0.5)
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_line(data=df,aes(x=years,y=case_obs))
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=case_obs_low,ymax=case_obs_high),
                                                          width=0.5)
@@ -467,8 +468,10 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
 
 
     deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_polygon(data=df2,aes(x=years,y=death_model_CI95),fill="blue")
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_polygon(data=df2,aes(x=years,y=death_model_CI50),fill="green")
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low95,
+                                                                   ymax=death_model_high95),fill="blue",alpha=0.5)
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low50,
+                                                                   ymax=death_model_high50),fill="green",alpha=0.5)
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_line(data=df,aes(x=years,y=death_obs))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=death_obs_low,ymax=death_obs_high),
                                                            width=0.5)
