@@ -4,12 +4,18 @@
 \alias{case_match_graphs}
 \title{case_match_graphs}
 \usage{
-case_match_graphs(model_data = list(), obs_case_data = list())
+case_match_graphs(
+  model_data = list(),
+  obs_case_data = list(),
+  input_data = list()
+)
 }
 \arguments{
 \item{model_data}{TBA}
 
 \item{obs_case_data}{TBA}
+
+\item{input_data}{TBA}
 }
 \description{
 Function to create a series of graphs comparing modelled and observed case data from results

@@ -360,6 +360,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
     }
   }
 
+  age_values=sero_obs=sero_obs_low=sero_obs_high=sero_model_low95=sero_model_low50=sero_model_high95=sero_model_high50=NULL
   n_graphs=length(data_regions)
   sero_graphs=list()
   for(i in 1:n_graphs){
@@ -442,6 +443,8 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
   n_graphs=length(data_regions)
 
   cases_graphs=deaths_graphs=list()
+  years=case_obs=case_obs_low=case_obs_high=case_model_low95=case_model_low50=case_model_high95=case_model_high50=NULL
+  death_obs=death_obs_low=death_obs_high=death_model_low95=death_model_low50=death_model_high95=death_model_high50=NULL
   for(i in 1:n_graphs){
     region=data_regions[i]
     lines=obs_case_data$adm1==region

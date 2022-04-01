@@ -44,7 +44,7 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
     assert_that(length(datasets_selected)==length(burnin_values))}
   if(is.null(end_values)==TRUE){
     for(i in 1:length(datasets_selected)){
-      end_values[i]=length(input_frames[[datasets_selected[i]]]$posterior_current)
+      end_values[i]=length(datasets[[datasets_selected[i]]]$posterior_current)
     }
   } else {
     assert_that(length(datasets_selected)==length(end_values))}
@@ -57,7 +57,7 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
   for(i in 1:length(datasets_selected)){
     n_data=datasets_selected[i]
     rows[[i]]=c(burnin_values[i]:end_values[i])
-    input_frame=input_frames[[n_data]]
+    input_frame=datasets[[n_data]]
     if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
       param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
     columns=which(colnames(input_frame) %in% param_names)
