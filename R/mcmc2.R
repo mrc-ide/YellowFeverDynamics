@@ -290,30 +290,16 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
     #Set up data structures to take modelled data corresponding to observed data and likelihood values
     if(is.null(obs_sero_data)==FALSE){
-      sero_like_values=model_sero_values=rep(0,nrow(obs_sero_data))
-      # model_sero_data=list()
-      # blank1=rep(0,nrow(obs_sero_data))
-      # blank2=data.frame(samples=blank1,positives=blank1,sero=blank1)
-      # for(rep in 1:const_list$n_reps){
-      #   model_sero_data[[rep]]=blank2
-      # }
-    } else {sero_like_values=model_sero_values=NA}
+      sero_like_values=rep(0,nrow(obs_sero_data))
+      model_sero_data=data.frame(samples=rep(0,nrow(obs_sero_data)),positives=rep(0,nrow(obs_sero_data)))
+    } else {sero_like_values=model_sero_data=NA}
+
     if(is.null(obs_case_data)==FALSE){
       cases_like_values=deaths_like_values=model_case_values=model_death_values=rep(0,nrow(obs_case_data))
-      # model_case_data=list()
-      # blank1=rep(0,nrow(obs_case_data))
-      # blank2=data.frame(rep_cases=blank1,rep_deaths=blank1)
-      # for(rep in 1:const_list$n_reps){
-      #   model_case_data[[rep]]=blank2
-      # }
     } else {cases_like_values=deaths_like_values=model_case_values=model_death_values=NA}
+
     if(is.null(obs_outbreak_data)==FALSE){
       outbreak_like_values=model_outbreak_risk_values=rep(0,nrow(obs_outbreak_data))
-      # model_outbreak_data=list()
-      # blank1=rep(0,nrow(obs_outbreak_data))
-      # for(rep in 1:const_list$n_reps){
-      #   model_outbreak_data[[rep]]=blank1
-      # }
     } else {outbreak_like_values=model_outbreak_risk_values=NA}
 
     #Model all regions and save relevant output data
@@ -402,7 +388,8 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
           sero_results=sero_calculate2(obs_sero_data[sero_line_list,],model_data=list(day=model_output$day[i,],
                                                                                       year=model_output$year[i,],S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
                                                                                       I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),V=t(model_output$V[,i,])))
-          model_sero_values[sero_line_list]=model_sero_values[sero_line_list]+(sero_results$positives/sero_results$samples)
+          model_sero_data$samples[sero_line_list]=model_sero_data$samples[sero_line_list]+sero_results$samples
+          model_sero_data$positives[sero_line_list]=model_sero_data$positives[sero_line_list]+sero_results$positives
         }
       }
       model_output<-NULL
@@ -410,11 +397,11 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
     #Likelihood of observing serological data
     if(is.null(obs_sero_data)==FALSE){
-      model_sero_values=model_sero_values*frac
+      model_sero=model_sero_data$positives/model_sero_data$samples
       sero_like_values=sero_like_values+lgamma(obs_sero_data$samples+1)-
         lgamma(obs_sero_data$positives+1)-lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+
-        obs_sero_data$positives*log(model_sero_values)+
-        (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero_values)
+        obs_sero_data$positives*log(model_sero)+
+        (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero)
     }
     #Likelihood of observing annual case/death data
     if(is.null(obs_case_data)==FALSE){
