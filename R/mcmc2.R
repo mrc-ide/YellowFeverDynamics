@@ -398,10 +398,9 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
     #Likelihood of observing serological data
     if(is.null(obs_sero_data)==FALSE){
       model_sero=model_sero_data$positives/model_sero_data$samples
-      sero_like_values=sero_like_values+lgamma(obs_sero_data$samples+1)-
-        lgamma(obs_sero_data$positives+1)-lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+
-        obs_sero_data$positives*log(model_sero)+
-        (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero)
+      sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)-
+        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+
+        obs_sero_data$positives*log(model_sero)+(obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero)
     }
     #Likelihood of observing annual case/death data
     if(is.null(obs_case_data)==FALSE){

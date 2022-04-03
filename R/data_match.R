@@ -313,9 +313,14 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
   obs_sero_values[is.nan(obs_sero_values)]=0.0
   obs_sero_values_low=obs_sero_values_high=rep(NA,n_sero_values)
   for(i in 1:n_sero_values){
-    CI=prop.test(x=obs_sero_data$positives[i],n=obs_sero_data$samples[i])
-    obs_sero_values_low[i]=CI$conf.int[1]
-    obs_sero_values_high[i]=CI$conf.int[2]
+    if(obs_sero_data$samples[i]>0){
+      CI=prop.test(x=obs_sero_data$positives[i],n=obs_sero_data$samples[i])
+      obs_sero_values_low[i]=CI$conf.int[1]
+      obs_sero_values_high[i]=CI$conf.int[2]
+    } else {
+      obs_sero_values_low[i]=0
+      obs_sero_values_high[i]=0
+    }
   }
 
   model_sero_values=array(NA,dim=c(length(obs_sero_values),n_param_sets))
@@ -417,7 +422,9 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
   n_region_values=match(obs_case_data$adm1,input_data$region_labels)
   obs_case_values_low=obs_case_values_high=obs_death_values_low=obs_death_values_high=rep(NA,n_case_values)
   for(i in 1:n_case_values){
-    population=round(sum(input_data$pop_data[n_region_values[i],n_year_values[i],]),digits=0)
+    regions=strsplit(obs_case_data$adm1[i],",")[[1]]
+    n_region_values=input_data$region_labels %in% regions
+    population=round(sum(input_data$pop_data[n_region_values,n_year_values[i],]),digits=0)
     CI=prop.test(x=obs_case_data$cases[i],n=population)
     obs_case_values_low[i]=round(CI$conf.int[1]*population,digits=0)
     obs_case_values_high[i]=round(CI$conf.int[2]*population,digits=0)
