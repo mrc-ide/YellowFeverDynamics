@@ -347,7 +347,7 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
             if(flag_sero==1){
               infs=sum(model_output$C[,i,model_output$year[1,]==year])
             } else {
-              infs=model_output$C[i,model_output$year==year]
+              infs=sum(model_output$C[i,model_output$year==year])
             }
             severe_infs=rbinom(1,floor(infs),p_severe_inf)
             deaths=rbinom(1,severe_infs,p_death_severe_inf)
