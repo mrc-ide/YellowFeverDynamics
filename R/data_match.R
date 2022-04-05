@@ -24,11 +24,8 @@
 data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
 
-  enviro_data=const_list$enviro_data
   regions=input_data$region_labels
   n_regions=length(regions)
-  p_severe=0.12
-  p_death_severe=0.47
   frac=1.0/const_list$n_reps
 
   n_params=length(param_prop)
@@ -61,9 +58,10 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   FOI_values=R0_values=rep(0,n_regions)
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$adm1==regions[i],])
+      model_params=param_calc_enviro(param=param_prop,const_list$enviro_data)
       FOI_values[i]=model_params$FOI
-      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=const_list$R0_fixed_values[i]}
+      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {
+        R0_values[i]=const_list$R0_fixed_values[i]}
     }
   }
   if(const_list$type %in% c("FOI+R0","FOI")){
@@ -101,10 +99,9 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   if(is.null(obs_outbreak_data)==FALSE){
     regions_outbreak=names(table(obs_outbreak_data$adm1))
     model_outbreak_data=list()
-    blank1=data.frame(region=obs_outbreak_data$adm1,year=obs_outbreak_data$year,outbreak_yn=rep(0,nrow(obs_outbreak_data)))
-    for(rep in 1:const_list$n_reps){
-      model_outbreak_data[[rep]]=blank1
-    }
+    blank1=data.frame(region=obs_outbreak_data$adm1,year=obs_outbreak_data$year,
+                      outbreak_yn=rep(0,nrow(obs_outbreak_data)))
+    for(rep in 1:const_list$n_reps){model_outbreak_data[[rep]]=blank1}
   } else {
     regions_outbreak=NULL
     model_outbreak_data=NULL
@@ -269,11 +266,6 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
       model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives*frac
       model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
       model_data_all[[i]]$model_sero_data$sero[is.na(model_data_all[[i]]$model_sero_data$sero)]=0.0
-      # if(model_data_all[[i]]$model_sero_data$samples==0){
-      #   model_data_all[[i]]$model_sero_data$sero=0
-      # } else {
-      #   model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
-      # }
     }
     if(is.null(obs_case_data)==FALSE){
       model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$deaths=0
