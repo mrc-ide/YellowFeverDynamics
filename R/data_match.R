@@ -186,7 +186,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
     model_sero_data$positives=round(model_sero_data$samples*model_sero_data$sero,0)
   }
 
-  return(list(model_case_values=model_case_values,model_death_values=model_death_values,
+  return(list(model_case_values=model_case_values*frac,model_death_values=model_death_values*frac,
               model_sero_data=model_sero_data,model_outbreak_risk_values=model_outbreak_risk_values))
 }
 #-------------------------------------------------------------------------------
