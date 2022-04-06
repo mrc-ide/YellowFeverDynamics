@@ -42,7 +42,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
     vaccine_efficacy=const_list$vaccine_efficacy
   }
 
-  #Get reporting probabilities and check they are within specified bounds
+  #Get reporting probabilities
   if(is.numeric(const_list$p_rep_severe)==FALSE){
     p_rep_severe=as.numeric(exp(param_prop[names(param_prop)=="p_rep_severe"]))
   } else {
@@ -58,9 +58,9 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   FOI_values=R0_values=rep(0,n_regions)
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(param=param_prop,const_list$enviro_data)
-      FOI_values[i]=model_params$FOI
-      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {
+      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$adm1==regions[i],])
+      FOI_values[i]=as.numeric(model_params[[1]])
+      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=as.numeric(model_params[[2]])} else {
         R0_values[i]=const_list$R0_fixed_values[i]}
     }
   }
@@ -72,40 +72,17 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
   #Set up data structures to take modelled data corresponding to observed data
   if(is.null(obs_sero_data)==FALSE){
-    regions_sero=names(table(obs_sero_data$adm1))
-    model_sero_data=list()
-    blank1=rep(0,nrow(obs_sero_data))
-    blank2=data.frame(adm1=obs_sero_data$adm1,year=obs_sero_data$year,age_min=obs_sero_data$age_min,
-                      age_max=obs_sero_data$age_max,samples=blank1,positives=blank1,sero=blank1)
-    for(rep in 1:const_list$n_reps){
-      model_sero_data[[rep]]=blank2
-    }
-  } else {
-    model_sero_data=NULL
-    regions_sero=NULL
-    }
+    blank=rep(0,nrow(obs_sero_data))
+    model_sero_data=data.frame(samples=blank,positives=blank,sero=blank)
+  } else {model_sero_values=NULL}
+
   if(is.null(obs_case_data)==FALSE){
-    regions_case=names(table(obs_case_data$adm1))
-    model_case_data=list()
-    blank1=rep(0,nrow(obs_case_data))
-    blank2=data.frame(region=obs_case_data$adm1,year=obs_case_data$year,cases=blank1,deaths=blank1)
-    for(rep in 1:const_list$n_reps){
-      model_case_data[[rep]]=blank2
-    }
-  } else {
-    regions_case=NULL
-    model_case_data=NULL
-    }
+    model_case_values=model_death_values=rep(0,nrow(obs_case_data))
+  } else {model_case_values=model_death_values=NA}
+
   if(is.null(obs_outbreak_data)==FALSE){
-    regions_outbreak=names(table(obs_outbreak_data$adm1))
-    model_outbreak_data=list()
-    blank1=data.frame(region=obs_outbreak_data$adm1,year=obs_outbreak_data$year,
-                      outbreak_yn=rep(0,nrow(obs_outbreak_data)))
-    for(rep in 1:const_list$n_reps){model_outbreak_data[[rep]]=blank1}
-  } else {
-    regions_outbreak=NULL
-    model_outbreak_data=NULL
-    }
+    model_outbreak_risk_values=rep(0,nrow(obs_outbreak_data))
+  } else {model_outbreak_risk_values=NA}
 
   #Model all regions and save relevant output data
   for(n_region in 1:n_regions){
@@ -154,8 +131,8 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
           } else {
             infs=sum(model_output$C[i,model_output$year==year])
           }
-          severe_infs=rbinom(1,floor(infs),p_severe)
-          deaths=rbinom(1,severe_infs,p_death_severe)
+          severe_infs=rbinom(1,floor(infs),p_severe_inf)
+          deaths=rbinom(1,severe_infs,p_death_severe_inf)
           annual_data$rep_deaths[i,n_year]=rbinom(1,deaths,p_rep_death)
           annual_data$rep_cases[i,n_year]=annual_data$rep_deaths[i,n_year]+rbinom(1,severe_infs-deaths,
                                                                                   p_rep_severe)
@@ -164,8 +141,8 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
       if(flag_case==1){
         for(rep in 1:const_list$n_reps){
-          model_case_data[[rep]]$cases[case_line_list]=model_case_data[[rep]]$cases[case_line_list]+annual_data$rep_cases[rep,]
-          model_case_data[[rep]]$deaths[case_line_list]=model_case_data[[rep]]$deaths[case_line_list]+annual_data$rep_deaths[rep,]
+          model_case_values[case_line_list]=model_case_values[case_line_list]+annual_data$rep_cases[rep,]
+          model_death_values[case_line_list]=model_death_values[case_line_list]+annual_data$rep_deaths[rep,]
         }
       }
 
@@ -181,7 +158,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
           if(outbreak_risk[n_year]>0.9999){outbreak_risk[n_year]=0.9999}
         }
         for(i in 1:const_list$n_reps){
-          model_outbreak_data$outbreak_yn[input_data$outbreak_line_list[[n_region]]]=outbreak_risk
+          model_outbreak_risk_values[input_data$outbreak_line_list[[n_region]]]=outbreak_risk
         }
       }
     }
@@ -190,34 +167,27 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
     if(flag_sero==1){
       sero_line_list=input_data$sero_line_list[[n_region]]
       for(i in 1:const_list$n_reps){
-        sero_results=sero_calculate2(obs_sero_data[sero_line_list,],model_data=list(day=model_output$day[i,],
-                                                                                    year=model_output$year[i,],S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
-                                                                                    I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),V=t(model_output$V[,i,])))
-        model_sero_data[[i]]$samples[sero_line_list]=model_sero_data[[i]]$samples[sero_line_list]+sero_results$samples
-        model_sero_data[[i]]$positives[sero_line_list]=model_sero_data[[i]]$positives[sero_line_list]+sero_results$positives
+        sero_results=sero_calculate2(obs_sero_data[sero_line_list,],
+                                     model_data=list(day=model_output$day[i,],year=model_output$year[i,],
+                                                     S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
+                                                     I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),
+                                                     V=t(model_output$V[,i,])))
+        model_sero_data$samples[sero_line_list]=model_sero_data$samples[sero_line_list]+sero_results$samples
+        model_sero_data$positives[sero_line_list]=model_sero_data$positives[sero_line_list]+sero_results$positives
+
       }
     }
     model_output<-NULL
   }
 
-  for(i in 1:const_list$n_reps){
-    if(is.null(model_sero_data)==FALSE){
-      model_sero_data[[i]]$sero=model_sero_data[[i]]$positives/model_sero_data[[i]]$samples
-      model_sero_data[[i]]$samples=obs_sero_data$samples
-      for(j in 1:nrow(obs_sero_data)){
-        model_sero_data[[i]]$positives[j]=rbinom(1,obs_sero_data$samples[j],model_sero_data[[i]]$sero[j])
-      }
-    }
-    if(is.null(model_outbreak_data)==FALSE){
-      for(j in 1:nrow(obs_outbreak_data)){
-        model_outbreak_data[[i]]$outbreak_yn[j]=rbinom(1,1,model_outbreak_data[[i]]$outbreak_yn[j])
-      }
-    }
+  if(is.null(obs_sero_data)==FALSE){
+    model_sero_data$sero=model_sero_data$positives/model_sero_data$samples
+    model_sero_data$samples=obs_sero_data$samples
+    model_sero_data$positives=round(model_sero_data$samples*model_sero_data$sero,0)
   }
 
-  return(list(regions_case=regions_case,model_case_data=model_case_data,
-              regions_outbreak=regions_outbreak,model_outbreak_data=model_outbreak_data,
-              regions_sero=regions_sero,model_sero_data=model_sero_data))
+  return(list(model_case_values=model_case_values,model_death_values=model_death_values,
+              model_sero_data=model_sero_data,model_outbreak_risk_values=model_outbreak_risk_values))
 }
 #-------------------------------------------------------------------------------
 #' @title data_match_multi
@@ -254,31 +224,10 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
     cat("\t",i)
     param_prop=as.numeric(param_sets[i,])
     model_data <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
-    model_data_all[[i]]=list(regions_case=model_data$regions_case,model_case_data=model_data$model_case_data[[1]],
-                             regions_outbreak=model_data$regions_outbreak,model_outbreak_data=model_data$model_outbreak_data[[1]],
-                             regions_sero=model_data$regions_sero,model_sero_data=model_data$model_sero_data[[1]])
-
-    if(is.null(obs_sero_data)==FALSE){
-      model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$sero=0
-      for(rep in 1:const_list$n_reps){
-        model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives+model_data$model_sero_data[[rep]]$positives
-      }
-      model_data_all[[i]]$model_sero_data$positives=model_data_all[[i]]$model_sero_data$positives*frac
-      model_data_all[[i]]$model_sero_data$sero=model_data_all[[i]]$model_sero_data$positives/model_data_all[[i]]$model_sero_data$samples
-      model_data_all[[i]]$model_sero_data$sero[is.na(model_data_all[[i]]$model_sero_data$sero)]=0.0
-    }
-    if(is.null(obs_case_data)==FALSE){
-      model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$deaths=0
-      for(rep in 1:const_list$n_reps){
-        model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$cases+model_data$model_case_data[[rep]]$cases
-        model_data_all[[i]]$model_case_data$deaths=model_data_all[[i]]$model_case_data$deaths+model_data$model_case_data[[rep]]$deaths
-      }
-      model_data_all[[i]]$model_case_data$cases=model_data_all[[i]]$model_case_data$cases*frac
-      model_data_all[[i]]$model_case_data$deaths=model_data_all[[i]]$model_case_data$deaths*frac
-    }
-    if(is.null(obs_outbreak_data)==FALSE){
-      #TODO
-    }
+    model_data_all[[i]]=list(model_case_values=model_data$model_case_values,
+                             model_death_values=model_data$model_death_values,
+                             model_sero_data=model_data$model_sero_data,
+                             model_outbreak_risk_values=model_data$model_outbreak_risk_values)
   }
 
   return(model_data_all)
@@ -357,7 +306,8 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
     }
   }
 
-  age_values=sero_obs=sero_obs_low=sero_obs_high=sero_model_low95=sero_model_low50=sero_model_high95=sero_model_high50=NULL
+  age_values=sero_obs=sero_obs_low=sero_obs_high=sero_model_low95=NULL
+  sero_model_low50=sero_model_high95=sero_model_high50=NULL
   n_graphs=length(data_regions)
   sero_graphs=list()
   for(i in 1:n_graphs){
@@ -428,8 +378,8 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
   model_case_values=model_death_values=array(NA,dim=c(length(obs_case_values),n_param_sets))
   model_CI_cases95=model_CI_deaths95=model_CI_cases50=model_CI_deaths50=array(NA,dim=c(3,length(obs_case_values)))
   for(i in 1:n_param_sets){
-    model_case_values[,i]=model_data[[i]]$model_case_data$cases
-    model_death_values[,i]=model_data[[i]]$model_case_data$deaths
+    model_case_values[,i]=model_data[[i]]$model_case_values
+    model_death_values[,i]=model_data[[i]]$model_death_values
   }
   for(i in 1:n_case_values){
     model_CI_cases95[,i]=CI(model_case_values[i,],ci=0.95)

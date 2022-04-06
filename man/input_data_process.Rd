@@ -2,7 +2,7 @@
 % Please edit documentation in R/mcmc.R
 \name{input_data_process}
 \alias{input_data_process}
-\title{input_data_process2}
+\title{input_data_process}
 \usage{
 input_data_process(
   input_data = list(),
@@ -25,7 +25,7 @@ deaths}
 1 = 1 or more outbreak(s)}
 }
 \description{
-TBA
+Cross-reference input data with observed data to be fitted to
 }
 \details{
 TBA

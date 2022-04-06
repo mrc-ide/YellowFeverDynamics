@@ -32,7 +32,7 @@ deaths}
 mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)}
 }
 \description{
-Function which calculates and outputs likelihood
+Function which calculates and outputs likelihood of observing simulated data
 }
 \details{
 This function calculates the total likelihood of observing a set of observations (across multiple regions

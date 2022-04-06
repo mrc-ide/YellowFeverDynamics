@@ -81,7 +81,7 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
   n_regions=length(regions)
   if(is.null(enviro_data)==FALSE){
     for(region in regions){assert_that(region %in% enviro_data$adm1)}
-    enviro_data=subset(enviro_data,adm1 %in% regions)
+    enviro_data=subset(enviro_data,enviro_data$adm1 %in% regions)
     }
 
   #Label parameters according to order and fitting type
@@ -287,9 +287,9 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
 
     #Set up data structures to take modelled data corresponding to observed data and likelihood values
     if(is.null(obs_sero_data)==FALSE){
-      sero_like_values=rep(0,nrow(obs_sero_data))
-      model_sero_data=data.frame(samples=rep(0,nrow(obs_sero_data)),positives=rep(0,nrow(obs_sero_data)))
-    } else {sero_like_values=model_sero_data=NA}
+      blank=rep(0,nrow(obs_sero_data))
+      model_sero_data=data.frame(samples=blank,positives=blank,sero=blank)
+    } else {model_sero_data=NULL}
 
     if(is.null(obs_case_data)==FALSE){
       cases_like_values=deaths_like_values=model_case_values=model_death_values=rep(0,nrow(obs_case_data))
@@ -373,7 +373,7 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
             if(outbreak_risk[n_year]>0.9999){outbreak_risk[n_year]=0.9999}
           }
           for(i in 1:const_list$n_reps){
-            model_outbreak_data[input_data$outbreak_line_list[[n_region]]]=outbreak_risk
+            model_outbreak_risk_values[input_data$outbreak_line_list[[n_region]]]=outbreak_risk
           }
         }
       }
@@ -396,10 +396,10 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
 
     #Likelihood of observing serological data
     if(is.null(obs_sero_data)==FALSE){
-      model_sero=model_sero_data$positives/model_sero_data$samples
+      model_sero_data$sero=model_sero_data$positives/model_sero_data$samples
       sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)-
-        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+
-        obs_sero_data$positives*log(model_sero)+(obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero)
+        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+obs_sero_data$positives*log(model_sero_data$sero)+
+        (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero_data$sero)
     }
     #Likelihood of observing annual case/death data
     if(is.null(obs_case_data)==FALSE){
@@ -414,7 +414,7 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
     }
     #Likelihood of observing annual outbreak Y/N data
     if(is.null(obs_outbreak_data)==FALSE){
-      outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_outbreak_data,
+      outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_outbreak_risk_values,
                                                  obs_data=obs_outbreak_data$outbreak_yn)
     }
 
