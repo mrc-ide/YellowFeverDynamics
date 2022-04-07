@@ -105,7 +105,7 @@ Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=li
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRVC input in list from previous run(s)
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param n_particles number of particles to use
 #' @param n_threads number of threads to use
 #' @param year_end year to run up to
@@ -148,6 +148,160 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
               I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
               R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
               V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out))))
+}
+#-------------------------------------------------------------------------------
+#' @title Generate_Dataset
+#'
+#' @description Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
+#'   data sets; normally used by single_like_calc() and data_match_single() functions
+#'
+#' @details TBA
+#'
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#'   code and usually loaded from RDS file), with cross-reference tables added using input_data_process() function)
+#' @param enviro_data TBA
+#' @param FOI_values TBA
+#' @param R0_values TBA
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
+#' @param vaccine_efficacy TBA
+#' @param p_rep_severe TBA
+#' @param p_rep_death TBA
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param n_reps Number of repeats over which to average results
+#' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' '
+#' @export
+#'
+Generate_Dataset <- function(input_data=list(),enviro_data=list(),FOI_values=c(),R0_values=c(),
+                             obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
+                             vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0,mode_start=1,n_reps=1,dt=1.0){
+  #TODO Add assert_that functions
+
+  n_regions=length(input_data$region_labels)
+  frac=1.0/n_reps
+
+  #Set up data structures to take modelled data corresponding to observed data
+  if(is.null(obs_sero_data)==FALSE){
+    blank=rep(0,nrow(obs_sero_data))
+    model_sero_data=data.frame(samples=blank,positives=blank,sero=blank)
+  } else {model_sero_data=NULL}
+
+  if(is.null(obs_case_data)==FALSE){
+    model_case_values=model_death_values=rep(0,nrow(obs_case_data))
+  } else {model_case_values=model_death_values=NA}
+
+  if(is.null(obs_outbreak_data)==FALSE){
+    model_outbreak_risk_values=rep(0,nrow(obs_outbreak_data))
+  } else {model_outbreak_risk_values=NA}
+
+  #Model all regions and save relevant output data
+  for(n_region in 1:n_regions){
+
+    #Get information on which observed data types are available for considered region
+    flag_sero=input_data$flag_sero[n_region]
+    flag_case=input_data$flag_case[n_region]
+    flag_outbreak=input_data$flag_outbreak[n_region]
+
+    #Get input data on region
+    vacc_data=input_data$vacc_data[n_region,,]
+    pop_data=input_data$pop_data[n_region,,]
+    year_end=input_data$year_end[n_region]
+    year_data_begin=input_data$year_data_begin[n_region]
+
+    #Run model
+    if(flag_sero==1){
+      model_output=Full_Model_Run(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
+                                  year0=min(input_data$years_labels),mode_start,
+                                  n_particles=n_reps,n_threads=n_reps,year_end,
+                                  year_data_begin,vaccine_efficacy,dt=dt)
+    } else {
+      model_output=case_data_generate(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
+                                      year0=min(input_data$years_labels),mode_start,n_reps,
+                                      year_end,year_data_begin,vaccine_efficacy,dt=dt)
+    }
+
+    #Compile outbreak/case data if needed
+    if(max(flag_case,flag_outbreak)==1){
+      if(flag_case==1){
+        case_line_list=input_data$case_line_list[[n_region]]
+        years_outbreak=obs_case_data$year[case_line_list]
+        n_years_outbreak=length(case_line_list)
+      } else {
+        years_outbreak=obs_outbreak_data$year[input_data$outbreak_line_list[[n_region]]]
+        n_years_outbreak=length(input_data$outbreak_line_list[[n_region]])
+      }
+      blank=array(data=rep(0,n_reps*n_years_outbreak),dim=c(n_reps,n_years_outbreak))
+      annual_data=list(rep_cases=blank,rep_deaths=blank)
+      for(i in 1:n_reps){
+        for(n_year in 1:n_years_outbreak){
+          year=years_outbreak[n_year]
+          if(flag_sero==1){
+            infs=sum(model_output$C[,i,model_output$year[1,]==year])
+          } else {
+            infs=sum(model_output$C[i,model_output$year==year])
+          }
+          severe_infs=rbinom(1,floor(infs),p_severe_inf)
+          deaths=rbinom(1,severe_infs,p_death_severe_inf)
+          annual_data$rep_deaths[i,n_year]=rbinom(1,deaths,p_rep_death)
+          annual_data$rep_cases[i,n_year]=annual_data$rep_deaths[i,n_year]+rbinom(1,severe_infs-deaths,
+                                                                                  p_rep_severe)
+        }
+      }
+
+      if(flag_case==1){
+        for(rep in 1:n_reps){
+          model_case_values[case_line_list]=model_case_values[case_line_list]+annual_data$rep_cases[rep,]
+          model_death_values[case_line_list]=model_death_values[case_line_list]+annual_data$rep_deaths[rep,]
+        }
+      }
+
+      if(flag_outbreak==1){
+        outbreak_risk=rep(0,n_years_outbreak)
+        for(rep in 1:n_reps){
+          for(n_year in 1:n_years_outbreak){
+            if(annual_data$rep_cases[rep,n_year]>0){outbreak_risk[n_year]=outbreak_risk[n_year]+frac}
+          }
+        }
+        for(n_year in 1:n_years_outbreak){
+          if(outbreak_risk[n_year]<1.0e-4){outbreak_risk[n_year]=1.0e-4}
+          if(outbreak_risk[n_year]>0.9999){outbreak_risk[n_year]=0.9999}
+        }
+        model_outbreak_risk_values[input_data$outbreak_line_list[[n_region]]]=outbreak_risk
+      }
+    }
+
+    #Compile seroprevalence data if necessary
+    if(flag_sero==1){
+      sero_line_list=input_data$sero_line_list[[n_region]]
+      for(i in 1:n_reps){
+        sero_results=sero_calculate2(obs_sero_data[sero_line_list,],
+                                     model_data=list(day=model_output$day[i,],year=model_output$year[i,],
+                                                     S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
+                                                     I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),
+                                                     V=t(model_output$V[,i,])))
+        model_sero_data$samples[sero_line_list]=model_sero_data$samples[sero_line_list]+sero_results$samples
+        model_sero_data$positives[sero_line_list]=model_sero_data$positives[sero_line_list]+sero_results$positives
+      }
+    }
+    model_output<-NULL
+  }
+
+  if(is.null(obs_sero_data)==FALSE){model_sero_data$sero=model_sero_data$positives/model_sero_data$samples}
+  if(is.null(obs_case_data)==FALSE){
+    model_case_values=model_case_values*frac
+    model_death_values=model_death_values*frac
+  }
+
+  return(list(model_sero_values=model_sero_data$sero,model_case_values=model_case_values,
+              model_death_values=model_death_values,model_outbreak_risk_values=model_outbreak_risk_values))
 }
 #-------------------------------------------------------------------------------
 #' @title Parameter setup
@@ -244,90 +398,15 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
               dP1_all=dP1_all,dP2_all=dP2_all,n_years=n_years,year0=year0,vaccine_efficacy=vaccine_efficacy,dt=dt))
 }
 #-------------------------------------------------------------------------------
-#' @title mcmc_FOI_R0_setup
-#'
-#' @description Set up FOI and R0 values and calculate some prior probability values for MCMC calculation
-#'
-#' @details Takes in parameter values used for Markov Chain Monte Carlo fitting, calculates spillover force of
-#' infection and (optionally) reproduction number values either directly or from environmental covariates. Also
-#' calculates related components of prior probability.
-#'
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
-#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
-#' @param prior_type Text indicating which type of calculation to use for prior probability
-#'  If prior_type = "zero", prior probability is always zero
-#'  If prior_type = "flat", prior probability is zero if FOI/R0 in designated ranges, -Inf otherwise
-#'  If prior_type = "exp", prior probability is given by dexp calculation on FOI/R0 values
-#'  If prior_type = "norm", prior probability is given by dnorm calculation on parameter values
-#' @param regions Vector of region names
-#' @param param_prop Proposed parameter values
-#' @param enviro_data Environmental data frame, containing only relevant environmental variables
-#' @param R0_fixed_values Values of R0 to use if not being fitted
-#' @param pars_min Lower limits of parameter values if specified
-#' @param pars_max Upper limits of parameter values if specified
-#' '
-#' @export
-#'
-mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),enviro_data=list(),R0_fixed_values=c(),
-                              pars_min=c(),pars_max=c()){
-
-  n_params=length(param_prop)
-  n_regions=length(regions)
-  if(type %in% c("FOI+R0 enviro","FOI enviro")){n_env_vars=ncol(enviro_data)-1}
-  FOI_values=R0_values=rep(0,n_regions)
-
-  if(type %in% c("FOI+R0 enviro","FOI enviro")){
-    for(i in 1:n_regions){
-      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$adm1==regions[i],])
-      FOI_values[i]=model_params$FOI
-      if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
-    }
-  }
-  if(type %in% c("FOI+R0","FOI")){
-    FOI_values=exp(param_prop[c(1:n_regions)])
-    if(type=="FOI+R0"){R0_values=exp(param_prop[c((n_regions+1):(2*n_regions))])
-    } else {R0_values=R0_fixed_values}
-  }
-
-  prior=0
-  if(prior_type=="exp"){
-    prior_FOI=dexp(FOI_values,rate=1,log=TRUE)
-    if(type %in% c("FOI+R0","FOI+R0 enviro")){prior_R0=dexp(R0_values,rate=1,log=TRUE)} else {prior_R0=0}
-    prior = prior+sum(prior_FOI)+sum(prior_R0)
-  }
-  if(prior_type=="flat"){
-    if(is.null(pars_min)==FALSE){
-      for(i in 1:n_params){
-        if(param_prop[i]<pars_min[i]){prior=-Inf}
-      }
-    }
-    if(is.null(pars_max)==FALSE){
-      for(i in 1:n_params){
-        if(param_prop[i]>pars_max[i]){prior=-Inf}
-      }
-    }
-  }
-  if(prior_type=="norm"){
-    if(type=="FOI"){n_params_check=n_regions}
-    if(type=="FOI+R0"){n_params_check=2*n_regions}
-    if(type=="FOI enviro"){n_params_check=n_env_vars}
-    if(type=="FOI+R0 enviro"){n_params_check=2*n_env_vars}
-    prior=sum(dnorm(param_prop[c(1:n_params_check)],mean = 0,sd = 30,log = TRUE))
-  }
-
-  output=list(FOI_values=FOI_values,R0_values=R0_values,prior=prior)
-  return(output)
-}
-#-------------------------------------------------------------------------------
 #' @title param_calc_enviro
 #'
-#' @description Parameter calculation from environmental variables
+#' @description Parameter calculation from environmental covariates
 #'
 #' @details Takes in parameter set used for Markov Chain Monte Carlo fitting and calculates values of spillover
 #' force of infection and reproduction number.
 #'
-#' @param param Parameter values
-#' @param enviro_data Environmental data frame line, containing only relevant environmental variables
+#' @param param Parameter values as fitted in MCMC (natural logarithm of actual values)
+#' @param enviro_data Environmental data frame line, containing only relevant environmental covariates
 #' '
 #' @export
 #'
@@ -345,82 +424,6 @@ param_calc_enviro <- function(param=c(),enviro_data=c()){
   }
 
   return(output)
-}
-#-------------------------------------------------------------------------------
-#' @title param_prop_setup
-#'
-#' @description Set up proposed new parameter values for next step in chain
-#'
-#' @details Takes in current values of parameter set used for Markov Chain Monte Carlo fitting and proposes new values
-#' from multivariate normal distribution where the existing values form the mean and the standard deviation is
-#' based on the chain covariance or (if the flag "adapt" is set to 1) a flat value based on the number of parameters.
-#'
-#' @param param Previous parameter values used as input
-#' @param chain_cov Covariance calculated from previous steps in chain
-#' @param adapt 0/1 flag indicating which type of calculation to use for proposition value
-#' '
-#' @export
-#'
-param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
-
-  n_params = length(param)
-  if (adapt==1) {
-    sigma = (2.38 ^ 2) * chain_cov / n_params #'optimal' scaling of chain covariance
-    param_prop_a = rmvnorm(n = 1, mean = param, sigma = sigma)
-  } else {
-    sigma = ((1e-2) ^ 2) * diag(n_params) / n_params #this is an inital proposal covariance, see [Mckinley et al 2014]
-    param_prop_a = rmvnorm(n = 1, mean = param, sigma = sigma)
-  }
-  param_prop = param_prop_a[1,]
-  names(param_prop)=names(param)
-
-  return(param_prop)
-}
-#-------------------------------------------------------------------------------
-#' @title create_param_labels
-#'
-#' @description Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting
-#'
-#' @details Takes in input list and environmental data along with names of additional parameters (vaccine efficacy
-#' and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
-#'
-#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
-#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
-#' @param input_data = List of population and vaccination data for multiple regions (created using data input creation
-#' code and usually loaded from RDS file)
-#' @param enviro_data = Environmental data frame, containing only relevant environmental variables
-#' @param extra_params = Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
-#' efficacy and/or infection/death reporting probabilities)
-#' '
-#' @export
-#'
-create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){
-  #TODO - Add assert_that functions
-
-  n_extra=length(extra_params)
-
-  if(type %in% c("FOI","FOI+R0")){
-    regions=input_data$region_labels
-    n_regions=length(regions)
-    if(type=="FOI"){n_params=n_regions+n_extra} else {n_params=(2*n_regions)+n_extra}
-    param_names=rep("",n_params)
-    for(i in 1:n_regions){
-      param_names[i]=paste("FOI_",regions[i],sep="")
-      if(type=="FOI+R0"){param_names[i+n_regions]=paste("R0_",regions[i],sep="")}
-    }
-  } else {
-    env_vars=colnames(enviro_data)[c(2:ncol(enviro_data))]
-    n_env_vars=length(env_vars)
-    if(type=="FOI enviro"){n_params=n_env_vars+n_extra} else {n_params=(2*n_env_vars)+n_extra}
-    param_names=rep("",n_params)
-    for(i in 1:n_env_vars){
-      param_names[i]=paste("FOI_",env_vars[i],sep="")
-      if(type=="FOI+R0 enviro"){param_names[i+n_env_vars]=paste("R0_",env_vars[i],sep="")}
-    }
-  }
-  if(n_extra>0){param_names[(n_params-n_extra+1):n_params]=extra_params}
-
-  return(param_names)
 }
 #-------------------------------------------------------------------------------
 #' @title plot_model_output
@@ -486,4 +489,50 @@ plot_model_output <- function(model_output=list()){
   }
 
   return(plot1)
+}
+#-------------------------------------------------------------------------------
+#' @title create_param_labels
+#'
+#' @description Apply names to the parameters in a set used for data matching and parameter fitting
+#'
+#' @details Takes in input list and environmental data along with names of additional parameters (vaccine efficacy
+#' and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
+#'
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
+#' @param input_data = List of population and vaccination data for multiple regions (created using data input creation
+#' code and usually loaded from RDS file)
+#' @param enviro_data = Environmental data frame, containing only relevant environmental variables
+#' @param extra_params = Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
+#' efficacy and/or infection/death reporting probabilities)
+#' '
+#' @export
+#'
+create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){
+  #TODO - Add assert_that functions
+
+  n_extra=length(extra_params)
+
+  if(type %in% c("FOI","FOI+R0")){
+    regions=input_data$region_labels
+    n_regions=length(regions)
+    if(type=="FOI"){n_params=n_regions+n_extra} else {n_params=(2*n_regions)+n_extra}
+    param_names=rep("",n_params)
+    for(i in 1:n_regions){
+      param_names[i]=paste("FOI_",regions[i],sep="")
+      if(type=="FOI+R0"){param_names[i+n_regions]=paste("R0_",regions[i],sep="")}
+    }
+  } else {
+    env_vars=colnames(enviro_data)[c(2:ncol(enviro_data))]
+    n_env_vars=length(env_vars)
+    if(type=="FOI enviro"){n_params=n_env_vars+n_extra} else {n_params=(2*n_env_vars)+n_extra}
+    param_names=rep("",n_params)
+    for(i in 1:n_env_vars){
+      param_names[i]=paste("FOI_",env_vars[i],sep="")
+      if(type=="FOI+R0 enviro"){param_names[i+n_env_vars]=paste("R0_",env_vars[i],sep="")}
+    }
+  }
+  if(n_extra>0){param_names[(n_params-n_extra+1):n_params]=extra_params}
+
+  return(param_names)
 }

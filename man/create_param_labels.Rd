@@ -25,7 +25,7 @@ efficacy and/or infection/death reporting probabilities)
 '}
 }
 \description{
-Apply names to the parameters in the set used for Markov Chain Monte Carlo fitting
+Apply names to the parameters in a set used for data matching and parameter fitting
 }
 \details{
 Takes in input list and environmental data along with names of additional parameters (vaccine efficacy

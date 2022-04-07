@@ -17,7 +17,7 @@ data_match_single(
 \item{param_prop}{Log values of proposed parameters}
 
 \item{input_data}{List of population and vaccination data for multiple regions, with tables to cross-reference
-with observed data, added using input_data_process2}
+with observed data, added using input_data_process}
 
 \item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 positives}

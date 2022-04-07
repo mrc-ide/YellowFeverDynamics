@@ -7,7 +7,8 @@
 get_mcmc_probs_multichain(
   datasets = c(),
   datasets_selected = c(1),
-  lines_selected = list(),
+  burnin_values = NULL,
+  end_values = NULL,
   prob_names = c("vaccine_efficacy")
 )
 }
@@ -16,7 +17,9 @@ get_mcmc_probs_multichain(
 
 \item{datasets_selected}{Vector of dataset numbers to be selected from list}
 
-\item{lines_selected}{TBA}
+\item{burnin_values}{TBA}
+
+\item{end_values}{TBA}
 
 \item{prob_names}{TBA}
 }

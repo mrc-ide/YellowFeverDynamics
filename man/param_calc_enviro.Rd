@@ -7,13 +7,13 @@
 param_calc_enviro(param = c(), enviro_data = c())
 }
 \arguments{
-\item{param}{Parameter values}
+\item{param}{Parameter values as fitted in MCMC (natural logarithm of actual values)}
 
-\item{enviro_data}{Environmental data frame line, containing only relevant environmental variables
+\item{enviro_data}{Environmental data frame line, containing only relevant environmental covariates
 '}
 }
 \description{
-Parameter calculation from environmental variables
+Parameter calculation from environmental covariates
 }
 \details{
 Takes in parameter set used for Markov Chain Monte Carlo fitting and calculates values of spillover

@@ -7,7 +7,8 @@
 get_mcmc_FOI_R0_multichain(
   datasets = c(),
   datasets_selected = c(1),
-  lines_selected = list(),
+  burnin_values = NULL,
+  end_values = NULL,
   type = "FOI+R0",
   enviro_data = NULL
 )
@@ -17,7 +18,9 @@ get_mcmc_FOI_R0_multichain(
 
 \item{datasets_selected}{Vector of dataset numbers to be selected from list}
 
-\item{lines_selected}{TBA}
+\item{burnin_values}{TBA}
+
+\item{end_values}{TBA}
 
 \item{type}{TBA}
 
