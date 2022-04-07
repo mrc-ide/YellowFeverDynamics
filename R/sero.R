@@ -124,6 +124,10 @@ sero_calculate2 <- function(sero_data=list(),model_data=list()){
 sero_compare <- function(model_data=list(),obs_sero_data=list()){
 
   assert_that(is.null(model_data$S)==FALSE)
+  assert_that(is.null(model_data$E)==FALSE)
+  assert_that(is.null(model_data$I)==FALSE)
+  assert_that(is.null(model_data$R)==FALSE)
+  assert_that(is.null(model_data$V)==FALSE)
   assert_that(is.null(obs_sero_data$year)==FALSE)
   assert_that(is.null(obs_sero_data$age_min)==FALSE)
   assert_that(is.null(obs_sero_data$age_max)==FALSE)

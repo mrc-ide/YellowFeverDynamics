@@ -188,7 +188,10 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
   if(plot_type %in% c("box","violin")){
     FOI=NULL
     p_FOI <- ggplot(data=data_frame,aes(x=n_region,y=log(FOI))) + theme_bw()
-    if(plot_type=="box"){p_FOI <- p_FOI+geom_boxplot(outlier.size = 0)} else {p_FOI <- p_FOI+geom_violin(trim=FALSE)}
+    if(plot_type=="box"){
+      p_FOI <- p_FOI+geom_boxplot(outlier.size = 0)
+    } else {
+      p_FOI <- p_FOI+geom_violin(trim=FALSE,scale="width")}
     p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
     p_FOI <- p_FOI + scale_y_continuous(name="FOI",breaks=log(FOI_labels),labels=FOI_labels)
     p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1))
@@ -196,7 +199,11 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
     if(is.null(data_frame$R0)==FALSE){
       R0=NULL
       p_R0 <- ggplot(data=data_frame,aes(x=n_region,y=R0)) + theme_bw()
-      if(plot_type=="box"){p_R0 <- p_R0+geom_boxplot(outlier.size = 0)} else {p_R0 <- p_R0+geom_violin(trim=FALSE)}
+      if(plot_type=="box"){
+        p_R0 <- p_R0+geom_boxplot(outlier.size = 0)
+      } else {
+        p_R0 <- p_R0+geom_violin(trim=FALSE,scale="width")
+      }
       p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
       p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1))
     } else {
@@ -296,7 +303,7 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
     if(plot_type=="box"){
       p_probs <- p_probs+geom_boxplot(outlier.size=0)
     } else {
-      p_probs <- p_probs+geom_violin(trim=FALSE)}
+      p_probs <- p_probs+geom_violin(trim=FALSE,scale="width")}
     p_probs <- p_probs + scale_x_discrete(name="",breaks=c(1:length(values)),labels=values)
     p_probs <- p_probs + scale_y_continuous(name="",breaks=log(labels),labels=labels)
     p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1))

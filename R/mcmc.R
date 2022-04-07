@@ -1,7 +1,7 @@
 # R file for functions used for Markov Chain Monte Carlo fitting (and preliminary maximum-likelihood fitting) in
 # YellowFeverDynamics package
 #-------------------------------------------------------------------------------
-#' @title MCMC2
+#' @title MCMC
 #'
 #' @description Combined MCMC Multi-Region - series of MCMC steps for one or more regions
 #'
@@ -58,7 +58,7 @@
 #' '
 #' @export
 #'
-MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,Niter=1,
+MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,Niter=1,
                   type=NULL,pars_min=NULL,pars_max=NULL,n_reps=1,mode_start=0,prior_type="zero",dt=1.0,
                   enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,
                   filename_prefix="Chain"){
@@ -68,25 +68,29 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
   assert_that(length(pars_min)==n_params)
   assert_that(length(pars_max)==n_params)
 
-  #TODO - Assert that environmental variables must be in alphabetical order?
-
   extra_params=c()
   if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
   if(is.null(p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
   if(is.null(p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
 
   #Process input data to check that all regions with sero, case and/or outbreak data supplied are present, remove
-  #regions without any supplied data, and add cross-referencing tables for use when calculating likelihood
-  input_data=input_data_process2(input_data,obs_sero_data,obs_case_data,obs_outbreak_data)
+  #regions without any supplied data, and add cross-referencing tables for use when calculating likelihood. Take
+  #subset of environmental data (if used) and check that environmental data available for all regions
+  input_data=input_data_process(input_data,obs_sero_data,obs_case_data,obs_outbreak_data)
   regions=names(table(input_data$region_labels)) #Regions in new processed input data list
   n_regions=length(regions)
+  if(is.null(enviro_data)==FALSE){
+    for(region in regions){assert_that(region %in% enviro_data$adm1)}
+    enviro_data=subset(enviro_data,enviro_data$adm1 %in% regions)
+    }
 
   #Label parameters according to order and fitting type
   param_names=create_param_labels(type,input_data,enviro_data,extra_params)
   names(pars_ini)=names(pars_min)=names(pars_max)=param_names
 
-  #Run checks to ensure that number of parameters is correct for fitting type and number of regions/environmental covariates
-  checks<-mcmc_checks2(pars_ini,n_regions,type,pars_min,pars_max,prior_type,enviro_data,
+  #Run checks to ensure that number of parameters is correct for fitting type and number of regions/environmental
+  #covariates
+  checks<-mcmc_checks(pars_ini,n_regions,type,pars_min,pars_max,prior_type,enviro_data,
                        R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
 
   #Set up list of invariant parameter values to supply to other functions
@@ -95,7 +99,7 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
                   vaccine_efficacy=vaccine_efficacy,p_rep_severe=p_rep_severe,p_rep_death=p_rep_death)
 
   ### find posterior probability at start ###
-  out = MCMC_step2(param=pars_ini,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,
+  out = MCMC_step(param=pars_ini,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,
                    chain_cov=1,adapt=0,like_current=-Inf,const_list)
 
   #MCMC setup
@@ -121,11 +125,8 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
 
     #Set output headings
     if(iter==1){
-      colnames(chain) = names(pars_ini)
-      colnames(chain_prop) = names(pars_ini)
-      for(i in 1:n_params){
-        colnames(chain_prop)[i]=paste("Test_",colnames(chain_prop)[i],sep="")
-      }
+      colnames(chain)=colnames(chain_prop)=names(pars_ini)
+      for(i in 1:n_params){colnames(chain_prop)[i]=paste("Test_",colnames(chain_prop)[i],sep="")}
       colnames(posterior_current) = "posterior_current"
       colnames(posterior_prop) = "posterior_prop"
       colnames(flag_accept) = "flag_accept"
@@ -153,7 +154,7 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
     }
 
     #Next iteration in chain
-    out = MCMC_step2(param,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,chain_cov,adapt,like_current,
+    out = MCMC_step(param,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,chain_cov,adapt,like_current,
                      const_list)
   }
 
@@ -164,7 +165,7 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
   return(param_out)
 }
 #-------------------------------------------------------------------------------
-#' @title MCMC_step2
+#' @title MCMC_step
 #'
 #' @description Single MCMC step - one or more regions
 #'
@@ -185,19 +186,19 @@ MCMC2 <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_dat
 #' @param chain_cov = Chain covariance
 #' @param adapt = 0/1 flag indicating which type of calculation to use for proposition value
 #' @param like_current = Current accepted likelihood value
-#' @param const_list = List of constant parameters/flags/etc. loaded to mcmc2() (type,pars_min,pars_max,n_reps,
+#' @param const_list = List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
 #' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
 #'
 #' @export
 #'
-MCMC_step2 <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
+MCMC_step <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
                        chain_cov=1,adapt=0,like_current=-Inf,const_list=list()) {
 
   #Propose new parameter values
   param_prop=param_prop_setup(param,chain_cov,adapt)
 
-  #Calculate likelihood using single_like_calc2 function
-  like_prop=single_like_calc2(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+  #Calculate likelihood using single_like_calc function
+  like_prop=single_like_calc(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 
   if(is.finite(like_prop)==FALSE) {
     p_accept = -Inf
@@ -216,14 +217,12 @@ MCMC_step2 <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_d
     accept = 0
   }
 
-  output=list(param=param, param_prop=param_prop, like_current=like_current,like_prop=like_prop,accept = accept)
-
-  return(output)
+  return(list(param=param,param_prop=param_prop,like_current=like_current,like_prop=like_prop,accept=accept))
 }
 #-------------------------------------------------------------------------------
-#' @title single_like_calc2
+#' @title single_like_calc
 #'
-#' @description Function which calculates and outputs likelihood
+#' @description Function which calculates and outputs likelihood of observing simulated data
 #'
 #' @details This function calculates the total likelihood of observing a set of observations (across multiple regions
 #' and data types) for a given proposed parameter set. [TBC]
@@ -237,18 +236,16 @@ MCMC_step2 <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_d
 #'   deaths
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
-#' @param const_list = List of constant parameters/flags/etc. loaded to mcmc2() (type,pars_min,pars_max,n_reps,
+#' @param const_list = List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
 #' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
 #'
 #' @export
 #'
-single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
+single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
 
   regions=input_data$region_labels
   n_regions=length(regions)
-  # p_severe_inf=0.12
-  # p_death_severe_inf=0.47
   frac=1.0/const_list$n_reps
 
   #Get vaccine efficacy and calculate associated prior
@@ -285,128 +282,32 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   prior_prop=prior_vacc+prior_report+FOI_R0_data$prior+sum(dnorm(log(c(p_rep_severe,p_rep_death)),
                                                                  mean = 0,sd = 30,log = TRUE))
 
+  if(is.null(obs_sero_data)){sero_like_values=NA}
+  if(is.null(obs_case_data)){cases_like_values=deaths_like_values=NA}
+  if(is.null(obs_outbreak_data)){outbreak_like_values=NA}
+
   ### If prior finite, evaluate likelihood ###
   if (is.finite(prior_prop)) {
 
-    #Set up data structures to take modelled data corresponding to observed data and likelihood values
-    if(is.null(obs_sero_data)==FALSE){
-      sero_like_values=rep(0,nrow(obs_sero_data))
-      model_sero_data=data.frame(samples=rep(0,nrow(obs_sero_data)),positives=rep(0,nrow(obs_sero_data)))
-    } else {sero_like_values=model_sero_data=NA}
-
-    if(is.null(obs_case_data)==FALSE){
-      cases_like_values=deaths_like_values=model_case_values=model_death_values=rep(0,nrow(obs_case_data))
-    } else {cases_like_values=deaths_like_values=model_case_values=model_death_values=NA}
-
-    if(is.null(obs_outbreak_data)==FALSE){
-      outbreak_like_values=model_outbreak_risk_values=rep(0,nrow(obs_outbreak_data))
-    } else {outbreak_like_values=model_outbreak_risk_values=NA}
-
-    #Model all regions and save relevant output data
-    for(n_region in 1:n_regions){
-
-      #Get information on which observed data types are available for considered region
-      flag_sero=input_data$flag_sero[n_region]
-      flag_case=input_data$flag_case[n_region]
-      flag_outbreak=input_data$flag_outbreak[n_region]
-
-      #Get input data on region
-      region=regions[n_region]
-      vacc_data=input_data$vacc_data[n_region,,]
-      pop_data=input_data$pop_data[n_region,,]
-      year_end=input_data$year_end[n_region]
-      year_data_begin=input_data$year_data_begin[n_region]
-
-      #Run model
-      if(flag_sero==1){
-        model_output=Full_Model_Run(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
-                                    year0=min(input_data$years_labels),const_list$mode_start,
-                                    n_particles=const_list$n_reps,n_threads=const_list$n_reps,year_end,
-                                    year_data_begin,vaccine_efficacy,dt=const_list$dt)
-      } else {
-        model_output=case_data_generate(FOI_values[n_region],R0_values[n_region],vacc_data,pop_data,
-                                        year0=min(input_data$years_labels),const_list$mode_start,const_list$n_reps,
-                                        year_end,year_data_begin,vaccine_efficacy,const_list$dt)
-      }
-
-      #Compile outbreak/case data if needed
-      if(max(flag_case,flag_outbreak)==1){
-        if(flag_case==1){
-          case_line_list=input_data$case_line_list[[n_region]]
-          years_outbreak=obs_case_data$year[case_line_list]
-          n_years_outbreak=length(case_line_list)
-        } else {
-          years_outbreak=obs_outbreak_data$year[input_data$outbreak_line_list[[n_region]]]
-          n_years_outbreak=length(input_data$outbreak_line_list[[n_region]])
-        }
-        blank=array(data=rep(0,const_list$n_reps*n_years_outbreak),dim=c(const_list$n_reps,n_years_outbreak))
-        annual_data=list(rep_cases=blank,rep_deaths=blank)
-        for(i in 1:const_list$n_reps){
-          for(n_year in 1:n_years_outbreak){
-            year=years_outbreak[n_year]
-            if(flag_sero==1){
-              infs=sum(model_output$C[,i,model_output$year[1,]==year])
-            } else {
-              infs=sum(model_output$C[i,model_output$year==year])
-            }
-            severe_infs=rbinom(1,floor(infs),p_severe_inf)
-            deaths=rbinom(1,severe_infs,p_death_severe_inf)
-            annual_data$rep_deaths[i,n_year]=rbinom(1,deaths,p_rep_death)
-            annual_data$rep_cases[i,n_year]=annual_data$rep_deaths[i,n_year]+rbinom(1,severe_infs-deaths,
-                                                                                    p_rep_severe)
-          }
-        }
-
-        if(flag_case==1){
-          for(rep in 1:const_list$n_reps){
-            model_case_values[case_line_list]=model_case_values[case_line_list]+annual_data$rep_cases[rep,]
-            model_death_values[case_line_list]=model_death_values[case_line_list]+annual_data$rep_deaths[rep,]
-          }
-        }
-
-        if(flag_outbreak==1){
-          outbreak_risk=rep(0,n_years_outbreak)
-          for(i in 1:const_list$n_reps){
-            for(n_year in 1:n_years_outbreak){
-              if(annual_data$rep_cases[i,n_year]>0){outbreak_risk[n_year]=outbreak_risk[n_year]+frac}
-            }
-          }
-          for(n_year in 1:n_years_outbreak){
-            if(outbreak_risk[n_year]<1.0e-4){outbreak_risk[n_year]=1.0e-4}
-            if(outbreak_risk[n_year]>0.9999){outbreak_risk[n_year]=0.9999}
-          }
-          for(i in 1:const_list$n_reps){
-            model_outbreak_data[input_data$outbreak_line_list[[n_region]]]=outbreak_risk
-          }
-        }
-      }
-
-      #Compile seroprevalence data if necessary
-      if(flag_sero==1){
-        sero_line_list=input_data$sero_line_list[[n_region]]
-        for(i in 1:const_list$n_reps){
-          sero_results=sero_calculate2(obs_sero_data[sero_line_list,],model_data=list(day=model_output$day[i,],
-                                                                                      year=model_output$year[i,],S=t(model_output$S[,i,]),E=t(model_output$E[,i,]),
-                                                                                      I=t(model_output$I[,i,]),R=t(model_output$R[,i,]),V=t(model_output$V[,i,])))
-          model_sero_data$samples[sero_line_list]=model_sero_data$samples[sero_line_list]+sero_results$samples
-          model_sero_data$positives[sero_line_list]=model_sero_data$positives[sero_line_list]+sero_results$positives
-        }
-      }
-      model_output<-NULL
-    }
+    #Generate modelled data over all regions
+    dataset <- Generate_Dataset(input_data,const_list$enviro_data,FOI_values,R0_values,
+                                obs_sero_data,obs_case_data,obs_outbreak_data,
+                                vaccine_efficacy,p_rep_severe,p_rep_death,
+                                const_list$mode_start,const_list$n_reps,const_list$dt)
 
     #Likelihood of observing serological data
     if(is.null(obs_sero_data)==FALSE){
-      model_sero=model_sero_data$positives/model_sero_data$samples
       sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)-
-        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+
-        obs_sero_data$positives*log(model_sero)+(obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero)
+        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+obs_sero_data$positives*log(dataset$model_sero_values)+
+        (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-dataset$model_sero_values)
     }
     #Likelihood of observing annual case/death data
     if(is.null(obs_case_data)==FALSE){
+      model_case_values=dataset$model_case_values
+      model_death_values=dataset$model_death_values
       for(i in 1:length(model_case_values)){
-        model_case_values[i]=max(model_case_values[i]*frac,0.1)
-        model_death_values[i]=max(model_death_values[i]*frac,0.1)
+        model_case_values[i]=max(model_case_values[i],0.1)
+        model_death_values[i]=max(model_death_values[i],0.1)
       }
       cases_like_values=dnbinom(x=obs_case_data$cases,mu=model_case_values,
                                 size=rep(1,length(obs_case_data$cases)),log=TRUE)
@@ -415,128 +316,19 @@ single_like_calc2 <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
     }
     #Likelihood of observing annual outbreak Y/N data
     if(is.null(obs_outbreak_data)==FALSE){
-      outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_outbreak_data,
+      outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=dataset$model_outbreak_risk_values,
                                                  obs_data=obs_outbreak_data$outbreak_yn)
     }
 
-    # likelihood=sum(c(prior_prop,mean(sero_like_values,na.rm=TRUE),mean(cases_like_values,na.rm=TRUE),
-    #                  mean(deaths_like_values,na.rm=TRUE),mean(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
-    # likelihood=sum(c(prior_prop,sum(sero_like_values,na.rm=TRUE),sum(cases_like_values,na.rm=TRUE),
-    #                  sum(deaths_like_values,na.rm=TRUE),sum(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
     likelihood=prior_prop+mean(c(sum(sero_like_values,na.rm=TRUE),sum(cases_like_values,na.rm=TRUE),
                      sum(deaths_like_values,na.rm=TRUE),sum(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
 
-  } else {
-    likelihood=-Inf
-  }
+  } else {likelihood=-Inf}
 
   return(likelihood)
 }
 #-------------------------------------------------------------------------------
-#' @title input_data_process2
-#'
-#' @description TBA
-#'
-#' @details TBA
-#'
-#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
-#'   code and usually loaded from RDS file)
-#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
-#'   positives
-#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
-#'   deaths
-#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
-#'   1 = 1 or more outbreak(s)
-#'
-#' @export
-#'
-input_data_process2 <- function(input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL){
-
-  regions_input_data=input_data$region_labels
-  #TODO - Make sure regions always in alphabetical order?
-  #if(table(sort(regions_input_data)==regions_input_data)[[TRUE]]==length(regions_input_data)){}
-  regions_sero_com=names(table(obs_sero_data$adm1))
-  regions_case_com=names(table(obs_case_data$adm1))
-  regions_outbreak_com=names(table(obs_outbreak_data$adm1))
-  regions_sero_unc=regions_case_unc=regions_outbreak_unc=c()
-
-  for(region in regions_sero_com){regions_sero_unc=append(regions_sero_unc,strsplit(region,",")[[1]])}
-  for(region in regions_case_com){regions_case_unc=append(regions_case_unc,strsplit(region,",")[[1]])}
-  for(region in regions_outbreak_com){regions_outbreak_unc=append(regions_outbreak_unc,strsplit(region,",")[[1]])}
-  regions_sero_unc=names(table(regions_sero_unc))
-  regions_case_unc=names(table(regions_case_unc))
-  regions_outbreak_unc=names(table(regions_outbreak_unc))
-  regions_all_data_unc=names(table(c(regions_sero_unc,regions_case_unc,regions_outbreak_unc)))
-
-  for(region in regions_all_data_unc){
-    if(region %in% regions_input_data==FALSE){
-      cat("\nInput data error - ",region," does not appear in input data\n",sep="")
-      stop()
-    }
-  }
-
-  input_regions_check=regions_input_data %in% regions_all_data_unc
-  regions_input_data_new=regions_input_data[input_regions_check]
-  n_regions_input_data=length(regions_input_data_new)
-
-  #TODO - Skip steps below if the input data already has the same set of regions and the cross-reference tables
-
-  blank=rep(0,n_regions_input_data)
-  flag_sero=flag_case=flag_outbreak=year_end=blank
-  year_data_begin=rep(Inf,n_regions_input_data)
-  sero_line_list=case_line_list=outbreak_line_list=list()
-  for(i in 1:n_regions_input_data){
-    region=regions_input_data_new[i]
-    if(region %in% regions_sero_unc){
-      flag_sero[i]=1
-      sero_line_list[[i]]=c(0)
-      for(j in 1:nrow(obs_sero_data)){
-        if(grepl(region,obs_sero_data$adm1[j])==TRUE){
-          sero_line_list[[i]]=append(sero_line_list[[i]],j)
-          year_data_begin[i]=min(obs_sero_data$year[j],year_data_begin[i])
-          year_end[i]=max(obs_sero_data$year[j]+1,year_end[i])
-        }
-      }
-      sero_line_list[[i]]=sero_line_list[[i]][c(2:length(sero_line_list[[i]]))]
-    }
-    if(region %in% regions_case_unc){
-      flag_case[i]=1
-      case_line_list[[i]]=c(0)
-      for(j in 1:nrow(obs_case_data)){
-        if(grepl(region,obs_case_data$adm1[j])==TRUE){
-          case_line_list[[i]]=append(case_line_list[[i]],j)
-          year_data_begin[i]=min(obs_case_data$year[j],year_data_begin[i])
-          year_end[i]=max(obs_case_data$year[j]+1,year_end[i])
-        }
-      }
-      case_line_list[[i]]=case_line_list[[i]][c(2:length(case_line_list[[i]]))]
-    }
-    if(region %in% regions_outbreak_unc){
-      flag_outbreak[i]=1
-      outbreak_line_list[[i]]=c(0)
-      for(j in 1:nrow(obs_outbreak_data)){
-        if(grepl(region,obs_outbreak_data$adm1[j])==TRUE){
-          outbreak_line_list[[i]]=append(outbreak_line_list[[i]],j)
-          year_data_begin[i]=min(obs_outbreak_data$year[j],year_data_begin[i])
-          year_end[i]=max(obs_outbreak_data$year[j]+1,year_end[i])
-        }
-      }
-      outbreak_line_list[[i]]=outbreak_line_list[[i]][c(2:length(outbreak_line_list[[i]]))]
-    }
-  }
-
-  input_data_new=list(region_labels=input_data$region_labels[input_regions_check],
-                      years_labels=input_data$years_labels,age_labels=input_data$age_labels,
-                      vacc_data=input_data$vacc_data[input_regions_check,,],
-                      pop_data=input_data$pop_data[input_regions_check,,],year_data_begin=year_data_begin,
-                      year_end=year_end,flag_sero=flag_sero,flag_case=flag_case,flag_outbreak=flag_outbreak,
-                    sero_line_list=sero_line_list,case_line_list=case_line_list,outbreak_line_list=outbreak_line_list)
-
-
-  return(input_data_new)
-}
-#-------------------------------------------------------------------------------
-#' @title mcmc_prelim_fit2
+#' @title mcmc_prelim_fit
 #'
 #' @description Test multiple sets of parameters randomly drawn from range between maximum and minimum
 #' values in order to find approximate values giving maximum likelihood
@@ -579,7 +371,7 @@ input_data_process2 <- function(input_data=list(),obs_sero_data=NULL,obs_case_da
 #' '
 #' @export
 #'
-mcmc_prelim_fit2 <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
+mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
                             type=NULL,pars_min=NULL,pars_max=NULL,input_data=list(),
                             obs_sero_data=list(),obs_case_data=list(),obs_outbreak_data=list(),
                             n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
@@ -619,7 +411,7 @@ mcmc_prelim_fit2 <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
       cat(set,"\t",sep="")
       param_prop=all_param_sets[set,]
       names(param_prop)=param_names
-      like_prop=single_like_calc2(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+      like_prop=single_like_calc(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
       results<-rbind(results,c(set,exp(param_prop),like_prop))
       if(set==1){colnames(results)=c("set",param_names,"LogLikelihood")}
     }
@@ -649,7 +441,7 @@ mcmc_prelim_fit2 <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
   return(best_fit_results)
 }
 #-------------------------------------------------------------------------------
-#' @title mcmc_checks2
+#' @title mcmc_checks
 #'
 #' @description Perform checks on MCMC inputs
 #'
@@ -677,7 +469,7 @@ mcmc_prelim_fit2 <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
 #'
 #' @export
 #'
-mcmc_checks2 <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max=c(),prior_type=NULL,enviro_data=NULL,
+mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max=c(),prior_type=NULL,enviro_data=NULL,
                         R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL){
 
   param_names=names(pars_ini)
@@ -686,9 +478,9 @@ mcmc_checks2 <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_ma
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro")) #Check that type is one of those allowed
   assert_that(prior_type %in% c("zero","flat","exp","norm")) #Check that prior type is one of those allowed
 
-  #If vaccine efficacy, severe case reporting probability and/or fatal case reporting probability have been set to NULL,
-  # check that they appear among the parameters (should always have been set up in MCMC2() if create_param_labels()
-  #ran correctly )
+  #If vaccine efficacy, severe case reporting probability and/or fatal case reporting probability have been set to
+  #NULL, check that they appear among the parameters (should always have been set up in MCMC() if
+  #create_param_labels() ran correctly )
   if(is.numeric(vaccine_efficacy)==TRUE){
     flag_vacc_eff=0
     assert_that(0.0<=vaccine_efficacy && vaccine_efficacy<=1.0)
@@ -741,4 +533,109 @@ mcmc_checks2 <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_ma
   #TBA
 
   return(NULL)
+}
+#-------------------------------------------------------------------------------
+#' @title mcmc_FOI_R0_setup
+#'
+#' @description Set up FOI and R0 values and calculate some prior probability values for MCMC calculation
+#'
+#' @details Takes in parameter values used for Markov Chain Monte Carlo fitting, calculates spillover force of
+#' infection and (optionally) reproduction number values either directly or from environmental covariates. Also
+#' calculates related components of prior probability.
+#'
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
+#' @param prior_type Text indicating which type of calculation to use for prior probability
+#'  If prior_type = "zero", prior probability is always zero
+#'  If prior_type = "flat", prior probability is zero if FOI/R0 in designated ranges, -Inf otherwise
+#'  If prior_type = "exp", prior probability is given by dexp calculation on FOI/R0 values
+#'  If prior_type = "norm", prior probability is given by dnorm calculation on parameter values
+#' @param regions Vector of region names
+#' @param param_prop Proposed parameter values
+#' @param enviro_data Environmental data frame, containing only relevant environmental variables
+#' @param R0_fixed_values Values of R0 to use if not being fitted
+#' @param pars_min Lower limits of parameter values if specified
+#' @param pars_max Upper limits of parameter values if specified
+#' '
+#' @export
+#'
+mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),enviro_data=list(),R0_fixed_values=c(),
+                              pars_min=c(),pars_max=c()){
+
+  n_params=length(param_prop)
+  n_regions=length(regions)
+  if(type %in% c("FOI+R0 enviro","FOI enviro")){n_env_vars=ncol(enviro_data)-1}
+  FOI_values=R0_values=rep(0,n_regions)
+
+  if(type %in% c("FOI+R0 enviro","FOI enviro")){
+    for(i in 1:n_regions){
+      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$adm1==regions[i],])
+      FOI_values[i]=model_params$FOI
+      if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
+    }
+  }
+  if(type %in% c("FOI+R0","FOI")){
+    FOI_values=exp(param_prop[c(1:n_regions)])
+    if(type=="FOI+R0"){R0_values=exp(param_prop[c((n_regions+1):(2*n_regions))])
+    } else {R0_values=R0_fixed_values}
+  }
+
+  prior=0
+  if(prior_type=="exp"){
+    prior_FOI=dexp(FOI_values,rate=1,log=TRUE)
+    if(type %in% c("FOI+R0","FOI+R0 enviro")){prior_R0=dexp(R0_values,rate=1,log=TRUE)} else {prior_R0=0}
+    prior = prior+sum(prior_FOI)+sum(prior_R0)
+  }
+  if(prior_type=="flat"){
+    if(is.null(pars_min)==FALSE){
+      for(i in 1:n_params){
+        if(param_prop[i]<pars_min[i]){prior=-Inf}
+      }
+    }
+    if(is.null(pars_max)==FALSE){
+      for(i in 1:n_params){
+        if(param_prop[i]>pars_max[i]){prior=-Inf}
+      }
+    }
+  }
+  if(prior_type=="norm"){
+    if(type=="FOI"){n_params_check=n_regions}
+    if(type=="FOI+R0"){n_params_check=2*n_regions}
+    if(type=="FOI enviro"){n_params_check=n_env_vars}
+    if(type=="FOI+R0 enviro"){n_params_check=2*n_env_vars}
+    prior=sum(dnorm(param_prop[c(1:n_params_check)],mean = 0,sd = 30,log = TRUE))
+  }
+
+  output=list(FOI_values=FOI_values,R0_values=R0_values,prior=prior)
+  return(output)
+}
+#-------------------------------------------------------------------------------
+#' @title param_prop_setup
+#'
+#' @description Set up proposed new parameter values for next step in chain
+#'
+#' @details Takes in current values of parameter set used for Markov Chain Monte Carlo fitting and proposes new values
+#' from multivariate normal distribution where the existing values form the mean and the standard deviation is
+#' based on the chain covariance or (if the flag "adapt" is set to 1) a flat value based on the number of parameters.
+#'
+#' @param param Previous parameter values used as input
+#' @param chain_cov Covariance calculated from previous steps in chain
+#' @param adapt 0/1 flag indicating which type of calculation to use for proposition value
+#' '
+#' @export
+#'
+param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
+
+  n_params = length(param)
+  if (adapt==1) {
+    sigma = (2.38 ^ 2) * chain_cov / n_params #'optimal' scaling of chain covariance
+    param_prop_a = rmvnorm(n = 1, mean = param, sigma = sigma)
+  } else {
+    sigma = ((1e-2) ^ 2) * diag(n_params) / n_params #this is an inital proposal covariance, see [Mckinley et al 2014]
+    param_prop_a = rmvnorm(n = 1, mean = param, sigma = sigma)
+  }
+  param_prop = param_prop_a[1,]
+  names(param_prop)=names(param)
+
+  return(param_prop)
 }
