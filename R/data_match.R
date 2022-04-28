@@ -137,11 +137,13 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
 #'
 #' @param model_data TBA
 #' @param obs_sero_data TBA
+#' @param type TBA
 #'
 #' @export
 #'
-sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
+sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"){
   #TODO - Add assert_that functions
+  assert_that(type %in% c("mean","all"))
 
   n_param_sets=length(model_data)
   obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
@@ -160,15 +162,32 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
   }
 
   model_sero_values=array(NA,dim=c(length(obs_sero_values),n_param_sets))
-  model_CI95=array(NA,dim=c(3,length(obs_sero_values)))
-  model_CI50=model_CI95
+  model_CI50_low=model_CI50_high=model_CI95_low=model_CI95_high=rep(0,length(obs_sero_values))
   for(i in 1:n_param_sets){
     model_sero_values[,i]=model_data[[i]]$model_sero_values
   }
   lines_all=graph_lines=c(1:length(obs_sero_values))
-  for(i in lines_all){
-    model_CI95[,i]=CI(model_sero_values[i,],ci=0.95)
-    model_CI50[,i]=CI(model_sero_values[i,],ci=0.50)
+  if(type=="mean"){
+    for(i in lines_all){
+      CI_095=CI(model_sero_values[i,],ci=0.95)
+      model_CI95_low[i]=CI_095[3][[1]]
+      model_CI95_high[i]=CI_095[1][[1]]
+      CI_050=CI(model_sero_values[i,],ci=0.50)
+      model_CI50_low[i]=CI_050[3][[1]]
+      model_CI50_high[i]=CI_050[1][[1]]
+    }
+  } else {
+    n_095_low=ceiling(n_param_sets*0.025)
+    n_095_high=floor(n_param_sets*0.975)
+    n_050_low=ceiling(n_param_sets*0.25)
+    n_050_high=floor(n_param_sets*0.75)
+    for(i in lines_all){
+      model_values_sorted=sort(model_sero_values[i,])
+      model_CI95_low[i]=model_values_sorted[n_095_low]
+      model_CI95_high[i]=model_values_sorted[n_095_high]
+      model_CI50_low[i]=model_values_sorted[n_050_low]
+      model_CI50_high[i]=model_values_sorted[n_050_high]
+    }
   }
 
   if(is.null(obs_sero_data$country_zone)==FALSE){
@@ -215,8 +234,8 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
 
     df=data.frame(age_values=obs_sero_data$age_min[lines],sero_obs=obs_sero_values[lines],
                   sero_obs_low=obs_sero_values_low[lines],sero_obs_high=obs_sero_values_high[lines],
-                  sero_model_low95=model_CI95[3,lines],sero_model_high95=model_CI95[1,lines],
-                  sero_model_low50=model_CI50[3,lines],sero_model_high50=model_CI50[1,lines])
+                  sero_model_low95=model_CI95_low[lines],sero_model_high95=model_CI95_high[lines],
+                  sero_model_low50=model_CI50_low[lines],sero_model_high50=model_CI50_high[lines])
 
     sero_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low95,
@@ -245,11 +264,13 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list()){
 #' @param model_data TBA
 #' @param obs_case_data TBA
 #' @param input_data TBA
+#' @param type NULL
 #'
 #' @export
 #'
-case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list()){
+case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),type="mean"){
   #TODO - Add assert_that functions
+  assert_that(type %in% c("mean","all"))
 
   n_param_sets=length(model_data)
   obs_case_values=obs_case_data$cases
@@ -271,16 +292,44 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
   }
 
   model_case_values=model_death_values=array(NA,dim=c(length(obs_case_values),n_param_sets))
-  model_CI_cases95=model_CI_deaths95=model_CI_cases50=model_CI_deaths50=array(NA,dim=c(3,length(obs_case_values)))
   for(i in 1:n_param_sets){
     model_case_values[,i]=model_data[[i]]$model_case_values
     model_death_values[,i]=model_data[[i]]$model_death_values
   }
-  for(i in 1:n_case_values){
-    model_CI_cases95[,i]=CI(model_case_values[i,],ci=0.95)
-    model_CI_deaths95[,i]=CI(model_death_values[i,],ci=0.95)
-    model_CI_cases50[,i]=CI(model_case_values[i,],ci=0.50)
-    model_CI_deaths50[,i]=CI(model_death_values[i,],ci=0.50)
+  model_cases_CI95_low=model_cases_CI95_high=model_cases_CI50_low=model_cases_CI50_high=rep(0,n_case_values)
+  model_deaths_CI95_low=model_deaths_CI95_high=model_deaths_CI50_low=model_deaths_CI50_high=rep(0,n_case_values)
+  if(type=="mean"){
+    for(i in 1:n_case_values){
+      CI_095=CI(model_case_values[i,],ci=0.95)
+      model_cases_CI95_low[i]=CI_095[3][[1]]
+      model_cases_CI95_high[i]=CI_095[1][[1]]
+      CI_050=CI(model_case_values[i,],ci=0.50)
+      model_cases_CI50_low[i]=CI_050[3][[1]]
+      model_cases_CI50_high[i]=CI_050[1][[1]]
+      CI_095=CI(model_death_values[i,],ci=0.95)
+      model_deaths_CI95_low[i]=CI_095[3][[1]]
+      model_deaths_CI95_high[i]=CI_095[1][[1]]
+      CI_050=CI(model_case_values[i,],ci=0.50)
+      model_deaths_CI50_low[i]=CI_050[3][[1]]
+      model_deaths_CI50_high[i]=CI_050[1][[1]]
+    }
+  } else {
+    n_095_low=ceiling(n_param_sets*0.025)
+    n_095_high=floor(n_param_sets*0.975)
+    n_050_low=ceiling(n_param_sets*0.25)
+    n_050_high=floor(n_param_sets*0.75)
+    for(i in 1:n_case_values){
+      model_case_values_sorted=sort(model_case_values[i,])
+      model_cases_CI95_low[i]=model_case_values_sorted[n_095_low]
+      model_cases_CI95_high[i]=model_case_values_sorted[n_095_high]
+      model_cases_CI50_low[i]=model_case_values_sorted[n_050_low]
+      model_cases_CI50_high[i]=model_case_values_sorted[n_050_high]
+      model_death_values_sorted=sort(model_death_values[i,])
+      model_deaths_CI95_low[i]=model_death_values_sorted[n_095_low]
+      model_deaths_CI95_high[i]=model_death_values_sorted[n_095_high]
+      model_deaths_CI50_low[i]=model_death_values_sorted[n_050_low]
+      model_deaths_CI50_high[i]=model_death_values_sorted[n_050_high]
+    }
   }
 
   data_regions=names(table(obs_case_data$adm1))
@@ -295,11 +344,11 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
 
     df=data.frame(years=obs_case_data$year[lines],case_obs=obs_case_values[lines],death_obs=obs_death_values[lines],
                   case_obs_low=obs_case_values_low[lines],case_obs_high=obs_case_values_high[lines],
-                  case_model_low95=model_CI_cases95[3,lines],case_model_high95=model_CI_cases95[1,lines],
-                  case_model_low50=model_CI_cases50[3,lines],case_model_high50=model_CI_cases50[1,lines],
+                  case_model_low95=model_cases_CI95_low[lines],case_model_high95=model_cases_CI95_high[lines],
+                  case_model_low50=model_cases_CI50_low[lines],case_model_high50=model_cases_CI50_high[lines],
                   death_obs_low=obs_death_values_low[lines],death_obs_high=obs_death_values_high[lines],
-                  death_model_low95=model_CI_deaths95[3,lines],death_model_high95=model_CI_deaths95[1,lines],
-                  death_model_low50=model_CI_deaths50[3,lines],death_model_high50=model_CI_deaths50[1,lines])
+                  death_model_low95=model_deaths_CI95_low[lines],death_model_high95=model_deaths_CI95_high[lines],
+                  death_model_low50=model_deaths_CI50_low[lines],death_model_high50=model_deaths_CI50_high[lines])
 
     cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low95,
