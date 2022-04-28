@@ -98,10 +98,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_set_rng_state(SEXP pt
   END_CPP11
 }
 // BasicModelOD.cpp
-SEXP dust_cpu_BasicModelOD_set_data(SEXP ptr, cpp11::list data);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_set_data(SEXP ptr, SEXP data) {
+SEXP dust_cpu_BasicModelOD_set_data(SEXP ptr, cpp11::list data, bool shared);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_set_data(SEXP ptr, SEXP data, SEXP shared) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_BasicModelOD_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data)));
+    return cpp11::as_sexp(dust_cpu_BasicModelOD_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data), cpp11::as_cpp<cpp11::decay_t<bool>>(shared)));
   END_CPP11
 }
 // BasicModelOD.cpp
@@ -226,10 +226,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_set_rng_state(SEXP ptr
   END_CPP11
 }
 // FullModelOD.cpp
-SEXP dust_cpu_FullModelOD_set_data(SEXP ptr, cpp11::list data);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_set_data(SEXP ptr, SEXP data) {
+SEXP dust_cpu_FullModelOD_set_data(SEXP ptr, cpp11::list data, bool shared);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_set_data(SEXP ptr, SEXP data, SEXP shared) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelOD_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data)));
+    return cpp11::as_sexp(dust_cpu_FullModelOD_set_data(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(data), cpp11::as_cpp<cpp11::decay_t<bool>>(shared)));
   END_CPP11
 }
 // FullModelOD.cpp
@@ -276,7 +276,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_resample",      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_resample,      2},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_rng_state",     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_rng_state,     3},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_run",           (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_run,           2},
-    {"_YellowFeverDynamics_dust_cpu_BasicModelOD_set_data",      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_set_data,      2},
+    {"_YellowFeverDynamics_dust_cpu_BasicModelOD_set_data",      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_set_data,      3},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_set_index",     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_set_index,     2},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_set_n_threads", (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_set_n_threads, 2},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_set_rng_state", (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_set_rng_state, 2},
@@ -292,7 +292,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_resample",       (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_resample,       2},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_rng_state",      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_rng_state,      3},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_run",            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_run,            2},
-    {"_YellowFeverDynamics_dust_cpu_FullModelOD_set_data",       (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_set_data,       2},
+    {"_YellowFeverDynamics_dust_cpu_FullModelOD_set_data",       (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_set_data,       3},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_set_index",      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_set_index,      2},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_set_n_threads",  (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_set_n_threads,  2},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_set_rng_state",  (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_set_rng_state,  2},

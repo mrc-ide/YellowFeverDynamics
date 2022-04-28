@@ -52,8 +52,8 @@ dust_cpu_BasicModelOD_set_rng_state <- function(ptr, rng_state) {
   .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_set_rng_state`, ptr, rng_state)
 }
 
-dust_cpu_BasicModelOD_set_data <- function(ptr, data) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_set_data`, ptr, data)
+dust_cpu_BasicModelOD_set_data <- function(ptr, data, shared) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_set_data`, ptr, data, shared)
 }
 
 dust_cpu_BasicModelOD_compare_data <- function(ptr) {
@@ -124,8 +124,8 @@ dust_cpu_FullModelOD_set_rng_state <- function(ptr, rng_state) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_set_rng_state`, ptr, rng_state)
 }
 
-dust_cpu_FullModelOD_set_data <- function(ptr, data) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_set_data`, ptr, data)
+dust_cpu_FullModelOD_set_data <- function(ptr, data, shared) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_set_data`, ptr, data, shared)
 }
 
 dust_cpu_FullModelOD_compare_data <- function(ptr) {
