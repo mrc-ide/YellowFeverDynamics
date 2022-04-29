@@ -4,7 +4,12 @@
 \alias{sero_match_graphs}
 \title{sero_match_graphs}
 \usage{
-sero_match_graphs(model_data = list(), obs_sero_data = list(), type = "mean")
+sero_match_graphs(
+  model_data = list(),
+  obs_sero_data = list(),
+  type = "mean",
+  text_size1 = 1
+)
 }
 \arguments{
 \item{model_data}{TBA}
@@ -12,6 +17,8 @@ sero_match_graphs(model_data = list(), obs_sero_data = list(), type = "mean")
 \item{obs_sero_data}{TBA}
 
 \item{type}{TBA}
+
+\item{text_size1}{TBA}
 }
 \description{
 Function to create a series of graphs comparing modelled and observed serological data from results

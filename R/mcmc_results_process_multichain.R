@@ -69,11 +69,14 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
     like_min=min(like_min,min(like_values[[n_data]]))
     like_max=max(like_max,max(like_values[[n_data]]))
   }
-  diag1=gelman.diag(mcmc_list,autoburnin=FALSE)
+  if(length(datasets_selected)>1){
+    diag1=gelman.diag(mcmc_list,autoburnin=FALSE)
+    MPSRF=signif(diag1$mpsrf,4)
+  } else {MPSRF=NA}
   if(flag_diag2){diag2<-gelman.plot(mcmc_list,autoburnin=FALSE,ask=FALSE,bin.width=1000,max.bins=100)} else {diag2=NULL}
   title_text="Chains:"
   for(i in 1:length(datasets_selected)){title_text=paste(title_text,datasets_selected[i],sep=" ")}
-  title_text=paste(title_text," - MPSRF = ",signif(diag1$mpsrf,4),sep="")
+  title_text=paste(title_text," - MPSRF = ",MPSRF,sep="")
   matplot(x=c(1,max(end_values)),y=c(like_min,like_max),type="p",col=0,xlab="Iteration",ylab="LogLikelihood")
   for(i in 1:length(datasets_selected)){
     n_data=datasets_selected[i]
@@ -81,7 +84,7 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
   }
   title(main=title_text)
 
-  return(list(like_values=like_values,MPSRF=diag1$mpsrf,diag_all=diag2))
+  return(list(like_values=like_values,MPSRF=MPSRF,diag_all=diag2))
 }
 #-------------------------------------------------------------------------------
 #' @title get_mcmc_FOI_R0_multichain

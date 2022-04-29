@@ -138,10 +138,11 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
 #' @param model_data TBA
 #' @param obs_sero_data TBA
 #' @param type TBA
+#' @param text_size1 TBA
 #'
 #' @export
 #'
-sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"){
+sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean",text_size1=1.0){
   #TODO - Add assert_that functions
   assert_that(type %in% c("mean","all"))
 
@@ -247,7 +248,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
                                                        width=1.0)
     sero_graphs[[i]] <- sero_graphs[[i]]+scale_x_continuous(name="",breaks=df$age_values,labels=df$age_values)
     sero_graphs[[i]] <- sero_graphs[[i]]+scale_y_continuous(name="")
-    sero_graphs[[i]] <- sero_graphs[[i]]+theme(text = element_text(size = 8))
+    sero_graphs[[i]] <- sero_graphs[[i]]+theme(text = element_text(size = text_size1))
   }
 
   return(sero_graphs)
@@ -264,11 +265,12 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
 #' @param model_data TBA
 #' @param obs_case_data TBA
 #' @param input_data TBA
-#' @param type NULL
+#' @param type TBA
+#' @param text_size1 TBA
 #'
 #' @export
 #'
-case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),type="mean"){
+case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),type="mean",text_size1=1.0){
   #TODO - Add assert_that functions
   assert_that(type %in% c("mean","all"))
 
@@ -360,7 +362,7 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
                                                          width=0.5)
     cases_graphs[[i]] <- cases_graphs[[i]]+scale_x_continuous(name="",breaks=df$years,labels=df$years)
     cases_graphs[[i]] <- cases_graphs[[i]]+scale_y_continuous(name="")
-    cases_graphs[[i]] <- cases_graphs[[i]]+theme(text = element_text(size = 8))
+    cases_graphs[[i]] <- cases_graphs[[i]]+theme(text = element_text(size = text_size1))
 
 
     deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
@@ -373,7 +375,7 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
                                                            width=0.5)
     deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_x_continuous(name="",breaks=df$years,labels=df$years)
     deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_y_continuous(name="")
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(text = element_text(size = 8))
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(text = element_text(size = text_size1))
   }
 
   return(list(cases_graphs=cases_graphs,deaths_graphs=deaths_graphs))

@@ -4,14 +4,21 @@
 \alias{plot_mcmc_FOI_R0_data}
 \title{plot_mcmc_FOI_R0_data}
 \usage{
-plot_mcmc_FOI_R0_data(data_frame = list(), regions = c(), plot_type = "box")
+plot_mcmc_FOI_R0_data(
+  data_frame = list(),
+  regions = c(),
+  plot_type = "box",
+  text_size1 = 10
+)
 }
 \arguments{
 \item{data_frame}{Data frame of FOI/R0 values obtained using get_mcmc_FOI_R0_data()}
 
 \item{regions}{List of region names}
 
-\item{plot_type}{Type of plots to create (choose from "box","violin","error_bars","scatter")
+\item{plot_type}{Type of plots to create (choose from "box","violin","error_bars","scatter")}
+
+\item{text_size1}{TBA
 '}
 }
 \description{

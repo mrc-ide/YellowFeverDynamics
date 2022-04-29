@@ -167,10 +167,11 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
 #' @param data_frame Data frame of FOI/R0 values obtained using get_mcmc_FOI_R0_data()
 #' @param regions List of region names
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars","scatter")
+#' @param text_size1 TBA
 #' '
 #' @export
 #'
-plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box"){
+plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",text_size1=10.0){
   #TODO - Add assertthat checks
   if(is.null(data_frame$R0)==TRUE){
     assert_that(plot_type %in% c("box","violin","error_bars"))
@@ -194,7 +195,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
       p_FOI <- p_FOI+geom_violin(trim=FALSE,scale="width")}
     p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
     p_FOI <- p_FOI + scale_y_continuous(name="FOI",breaks=log(FOI_labels),labels=FOI_labels)
-    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1))
+    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
 
     if(is.null(data_frame$R0)==FALSE){
       R0=NULL
@@ -205,7 +206,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
         p_R0 <- p_R0+geom_violin(trim=FALSE,scale="width")
       }
       p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1))
+      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
     } else {
       p_R0<-NULL
     }
@@ -245,7 +246,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
 
     p_FOI <- ggplot(data=summary_frame_FOI,aes(x=n_region,y=log(mean))) + theme_bw()
     p_FOI <- p_FOI + scale_x_continuous(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1))
+    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
     p_FOI <- p_FOI + scale_y_continuous(name="FOI",breaks=log(FOI_labels),labels=FOI_labels)
     p_FOI <- p_FOI + geom_line(data=summary_frame_FOI,aes(x=n_region,y=log(mean)))
     p_FOI <- p_FOI + geom_errorbar(data=summary_frame_FOI,aes(ymin=log(lower),ymax=log(upper)),width=0.5)
@@ -253,7 +254,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
     if(is.null(data_frame$R0)==FALSE){
       p_R0 <- ggplot(data=summary_frame_R0,aes(x=n_region,y=mean)) + theme_bw()
       p_R0 <- p_R0 + scale_x_continuous(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1))
+      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
       p_R0 <- p_R0 + geom_line(data=summary_frame_R0,aes(x=n_region,y=mean))
       p_R0 <- p_R0 + geom_errorbar(data=summary_frame_R0,aes(ymin=lower,ymax=upper),width=0.5)
     } else {
@@ -279,10 +280,12 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box")
 #' @param values List of names of parameters to plot (must be parameters appearing in the data)
 #' @param margin For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
 #'   expressed as a fraction
-#' '
+#' @param text_size1 TBA
+#'
 #' @export
 #'
-plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vaccine_efficacy"),margin=0.95){
+plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vaccine_efficacy"),margin=0.95,
+                                text_size1=10.0){
   assert_that(plot_type %in% c("box","violin","error_bars"))
 
   n_values=length(values)
@@ -306,7 +309,7 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
       p_probs <- p_probs+geom_violin(trim=FALSE,scale="width")}
     p_probs <- p_probs + scale_x_discrete(name="",breaks=c(1:length(values)),labels=values)
     p_probs <- p_probs + scale_y_continuous(name="",breaks=log(labels),labels=labels)
-    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1))
+    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
   }
   if(plot_type=="error_bars"){
     blank=rep(NA,n_values)
@@ -325,7 +328,7 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
     p_probs <- p_probs + scale_y_continuous(name="",breaks=log(labels),labels=labels)
     p_probs <- p_probs + geom_line(data=summary_frame,aes(x=n_value,y=log(mean)))
     p_probs <- p_probs + geom_errorbar(data=summary_frame,aes(ymin=log(lower),ymax=log(upper)),width=0.5)
-    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1))
+    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
 
   }
 

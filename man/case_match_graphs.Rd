@@ -8,7 +8,8 @@ case_match_graphs(
   model_data = list(),
   obs_case_data = list(),
   input_data = list(),
-  type = "mean"
+  type = "mean",
+  text_size1 = 1
 )
 }
 \arguments{
@@ -18,7 +19,9 @@ case_match_graphs(
 
 \item{input_data}{TBA}
 
-\item{type}{NULL}
+\item{type}{TBA}
+
+\item{text_size1}{TBA}
 }
 \description{
 Function to create a series of graphs comparing modelled and observed case data from results
