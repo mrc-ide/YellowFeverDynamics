@@ -111,7 +111,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 #' @export
 #'
 data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
-                       obs_outbreak_data=NULL,const_list=list()){
+                             obs_outbreak_data=NULL,const_list=list()){
   #TODO - Add assert_that functions
   assert_that(TRUE %in% names(table(is.na(param_sets))) == FALSE)
 
@@ -192,7 +192,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
   }
 
   if(is.null(obs_sero_data$country_zone)==FALSE){
-    data_regions=names(table(obs_sero_data$country_zone))
+    data_regions=graph_titles=names(table(obs_sero_data$country_zone))
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$country_zone==region]
@@ -203,10 +203,11 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
         subset2=subset(subset,year==year)
         n_graphs=n_graphs+1
         graph_lines[lines2]=n_graphs
+        graph_titles[n_graphs]=paste(graph_titles[n_graphs],year,sep=" ")
       }
     }
   } else {
-    data_regions=names(table(obs_sero_data$adm1))
+    data_regions=graph_titles=names(table(obs_sero_data$adm1))
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$adm1==region]
@@ -217,6 +218,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
         subset2=subset(subset,year==year)
         n_graphs=n_graphs+1
         graph_lines[lines2]=n_graphs
+        graph_titles[n_graphs]=paste(graph_titles[n_graphs],year,sep=" ")
       }
     }
   }
@@ -227,28 +229,28 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
   sero_graphs=list()
   for(i in 1:n_graphs){
     lines=lines_all[graph_lines==i]
-    if(is.null(obs_sero_data$country_zone)==FALSE){
-      region=obs_sero_data$country_zone[lines[1]]
-    } else{
-      region=obs_sero_data$adm1[lines[1]]
-    }
 
     df=data.frame(age_values=obs_sero_data$age_min[lines],sero_obs=obs_sero_values[lines],
+                  samples=obs_sero_data$samples[lines],
                   sero_obs_low=obs_sero_values_low[lines],sero_obs_high=obs_sero_values_high[lines],
                   sero_model_low95=model_CI95_low[lines],sero_model_high95=model_CI95_high[lines],
                   sero_model_low50=model_CI50_low[lines],sero_model_high50=model_CI50_high[lines])
+    df$samples[df$samples==0]=1
 
-    sero_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
+    sero_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=graph_titles[i])
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low95,
                                                                  ymax=sero_model_high95),fill="blue",alpha=0.5)
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low50,
                                                                  ymax=sero_model_high50),fill="green",alpha=0.5)
-    sero_graphs[[i]] <- sero_graphs[[i]]+geom_line(data=df,aes(x=age_values,y=sero_obs))
+    sero_graphs[[i]] <- sero_graphs[[i]]+geom_point(data=df,aes(x=age_values,y=sero_obs,size=log(samples)),
+                                                    show.legend=FALSE)
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_errorbar(data=df,aes(x=age_values,ymin=sero_obs_low,ymax=sero_obs_high),
                                                        width=1.0)
     sero_graphs[[i]] <- sero_graphs[[i]]+scale_x_continuous(name="",breaks=df$age_values,labels=df$age_values)
     sero_graphs[[i]] <- sero_graphs[[i]]+scale_y_continuous(name="")
-    sero_graphs[[i]] <- sero_graphs[[i]]+theme(text = element_text(size = text_size1))
+    sero_graphs[[i]] <- sero_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
+                                               axis.text.y = element_text(size = text_size1),
+                                               title=element_text(size=text_size1))
   }
 
   return(sero_graphs)
@@ -311,7 +313,7 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
       CI_095=CI(model_death_values[i,],ci=0.95)
       model_deaths_CI95_low[i]=CI_095[3][[1]]
       model_deaths_CI95_high[i]=CI_095[1][[1]]
-      CI_050=CI(model_case_values[i,],ci=0.50)
+      CI_050=CI(model_death_values[i,],ci=0.50)
       model_deaths_CI50_low[i]=CI_050[3][[1]]
       model_deaths_CI50_high[i]=CI_050[1][[1]]
     }
@@ -352,30 +354,36 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
                   death_model_low95=model_deaths_CI95_low[lines],death_model_high95=model_deaths_CI95_high[lines],
                   death_model_low50=model_deaths_CI50_low[lines],death_model_high50=model_deaths_CI50_high[lines])
 
-    cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
+    cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,3))
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low95,
-                                                                 ymax=case_model_high95),fill="blue",alpha=0.5)
+                                                                   ymax=case_model_high95),fill="blue",alpha=0.5)
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low50,
-                                                                 ymax=case_model_high50),fill="green",alpha=0.5)
-    cases_graphs[[i]] <- cases_graphs[[i]]+geom_line(data=df,aes(x=years,y=case_obs))
+                                                                   ymax=case_model_high50),fill="green",alpha=0.5)
+    cases_graphs[[i]] <- cases_graphs[[i]]+geom_point(data=df,aes(x=years,y=case_obs))
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=case_obs_low,ymax=case_obs_high),
                                                          width=0.5)
-    cases_graphs[[i]] <- cases_graphs[[i]]+scale_x_continuous(name="",breaks=df$years,labels=df$years)
+    cases_graphs[[i]] <- cases_graphs[[i]]+scale_x_continuous(name="",breaks=c(min(df$years):max(df$years)),
+                                                              labels=c(min(df$years):max(df$years)))
     cases_graphs[[i]] <- cases_graphs[[i]]+scale_y_continuous(name="")
-    cases_graphs[[i]] <- cases_graphs[[i]]+theme(text = element_text(size = text_size1))
+    cases_graphs[[i]] <- cases_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
+                                                 axis.text.y = element_text(size = text_size1),
+                                                 title=element_text(size=text_size1))
 
 
-    deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=region)
+    deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,3))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low95,
-                                                                   ymax=death_model_high95),fill="blue",alpha=0.5)
+                                                                     ymax=death_model_high95),fill="blue",alpha=0.5)
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low50,
-                                                                   ymax=death_model_high50),fill="green",alpha=0.5)
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_line(data=df,aes(x=years,y=death_obs))
+                                                                     ymax=death_model_high50),fill="green",alpha=0.5)
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_point(data=df,aes(x=years,y=death_obs))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=death_obs_low,ymax=death_obs_high),
                                                            width=0.5)
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_x_continuous(name="",breaks=df$years,labels=df$years)
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_x_continuous(name="",breaks=c(min(df$years):max(df$years)),
+                                                                labels=c(min(df$years):max(df$years)))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_y_continuous(name="")
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(text = element_text(size = text_size1))
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
+                                                   axis.text.y = element_text(size = text_size1),
+                                                   title=element_text(size=text_size1))
   }
 
   return(list(cases_graphs=cases_graphs,deaths_graphs=deaths_graphs))
