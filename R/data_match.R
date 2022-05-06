@@ -192,7 +192,8 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
   }
 
   if(is.null(obs_sero_data$country_zone)==FALSE){
-    data_regions=graph_titles=names(table(obs_sero_data$country_zone))
+    data_regions=names(table(obs_sero_data$country_zone))
+    graph_titles=c()
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$country_zone==region]
@@ -203,11 +204,12 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
         subset2=subset(subset,year==year)
         n_graphs=n_graphs+1
         graph_lines[lines2]=n_graphs
-        graph_titles[n_graphs]=paste(graph_titles[n_graphs],year,sep=" ")
+        graph_titles=append(graph_titles,paste(region,year,sep=" "))
       }
     }
   } else {
-    data_regions=graph_titles=names(table(obs_sero_data$adm1))
+    data_regions=names(table(obs_sero_data$adm1))
+    graph_titles=c()
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$adm1==region]
@@ -218,14 +220,13 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
         subset2=subset(subset,year==year)
         n_graphs=n_graphs+1
         graph_lines[lines2]=n_graphs
-        graph_titles[n_graphs]=paste(graph_titles[n_graphs],year,sep=" ")
+        graph_titles=append(graph_titles,paste(region,year,sep=" "))
       }
     }
   }
 
   age_values=sero_obs=sero_obs_low=sero_obs_high=sero_model_low95=NULL
   sero_model_low50=sero_model_high95=sero_model_high50=NULL
-  n_graphs=length(data_regions)
   sero_graphs=list()
   for(i in 1:n_graphs){
     lines=lines_all[graph_lines==i]
