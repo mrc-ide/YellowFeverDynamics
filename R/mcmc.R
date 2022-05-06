@@ -639,3 +639,57 @@ param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 
   return(param_prop)
 }
+#-------------------------------------------------------------------------------
+#' @title calc_like0
+#'
+#' @description Calculate the likelihood value which would be obtained (with no prior) if modelled data values were
+#'              all equal to observed values (for use as comparison with MCMC likelihood values)
+#'
+#' @details TBA
+#'
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
+#'   1 = 1 or more outbreak(s)
+#'
+#' @export
+#'
+calc_like0 <- function(obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL) {
+
+  if(is.null(obs_sero_data)){sero_like_values=NA}
+  if(is.null(obs_case_data)){cases_like_values=deaths_like_values=NA}
+  if(is.null(obs_outbreak_data)){outbreak_like_values=NA}
+
+  #Likelihood of observing serological data
+  if(is.null(obs_sero_data)==FALSE){
+    model_sero_values=obs_sero_data$positives/obs_sero_data$samples
+    sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)-
+      lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+obs_sero_data$positives*log(model_sero_values)+
+      (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_sero_values)
+  }
+  #Likelihood of observing annual case/death data
+  if(is.null(obs_case_data)==FALSE){
+    model_case_values=obs_case_data$cases
+    model_death_values=obs_case_data$deaths
+    for(i in 1:length(model_case_values)){
+      model_case_values[i]=max(model_case_values[i],0.1)
+      model_death_values[i]=max(model_death_values[i],0.1)
+    }
+    cases_like_values=dnbinom(x=obs_case_data$cases,mu=model_case_values,
+                              size=rep(1,length(obs_case_data$cases)),log=TRUE)
+    deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_death_values,
+                               size=rep(1,length(obs_case_data$deaths)),log=TRUE)
+  }
+  #Likelihood of observing annual outbreak Y/N data
+  if(is.null(obs_outbreak_data)==FALSE){
+    outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=obs_outbreak_data$outbreak_yn,
+                                               obs_data=obs_outbreak_data$outbreak_yn)
+  }
+
+  likelihood=mean(c(sum(sero_like_values,na.rm=TRUE),sum(cases_like_values,na.rm=TRUE),
+                    sum(deaths_like_values,na.rm=TRUE),sum(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
+
+  return(likelihood)
+}

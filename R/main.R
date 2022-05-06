@@ -536,3 +536,113 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 
   return(param_names)
 }
+#-------------------------------------------------------------------------------
+#' @title total_burden_estimate
+#'
+#' @description TBA
+#'
+#' @details TBA
+#'
+#' @param type TBA
+#' @param param_dist TBA
+#' @param input_data TBA
+#' @param years_data TBA
+#' @param n_reps TBA
+#' @param mode_start TBA
+#' @param dt TBA
+#' @param enviro_data TBA
+#' @param R0_fixed_values TBA
+#' @param vaccine_efficacy0 TBA
+#' @param p_rep_severe0 TBA
+#' @param p_rep_death0 TBA
+#'
+#' @export
+#'
+total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_data=list(),years_data=c(),n_reps=1,
+                                  mode_start=1,dt=5.0,enviro_data=NULL,R0_fixed_values=NULL,
+                                  vaccine_efficacy0=NULL,p_rep_severe0=NULL,p_rep_death0=NULL){
+
+  assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
+
+  n_param_sets=nrow(param_dist)
+  n_years=length(years_data)
+  year_data_begin=years_data[1]
+  year_end=max(years_data)+1
+  regions=input_data$region_labels
+  n_regions=length(regions)
+  case_ar1=death_ar1=obs_case_ar1=obs_death_ar1=array(NA,dim=c(n_years,n_regions,n_param_sets,n_reps))
+  case_ar2=death_ar2=obs_case_ar2=obs_death_ar2=array(NA,dim=c(n_years,n_regions,n_param_sets))
+  case_ar3=death_ar3=obs_case_ar3=obs_death_ar3=array(NA,dim=c(n_years,n_param_sets))
+  FOI_values=R0_values=rep(NA,n_regions)
+
+  cat("\nSets:\n")
+  for(n_param_set in 1:n_param_sets){
+    cat(" ",n_param_set,sep="")
+    if(n_param_set %% 10 == 0){cat("\n")}
+    params=log(param_dist[n_param_set,])
+    names(params)=colnames(param_dist)
+    if(is.null(vaccine_efficacy0)){vaccine_efficacy=exp(params$vaccine_efficacy)
+    }else{vaccine_efficacy=vaccine_efficacy0}
+    if(is.null(p_rep_severe0)){p_rep_severe=exp(params$p_rep_severe)}else{p_rep_severe=p_rep_severe0}
+    if(is.null(p_rep_death0)){p_rep_death=exp(params$p_rep_death)}else{p_rep_death=p_rep_death0}
+
+    if(type %in% c("FOI+R0 enviro","FOI enviro")){
+      for(n_region in 1:n_regions){
+        model_params=param_calc_enviro(as.numeric(params),
+                                       enviro_data=enviro_data[enviro_data$adm1==regions[n_region],])
+        FOI_values[n_region]=model_params$FOI
+        if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
+          R0_values[n_region]=R0_fixed_values[n_region]}
+      }
+    }
+    if(type %in% c("FOI+R0","FOI")){
+      FOI_values=exp(as.numeric(params)[c(1:n_regions)])
+      if(type=="FOI+R0"){R0_values=exp(as.numeric(params)[c((n_regions+1):(2*n_regions))])
+      } else {R0_values=R0_fixed_values}
+    }
+
+    for(n_region in 1:n_regions){
+
+      case_data <- case_data_generate(FOI_values[n_region],R0_values[n_region],
+                                  vacc_data=input_data$vacc_data[n_region,,],pop_data=input_data$pop_data[n_region,,],
+                                  year0=input_data$years_labels[1],mode_start,n_reps,year_end,year_data_begin,
+                                  vaccine_efficacy,NULL,dt)
+      for(n_year in 1:n_years){
+        for(rep in 1:n_reps){
+          infs=floor(sum(case_data$C,case_data$year==years_data[n_year]))
+          severe_infs=rbinom(1,infs,p_severe_inf)
+          deaths=rbinom(1,severe_infs,p_death_severe_inf)
+          obs_deaths=rbinom(1,deaths,p_rep_death)
+          obs_cases=obs_deaths+rbinom(1,severe_infs-deaths,p_rep_severe)
+          case_ar1[n_year,n_region,n_param_set,rep]=severe_infs
+          death_ar1[n_year,n_region,n_param_set,rep]=deaths
+          obs_case_ar1[n_year,n_region,n_param_set,rep]=obs_cases
+          obs_death_ar1[n_year,n_region,n_param_set,rep]=obs_deaths
+        }
+        case_ar2[n_year,n_region,n_param_set]=sum(case_ar1[n_year,n_region,n_param_set,])/n_reps
+        death_ar2[n_year,n_region,n_param_set]=sum(death_ar1[n_year,n_region,n_param_set,])/n_reps
+        obs_case_ar2[n_year,n_region,n_param_set]=sum(obs_case_ar1[n_year,n_region,n_param_set,])/n_reps
+        obs_death_ar2[n_year,n_region,n_param_set]=sum(obs_death_ar1[n_year,n_region,n_param_set,])/n_reps
+      }
+    }
+
+    for(n_year in 1:n_years){
+      case_ar3[n_year,n_param_set]=sum(case_ar2[n_year,,n_param_set])
+      death_ar3[n_year,n_param_set]=sum(death_ar2[n_year,,n_param_set])
+      obs_case_ar3[n_year,n_param_set]=sum(obs_case_ar2[n_year,,n_param_set])
+      obs_death_ar3[n_year,n_param_set]=sum(obs_death_ar2[n_year,,n_param_set])
+    }
+  }
+
+  plot_frame1=data.frame(year=rep(years_data,n_regions*n_param_sets),
+                         region=rep(sort(rep(regions,n_years)),n_param_sets),
+                         set=sort(rep(c(1:n_param_sets),n_years*n_regions)),
+                         cases=as.vector(case_ar2),deaths=as.vector(death_ar2),
+                         obs_cases=as.vector(obs_case_ar2),obs_deaths=as.vector(obs_death_ar2))
+  plot_frame2=data.frame(year=rep(years_data,n_param_sets),set=sort(rep(c(1:n_param_sets),n_years)),
+                         cases=as.vector(case_ar3),deaths=as.vector(death_ar3),
+                         obs_cases=as.vector(obs_case_ar3),obs_deaths=as.vector(obs_death_ar3))
+
+
+  return(list(by_region=plot_frame1,all=plot_frame2))
+}
