@@ -238,6 +238,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
                   sero_model_low50=model_CI50_low[lines],sero_model_high50=model_CI50_high[lines])
     df$samples[df$samples==0]=1
 
+    samples=NULL
     sero_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=graph_titles[i])
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low95,
                                                                  ymax=sero_model_high95),fill="blue",alpha=0.5)

@@ -9,7 +9,8 @@ get_MCMC_data_CI(input_frame = list(), margin = 0.95)
 \arguments{
 \item{input_frame}{TBA}
 
-\item{margin}{'}
+\item{margin}{TBA
+'}
 }
 \description{
 Get confidence interval of selected MCMC output parameter values

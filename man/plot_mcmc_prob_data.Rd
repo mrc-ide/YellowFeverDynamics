@@ -8,7 +8,6 @@ plot_mcmc_prob_data(
   input_frame = list(),
   plot_type = "box",
   values = c("vaccine_efficacy"),
-  margin = 0.95,
   text_size1 = 10
 )
 }
@@ -18,9 +17,6 @@ plot_mcmc_prob_data(
 \item{plot_type}{Type of plots to create (choose from "box","violin","error_bars")}
 
 \item{values}{List of names of parameters to plot (must be parameters appearing in the data)}
-
-\item{margin}{For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-expressed as a fraction}
 
 \item{text_size1}{TBA}
 }

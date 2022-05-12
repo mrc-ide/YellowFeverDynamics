@@ -155,6 +155,55 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
   return(output_frame)
 }
 #-------------------------------------------------------------------------------
+#' @title get_mcmc_enviro_coeff_data
+#'
+#' @description Extract values of environmental coefficients from MCMC output data
+#'
+#' @details This function takes in a data frame produced by functions get_mcmc_data() and/or truncate_mcmc_data() and
+#' calculates spillover force of infection (FOI) and reproduction number (R0) values for each row in the frame
+#' (representing points on the chain) based on the type of fit carried out.
+#'
+#' @param input_frame Data frame of MCMC output data
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI enviro","FOI+R0 enviro"
+#' @param enviro_data Data frame of environmental covariate values used to calculate FOI and R0 in MCMC run, by region
+#'   (NOTE: the data frame should include only the relevant environmental covariates; any not used in the MCMC fit
+#'    should be removed)
+#' '
+#' @export
+#'
+get_mcmc_enviro_coeff_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
+  #TODO - Add assertthat checks
+  assert_that(is.data.frame((input_frame)))
+  assert_that(type %in% c("FOI enviro","FOI+R0 enviro"))
+  assert_that(is.data.frame((enviro_data)))
+  assert_that(is.null(enviro_data$adm1)==FALSE)
+
+  if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
+    param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
+  columns=which(colnames(input_frame) %in% param_names)
+
+  n_lines=nrow(input_frame)
+  n_env_vars=ncol(enviro_data)-1
+  env_vars=colnames(enviro_data)[c(2:(n_env_vars+1))]
+
+  blank=rep(NA,n_env_vars*n_lines)
+  output_frame=data.frame(n_env_var=as.factor(rep(c(1:n_env_vars),n_lines)),env_var=blank,FOI_coeffs=blank)
+  output_frame$env_var=env_vars[output_frame$n_env_var]
+  if(type=="FOI+R0 enviro"){
+    R0_coeffs=blank
+    output_frame=cbind(output_frame,R0_coeffs)}
+
+  columns1=columns[c(1:n_env_vars)]
+  output_frame$FOI_coeffs=as.vector(t(input_frame[,columns1]))
+  if(type=="FOI+R0 enviro"){
+    columns2=columns[c(1:n_env_vars)]+n_env_vars
+    output_frame$R0_coeffs=as.vector(t(input_frame[,columns2]))
+  }
+
+  return(output_frame)
+}
+#-------------------------------------------------------------------------------
 #' @title plot_mcmc_FOI_R0_data
 #'
 #' @description Plot spillover force of infection (FOI) and reproduction number (R0) values from MCMC output data
@@ -194,8 +243,9 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
     } else {
       p_FOI <- p_FOI+geom_violin(trim=FALSE,scale="width")}
     p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-    p_FOI <- p_FOI + scale_y_continuous(name="FOI",breaks=log(FOI_labels),labels=FOI_labels)
-    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
+    p_FOI <- p_FOI + scale_y_continuous(name="FOI coefficients",breaks=log(FOI_labels),labels=FOI_labels)
+    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                           axis.text.y = element_text(size = text_size1))
 
     if(is.null(data_frame$R0)==FALSE){
       R0=NULL
@@ -206,7 +256,8 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
         p_R0 <- p_R0+geom_violin(trim=FALSE,scale="width")
       }
       p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
+      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                           axis.text.y = element_text(size = text_size1))
     } else {
       p_R0<-NULL
     }
@@ -221,6 +272,8 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
       names(subset)[names(subset)=="n_region"]="Region"
       Region=NULL
       p_FOI_R0 <- p_FOI_R0 + geom_point(data=subset,aes(x=log(FOI),y=R0,colour=Region))
+      p_FOI_R0 <- p_FOI_R0 + theme(axis.text.x = element_text(size = text_size1),
+                                   axis.text.y = element_text(size = text_size1))
     }
     output<-list(p_FOI_R0=p_FOI_R0)
   }
@@ -246,7 +299,8 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 
     p_FOI <- ggplot(data=summary_frame_FOI,aes(x=n_region,y=log(mean))) + theme_bw()
     p_FOI <- p_FOI + scale_x_continuous(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
+    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                           axis.text.y = element_text(size = text_size1))
     p_FOI <- p_FOI + scale_y_continuous(name="FOI",breaks=log(FOI_labels),labels=FOI_labels)
     p_FOI <- p_FOI + geom_line(data=summary_frame_FOI,aes(x=n_region,y=log(mean)))
     p_FOI <- p_FOI + geom_errorbar(data=summary_frame_FOI,aes(ymin=log(lower),ymax=log(upper)),width=0.5)
@@ -254,11 +308,66 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
     if(is.null(data_frame$R0)==FALSE){
       p_R0 <- ggplot(data=summary_frame_R0,aes(x=n_region,y=mean)) + theme_bw()
       p_R0 <- p_R0 + scale_x_continuous(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
+      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                           axis.text.y = element_text(size = text_size1))
       p_R0 <- p_R0 + geom_line(data=summary_frame_R0,aes(x=n_region,y=mean))
       p_R0 <- p_R0 + geom_errorbar(data=summary_frame_R0,aes(ymin=lower,ymax=upper),width=0.5)
     } else {
       p_R0 <- NULL
+    }
+    output<-list(p_FOI=p_FOI,p_R0=p_R0)
+  }
+
+  return(output)
+}
+#-------------------------------------------------------------------------------
+#' @title plot_mcmc_enviro_coeff_data
+#'
+#' @description TBA
+#'
+#' @details TBA
+#'
+#' @param data_frame Data frame of coefficient values obtained using get_mcmc_enviro_coeff_data()
+#' @param env_vars List of environmental covariates
+#' @param plot_type Type of plots to create (choose from "box","violin")
+#' @param text_size1 TBA
+#' '
+#' @export
+#'
+plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type="box",text_size1=10.0){
+  #TODO - Add assertthat checks
+  assert_that(plot_type %in% c("box","violin"))
+
+  n_env_vars=length(env_vars)
+  ylabels=10^c(-20:1)
+  n_env_var=NULL
+
+  if(plot_type %in% c("box","violin")){
+    FOI_coeffs=NULL
+    p_FOI <- ggplot(data=data_frame,aes(x=n_env_var,y=log(FOI_coeffs))) + theme_bw()
+    if(plot_type=="box"){
+      p_FOI <- p_FOI+geom_boxplot(outlier.size = 0)
+    } else {
+      p_FOI <- p_FOI+geom_violin(trim=FALSE,scale="width")}
+    p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_env_vars),labels=env_vars)
+    p_FOI <- p_FOI + scale_y_continuous(name="FOI coefficients",breaks=log(ylabels),labels=ylabels)
+    p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                           axis.text.y = element_text(size = text_size1))
+
+    if(is.null(data_frame$R0_coeffs)==FALSE){
+      R0_coeffs=NULL
+      p_R0 <- ggplot(data=data_frame,aes(x=n_env_var,y=log(R0_coeffs))) + theme_bw()
+      if(plot_type=="box"){
+        p_R0 <- p_R0+geom_boxplot(outlier.size = 0)
+      } else {
+        p_R0 <- p_R0+geom_violin(trim=FALSE,scale="width")
+      }
+      p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_env_vars),labels=env_vars)
+      p_R0 <- p_R0 + scale_y_continuous(name="R0 coefficients",breaks=log(ylabels),labels=ylabels)
+      p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                           axis.text.y = element_text(size = text_size1))
+    } else {
+      p_R0<-NULL
     }
     output<-list(p_FOI=p_FOI,p_R0=p_R0)
   }
@@ -278,14 +387,11 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #' @param input_frame Data frame of MCMC output data
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars")
 #' @param values List of names of parameters to plot (must be parameters appearing in the data)
-#' @param margin For plot type "error_bars" only, the margin of the critical interval to display with the error bars,
-#'   expressed as a fraction
 #' @param text_size1 TBA
 #'
 #' @export
 #'
-plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vaccine_efficacy"),margin=0.95,
-                                text_size1=10.0){
+plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vaccine_efficacy"),text_size1=10.0){
   assert_that(plot_type %in% c("box","violin","error_bars"))
 
   n_values=length(values)
@@ -343,7 +449,7 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
 #'          then returns exponentials to return to original output format
 #'
 #' @param input_frame TBA
-#' @param margin
+#' @param margin TBA
 #' '
 #' @export
 #'
