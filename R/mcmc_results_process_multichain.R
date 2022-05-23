@@ -105,6 +105,7 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
 get_mcmc_FOI_R0_multichain <- function(datasets=c(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
                                        type="FOI+R0",enviro_data=NULL){
   #TODO Add assert_that functions
+  assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
   if(is.null(burnin_values)==TRUE){burnin_values=rep(1,length(datasets_selected))} else {
     assert_that(length(datasets_selected)==length(burnin_values))}
   if(is.null(end_values)==TRUE){

@@ -108,6 +108,7 @@ truncate_mcmc_data <- function(input_frame=list(),rows=c(1),plot_graph=TRUE){
 #'
 get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
   #TODO - Add assertthat checks
+  assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
   assert_that(is.data.frame((input_frame)))
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
   if(type %in% c("FOI enviro","FOI+R0 enviro")){
