@@ -8,6 +8,7 @@ total_burden_estimate(
   type = "FOI+R0 enviro",
   param_dist = list(),
   input_data = list(),
+  start_SEIRV0 = NULL,
   years_data = c(),
   n_reps = 1,
   mode_start = 1,
@@ -16,7 +17,8 @@ total_burden_estimate(
   R0_fixed_values = NULL,
   vaccine_efficacy0 = NULL,
   p_rep_severe0 = NULL,
-  p_rep_death0 = NULL
+  p_rep_death0 = NULL,
+  flag_reporting = TRUE
 )
 }
 \arguments{
@@ -25,6 +27,8 @@ total_burden_estimate(
 \item{param_dist}{TBA}
 
 \item{input_data}{TBA}
+
+\item{start_SEIRV0}{TBA}
 
 \item{years_data}{TBA}
 
@@ -43,6 +47,8 @@ total_burden_estimate(
 \item{p_rep_severe0}{TBA}
 
 \item{p_rep_death0}{TBA}
+
+\item{flag_reporting}{TRUE/FALSE flag indicating whether to calculate number of reported/observed cases}
 }
 \description{
 TBA
