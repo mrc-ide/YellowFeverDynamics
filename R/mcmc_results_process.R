@@ -244,9 +244,10 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
     } else {
       p_FOI <- p_FOI+geom_violin(trim=FALSE,scale="width")}
     p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
-    p_FOI <- p_FOI + scale_y_continuous(name="FOI coefficients",breaks=log(FOI_labels),labels=FOI_labels)
+    p_FOI <- p_FOI + scale_y_continuous(name="FOI",breaks=log(FOI_labels),labels=FOI_labels)
     p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
-                           axis.text.y = element_text(size = text_size1))
+                           axis.text.y = element_text(size = text_size1),
+                           axis.title.y = element_text(size = text_size1))
 
     if(is.null(data_frame$R0)==FALSE){
       R0=NULL
@@ -258,7 +259,8 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
       }
       p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_regions),labels=output_labels[c(1:n_regions)])
       p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
-                           axis.text.y = element_text(size = text_size1))
+                           axis.text.y = element_text(size = text_size1),
+                           axis.title.y = element_text(size = text_size1))
     } else {
       p_R0<-NULL
     }
@@ -274,7 +276,8 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
       Region=NULL
       p_FOI_R0 <- p_FOI_R0 + geom_point(data=subset,aes(x=log(FOI),y=R0,colour=Region))
       p_FOI_R0 <- p_FOI_R0 + theme(axis.text.x = element_text(size = text_size1),
-                                   axis.text.y = element_text(size = text_size1))
+                                   axis.text.y = element_text(size = text_size1),
+                                   axis.title.y = element_text(size = text_size1))
     }
     output<-list(p_FOI_R0=p_FOI_R0)
   }
@@ -335,38 +338,46 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #' '
 #' @export
 #'
+#'plot_mcmc_enviro_coeff_data(coeff_datasets[[i]],names(table(coeff_datasets[[i]]$env_var)),plot_type,20)
 plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type="box",text_size1=10.0){
   #TODO - Add assertthat checks
   assert_that(plot_type %in% c("box","violin"))
 
   n_env_vars=length(env_vars)
-  ylabels=10^c(-20:1)
+  FOI_limits=c(max(-11,floor(log(min(data_frame$FOI_coeffs),10))),-3)
+  FOI_labels=10^c(FOI_limits[1]:FOI_limits[2])
+  R0_limits=c(max(-4,floor(log(min(data_frame$R0_coeffs),10))),1)
+  R0_labels=10^c(R0_limits[1]:R0_limits[2])
   n_env_var=NULL
 
   if(plot_type %in% c("box","violin")){
     FOI_coeffs=NULL
-    p_FOI <- ggplot(data=data_frame,aes(x=n_env_var,y=log(FOI_coeffs))) + theme_bw()
+    p_FOI <- ggplot(data=data_frame,aes(x=n_env_var,y=log(FOI_coeffs,10))) + theme_bw()
     if(plot_type=="box"){
       p_FOI <- p_FOI+geom_boxplot(outlier.size = 0)
     } else {
       p_FOI <- p_FOI+geom_violin(trim=FALSE,scale="width")}
     p_FOI <- p_FOI + scale_x_discrete(name="",breaks=c(1:n_env_vars),labels=env_vars)
-    p_FOI <- p_FOI + scale_y_continuous(name="FOI coefficients",breaks=log(ylabels),labels=ylabels)
+    p_FOI <- p_FOI + scale_y_continuous(name="FOI coefficients",breaks=log(FOI_labels,10),labels=FOI_labels,
+                                        limits=FOI_limits)
     p_FOI <- p_FOI + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
-                           axis.text.y = element_text(size = text_size1))
+                           axis.text.y = element_text(size = text_size1),
+                           axis.title.y = element_text(size = text_size1))
 
     if(is.null(data_frame$R0_coeffs)==FALSE){
       R0_coeffs=NULL
-      p_R0 <- ggplot(data=data_frame,aes(x=n_env_var,y=log(R0_coeffs))) + theme_bw()
+      p_R0 <- ggplot(data=data_frame,aes(x=n_env_var,y=log(R0_coeffs,10))) + theme_bw()
       if(plot_type=="box"){
         p_R0 <- p_R0+geom_boxplot(outlier.size = 0)
       } else {
         p_R0 <- p_R0+geom_violin(trim=FALSE,scale="width")
       }
       p_R0 <- p_R0 + scale_x_discrete(name="",breaks=c(1:n_env_vars),labels=env_vars)
-      p_R0 <- p_R0 + scale_y_continuous(name="R0 coefficients",breaks=log(ylabels),labels=ylabels)
+      p_R0 <- p_R0 + scale_y_continuous(name="R0 coefficients",breaks=log(R0_labels,10),labels=R0_labels,
+                                        limits=R0_limits)
       p_R0 <- p_R0 + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
-                           axis.text.y = element_text(size = text_size1))
+                           axis.text.y = element_text(size = text_size1),
+                           axis.title.y = element_text(size = text_size1))
     } else {
       p_R0<-NULL
     }
