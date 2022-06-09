@@ -338,7 +338,6 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #' '
 #' @export
 #'
-#'plot_mcmc_enviro_coeff_data(coeff_datasets[[i]],names(table(coeff_datasets[[i]]$env_var)),plot_type,20)
 plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type="box",text_size1=10.0){
   #TODO - Add assertthat checks
   assert_that(plot_type %in% c("box","violin"))
