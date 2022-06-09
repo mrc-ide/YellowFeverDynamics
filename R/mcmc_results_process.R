@@ -338,15 +338,14 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #' '
 #' @export
 #'
-#'plot_mcmc_enviro_coeff_data(coeff_datasets[[i]],names(table(coeff_datasets[[i]]$env_var)),plot_type,20)
 plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type="box",text_size1=10.0){
   #TODO - Add assertthat checks
   assert_that(plot_type %in% c("box","violin"))
 
   n_env_vars=length(env_vars)
-  FOI_limits=c(max(-11,floor(log(min(data_frame$FOI_coeffs),10))),-3)
+  FOI_limits=c(max(-11,floor(log(min(data_frame$FOI_coeffs),10))),min(-3,ceiling(log(max(data_frame$FOI_coeffs),10))))
   FOI_labels=10^c(FOI_limits[1]:FOI_limits[2])
-  R0_limits=c(max(-4,floor(log(min(data_frame$R0_coeffs),10))),1)
+  R0_limits=c(max(-4,floor(log(min(data_frame$R0_coeffs),10))),min(1,ceiling(log(max(data_frame$R0_coeffs),10))))
   R0_labels=10^c(R0_limits[1]:R0_limits[2])
   n_env_var=NULL
 
@@ -427,7 +426,9 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
       p_probs <- p_probs+geom_violin(trim=FALSE,scale="width")}
     p_probs <- p_probs + scale_x_discrete(name="",breaks=c(1:length(values)),labels=values)
     p_probs <- p_probs + scale_y_continuous(name="",breaks=log(labels),labels=labels)
-    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
+    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                               axis.text.y = element_text(size = text_size1),
+                               axis.title.y = element_text(size = text_size1))
   }
   if(plot_type=="error_bars"){
     blank=rep(NA,n_values)
@@ -446,7 +447,9 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
     p_probs <- p_probs + scale_y_continuous(name="",breaks=log(labels),labels=labels)
     p_probs <- p_probs + geom_line(data=summary_frame,aes(x=n_value,y=log(mean)))
     p_probs <- p_probs + geom_errorbar(data=summary_frame,aes(ymin=log(lower),ymax=log(upper)),width=0.5)
-    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1))
+    p_probs <- p_probs + theme(axis.text.x = element_text(angle = 90, hjust=1,size=text_size1),
+                               axis.text.y = element_text(size = text_size1),
+                               axis.title.y = element_text(size = text_size1))
 
   }
 
