@@ -565,6 +565,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
                                   enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy0=NULL,
                                   p_rep_severe0=NULL,p_rep_death0=NULL,flag_reporting=TRUE){
 
+  assert_that(all(input_data$region_labels==enviro_data$adm1)==TRUE)
   assert_that(min(years_data)>=input_data$years_labels[1])
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
   assert_that(is.logical(flag_reporting))
