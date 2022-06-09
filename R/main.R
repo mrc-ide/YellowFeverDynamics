@@ -620,7 +620,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
                                   vaccine_efficacy,start_SEIRV,dt)
       for(n_year in 1:n_years){
         for(rep in 1:n_reps){
-          infs=floor(sum(case_data$C,case_data$year==years_data[n_year]))
+          infs=floor(sum(case_data$C[rep,case_data$year==years_data[n_year]]))
           severe_infs=rbinom(1,infs,p_severe_inf)
           deaths=rbinom(1,severe_infs,p_death_severe_inf)
           case_ar1[n_year,n_region,n_param_set,rep]=severe_infs
