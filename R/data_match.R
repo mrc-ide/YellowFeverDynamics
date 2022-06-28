@@ -5,7 +5,12 @@
 #' @description Function which runs the model to create simulated data corresponding to supplied observed data for a
 #'   single set of parameters with one or more repetitions
 #'
-#' @details TBA
+#' @details This function takes in observed data and produces a corresponding simulated dataset for comparison using
+#'   supplied model parameters (in the param_prop input variable), population and vaccination settings (in the
+#'   input_data input variable) and other settings including parameter type, time increment and environmental covariate
+#'   values (in the const_list input variable). The simulated dataset will be able to be compared directly to the
+#'   observed dataset - individual data values will be produced for the same years and regions (or combinations of
+#'   regions), seroprevalence data will be produced for the same age groups, etc.
 #'
 #' @param param_prop Log values of proposed parameters
 #' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
@@ -94,11 +99,17 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 #' @description Function which runs the model to create simulated data corresponding to supplied observed data for
 #'   multiple parameter sets
 #'
-#' @details TBA
+#' @details This function runs the data_match_single() function for multiple parameter sets. It takes in observed data
+#'   and produces corresponding simulated datasets for comparison using multiple sets of supplied model parameters (in
+#'   the param_sets input variable), population and vaccination settings (in the input_data input variable) and other
+#'   settings including parameter type, time increment and environmental covariate values (in the const_list input
+#'   variable). The simulated dataset will be able to be compared directly to the observed dataset - individual data
+#'   values will be produced for the same years and regions (or combinations of regions), seroprevalence data will be
+#'   produced for the same age groups, etc.
 #'
 #' @param param_sets Data frame of log values of proposed parameters, one set per row
 #' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
-#' with observed data, added using input_data_process2
+#'   with observed data, added using input_data_process2
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 #'   positives
 #' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
@@ -131,14 +142,19 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
 #' @title sero_match_graphs
 #'
 #' @description Function to create a series of graphs comparing modelled and observed serological data from results
-#'   generated from data_match_multi
+#'   generated from data_match_multi() function
 #'
-#' @details TBA
+#' @details Takes in simulated datasets produced by data_match_multi() function along with observed seroprevalence
+#'   dataset used to generate the simulated datasets, and produces graph(s) (one graph per survey) showing the observed
+#'   and simulated data on the same set(s) of axes, with observed data displayed as points and lines and simulated data
+#'   as coloured bands.
 #'
-#' @param model_data TBA
-#' @param obs_sero_data TBA
-#' @param type TBA
-#' @param text_size1 TBA
+#' @param model_data Simulated datasets produced by data_match_multi() function
+#' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+#'   positives
+#' @param type Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
+#'   95\% and 50\% confidence intervals for mean of all values
+#' @param text_size1 Size of text to display on graphs
 #'
 #' @export
 #'
@@ -262,15 +278,21 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
 #' @title case_match_graphs
 #'
 #' @description Function to create a series of graphs comparing modelled and observed case data from results
-#'   generated from data_match_multi
+#'   generated from data_match_multi() function
 #'
-#' @details TBA
+#' @details Takes in simulated datasets produced by data_match_multi() function along with observed annual case
+#'   dataset used to generate the simulated datasets, and produces graph(s) (one graph per region or group of regions
+#'   for which annual case data was supplied) showing the observed and simulated data on the same set(s) of axes, with
+#'   observed data displayed as points and lines and simulated data as coloured bands.
 #'
-#' @param model_data TBA
-#' @param obs_case_data TBA
-#' @param input_data TBA
-#' @param type TBA
-#' @param text_size1 TBA
+#' @param model_data Simulated datasets produced by data_match_multi() function
+#' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+#'   deaths
+#' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
+#' with observed data, added using input_data_process
+#' @param type Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
+#'   95\% and 50\% confidence intervals for mean of all values
+#' @param text_size1 Size of text to display on graphs
 #'
 #' @export
 #'

@@ -24,11 +24,11 @@ Generate_Dataset(
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
 code and usually loaded from RDS file), with cross-reference tables added using input_data_process() function)}
 
-\item{enviro_data}{TBA}
+\item{enviro_data}{Data frame containing values of environmental covariates; set to NULL if not in use}
 
-\item{FOI_values}{TBA}
+\item{FOI_values}{Values for each region of the force of infection due to spillover from sylvatic reservoir}
 
-\item{R0_values}{TBA}
+\item{R0_values}{Values for each region of the basic reproduction number for human-human transmission}
 
 \item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 positives}
@@ -39,11 +39,11 @@ deaths}
 \item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 1 = 1 or more outbreak(s)}
 
-\item{vaccine_efficacy}{TBA}
+\item{vaccine_efficacy}{Fractional vaccine efficacy}
 
-\item{p_rep_severe}{TBA}
+\item{p_rep_severe}{Probability of reporting of a severe but non-fatal infection}
 
-\item{p_rep_death}{TBA}
+\item{p_rep_death}{Probability of reporting of a fatal infection}
 
 \item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination
 If mode_start=0, only vaccinated individuals

@@ -36,5 +36,10 @@ Function which runs the model to create simulated data corresponding to supplied
   single set of parameters with one or more repetitions
 }
 \details{
-TBA
+This function takes in observed data and produces a corresponding simulated dataset for comparison using
+  supplied model parameters (in the param_prop input variable), population and vaccination settings (in the
+  input_data input variable) and other settings including parameter type, time increment and environmental covariate
+  values (in the const_list input variable). The simulated dataset will be able to be compared directly to the
+  observed dataset - individual data values will be produced for the same years and regions (or combinations of
+  regions), seroprevalence data will be produced for the same age groups, etc.
 }

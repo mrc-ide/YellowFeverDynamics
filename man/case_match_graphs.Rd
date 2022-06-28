@@ -13,20 +13,26 @@ case_match_graphs(
 )
 }
 \arguments{
-\item{model_data}{TBA}
+\item{model_data}{Simulated datasets produced by data_match_multi() function}
 
-\item{obs_case_data}{TBA}
+\item{obs_case_data}{Annual reported case/death data for comparison, by region and year, in format no. cases/no.
+deaths}
 
-\item{input_data}{TBA}
+\item{input_data}{List of population and vaccination data for multiple regions, with tables to cross-reference
+with observed data, added using input_data_process}
 
-\item{type}{TBA}
+\item{type}{Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
+95\% and 50\% confidence intervals for mean of all values}
 
-\item{text_size1}{TBA}
+\item{text_size1}{Size of text to display on graphs}
 }
 \description{
 Function to create a series of graphs comparing modelled and observed case data from results
-  generated from data_match_multi
+  generated from data_match_multi() function
 }
 \details{
-TBA
+Takes in simulated datasets produced by data_match_multi() function along with observed annual case
+  dataset used to generate the simulated datasets, and produces graph(s) (one graph per region or group of regions
+  for which annual case data was supplied) showing the observed and simulated data on the same set(s) of axes, with
+  observed data displayed as points and lines and simulated data as coloured bands.
 }

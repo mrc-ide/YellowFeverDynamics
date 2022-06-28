@@ -12,18 +12,23 @@ sero_match_graphs(
 )
 }
 \arguments{
-\item{model_data}{TBA}
+\item{model_data}{Simulated datasets produced by data_match_multi() function}
 
-\item{obs_sero_data}{TBA}
+\item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
+positives}
 
-\item{type}{TBA}
+\item{type}{Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
+95\% and 50\% confidence intervals for mean of all values}
 
-\item{text_size1}{TBA}
+\item{text_size1}{Size of text to display on graphs}
 }
 \description{
 Function to create a series of graphs comparing modelled and observed serological data from results
-  generated from data_match_multi
+  generated from data_match_multi() function
 }
 \details{
-TBA
+Takes in simulated datasets produced by data_match_multi() function along with observed seroprevalence
+  dataset used to generate the simulated datasets, and produces graph(s) (one graph per survey) showing the observed
+  and simulated data on the same set(s) of axes, with observed data displayed as points and lines and simulated data
+  as coloured bands.
 }

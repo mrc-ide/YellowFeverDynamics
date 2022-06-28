@@ -159,18 +159,18 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'
 #' @param input_data List of population and vaccination data for multiple regions (created using data input creation
 #'   code and usually loaded from RDS file), with cross-reference tables added using input_data_process() function)
-#' @param enviro_data TBA
-#' @param FOI_values TBA
-#' @param R0_values TBA
+#' @param enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
+#' @param FOI_values Values for each region of the force of infection due to spillover from sylvatic reservoir
+#' @param R0_values Values for each region of the basic reproduction number for human-human transmission
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 #'   positives
 #' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
 #'   deaths
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
-#' @param vaccine_efficacy TBA
-#' @param p_rep_severe TBA
-#' @param p_rep_death TBA
+#' @param vaccine_efficacy Fractional vaccine efficacy
+#' @param p_rep_severe Probability of reporting of a severe but non-fatal infection
+#' @param p_rep_death Probability of reporting of a fatal infection
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
@@ -428,11 +428,12 @@ param_calc_enviro <- function(param=c(),enviro_data=c()){
 #-------------------------------------------------------------------------------
 #' @title plot_model_output
 #'
-#' @description Plot output of Full_Model_Run or Basic_Model_Run
+#' @description Plot output of Full_Model_Run() or Basic_Model_Run() functions
 #'
-#' @details TBA
+#' @details Takes in the output of the Full_Model_Run() or Basic_Model_Run() functions and outputs a ggplot graph of
+#'   S, R and V summed over all age groups, with error bars showing the spread of values from multiple repetitions
 #'
-#' @param model_output TBA
+#' @param model_output List of output data produced via Full_Model_Run() or Basic_Model_Run() functions
 #' '
 #' @export
 #'
@@ -500,12 +501,12 @@ plot_model_output <- function(model_output=list()){
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
-#' @param input_data = List of population and vaccination data for multiple regions (created using data input creation
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
 #' code and usually loaded from RDS file)
-#' @param enviro_data = Environmental data frame, containing only relevant environmental variables
-#' @param extra_params = Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
-#' efficacy and/or infection/death reporting probabilities)
-#' '
+#' @param enviro_data Environmental data frame, containing only relevant environmental variables
+#' @param extra_params Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
+#'   efficacy and/or infection/death reporting probabilities)
+#'
 #' @export
 #'
 create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){

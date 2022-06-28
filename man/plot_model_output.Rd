@@ -7,12 +7,13 @@
 plot_model_output(model_output = list())
 }
 \arguments{
-\item{model_output}{TBA
+\item{model_output}{List of output data produced via Full_Model_Run() or Basic_Model_Run() functions
 '}
 }
 \description{
-Plot output of Full_Model_Run or Basic_Model_Run
+Plot output of Full_Model_Run() or Basic_Model_Run() functions
 }
 \details{
-TBA
+Takes in the output of the Full_Model_Run() or Basic_Model_Run() functions and outputs a ggplot graph of
+  S, R and V summed over all age groups, with error bars showing the spread of values from multiple repetitions
 }

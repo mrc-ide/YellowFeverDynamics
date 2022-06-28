@@ -36,5 +36,11 @@ Function which runs the model to create simulated data corresponding to supplied
   multiple parameter sets
 }
 \details{
-TBA
+This function runs the data_match_single() function for multiple parameter sets. It takes in observed data
+  and produces corresponding simulated datasets for comparison using multiple sets of supplied model parameters (in
+  the param_sets input variable), population and vaccination settings (in the input_data input variable) and other
+  settings including parameter type, time increment and environmental covariate values (in the const_list input
+  variable). The simulated dataset will be able to be compared directly to the observed dataset - individual data
+  values will be produced for the same years and regions (or combinations of regions), seroprevalence data will be
+  produced for the same age groups, etc.
 }

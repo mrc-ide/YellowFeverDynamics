@@ -15,14 +15,13 @@ create_param_labels(
 \item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{input_data}{= List of population and vaccination data for multiple regions (created using data input creation
+\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
 code and usually loaded from RDS file)}
 
-\item{enviro_data}{= Environmental data frame, containing only relevant environmental variables}
+\item{enviro_data}{Environmental data frame, containing only relevant environmental variables}
 
-\item{extra_params}{= Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
-efficacy and/or infection/death reporting probabilities)
-'}
+\item{extra_params}{Vector of strings listing parameters besides ones determining FOI/R0 (may include vaccine
+efficacy and/or infection/death reporting probabilities)}
 }
 \description{
 Apply names to the parameters in a set used for data matching and parameter fitting
