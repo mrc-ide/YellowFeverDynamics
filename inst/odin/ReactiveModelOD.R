@@ -16,7 +16,9 @@ R0 <- user() #Basic reproduction number
 N_age <- user() #Number of age categories
 vacc_rate_annual[,] <- user() #Daily rate of vaccination by age and year
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
-p_rep <- user() #Proportion of infections reported
+p_rep[,] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
+outbreak_threshold1 <- user() #Threshold total no. reported cases to trigger outbreak flag 1
+cluster_threshold1 <- user()  #Threshold current infectious fraction to trigger cluster flag 1
 
 #initial conditions
 year0 <- user()  #Starting year
@@ -30,13 +32,16 @@ dP1_all[,] <- user() #Daily increase in number of people by age group (people ar
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
 
-Pmin <- 0 #Minimum population setting to avoid negative numbers
+zero <- 0 #Minimum population setting to avoid negative numbers
+one <- 1
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 t_incubation <- 5 #Time for cases to incubate in mosquito
 t_latent <- 5 #Latent period before cases become infectious
 rate1=dt/(t_incubation+t_latent)
 t_infectious <- 5 #Time cases remain infectious
 rate2 <- dt/t_infectious
+surv_delay <- 60 #Average time delay between symptom onset and case confirmation
+rate3 <- dt/surv_delay
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
 year_i=floor((step*dt)/365) + 1 #Number of years since start, as integer
@@ -53,21 +58,30 @@ F_S[1:N_age] <- S[i]*inv_P[i] #Susceptible fraction by age group
 F_R[1:N_age] <- R[i]*inv_P[i] #Recovered fraction by age group
 F_V[1:N_age] <- V[i]*inv_P[i] #Vaccinated fraction by age group
 vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i)]*S[i]*vaccine_efficacy*dt #Vaccination rate by age group
-C_rep_new[1:N_age] <- rbinom(as.integer(I_new[i]),p_rep) #Daily new reported cases by age group
+outbreak_flag1 <- min(one,max(zero,1+C_rep_total-outbreak_threshold1))
+p_rep_cur <- p_rep[as.integer(flag1b+1),as.integer(flag2b+1)]
+C_rep_new[1:N_age] <- rbinom(as.integer(I_new[i]),p_rep_cur) #Daily new reported cases by age group
+F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of population - check for cluster flag
+cluster_flag1 <- as.integer(max(flag2a,min(one,F_I_total/cluster_threshold1)))
 
 #Updates to output values at each time increment
 update(day) <- day + dt
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
 update(C_rep_total) <- C_rep_total + sum(C_rep_new) #Running total reported cases across all ages
-update(S[1]) <- max(Pmin,S[1] - E_new[1] - vacc_rate[1] + dP1[1] - (dP2[1]*F_S[1]))
-update(S[2:N_age]) <- max(Pmin,S[i] - E_new[i] - vacc_rate[i] + (dP1[i]*F_S[i-1]) - (dP2[i]*F_S[i]))
-update(E[1:N_age]) <- max(Pmin,E[i] + E_new[i] - I_new[i])
-update(I[1:N_age]) <- max(Pmin,I[i] + I_new[i] - R_new[i])
-update(R[1]) <- max(Pmin,R[1] + R_new[1] - (dP2[1]*F_R[1]))
-update(R[2:N_age]) <- max(Pmin,R[i] + R_new[i] + (dP1[i]*F_R[i-1]) - (dP2[i]*F_R[i]))
-update(V[1]) <- max(Pmin,V[1] + vacc_rate[1] - (dP2[1]*F_V[1]))
-update(V[2:N_age]) <- max(Pmin,V[i] + vacc_rate[i] + (dP1[i]*F_V[i-1]) - (dP2[i]*F_V[i]))
+update(flag1a) <- outbreak_flag1 #0 = No cases so far; 1 = 1+ cases so far
+update(flag1b) <- min(one,flag1b + (outbreak_flag1*rate3)) #flag1 with delay (converted to integer on use)
+update(flag2a) <- cluster_flag1 #0 = No cluster; 1 = cluster (high enough no. infectious people)
+update(flag2b) <- min(one,flag2b + (cluster_flag1*rate3)) #flag1 with delay (converted to integer on use)
+update(report_rate) <- p_rep_cur
+update(S[1]) <- max(zero,S[1] - E_new[1] - vacc_rate[1] + dP1[1] - (dP2[1]*F_S[1]))
+update(S[2:N_age]) <- max(zero,S[i] - E_new[i] - vacc_rate[i] + (dP1[i]*F_S[i-1]) - (dP2[i]*F_S[i]))
+update(E[1:N_age]) <- max(zero,E[i] + E_new[i] - I_new[i])
+update(I[1:N_age]) <- max(zero,I[i] + I_new[i] - R_new[i])
+update(R[1]) <- max(zero,R[1] + R_new[1] - (dP2[1]*F_R[1]))
+update(R[2:N_age]) <- max(zero,R[i] + R_new[i] + (dP1[i]*F_R[i-1]) - (dP2[i]*F_R[i]))
+update(V[1]) <- max(zero,V[1] + vacc_rate[1] - (dP2[1]*F_V[1]))
+update(V[2:N_age]) <- max(zero,V[i] + vacc_rate[i] + (dP1[i]*F_V[i-1]) - (dP2[i]*F_V[i]))
 update(C[1:N_age]) <- I_new[i]
 update(C_rep[1:N_age]) <- C_rep_new[i]
 
@@ -75,6 +89,12 @@ update(C_rep[1:N_age]) <- C_rep_new[i]
 initial(day) <- 0
 initial(year) <- year0-1
 initial(FOI_total) <- FOI_spillover
+initial(C_rep_total) <- 0
+initial(flag1a) <- 0
+initial(flag1b) <- 0
+initial(flag2a) <- 0
+initial(flag2b) <- 0
+initial(report_rate) <- p_rep[1,1]
 initial(S[1:N_age]) <- Sus0[i]
 initial(E[1:N_age]) <- Exp0[i]
 initial(I[1:N_age]) <- Inf0[i]
@@ -82,7 +102,6 @@ initial(R[1:N_age]) <- Rec0[i]
 initial(V[1:N_age]) <- Vac0[i]
 initial(C[1:N_age]) <- Cas0[i]
 initial(C_rep[1:N_age]) <- 0
-initial(C_rep_total) <- 0
 
 #Dimensions
 dim(S) <- N_age
@@ -115,3 +134,4 @@ dim(Cas0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_annual) <- c(N_age, n_years)
+dim(p_rep) <- c(2,2)
