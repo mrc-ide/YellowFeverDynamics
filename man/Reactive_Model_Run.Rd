@@ -7,7 +7,8 @@
 Reactive_Model_Run(
   FOI_spillover = 0,
   R0 = 1,
-  vacc_data = list(),
+  vacc_data1 = list(),
+  vacc_data2 = list(),
   pop_data = list(),
   year0 = 1940,
   mode_start = 0,
@@ -18,7 +19,7 @@ Reactive_Model_Run(
   vaccine_efficacy = 1,
   start_SEIRV = list(),
   dt = 1,
-  p_rep = matrix(rep(1e-06, 4), nrow = 2, ncol = 2),
+  p_rep = c(1e-06, 1e-06),
   outbreak_threshold1 = 1,
   cluster_threshold1 = 1
 )
@@ -28,7 +29,9 @@ Reactive_Model_Run(
 
 \item{R0}{Reproduction number for urban spread of infection}
 
-\item{vacc_data}{Vaccination coverage in each age group by year}
+\item{vacc_data1}{Vaccination coverage in each age group by year (non-emergency)}
+
+\item{vacc_data2}{Vaccination coverage in each age group by year (emergency)}
 
 \item{pop_data}{Population in each age group by year}
 
