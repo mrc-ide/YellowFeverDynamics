@@ -1,11 +1,3 @@
-# Full version of SEIRV (Susceptible, Exposed, Infectious, Recovered, Vaccinated) yellow fever model,
-# incorporating the force of infection of spillover from sylvatic/non-human primate reservoirs (which can also
-# represent case importation) and the reproduction number for human-human transmission. Returns SEIRV data at each
-# time point (separated by increment dt) and also numbers of new infections and total force of infection at each
-# time point.
-# Reactive version: calculates numbers of reported cases and implements reactive surveillance/intervention
-# (IN PROGRESS)
-
 dt <- user() #Time increment in days
 initial(time) <- 0 #Initial value of time in days
 update(time) <- (step + 1) * dt
@@ -14,9 +6,9 @@ update(time) <- (step + 1) * dt
 FOI_spillover <- user() #Spillover force of infection
 R0 <- user() #Basic reproduction number
 N_age <- user() #Number of age categories
-vacc_rate_annual[,] <- user() #Daily rate of vaccination by age and year
+vacc_rate_annual[,,] <- user() #Daily rate of vaccination by age and year (non-emergency and emergency)
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
-p_rep[,] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
+p_rep[] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
 outbreak_threshold1 <- user() #Threshold total no. reported cases to trigger outbreak flag 1
 cluster_threshold1 <- user()  #Threshold current infectious fraction to trigger cluster flag 1
 
@@ -37,14 +29,14 @@ one <- 1
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 t_incubation <- 5 #Time for cases to incubate in mosquito
 t_latent <- 5 #Latent period before cases become infectious
-rate1=dt/(t_incubation+t_latent)
+rate1 <- dt/(t_incubation+t_latent)
 t_infectious <- 5 #Time cases remain infectious
 rate2 <- dt/t_infectious
 surv_delay <- 60 #Average time delay between symptom onset and case confirmation
 rate3 <- dt/surv_delay
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
-year_i=floor((step*dt)/365) + 1 #Number of years since start, as integer
+year_i <- floor((step*dt)/365) + 1 #Number of years since start, as integer
 dP1[1:N_age] <- dP1_all[i, as.integer(year_i)]*dt #Increase in population by age group over 1 time increment
 dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age group over 1 time increment
 
@@ -57,12 +49,14 @@ inv_P[1:N_age] <- 1.0/P[i]
 F_S[1:N_age] <- S[i]*inv_P[i] #Susceptible fraction by age group
 F_R[1:N_age] <- R[i]*inv_P[i] #Recovered fraction by age group
 F_V[1:N_age] <- V[i]*inv_P[i] #Vaccinated fraction by age group
-vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i)]*S[i]*vaccine_efficacy*dt #Vaccination rate by age group
+vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i),as.integer(flag3+1)]*S[i]*vaccine_efficacy*dt
+VR_check1 <- 1
 outbreak_flag1 <- min(one,max(zero,1+C_rep_total-outbreak_threshold1))
-p_rep_cur <- p_rep[as.integer(flag1b+1),as.integer(flag2b+1)]
+p_rep_cur <- p_rep[as.integer(flag3+1)]
 C_rep_new[1:N_age] <- rbinom(as.integer(I_new[i]),p_rep_cur) #Daily new reported cases by age group
 F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of population - check for cluster flag
 cluster_flag1 <- as.integer(max(flag2a,min(one,F_I_total/cluster_threshold1)))
+flag_emergency <- max(flag1b,flag2b)
 
 #Updates to output values at each time increment
 update(day) <- day + dt
@@ -73,7 +67,9 @@ update(flag1a) <- outbreak_flag1 #0 = No cases so far; 1 = 1+ cases so far
 update(flag1b) <- min(one,flag1b + (outbreak_flag1*rate3)) #flag1 with delay (converted to integer on use)
 update(flag2a) <- cluster_flag1 #0 = No cluster; 1 = cluster (high enough no. infectious people)
 update(flag2b) <- min(one,flag2b + (cluster_flag1*rate3)) #flag1 with delay (converted to integer on use)
+update(flag3) <- flag_emergency #0 = No emergency (flags 1+2 not tripped); 1 = emergency (flag 1 and/or 2 tripped)
 update(report_rate) <- p_rep_cur
+update(VR_check) <- VR_check1
 update(S[1]) <- max(zero,S[1] - E_new[1] - vacc_rate[1] + dP1[1] - (dP2[1]*F_S[1]))
 update(S[2:N_age]) <- max(zero,S[i] - E_new[i] - vacc_rate[i] + (dP1[i]*F_S[i-1]) - (dP2[i]*F_S[i]))
 update(E[1:N_age]) <- max(zero,E[i] + E_new[i] - I_new[i])
@@ -94,7 +90,9 @@ initial(flag1a) <- 0
 initial(flag1b) <- 0
 initial(flag2a) <- 0
 initial(flag2b) <- 0
-initial(report_rate) <- p_rep[1,1]
+initial(flag3) <- 0
+initial(report_rate) <- p_rep[1]
+initial(VR_check) <- 0
 initial(S[1:N_age]) <- Sus0[i]
 initial(E[1:N_age]) <- Exp0[i]
 initial(I[1:N_age]) <- Inf0[i]
@@ -133,5 +131,5 @@ dim(Vac0) <- N_age
 dim(Cas0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
-dim(vacc_rate_annual) <- c(N_age, n_years)
-dim(p_rep) <- c(2,2)
+dim(vacc_rate_annual) <- c(N_age, n_years, 2)
+dim(p_rep) <- 2

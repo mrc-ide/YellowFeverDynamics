@@ -1,3 +1,4 @@
+library(assertthat)
 #-------------------------------------------------------------------------------
 #' @title Reactive_Model_Run
 #'
@@ -10,7 +11,8 @@
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
-#' @param vacc_data Vaccination coverage in each age group by year
+#' @param vacc_data1 Vaccination coverage in each age group by year (non-emergency)
+#' @param vacc_data2 Vaccination coverage in each age group by year (emergency)
 #' @param pop_data Population in each age group by year
 #' @param year0 First year in population/vaccination data
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
@@ -30,22 +32,22 @@
 #'
 #' @export
 #'
-Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
+Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_data2=list(),pop_data=list(),year0=1940,
                            mode_start=0,n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,
-                           vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0,p_rep=matrix(rep(1e-6,4),nrow=2,ncol=2),
-                           outbreak_threshold1=1,cluster_threshold1=1.0) {
+                           vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0,p_rep=c(1.0e-6,1.0e-6),outbreak_threshold1=1,
+                           cluster_threshold1=1.0) {
 
   assert_that(n_particles>0)
   assert_that(n_particles<=20)
   assert_that(n_threads<=n_particles)
   assert_that(n_threads>0)
 
-  x <- ReactiveModelOD$new(pars=parameter_setup2(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,
+  x <- ReactiveModelOD$new(pars=parameter_setup2(FOI_spillover,R0,vacc_data1,vacc_data2,pop_data,year0,mode_start,
                                             year_end,year_data_begin,vaccine_efficacy,start_SEIRV,dt,p_rep,
                                             outbreak_threshold1,cluster_threshold1),
                        step = 1,n_particles = n_particles,n_threads = n_threads)
 
-  n_nv=10 #Number of non-vector outputs at beginning of output
+  n_nv=12 #Number of non-vector outputs at beginning of output
   N_age=length(pop_data[1,]) #Number of age groups
   t_pts_all=c(1:((year_end-year0)*(365/dt))) #All output time points
   n_data_pts=(7*N_age)+n_nv #Number of data values per time point in output
@@ -63,7 +65,9 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
           C_rep_total=array(x_res[5,,],dim=c(n_particles,t_pts_out)),
           flag1a=array(x_res[6,,],dim=c(n_particles,t_pts_out)),flag1b=array(x_res[7,,],dim=c(n_particles,t_pts_out)),
           flag2a=array(x_res[8,,],dim=c(n_particles,t_pts_out)),flag2b=array(x_res[9,,],dim=c(n_particles,t_pts_out)),
-          report_rate=array(x_res[10,,],dim=c(n_particles,t_pts_out)),
+          flag3=array(x_res[10,,],dim=c(n_particles,t_pts_out)),
+          report_rate=array(x_res[11,,],dim=c(n_particles,t_pts_out)),
+          VR_check=array(x_res[12,,],dim=c(n_particles,t_pts_out)),
               S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
               E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
               I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out)),
@@ -81,7 +85,8 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Reproduction number for urban spread of infection
-#' @param vacc_data Vaccination coverage in each age group by year
+#' @param vacc_data1 Vaccination coverage in each age group by year (non-emergency)
+#' @param vacc_data2 Vaccination coverage in each age group by year (emergency)
 #' @param pop_data Population in each age group by year
 #' @param year0 First year in population/vaccination data
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
@@ -99,28 +104,31 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 #' '
 #' @export
 #'
-parameter_setup2 <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
+parameter_setup2 <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_data2=list(),pop_data=list(),year0=1940,
                              mode_start=0,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,start_SEIRV=list(),
-                             dt=1.0,p_rep=matrix(rep(1e-6,4),nrow=2,ncol=2),outbreak_threshold1=1,
-                             cluster_threshold1=1.0){
+                             dt=1.0,p_rep=c(1.0e-6,1.0e-6),outbreak_threshold1=1,cluster_threshold1=1.0){
 
   assert_that(length(pop_data[,1])>1)
   assert_that(length(pop_data[1,])>1)
   n_years=length(pop_data[,1])-1
   N_age=length(pop_data[1,])
-  assert_that(length(vacc_data[,1])==n_years+1)
-  assert_that(length(vacc_data[1,])==N_age)
+  assert_that(length(vacc_data1[,1])==n_years+1)
+  assert_that(length(vacc_data1[1,])==N_age)
+  assert_that(length(vacc_data2[,1])==n_years+1)
+  assert_that(length(vacc_data2[1,])==N_age)
   assert_that(mode_start %in% c(0,1,2))
   if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE)}
   assert_that(year_data_begin>=year0)
   assert_that(year_data_begin<year_end)
   assert_that(year_end-year0<=n_years)
-  vacc_initial=vacc_data[1,]
+  vacc_initial=vacc_data1[1,]
   assert_that(dt %in% c(1,5))
+  assert_that(length(p_rep)==2)
   inv_365=1.0/365.0
 
   P0=Cas0=Sus0=Exp0=Inf0=Rec0=Vac0=rep(0,N_age)
-  dP1_all=dP2_all=vacc_rates=array(rep(0,N_age*n_years),dim=c(N_age,n_years))
+  dP1_all=dP2_all=array(rep(0,N_age*n_years),dim=c(N_age,n_years))
+  vacc_rates=array(rep(0,N_age*n_years*2),dim=c(N_age,n_years,2))
   for(i in 1:N_age){
     P0[i]=max(1.0,pop_data[1,i]) #Set all population values to a minimum of 1 to avoid NaN values appearing
   }
@@ -129,9 +137,11 @@ parameter_setup2 <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=
       dP1_all[i,n_year]=max(1.0,pop_data[n_year+1,i])*inv_365
       dP2_all[i,n_year]=max(1.0,pop_data[n_year,i])*inv_365
       if(i==1){
-        vacc_rates[i,n_year]=vacc_data[n_year+1,i]*inv_365
+        vacc_rates[i,n_year,1]=vacc_data1[n_year+1,i]*inv_365
+        vacc_rates[i,n_year,2]=vacc_data2[n_year+1,i]*inv_365
       } else {
-        vacc_rates[i,n_year]=max(0.0,vacc_data[n_year+1,i]-vacc_data[n_year,i-1])*inv_365
+        vacc_rates[i,n_year,1]=max(0.0,vacc_data1[n_year+1,i]-vacc_data1[n_year,i-1])*inv_365
+        vacc_rates[i,n_year,2]=max(0.0,vacc_data2[n_year+1,i]-vacc_data2[n_year,i-1])*inv_365
       }
     }
   }

@@ -3,6 +3,8 @@ template <typename real_type, typename container>
 __host__ __device__ real_type odin_sum1(const container x, size_t from, size_t to);
 template <typename real_type, typename container>
 __host__ __device__ real_type odin_sum2(const container x, int from_i, int to_i, int from_j, int to_j, int dim_x_1);
+template <typename real_type, typename container>
+__host__ __device__ real_type odin_sum3(const container x, int from_i, int to_i, int from_j, int to_j, int from_k, int to_k, int dim_x_1, int dim_x_12);
 template <typename real_type, typename T, typename U>
 __host__ __device__ real_type fmodr(T x, U y) {
   real_type tmp = std::fmod(static_cast<real_type>(x),
@@ -36,12 +38,12 @@ __host__ __device__ T odin_max(T x, T y) {
 // [[dust::param(N_age, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_years, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(outbreak_threshold1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(p_rep, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(p_rep, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(R0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Rec0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Sus0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Vac0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vacc_rate_annual, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vacc_rate_annual, has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_efficacy, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(year0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class ReactiveModelOD {
@@ -77,8 +79,6 @@ public:
     int dim_inv_P;
     int dim_P;
     int dim_p_rep;
-    int dim_p_rep_1;
-    int dim_p_rep_2;
     int dim_R;
     int dim_R_new;
     int dim_Rec0;
@@ -89,7 +89,9 @@ public:
     int dim_vacc_rate;
     int dim_vacc_rate_annual;
     int dim_vacc_rate_annual_1;
+    int dim_vacc_rate_annual_12;
     int dim_vacc_rate_annual_2;
+    int dim_vacc_rate_annual_3;
     std::vector<real_type> dP1_all;
     std::vector<real_type> dP2_all;
     real_type dt;
@@ -106,6 +108,7 @@ public:
     real_type initial_flag1b;
     real_type initial_flag2a;
     real_type initial_flag2b;
+    real_type initial_flag3;
     real_type initial_FOI_total;
     std::vector<real_type> initial_I;
     std::vector<real_type> initial_R;
@@ -113,6 +116,7 @@ public:
     std::vector<real_type> initial_S;
     real_type initial_time;
     std::vector<real_type> initial_V;
+    real_type initial_VR_check;
     real_type initial_year;
     int N_age;
     int n_years;
@@ -138,6 +142,7 @@ public:
     std::vector<real_type> Vac0;
     std::vector<real_type> vacc_rate_annual;
     real_type vaccine_efficacy;
+    real_type VR_check1;
     real_type year0;
     real_type zero;
   };
@@ -159,10 +164,10 @@ public:
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() {
-    return shared->dim_C + shared->dim_C_rep + shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 10;
+    return shared->dim_C + shared->dim_C_rep + shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 12;
   }
   std::vector<real_type> initial(size_t step) {
-    std::vector<real_type> state(shared->dim_C + shared->dim_C_rep + shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 10);
+    std::vector<real_type> state(shared->dim_C + shared->dim_C_rep + shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 12);
     state[0] = shared->initial_time;
     state[1] = shared->initial_day;
     state[2] = shared->initial_year;
@@ -172,8 +177,10 @@ public:
     state[6] = shared->initial_flag1b;
     state[7] = shared->initial_flag2a;
     state[8] = shared->initial_flag2b;
-    state[9] = shared->initial_report_rate;
-    std::copy(shared->initial_S.begin(), shared->initial_S.end(), state.begin() + 10);
+    state[9] = shared->initial_flag3;
+    state[10] = shared->initial_report_rate;
+    state[11] = shared->initial_VR_check;
+    std::copy(shared->initial_S.begin(), shared->initial_S.end(), state.begin() + 12);
     std::copy(shared->initial_E.begin(), shared->initial_E.end(), state.begin() + shared->offset_variable_E);
     std::copy(shared->initial_I.begin(), shared->initial_I.end(), state.begin() + shared->offset_variable_I);
     std::copy(shared->initial_R.begin(), shared->initial_R.end(), state.begin() + shared->offset_variable_R);
@@ -188,17 +195,22 @@ public:
     const real_type flag1b = state[6];
     const real_type flag2a = state[7];
     const real_type flag2b = state[8];
-    const real_type * S = state + 10;
+    const real_type flag3 = state[9];
+    const real_type * S = state + 12;
     const real_type * E = state + shared->offset_variable_E;
     const real_type * I = state + shared->offset_variable_I;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
+    real_type flag_emergency = std::max(flag1b, flag2b);
     real_type outbreak_flag1 = std::min(shared->one, std::max(shared->zero, 1 + C_rep_total - shared->outbreak_threshold1));
     state_next[1] = day + shared->dt;
     state_next[0] = (step + 1) * shared->dt;
+    state_next[11] = shared->VR_check1;
     real_type year_i = std::floor((step * shared->dt) / (real_type) 365) + 1;
+    real_type p_rep_cur = shared->p_rep[static_cast<int>(flag3 + 1) - 1];
     state_next[5] = outbreak_flag1;
     state_next[6] = std::min(shared->one, flag1b + (outbreak_flag1 * shared->rate3));
+    state_next[9] = flag_emergency;
     state_next[2] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.I_new[i - 1] = E[i - 1] * shared->rate1;
@@ -206,10 +218,10 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.P[i - 1] = S[i - 1] + E[i - 1] + I[i - 1] + R[i - 1] + V[i - 1];
     }
-    real_type p_rep_cur = shared->p_rep[shared->dim_p_rep_1 * (static_cast<int>(flag2b + 1) - 1) + static_cast<int>(flag1b + 1) - 1];
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.R_new[i - 1] = I[i - 1] * shared->rate2;
     }
+    state_next[10] = p_rep_cur;
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.C_rep_new[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(internal.I_new[i - 1]), p_rep_cur);
     }
@@ -229,9 +241,8 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_I + i - 1] = std::max(shared->zero, I[i - 1] + internal.I_new[i - 1] - internal.R_new[i - 1]);
     }
-    state_next[9] = p_rep_cur;
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * S[i - 1] * shared->vaccine_efficacy * shared->dt;
+      internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_12 * (static_cast<int>(flag3 + 1) - 1) + shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * S[i - 1] * shared->vaccine_efficacy * shared->dt;
     }
     real_type F_I_total = odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot;
     for (int i = 1; i <= shared->N_age; ++i) {
@@ -274,10 +285,10 @@ public:
     state_next[8] = std::min(shared->one, flag2b + (cluster_flag1 * shared->rate3));
     {
        int i = 1;
-       state_next[10 + i - 1] = std::max(shared->zero, S[0] - internal.E_new[0] - internal.vacc_rate[0] + internal.dP1[0] - (internal.dP2[0] * internal.F_S[0]));
+       state_next[12 + i - 1] = std::max(shared->zero, S[0] - internal.E_new[0] - internal.vacc_rate[0] + internal.dP1[0] - (internal.dP2[0] * internal.F_S[0]));
     }
     for (int i = 2; i <= shared->N_age; ++i) {
-      state_next[10 + i - 1] = std::max(shared->zero, S[i - 1] - internal.E_new[i - 1] - internal.vacc_rate[i - 1] + (internal.dP1[i - 1] * internal.F_S[i - 1 - 1]) - (internal.dP2[i - 1] * internal.F_S[i - 1]));
+      state_next[12 + i - 1] = std::max(shared->zero, S[i - 1] - internal.E_new[i - 1] - internal.vacc_rate[i - 1] + (internal.dP1[i - 1] * internal.F_S[i - 1 - 1]) - (internal.dP2[i - 1] * internal.F_S[i - 1]));
     }
   }
 private:
@@ -291,6 +302,20 @@ __host__ __device__ real_type odin_sum2(const container x, int from_i, int to_i,
     int jj = j * dim_x_1;
     for (int i = from_i; i < to_i; ++i) {
       tot += x[i + jj];
+    }
+  }
+  return tot;
+}
+template <typename real_type, typename container>
+__host__ __device__ real_type odin_sum3(const container x, int from_i, int to_i, int from_j, int to_j, int from_k, int to_k, int dim_x_1, int dim_x_12) {
+  real_type tot = 0.0;
+  for (int k = from_k; k < to_k; ++k) {
+    int kk = k * dim_x_12;
+    for (int j = from_j; j < to_j; ++j) {
+      int jj = j * dim_x_1 + kk;
+      for (int i = from_i; i < to_i; ++i) {
+        tot += x[i + jj];
+      }
     }
   }
   return tot;
@@ -515,8 +540,7 @@ dust::pars_type<ReactiveModelOD> dust_pars<ReactiveModelOD>(cpp11::list user) {
   using real_type = typename ReactiveModelOD::real_type;
   auto shared = std::make_shared<ReactiveModelOD::shared_type>();
   ReactiveModelOD::internal_type internal;
-  shared->dim_p_rep_1 = 2;
-  shared->dim_p_rep_2 = 2;
+  shared->dim_p_rep = 2;
   shared->FOI_max = 1;
   shared->initial_C_rep_total = 0;
   shared->initial_day = 0;
@@ -524,14 +548,16 @@ dust::pars_type<ReactiveModelOD> dust_pars<ReactiveModelOD>(cpp11::list user) {
   shared->initial_flag1b = 0;
   shared->initial_flag2a = 0;
   shared->initial_flag2b = 0;
+  shared->initial_flag3 = 0;
   shared->initial_time = 0;
+  shared->initial_VR_check = 0;
   shared->one = 1;
   shared->surv_delay = 60;
   shared->t_incubation = 5;
   shared->t_infectious = 5;
   shared->t_latent = 5;
+  shared->VR_check1 = 1;
   shared->zero = 0;
-  shared->dim_p_rep = shared->dim_p_rep_1 * shared->dim_p_rep_2;
   shared->cluster_threshold1 = NA_REAL;
   shared->dt = NA_REAL;
   shared->FOI_spillover = NA_REAL;
@@ -582,8 +608,10 @@ dust::pars_type<ReactiveModelOD> dust_pars<ReactiveModelOD>(cpp11::list user) {
   shared->dim_vacc_rate = shared->N_age;
   shared->dim_vacc_rate_annual_1 = shared->N_age;
   shared->dim_vacc_rate_annual_2 = shared->n_years;
+  shared->dim_vacc_rate_annual_3 = 2;
   shared->initial_FOI_total = shared->FOI_spillover;
   shared->initial_year = shared->year0 - 1;
+  shared->p_rep = user_get_array_fixed<real_type, 1>(user, "p_rep", shared->p_rep, {shared->dim_p_rep}, NA_REAL, NA_REAL);
   shared->rate1 = shared->dt / (real_type) (shared->t_incubation + shared->t_latent);
   shared->rate2 = shared->dt / (real_type) shared->t_infectious;
   shared->rate3 = shared->dt / (real_type) shared->surv_delay;
@@ -609,19 +637,20 @@ dust::pars_type<ReactiveModelOD> dust_pars<ReactiveModelOD>(cpp11::list user) {
   shared->Cas0 = user_get_array_fixed<real_type, 1>(user, "Cas0", shared->Cas0, {shared->dim_Cas0}, NA_REAL, NA_REAL);
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
-  shared->dim_vacc_rate_annual = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2;
+  shared->dim_vacc_rate_annual = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2 * shared->dim_vacc_rate_annual_3;
+  shared->dim_vacc_rate_annual_12 = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2;
   shared->Exp0 = user_get_array_fixed<real_type, 1>(user, "Exp0", shared->Exp0, {shared->dim_Exp0}, NA_REAL, NA_REAL);
   shared->Inf0 = user_get_array_fixed<real_type, 1>(user, "Inf0", shared->Inf0, {shared->dim_Inf0}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_C_rep[i - 1] = 0;
   }
-  shared->offset_variable_C = shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 10;
-  shared->offset_variable_C_rep = shared->dim_C + shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 10;
-  shared->offset_variable_E = shared->dim_S + 10;
-  shared->offset_variable_I = shared->dim_E + shared->dim_S + 10;
-  shared->offset_variable_R = shared->dim_E + shared->dim_I + shared->dim_S + 10;
-  shared->offset_variable_V = shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + 10;
-  shared->p_rep = user_get_array_fixed<real_type, 2>(user, "p_rep", shared->p_rep, {shared->dim_p_rep_1, shared->dim_p_rep_2}, NA_REAL, NA_REAL);
+  shared->initial_report_rate = shared->p_rep[0];
+  shared->offset_variable_C = shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 12;
+  shared->offset_variable_C_rep = shared->dim_C + shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 12;
+  shared->offset_variable_E = shared->dim_S + 12;
+  shared->offset_variable_I = shared->dim_E + shared->dim_S + 12;
+  shared->offset_variable_R = shared->dim_E + shared->dim_I + shared->dim_S + 12;
+  shared->offset_variable_V = shared->dim_E + shared->dim_I + shared->dim_R + shared->dim_S + 12;
   shared->Rec0 = user_get_array_fixed<real_type, 1>(user, "Rec0", shared->Rec0, {shared->dim_Rec0}, NA_REAL, NA_REAL);
   shared->Sus0 = user_get_array_fixed<real_type, 1>(user, "Sus0", shared->Sus0, {shared->dim_Sus0}, NA_REAL, NA_REAL);
   shared->Vac0 = user_get_array_fixed<real_type, 1>(user, "Vac0", shared->Vac0, {shared->dim_Vac0}, NA_REAL, NA_REAL);
@@ -639,22 +668,21 @@ dust::pars_type<ReactiveModelOD> dust_pars<ReactiveModelOD>(cpp11::list user) {
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_R[i - 1] = shared->Rec0[i - 1];
   }
-  shared->initial_report_rate = shared->p_rep[shared->dim_p_rep_1 * 0 + 0];
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_S[i - 1] = shared->Sus0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_V[i - 1] = shared->Vac0[i - 1];
   }
-  shared->vacc_rate_annual = user_get_array_fixed<real_type, 2>(user, "vacc_rate_annual", shared->vacc_rate_annual, {shared->dim_vacc_rate_annual_1, shared->dim_vacc_rate_annual_2}, NA_REAL, NA_REAL);
+  shared->vacc_rate_annual = user_get_array_fixed<real_type, 3>(user, "vacc_rate_annual", shared->vacc_rate_annual, {shared->dim_vacc_rate_annual_1, shared->dim_vacc_rate_annual_2, shared->dim_vacc_rate_annual_3}, NA_REAL, NA_REAL);
   return dust::pars_type<ReactiveModelOD>(shared, internal);
 }
 template <>
 cpp11::sexp dust_info<ReactiveModelOD>(const dust::pars_type<ReactiveModelOD>& pars) {
   const ReactiveModelOD::internal_type internal = pars.internal;
   const std::shared_ptr<const ReactiveModelOD::shared_type> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "day", "year", "FOI_total", "C_rep_total", "flag1a", "flag1b", "flag2a", "flag2b", "report_rate", "S", "E", "I", "R", "V", "C", "C_rep"});
-  cpp11::writable::list dim(17);
+  cpp11::writable::strings nms({"time", "day", "year", "FOI_total", "C_rep_total", "flag1a", "flag1b", "flag2a", "flag2b", "flag3", "report_rate", "VR_check", "S", "E", "I", "R", "V", "C", "C_rep"});
+  cpp11::writable::list dim(19);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
   dim[2] = cpp11::writable::integers({1});
@@ -665,15 +693,17 @@ cpp11::sexp dust_info<ReactiveModelOD>(const dust::pars_type<ReactiveModelOD>& p
   dim[7] = cpp11::writable::integers({1});
   dim[8] = cpp11::writable::integers({1});
   dim[9] = cpp11::writable::integers({1});
-  dim[10] = cpp11::writable::integers({shared->dim_S});
-  dim[11] = cpp11::writable::integers({shared->dim_E});
-  dim[12] = cpp11::writable::integers({shared->dim_I});
-  dim[13] = cpp11::writable::integers({shared->dim_R});
-  dim[14] = cpp11::writable::integers({shared->dim_V});
-  dim[15] = cpp11::writable::integers({shared->dim_C});
-  dim[16] = cpp11::writable::integers({shared->dim_C_rep});
+  dim[10] = cpp11::writable::integers({1});
+  dim[11] = cpp11::writable::integers({1});
+  dim[12] = cpp11::writable::integers({shared->dim_S});
+  dim[13] = cpp11::writable::integers({shared->dim_E});
+  dim[14] = cpp11::writable::integers({shared->dim_I});
+  dim[15] = cpp11::writable::integers({shared->dim_R});
+  dim[16] = cpp11::writable::integers({shared->dim_V});
+  dim[17] = cpp11::writable::integers({shared->dim_C});
+  dim[18] = cpp11::writable::integers({shared->dim_C_rep});
   dim.names() = nms;
-  cpp11::writable::list index(17);
+  cpp11::writable::list index(19);
   index[0] = cpp11::writable::integers({1});
   index[1] = cpp11::writable::integers({2});
   index[2] = cpp11::writable::integers({3});
@@ -684,13 +714,15 @@ cpp11::sexp dust_info<ReactiveModelOD>(const dust::pars_type<ReactiveModelOD>& p
   index[7] = cpp11::writable::integers({8});
   index[8] = cpp11::writable::integers({9});
   index[9] = cpp11::writable::integers({10});
-  index[10] = integer_sequence(11, shared->dim_S);
-  index[11] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
-  index[12] = integer_sequence(shared->offset_variable_I + 1, shared->dim_I);
-  index[13] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
-  index[14] = integer_sequence(shared->offset_variable_V + 1, shared->dim_V);
-  index[15] = integer_sequence(shared->offset_variable_C + 1, shared->dim_C);
-  index[16] = integer_sequence(shared->offset_variable_C_rep + 1, shared->dim_C_rep);
+  index[10] = cpp11::writable::integers({11});
+  index[11] = cpp11::writable::integers({12});
+  index[12] = integer_sequence(13, shared->dim_S);
+  index[13] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
+  index[14] = integer_sequence(shared->offset_variable_I + 1, shared->dim_I);
+  index[15] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
+  index[16] = integer_sequence(shared->offset_variable_V + 1, shared->dim_V);
+  index[17] = integer_sequence(shared->offset_variable_C + 1, shared->dim_C);
+  index[18] = integer_sequence(shared->offset_variable_C_rep + 1, shared->dim_C_rep);
   index.names() = nms;
   size_t len = shared->offset_variable_C_rep + shared->dim_C_rep;
   using namespace cpp11::literals;
