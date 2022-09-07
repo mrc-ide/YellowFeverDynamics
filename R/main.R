@@ -152,13 +152,12 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #-------------------------------------------------------------------------------
 #' @title Generate_Dataset
 #'
-#' @description Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
+#' @description Generate serological, annual case/death and/or annual outbreak risk data
+#'
+#' @details Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
 #'   data sets; normally used by single_like_calc() and data_match_single() functions
 #'
-#' @details TBA
-#'
-#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
-#'   code and usually loaded from RDS file), with cross-reference tables added using input_data_process() function)
+#' @param input_data List of population and vaccination data for multiple regions
 #' @param enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
 #' @param FOI_values Values for each region of the force of infection due to spillover from sylvatic reservoir
 #' @param R0_values Values for each region of the basic reproduction number for human-human transmission
@@ -540,24 +539,29 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #-------------------------------------------------------------------------------
 #' @title total_burden_estimate
 #'
-#' @description TBA
+#' @description Function to calculate annual yellow fever burden across multiple regions based on derived parameters
 #'
-#' @details TBA
+#' @details Function to take in parameter sets derived from MCMC fitting and use to calculate annual total and reported
+#' case and death numbers for multiple regions to compare with external data
 #'
-#' @param type TBA
-#' @param param_dist TBA
-#' @param input_data TBA
-#' @param start_SEIRV0 TBA
-#' @param years_data TBA
-#' @param n_reps TBA
-#' @param mode_start TBA
-#' @param dt TBA
-#' @param enviro_data TBA
-#' @param R0_fixed_values TBA
-#' @param vaccine_efficacy0 TBA
-#' @param p_rep_severe0 TBA
-#' @param p_rep_death0 TBA
-#' @param flag_reporting TRUE/FALSE flag indicating whether to calculate number of reported/observed cases
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
+#' @param param_dist Data frame of parameter values output by MCMC fitting to use to generate FOI/R0/reporting
+#' probability values
+#' @param input_data List of population and vaccination data for multiple regions
+#' @param start_SEIRV0 SEIRV data to use as input
+#' @param years_data Vector of years for which to output data
+#' @param n_reps Number of repeats over which to average results
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
+#' @param enviro_data enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
+#' @param R0_fixed_values Values of R0 to use if not being taken from parameter distribution
+#' @param vaccine_efficacy0 Vaccine efficacy (set to NULL if being varied as a parameter)
+#' @param p_rep_severe0 Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_rep_death0 Probability of observation of death (set to NULL if being varied as a parameter)
 #'
 #' @export
 #'

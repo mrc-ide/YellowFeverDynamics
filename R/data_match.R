@@ -264,8 +264,8 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
                                                     show.legend=FALSE)
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_errorbar(data=df,aes(x=age_values,ymin=sero_obs_low,ymax=sero_obs_high),
                                                        width=1.0)
-    sero_graphs[[i]] <- sero_graphs[[i]]+scale_x_continuous(name="",breaks=df$age_values,labels=df$age_values)
-    sero_graphs[[i]] <- sero_graphs[[i]]+scale_y_continuous(name="")
+    sero_graphs[[i]] <- sero_graphs[[i]]+scale_x_continuous(name="Age (min)",breaks=df$age_values,labels=df$age_values)
+    sero_graphs[[i]] <- sero_graphs[[i]]+scale_y_continuous(name="Seroprevalence")
     sero_graphs[[i]] <- sero_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
                                                axis.text.y = element_text(size = text_size1),
                                                title=element_text(size=text_size1))
@@ -378,7 +378,7 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
                   death_model_low95=model_deaths_CI95_low[lines],death_model_high95=model_deaths_CI95_high[lines],
                   death_model_low50=model_deaths_CI50_low[lines],death_model_high50=model_deaths_CI50_high[lines])
 
-    cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,3))
+    cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,5))
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low95,
                                                                    ymax=case_model_high95),fill="blue",alpha=0.5)
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low50,
@@ -388,13 +388,13 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
                                                          width=0.5)
     cases_graphs[[i]] <- cases_graphs[[i]]+scale_x_continuous(name="",breaks=c(min(df$years):max(df$years)),
                                                               labels=c(min(df$years):max(df$years)))
-    cases_graphs[[i]] <- cases_graphs[[i]]+scale_y_continuous(name="")
+    cases_graphs[[i]] <- cases_graphs[[i]]+scale_y_continuous(name="Cases")
     cases_graphs[[i]] <- cases_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
                                                  axis.text.y = element_text(size = text_size1),
                                                  title=element_text(size=text_size1))
 
 
-    deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,3))
+    deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,5))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low95,
                                                                      ymax=death_model_high95),fill="blue",alpha=0.5)
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low50,
@@ -404,7 +404,7 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
                                                            width=0.5)
     deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_x_continuous(name="",breaks=c(min(df$years):max(df$years)),
                                                                 labels=c(min(df$years):max(df$years)))
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_y_continuous(name="")
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_y_continuous(name="Deaths")
     deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
                                                    axis.text.y = element_text(size = text_size1),
                                                    title=element_text(size=text_size1))

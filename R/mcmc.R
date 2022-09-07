@@ -6,7 +6,7 @@
 #' @description Combined MCMC Multi-Region - series of MCMC steps for one or more regions
 #'
 #' @details This is the master function for running a Markov chain to optimize the parameters of the yellow fever model
-#' based on the calculated likelihood of observing supplied data given a particular set of parameters. [TBC]
+#' based on the calculated likelihood of observing supplied data given a particular set of parameters.
 #'
 #' @param pars_ini Initial values of parameters to be fitted. These should always be the log() values of the actual
 #'   epidemiological parameters, ordered as follows:
@@ -144,7 +144,7 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
       write.csv(data_out,filename,row.names=FALSE)
     }
 
-    #Decide whether next iteration will be adaptive or use [TBA]
+    #Decide whether next iteration will be adaptive
     if (iter>burnin & runif(1)<0.9){ #adapt
       adapt = 1
       chain_cov  = cov(chain[max(nrow(chain)-10000, 1):nrow(chain),])
@@ -172,7 +172,7 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
 #' @details This function runs a single step in a Markov chain set up using the function mcmc(). It proposes a
 #' set of parameters using the param_prop_setup() function, calculates the likelihood of observing the observed data
 #' based on that proposed parameter set, accepts or rejects the proposed parameter set based on the calculated
-#' likelihood and existing chain information, then returns the next line of information for the chain to mcmc(). [TBC]
+#' likelihood and existing chain information, then returns the next line of information for the chain to mcmc().
 #'
 #' @param param Log values of parameters
 #' @param input_data List of population and vaccination data for multiple regions (created using data input creation
@@ -225,7 +225,7 @@ MCMC_step <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_da
 #' @description Function which calculates and outputs likelihood of observing simulated data
 #'
 #' @details This function calculates the total likelihood of observing a set of observations (across multiple regions
-#' and data types) for a given proposed parameter set. [TBC]
+#' and data types) for a given proposed parameter set.
 #'
 #' @param param_prop Log values of proposed parameters
 #' @param input_data List of population and vaccination data for multiple regions (created using data input creation
@@ -335,7 +335,7 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
 #'
 #' @details This function is used to estimate the model parameter values giving maximum likelihood; it is primarily
 #' intended to be used to generate initial parameter values for Markov Chain Monte Carlo fitting (using the mcmc()
-#' function). [TBC]
+#' function).
 #'
 #' @param n_iterations = Number of times to run and adjust maximum/minimum
 #' @param n_param_sets = Number of parameter sets to run in each iteration
@@ -447,8 +447,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
 #'
 #' @details This function, which is called by MCMC2(), performs a number of checks on data to be used in fitting to
 #' ensure proper functionality. It verifies that the number of parameters being fitted is consistent with other
-#' settings, that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1) and
-#' [TBA]
+#' settings and that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1).
 #'
 #' @param pars_ini = Initial parameter values
 #' @param n_regions = Number of regions
@@ -529,8 +528,6 @@ mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max
     assert_that(length(R0_fixed_values)==n_regions)
     assert_that(n_params==n_env_vars+flag_vacc_eff+flag_severe+flag_death)
   }
-
-  #TBA
 
   return(NULL)
 }
@@ -642,10 +639,10 @@ param_prop_setup <- function(param=c(),chain_cov=1,adapt=0){
 #-------------------------------------------------------------------------------
 #' @title calc_like0
 #'
-#' @description Calculate the likelihood value which would be obtained (with no prior) if modelled data values were
-#'              all equal to observed values (for use as comparison with MCMC likelihood values)
+#' @description Calculate "best case" likelihood
 #'
-#' @details TBA
+#' @details Calculate the likelihood value which would be obtained (with no prior) if modelled data values were
+#'              all equal to observed values (for use as comparison with MCMC likelihood values)
 #'
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 #'   positives
