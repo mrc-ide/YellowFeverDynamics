@@ -18,13 +18,13 @@ This vignette demonstrates how to set up and carry out a single run of the model
 
 First load the package:
 
-```{r,eval=FALSE}
+```{r}
 library(YellowFeverDynamics)
 ```
 
 Population and vaccination data is stored in a list object as described in Vignette 2. Here an example data set for multiple regions is loaded from the package and a smaller data set for a single region is constructed:
 
-```{r,eval=FALSE}
+```{r}
 input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/inst/exdata/input_data_example.Rds",sep=""))
 regions=input_data_all$region_labels[1]
 check=input_data_all$region_labels %in% regions
@@ -35,7 +35,7 @@ input_data=list(region_labels=input_data_all$region_labels[check],years_labels=i
 
 The other input parameters to the functions which run the model are as follows:
 
-```{r,eval=FALSE}
+```{r}
 FOI_spillover=1.0e-8            # Force of infection due to spillover from sylvatic reservoir
 R0=1.5                          # Reproduction number for urban spread of infection
 vacc_data=input_data$vacc_data  # Vaccination coverage in each age group by year
@@ -56,7 +56,7 @@ dt=5.0                          # Time increment in days to use in model (should
 
 The Full_Model_Run function is normally used to run the model for the inputs above:
 
-```{r,eval=FALSE}
+```{r}
 test1<-Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                      year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 ```
