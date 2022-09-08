@@ -1,0 +1,33 @@
+---
+title: "Vignette 1 - Installation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 1 - Installation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+To install YellowFeverDynamics from GitHub, you will need to install the devtools package. If this is not already installed, run:
+
+```{r,eval=FALSE}
+install.packages("devtools")
+```
+
+With devtools installed, run:
+
+```{r,eval=FALSE}
+devtools::install_github("mrc-ide/YellowFeverDynamics")
+```
+
+To check that the package loads, run:
+
+```{r,eval=FALSE}
+library(YellowFeverDynamics)
+```
