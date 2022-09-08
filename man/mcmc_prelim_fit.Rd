@@ -85,5 +85,5 @@ values in order to find approximate values giving maximum likelihood
 \details{
 This function is used to estimate the model parameter values giving maximum likelihood; it is primarily
 intended to be used to generate initial parameter values for Markov Chain Monte Carlo fitting (using the mcmc()
-function). [TBC]
+function).
 }

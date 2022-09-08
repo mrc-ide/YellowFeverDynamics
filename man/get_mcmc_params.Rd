@@ -14,5 +14,6 @@ get_mcmc_params(chain = list())
 Identify columns in MCMC output data containing fitted parameter values and get parameter names
 }
 \details{
-TBA
+This function takes in a dataset output by mcmc() and extracts the names of the fitted parameters as a
+  vector
 }

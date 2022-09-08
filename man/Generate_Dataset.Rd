@@ -21,8 +21,7 @@ Generate_Dataset(
 )
 }
 \arguments{
-\item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
-code and usually loaded from RDS file), with cross-reference tables added using input_data_process() function)}
+\item{input_data}{List of population and vaccination data for multiple regions}
 
 \item{enviro_data}{Data frame containing values of environmental covariates; set to NULL if not in use}
 
@@ -56,9 +55,9 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 '}
 }
 \description{
-Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
-  data sets; normally used by single_like_calc() and data_match_single() functions
+Generate serological, annual case/death and/or annual outbreak risk data
 }
 \details{
-TBA
+Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
+  data sets; normally used by single_like_calc() and data_match_single() functions
 }

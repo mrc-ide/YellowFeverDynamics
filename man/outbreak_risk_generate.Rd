@@ -58,8 +58,9 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 '}
 }
 \description{
-Generate outbreak risk data
+Generate annual outbreak risk data
 }
 \details{
-[TBA]
+This function is used to calculate the annual risk of one or more outbreaks in a region over one or more
+  years, based on epidemiological parameters
 }

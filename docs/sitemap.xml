@@ -4,6 +4,12 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/01_Installation.html</loc>
+  </url>
+  <url>
+    <loc>/articles/02_ModelRun.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -26,6 +32,9 @@
   </url>
   <url>
     <loc>/reference/Basic_Model_Run.html</loc>
+  </url>
+  <url>
+    <loc>/reference/calc_like0.html</loc>
   </url>
   <url>
     <loc>/reference/cases_compare.html</loc>
@@ -52,16 +61,40 @@
     <loc>/reference/deaths_compare.html</loc>
   </url>
   <url>
+    <loc>/reference/display_multichain_progress.html</loc>
+  </url>
+  <url>
     <loc>/reference/FullModelOD.html</loc>
   </url>
   <url>
     <loc>/reference/Full_Model_Run.html</loc>
   </url>
   <url>
+    <loc>/reference/Generate_Dataset.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_mcmc_data.html</loc>
   </url>
   <url>
+    <loc>/reference/get_mcmc_datasets_multichain.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_mcmc_enviro_coeff_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_mcmc_enviro_coeff_multichain.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_mcmc_FOI_R0_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_mcmc_FOI_R0_multichain.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_mcmc_params.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_mcmc_probs_multichain.html</loc>
   </url>
   <url>
     <loc>/reference/get_outbreak_data.html</loc>
@@ -118,10 +151,16 @@
     <loc>/reference/param_prop_setup.html</loc>
   </url>
   <url>
+    <loc>/reference/plot_mcmc_enviro_coeff_data.html</loc>
+  </url>
+  <url>
     <loc>/reference/plot_mcmc_FOI_R0_data.html</loc>
   </url>
   <url>
     <loc>/reference/plot_mcmc_prob_data.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot_model_output.html</loc>
   </url>
   <url>
     <loc>/reference/sero_calculate.html</loc>
@@ -143,6 +182,9 @@
   </url>
   <url>
     <loc>/reference/single_like_calc2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/total_burden_estimate.html</loc>
   </url>
   <url>
     <loc>/reference/truncate_mcmc_data.html</loc>

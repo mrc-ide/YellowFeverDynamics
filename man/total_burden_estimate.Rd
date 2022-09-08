@@ -22,37 +22,43 @@ total_burden_estimate(
 )
 }
 \arguments{
-\item{type}{TBA}
+\item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{param_dist}{TBA}
+\item{param_dist}{Data frame of parameter values output by MCMC fitting to use to generate FOI/R0/reporting
+probability values}
 
-\item{input_data}{TBA}
+\item{input_data}{List of population and vaccination data for multiple regions}
 
-\item{start_SEIRV0}{TBA}
+\item{start_SEIRV0}{SEIRV data to use as input}
 
-\item{years_data}{TBA}
+\item{years_data}{Vector of years for which to output data}
 
-\item{n_reps}{TBA}
+\item{n_reps}{Number of repeats over which to average results}
 
-\item{mode_start}{TBA}
+\item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination
+If mode_start=0, only vaccinated individuals
+If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+If mode_start=2, use SEIRV input in list from previous run(s)}
 
-\item{dt}{TBA}
+\item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)}
 
-\item{enviro_data}{TBA}
+\item{enviro_data}{enviro_data Data frame containing values of environmental covariates; set to NULL if not in use}
 
-\item{R0_fixed_values}{TBA}
+\item{R0_fixed_values}{Values of R0 to use if not being taken from parameter distribution}
 
-\item{vaccine_efficacy0}{TBA}
+\item{vaccine_efficacy0}{Vaccine efficacy (set to NULL if being varied as a parameter)}
 
-\item{p_rep_severe0}{TBA}
+\item{p_rep_severe0}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
-\item{p_rep_death0}{TBA}
+\item{p_rep_death0}{Probability of observation of death (set to NULL if being varied as a parameter)}
 
-\item{flag_reporting}{TRUE/FALSE flag indicating whether to calculate number of reported/observed cases}
+\item{flag_reporting}{Flag indicating whether to output number of reported severe and fatal cases}
 }
 \description{
-TBA
+Function to calculate annual yellow fever burden across multiple regions based on derived parameters
 }
 \details{
-TBA
+Function to take in parameter sets derived from MCMC fitting and use to calculate annual total and reported
+case and death numbers for multiple regions to compare with external data
 }

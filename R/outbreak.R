@@ -241,9 +241,10 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 #-------------------------------------------------------------------------------
 #' @title outbreak_risk_generate
 #'
-#' @description Generate outbreak risk data
+#' @description Generate annual outbreak risk data
 #'
-#' @details [TBA]
+#' @details This function is used to calculate the annual risk of one or more outbreaks in a region over one or more
+#'   years, based on epidemiological parameters
 #'
 #' @param FOI_spillover = Force of infection due to spillover from sylvatic reservoir
 #' @param R0 = Reproduction number for urban spread of infection

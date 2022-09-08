@@ -99,5 +99,5 @@ Combined MCMC Multi-Region - series of MCMC steps for one or more regions
 }
 \details{
 This is the master function for running a Markov chain to optimize the parameters of the yellow fever model
-based on the calculated likelihood of observing supplied data given a particular set of parameters. [TBC]
+based on the calculated likelihood of observing supplied data given a particular set of parameters.
 }

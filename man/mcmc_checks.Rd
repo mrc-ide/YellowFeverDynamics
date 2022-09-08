@@ -52,6 +52,5 @@ Perform checks on MCMC inputs
 \details{
 This function, which is called by MCMC2(), performs a number of checks on data to be used in fitting to
 ensure proper functionality. It verifies that the number of parameters being fitted is consistent with other
-settings, that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1) and
-[TBA]
+settings and that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1).
 }

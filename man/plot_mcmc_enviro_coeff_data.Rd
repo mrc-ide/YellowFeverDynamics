@@ -18,12 +18,13 @@ plot_mcmc_enviro_coeff_data(
 
 \item{plot_type}{Type of plots to create (choose from "box","violin")}
 
-\item{text_size1}{TBA
+\item{text_size1}{Text size parameter for axis labels
 '}
 }
 \description{
-TBA
+Plot environmental coefficients from MCMC results
 }
 \details{
-TBA
+This function takes in a data frame of values (obtained using the get_mcmc_enviro_coeff_data() function) of
+  the coefficients of environmental covariates and plots them on graphs
 }

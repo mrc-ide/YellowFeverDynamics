@@ -562,6 +562,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #' @param vaccine_efficacy0 Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_rep_severe0 Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death0 Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param flag_reporting Flag indicating whether to output number of reported severe and fatal cases
 #'
 #' @export
 #'

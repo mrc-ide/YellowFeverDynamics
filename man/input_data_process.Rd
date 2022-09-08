@@ -13,7 +13,7 @@ input_data_process(
 }
 \arguments{
 \item{input_data}{List of population and vaccination data for multiple regions (created using create_input_data()
-function (TBA) and usually loaded from RDS file)}
+function and usually loaded from an RDS file)}
 
 \item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 positives}
@@ -28,5 +28,7 @@ deaths}
 Cross-reference input data with serological, annual case/death and/or outbreak data for comparison
 }
 \details{
-TBA
+This function, used to prepare input data for functions used to calculate the likelihood of observed data,
+  amends a list of population and vaccination data used as input for other functions,
+  cross-referencing it with seroprevalence, case and/or outbreak data and adding connection information.
 }

@@ -4,7 +4,8 @@
 #'
 #' @description Identify columns in MCMC output data containing fitted parameter values and get parameter names
 #'
-#' @details TBA
+#' @details This function takes in a dataset output by mcmc() and extracts the names of the fitted parameters as a
+#'   vector
 #'
 #' @param chain Data frame containing MCMC output
 #' '
@@ -217,7 +218,7 @@ get_mcmc_enviro_coeff_data <- function(input_frame=list(),type="FOI+R0",enviro_d
 #' @param data_frame Data frame of FOI/R0 values obtained using get_mcmc_FOI_R0_data()
 #' @param regions List of region names
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars","scatter")
-#' @param text_size1 TBA
+#' @param text_size1 Text size parameter for axis labels
 #' '
 #' @export
 #'
@@ -327,14 +328,15 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #-------------------------------------------------------------------------------
 #' @title plot_mcmc_enviro_coeff_data
 #'
-#' @description TBA
+#' @description Plot environmental coefficients from MCMC results
 #'
-#' @details TBA
+#' @details This function takes in a data frame of values (obtained using the get_mcmc_enviro_coeff_data() function) of
+#'   the coefficients of environmental covariates and plots them on graphs
 #'
 #' @param data_frame Data frame of coefficient values obtained using get_mcmc_enviro_coeff_data()
 #' @param env_vars List of environmental covariates
 #' @param plot_type Type of plots to create (choose from "box","violin")
-#' @param text_size1 TBA
+#' @param text_size1 Text size parameter for axis labels
 #' '
 #' @export
 #'
@@ -398,7 +400,7 @@ plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type
 #' @param input_frame Data frame of MCMC output data
 #' @param plot_type Type of plots to create (choose from "box","violin","error_bars")
 #' @param values List of names of parameters to plot (must be parameters appearing in the data)
-#' @param text_size1 TBA
+#' @param text_size1 Text size parameter for axis labels
 #'
 #' @export
 #'
@@ -454,35 +456,4 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
   }
 
   return(p_probs)
-}
-#-------------------------------------------------------------------------------
-#' @title get_MCMC_data_CI
-#'
-#' @description Get confidence interval of selected MCMC output parameter values
-#'
-#' @details TBA... Takes logarithms of MCMC output values (actual fitted values) and calculate CI for each parameter,
-#'          then returns exponentials to return to original output format
-#'
-#' @param input_frame TBA
-#' @param margin TBA
-#' '
-#' @export
-#'
-get_MCMC_data_CI <- function(input_frame=list(),margin=0.95){
-  #TODO Add assert_that function
-
-  if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
-    param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
-  columns=which(colnames(input_frame) %in% param_names)
-  n_columns=length(param_names)
-  params=log(input_frame[,columns])
-
-  CI_frame=data.frame(matrix(ncol = n_columns, nrow = 3))
-  colnames(CI_frame)=param_names
-  for(i in c(1:n_columns)){
-    CI=CI(params[,i],ci=margin)
-    CI_frame[,i]=exp(c(CI[[3]],CI[[2]],CI[[1]]))
-  }
-
-  return(CI_frame)
 }

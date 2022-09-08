@@ -1,8 +1,8 @@
 ---
-title: "ModelRun"
+title: "Vignette 3 - Running Model"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{ModelRun}
+  %\VignetteIndexEntry{Vignette 3 - Running Model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -22,10 +22,10 @@ First load the package:
 library(YellowFeverDynamics)
 ```
 
-Population and vaccination data for one or more regions to be considered are stored in a list object along with a list of regions, the years included, and the age groups into which the population is divided. Here an example data set is loaded from the package and a data set for a single region is constructed:
+Population and vaccination data is stored in a list object as described in Vignette 2. Here an example data set for multiple regions is loaded from the package and a smaller data set for a single region is constructed:
 
 ```{r}
-input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/inst/exdata/input_data_example.Rds",sep=""))
 regions=input_data_all$region_labels[1]
 check=input_data_all$region_labels %in% regions
 input_data=list(region_labels=input_data_all$region_labels[check],years_labels=input_data_all$years_labels,

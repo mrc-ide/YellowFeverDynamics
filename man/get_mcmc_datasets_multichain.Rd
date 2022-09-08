@@ -13,5 +13,6 @@ get_mcmc_datasets_multichain(input_folders = c())
 Get MCMC output data from multiple chains
 }
 \details{
-TBA
+This function extracts data produced by mcmc() and its subordinate functions and organizes them into
+  a list of datasets for further processing.
 }

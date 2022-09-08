@@ -18,7 +18,7 @@ plot_mcmc_prob_data(
 
 \item{values}{List of names of parameters to plot (must be parameters appearing in the data)}
 
-\item{text_size1}{TBA}
+\item{text_size1}{Text size parameter for axis labels}
 }
 \description{
 Plot values of vaccine efficacy and/or reporting probabilities from MCMC output data

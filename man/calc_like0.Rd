@@ -21,9 +21,9 @@ deaths}
 1 = 1 or more outbreak(s)}
 }
 \description{
-Calculate the likelihood value which would be obtained (with no prior) if modelled data values were
-             all equal to observed values (for use as comparison with MCMC likelihood values)
+Calculate "best case" likelihood
 }
 \details{
-TBA
+Calculate the likelihood value which would be obtained (with no prior) if modelled data values were
+             all equal to observed values (for use as comparison with MCMC likelihood values)
 }

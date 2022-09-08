@@ -47,5 +47,5 @@ Single MCMC step - one or more regions
 This function runs a single step in a Markov chain set up using the function mcmc(). It proposes a
 set of parameters using the param_prop_setup() function, calculates the likelihood of observing the observed data
 based on that proposed parameter set, accepts or rejects the proposed parameter set based on the calculated
-likelihood and existing chain information, then returns the next line of information for the chain to mcmc(). [TBC]
+likelihood and existing chain information, then returns the next line of information for the chain to mcmc().
 }
