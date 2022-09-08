@@ -18,25 +18,25 @@ This vignette discusses the format used for model input data by this package. Po
 
 Here an example data set is loaded from the package:
 
-```{r}
+```{r,eval=FALSE}
 library(YellowFeverDynamics)
-input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/inst/exdata/input_data_example.Rds",sep=""))
 ```
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 names(input_data_all)
 ```
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 input_data_all$region_labels
 ```
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 input_data_all$years_labels
 ```
 
