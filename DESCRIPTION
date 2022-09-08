@@ -5,9 +5,7 @@ Version: 0.1.0
 Authors@R: person("Keith", "Fraser", email = "keith.fraser@imperial.ac.uk", role = c("aut", "cre"))
 Maintainers@R: person("Keith", "Fraser", email = "keith.fraser@imperial.ac.uk", role = c("aut", "cre"))
 Description: A package for running a dynamic, stochastic SEIRV model of yellow fever, creating input data and processing output data.
-    
 The package can also be used to fit values of epidemiological parameters of the model to different types of data on yellow fever burden in one or more regions.
-
 Website: https://mrc-ide.github.io/YellowFeverDynamics/
 Depends: R (>= 4.0.0)
 License: GPL-3 + file LICENSE
