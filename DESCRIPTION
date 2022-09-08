@@ -29,7 +29,8 @@ Imports:
 SystemRequirements: C++11
 Suggests: 
     knitr,
-    odin,
-    odin.dust,
+    mrc-ide/dust,
+    mrc-ide/odin,
+    mrc-ide/odin.dust
     rmarkdown
 VignetteBuilder: knitr
