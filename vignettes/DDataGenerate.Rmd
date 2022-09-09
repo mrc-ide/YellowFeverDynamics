@@ -1,0 +1,23 @@
+---
+title: "Vignette 4 - Generating Epidemiological Data"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 4 - Generating Epidemiological Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette [TBA] 
+
+First load the package:
+
+```{r}
+library(YellowFeverDynamics)
+```

@@ -154,8 +154,8 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'
 #' @description Generate serological, annual case/death and/or annual outbreak risk data
 #'
-#' @details Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
-#'   data sets; normally used by single_like_calc() and data_match_single() functions
+#' @details This function is used to generate serological, annual case/death and/or annual outbreak risk data based on
+#'   observed or dummy data sets; it is normally used by single_like_calc() and data_match_single() functions
 #'
 #' @param input_data List of population and vaccination data for multiple regions
 #' @param enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
@@ -183,6 +183,7 @@ Generate_Dataset <- function(input_data=list(),enviro_data=list(),FOI_values=c()
                              obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
                              vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0,mode_start=1,n_reps=1,dt=1.0){
   #TODO Add assert_that functions
+  assert_that(input_data_check(input_data))
 
   n_regions=length(input_data$region_labels)
   frac=1.0/n_reps
@@ -336,6 +337,7 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
   assert_that(length(vacc_data[,1])==n_years+1)
   assert_that(length(vacc_data[1,])==N_age)
   assert_that(mode_start %in% c(0,1,2))
+  assert_that(vaccine_efficacy<=1.0)
   if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE)}
   assert_that(year_data_begin>=year0)
   assert_that(year_data_begin<year_end)
@@ -510,6 +512,7 @@ plot_model_output <- function(model_output=list()){
 #'
 create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){
   #TODO - Add assert_that functions
+  assert_that(input_data_check(input_data))
 
   n_extra=length(extra_params)
 
@@ -571,6 +574,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
                                   enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy0=NULL,
                                   p_rep_severe0=NULL,p_rep_death0=NULL,flag_reporting=TRUE){
 
+  assert_that(input_data_check(input_data))
   assert_that(all(input_data$region_labels==enviro_data$adm1)==TRUE)
   assert_that(min(years_data)>=input_data$years_labels[1])
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
@@ -631,23 +635,15 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
           deaths=rbinom(1,severe_infs,p_death_severe_inf)
           case_ar1[n_year,n_region,n_param_set,rep]=severe_infs
           death_ar1[n_year,n_region,n_param_set,rep]=deaths
-          # obs_deaths=rbinom(1,deaths,p_rep_death)
-          # obs_cases=obs_deaths+rbinom(1,severe_infs-deaths,p_rep_severe)
-          # obs_case_ar1[n_year,n_region,n_param_set,rep]=obs_cases
-          # obs_death_ar1[n_year,n_region,n_param_set,rep]=obs_deaths
         }
         case_ar2[n_year,n_region,n_param_set]=sum(case_ar1[n_year,n_region,n_param_set,])/n_reps
         death_ar2[n_year,n_region,n_param_set]=sum(death_ar1[n_year,n_region,n_param_set,])/n_reps
-        # obs_case_ar2[n_year,n_region,n_param_set]=sum(obs_case_ar1[n_year,n_region,n_param_set,])/n_reps
-        # obs_death_ar2[n_year,n_region,n_param_set]=sum(obs_death_ar1[n_year,n_region,n_param_set,])/n_reps
       }
     }
 
     for(n_year in 1:n_years){
       case_ar3[n_year,n_param_set]=sum(case_ar2[n_year,,n_param_set])
       death_ar3[n_year,n_param_set]=sum(death_ar2[n_year,,n_param_set])
-      # obs_case_ar3[n_year,n_param_set]=sum(obs_case_ar2[n_year,,n_param_set])
-      # obs_death_ar3[n_year,n_param_set]=sum(obs_death_ar2[n_year,,n_param_set])
     }
   }
 

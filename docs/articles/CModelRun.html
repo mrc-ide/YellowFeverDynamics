@@ -44,6 +44,7 @@
     <a class="dropdown-item" href="../articles/AInstallation.html">Vignette 1 - Installation</a>
     <a class="dropdown-item" href="../articles/BInputs.html">Vignette 2 - Inputs</a>
     <a class="dropdown-item" href="../articles/CModelRun.html">Vignette 3 - Running Model</a>
+    <a class="dropdown-item" href="../articles/DDataGenerate.html">Vignette 4 - Generating Epidemiological Data</a>
   </div>
 </li>
       </ul>
@@ -79,22 +80,17 @@ of the model for a single region.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span></code></pre></div>
 <p>Population and vaccination data is stored in a list object as
 described in Vignette 2. Here an example data set for multiple regions
-is loaded from the package and a smaller data set for a single region is
-constructed:</p>
+is loaded and the vaccination and population data for the first included
+region is extracted:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">input_data_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">regions</span><span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">region_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
-<span><span class="va">check</span><span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">region_labels</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">regions</span></span>
-<span><span class="va">input_data</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>region_labels<span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">region_labels</span><span class="op">[</span><span class="va">check</span><span class="op">]</span>,years_labels<span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">years_labels</span>,</span>
-<span>                age_labels<span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">age_labels</span>,vacc_data<span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="va">check</span>,,<span class="op">]</span>,</span>
-<span>                pop_data<span class="op">=</span><span class="va">input_data_all</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="va">check</span>,,<span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">vacc_data</span><span class="op">=</span><span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="fl">1</span>,,<span class="op">]</span></span>
+<span><span class="va">pop_data</span><span class="op">=</span><span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="fl">1</span>,,<span class="op">]</span>  </span></code></pre></div>
 <p>The other input parameters to the functions which run the model are
 as follows:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FOI_spillover</span><span class="op">=</span><span class="fl">1.0e-8</span>            <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
 <span><span class="va">R0</span><span class="op">=</span><span class="fl">1.5</span>                          <span class="co"># Reproduction number for urban spread of infection</span></span>
-<span><span class="va">vacc_data</span><span class="op">=</span><span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span>  <span class="co"># Vaccination coverage in each age group by year</span></span>
-<span><span class="va">pop_data</span><span class="op">=</span><span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span>    <span class="co"># Population in each age group by year</span></span>
 <span><span class="va">year0</span><span class="op">=</span><span class="fl">1940</span>                      <span class="co"># First year in population/vaccination data</span></span>
 <span><span class="va">mode_start</span><span class="op">=</span><span class="fl">1</span>                    <span class="co"># Flag indicating how to set initial population immunity level in addition to vaccination</span></span>
 <span>                                <span class="co"># If mode_start=0, only vaccinated individuals</span></span>
@@ -123,8 +119,8 @@ infections (C) at each time point organized by age group.</p>
 <p><img src="CModelRun_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p>For some applications, the Basic_Model_Run function can be used
 instead. This is identical to Full_Model_Run but does not output the
-total FOI at each time point or the number of new infections at each
-time point.</p>
+total force of infection at each time point or the number of new
+infections at each time point.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test2</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/Basic_Model_Run.html">Basic_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>,<span class="va">R0</span>,<span class="va">vacc_data</span>,<span class="va">pop_data</span>,<span class="va">year0</span>,<span class="va">mode_start</span>,<span class="va">n_particles</span>,<span class="va">n_threads</span>,<span class="va">year_end</span>,</span>
 <span>                     <span class="va">year_data_begin</span>,<span class="va">vaccine_efficacy</span>,<span class="va">start_SEIRVC</span>,<span class="va">dt</span><span class="op">)</span></span></code></pre></div>

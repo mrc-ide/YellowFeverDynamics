@@ -196,6 +196,7 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
                               vaccine_efficacy=vaccine_efficacy,start_SEIRV=list(),dt=1.0) {
 
   assert_that(n_reps>0)
+
   division=10
   n_particles0=min(division,n_reps)
   n_threads=min(10,n_particles0)

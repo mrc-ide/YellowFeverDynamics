@@ -29,6 +29,7 @@
 data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
   #TODO - Add assert_that functions
+  assert_that(input_data_check(input_data))
 
   #Process input data to check that all regions with sero, case and/or outbreak data supplied are present, remove
   #regions without any supplied data, and add cross-referencing tables for use when calculating likelihood. Take

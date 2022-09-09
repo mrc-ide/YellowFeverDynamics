@@ -22,15 +22,12 @@ First load the package:
 library(YellowFeverDynamics)
 ```
 
-Population and vaccination data is stored in a list object as described in Vignette 2. Here an example data set for multiple regions is loaded from the package and a smaller data set for a single region is constructed:
+Population and vaccination data is stored in a list object as described in Vignette 2. Here an example data set for multiple regions is loaded and the vaccination and population data for the first included region is extracted:
 
 ```{r}
-input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
-regions=input_data_all$region_labels[1]
-check=input_data_all$region_labels %in% regions
-input_data=list(region_labels=input_data_all$region_labels[check],years_labels=input_data_all$years_labels,
-                age_labels=input_data_all$age_labels,vacc_data=input_data_all$vacc_data[check,,],
-                pop_data=input_data_all$pop_data[check,,])
+input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+vacc_data=input_data$vacc_data[1,,]
+pop_data=input_data$pop_data[1,,]  
 ```
 
 The other input parameters to the functions which run the model are as follows:
@@ -38,8 +35,6 @@ The other input parameters to the functions which run the model are as follows:
 ```{r}
 FOI_spillover=1.0e-8            # Force of infection due to spillover from sylvatic reservoir
 R0=1.5                          # Reproduction number for urban spread of infection
-vacc_data=input_data$vacc_data  # Vaccination coverage in each age group by year
-pop_data=input_data$pop_data    # Population in each age group by year
 year0=1940                      # First year in population/vaccination data
 mode_start=1                    # Flag indicating how to set initial population immunity level in addition to vaccination
                                 # If mode_start=0, only vaccinated individuals
@@ -68,7 +63,7 @@ plot<-plot_model_output(test1)
 print(plot)
 ```
 
-For some applications, the Basic_Model_Run function can be used instead. This is identical to Full_Model_Run but does not output the total FOI at each time point or the number of new infections at each time point.
+For some applications, the Basic_Model_Run function can be used instead. This is identical to Full_Model_Run but does not output the total force of infection at each time point or the number of new infections at each time point.
 
 ```{r,eval=FALSE}
 test2<-Basic_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,

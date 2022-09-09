@@ -15,6 +15,46 @@ create_input_data <- function(vacc_data=list(),pop_data=list()){
 
 }
 #-------------------------------------------------------------------------------
+#' @title input_data_check
+#'
+#' @description Check that input data is correctly formatted
+#'
+#' @details This function takes in a list of input data for use with other functions and checks that it is correctly
+#'   formatted, including containing all necessary elements and having years and ages in sequence
+#'
+#' @param input_data List of population and vaccination data for multiple regions
+#'
+#' @export
+#'
+input_data_check <- function(input_data=list()){
+
+  result=TRUE
+
+  assert_that(is.list(input_data))
+  assert_that(is.vector(input_data$region_labels))
+  n_regions=length(input_data$region_labels)
+
+  assert_that(is.vector(input_data$years_labels))
+  n_years=length(input_data$years_labels)
+  for(i in 2:n_years){assert_that(input_data$years_labels[i]==input_data$years_labels[i-1]+1)}
+
+  assert_that(is.vector(input_data$age_labels))
+  N_age=length(input_data$age_labels)
+  for(i in 2:N_age){assert_that(input_data$age_labels[i]==input_data$age_labels[i-1]+1)}
+
+  assert_that(length(dim(input_data$vacc_data))==3)
+  assert_that(dim(input_data$vacc_data)[1]==n_regions)
+  assert_that(dim(input_data$vacc_data)[2]==n_years)
+  assert_that(dim(input_data$vacc_data)[3]==N_age)
+
+  assert_that(length(dim(input_data$pop_data))==3)
+  assert_that(dim(input_data$pop_data)[1]==n_regions)
+  assert_that(dim(input_data$pop_data)[2]==n_years)
+  assert_that(dim(input_data$pop_data)[3]==N_age)
+
+  return(result)
+}
+#-------------------------------------------------------------------------------
 #' @title input_data_process
 #'
 #' @description Cross-reference input data with serological, annual case/death and/or outbreak data for comparison
@@ -35,6 +75,8 @@ create_input_data <- function(vacc_data=list(),pop_data=list()){
 #' @export
 #'
 input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL){
+
+  assert_that(input_data_check(input_data))
 
   regions_input_data=input_data$region_labels
   #TODO - Make sure regions always in alphabetical order?

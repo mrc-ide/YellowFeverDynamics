@@ -13,6 +13,9 @@
     <loc>/articles/CModelRun.html</loc>
   </url>
   <url>
+    <loc>/articles/DDataGenerate.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -98,6 +101,9 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/input_data_check.html</loc>
   </url>
   <url>
     <loc>/reference/input_data_process.html</loc>
