@@ -54,14 +54,15 @@
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param m_FOI_Brazil Multiplier of spillover FOI for Brazil regions
 #' @param filename_prefix Prefix of names for output files
 #' '
 #' @export
 #'
 MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,Niter=1,
-                  type=NULL,pars_min=NULL,pars_max=NULL,n_reps=1,mode_start=0,prior_type="zero",dt=1.0,
-                  enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,
-                  filename_prefix="Chain"){
+                 type=NULL,pars_min=NULL,pars_max=NULL,n_reps=1,mode_start=0,prior_type="zero",dt=1.0,
+                 enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,
+                 m_FOI_Brazil=1.0,filename_prefix="Chain"){
 
   #Check that initial, minimum and maximum parameters are in vectors of same sizes
   n_params=length(pars_ini)
@@ -72,6 +73,7 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
   if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
   if(is.null(p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
   if(is.null(p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
+  if(is.null(m_FOI_Brazil)==TRUE){extra_params=append(extra_params,"m_FOI_Brazil")}
 
   #Process input data to check that all regions with sero, case and/or outbreak data supplied are present, remove
   #regions without any supplied data, and add cross-referencing tables for use when calculating likelihood. Take
@@ -91,12 +93,13 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
   #Run checks to ensure that number of parameters is correct for fitting type and number of regions/environmental
   #covariates
   checks<-mcmc_checks(pars_ini,n_regions,type,pars_min,pars_max,prior_type,enviro_data,
-                       R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
+                       R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)
 
   #Set up list of invariant parameter values to supply to other functions
   const_list=list(type=type,pars_min=pars_min,pars_max=pars_max,n_reps=n_reps,mode_start=mode_start,
                   prior_type=prior_type,dt=dt,enviro_data=enviro_data,R0_fixed_values=R0_fixed_values,
-                  vaccine_efficacy=vaccine_efficacy,p_rep_severe=p_rep_severe,p_rep_death=p_rep_death)
+                  vaccine_efficacy=vaccine_efficacy,p_rep_severe=p_rep_severe,p_rep_death=p_rep_death,
+                  m_FOI_Brazil=m_FOI_Brazil)
 
   ### find posterior probability at start ###
   out = MCMC_step(param=pars_ini,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,
@@ -187,7 +190,7 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
 #' @param adapt = 0/1 flag indicating which type of calculation to use for proposition value
 #' @param like_current = Current accepted likelihood value
 #' @param const_list = List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
-#' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
+#' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)
 #'
 #' @export
 #'
@@ -237,7 +240,7 @@ MCMC_step <- function(param=c(),input_data=list(),obs_sero_data=NULL,obs_case_da
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
 #' @param const_list = List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
-#' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
+#' mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)
 #'
 #' @export
 #'
@@ -274,10 +277,22 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
     p_rep_death=const_list$p_rep_death
   }
 
+  #Get value of Brazil multiplier and check bounds
+  if(is.numeric(const_list$m_FOI_Brazil)==FALSE){
+    m_FOI_Brazil=as.numeric(exp(param_prop[names(param_prop)=="m_FOI_Brazil"]))
+    if(m_FOI_Brazil<exp(const_list$pars_min[names(const_list$pars_min)=="m_FOI_Brazil"])){prior_report=-Inf}
+    if(m_FOI_Brazil>exp(const_list$pars_max[names(const_list$pars_max)=="m_FOI_Brazil"])){prior_report=-Inf}
+  } else {
+    m_FOI_Brazil=const_list$m_FOI_Brazil
+  }
+
   #Get FOI and R0 values and calculate associated prior
   FOI_R0_data=mcmc_FOI_R0_setup(const_list$type,const_list$prior_type,regions,param_prop,const_list$enviro_data,
                                 const_list$R0_fixed_values,const_list$pars_min,const_list$pars_max)
   FOI_values=FOI_R0_data$FOI_values
+  for(n_region in 1:n_regions){
+    if(substr(regions[n_region],1,3)=="BRA"){FOI_values[n_region]=FOI_values[n_region]*m_FOI_Brazil}
+  }
   R0_values=FOI_R0_data$R0_values
   prior_prop=prior_vacc+prior_report+FOI_R0_data$prior+sum(dnorm(log(c(p_rep_severe,p_rep_death)),
                                                                  mean = 0,sd = 30,log = TRUE))
@@ -368,6 +383,7 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param m_FOI_Brazil Multiplier of FOI in Brazil regions
 #' '
 #' @export
 #'
@@ -375,7 +391,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
                             type=NULL,pars_min=NULL,pars_max=NULL,input_data=list(),
                             obs_sero_data=list(),obs_case_data=list(),obs_outbreak_data=list(),
                             n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
-                            vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL){
+                            vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=NULL){
 
   #TODO - Add assertthat functions
   assert_that(length(pars_min)==length(pars_max))
@@ -388,6 +404,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
   if(is.null(vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
   if(is.null(p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
   if(is.null(p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
+  if(is.null(m_FOI_Brazil)==TRUE){extra_params=append(extra_params,"m_FOI_Brazil")}
   param_names=create_param_labels(type,input_data,enviro_data,extra_params)
   #TODO - Additional assert_that checks
   assert_that(length(param_names)==n_params)
@@ -404,7 +421,8 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
     results=data.frame()
     const_list=list(type=type,pars_min=pars_min,pars_max=pars_max,n_reps=n_reps,mode_start=mode_start,
                     prior_type=prior_type,dt=dt,enviro_data=enviro_data,R0_fixed_values=R0_fixed_values,
-                    vaccine_efficacy=vaccine_efficacy,p_rep_severe=p_rep_severe,p_rep_death=p_rep_death)
+                    vaccine_efficacy=vaccine_efficacy,p_rep_severe=p_rep_severe,p_rep_death=p_rep_death,
+                    m_FOI_Brazil=m_FOI_Brazil)
 
     for(set in 1:n_param_sets){
       if(set %% 10 == 0){cat("\n")}
@@ -445,7 +463,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
 #'
 #' @description Perform checks on MCMC inputs
 #'
-#' @details This function, which is called by MCMC2(), performs a number of checks on data to be used in fitting to
+#' @details This function, which is called by MCMC(), performs a number of checks on data to be used in fitting to
 #' ensure proper functionality. It verifies that the number of parameters being fitted is consistent with other
 #' settings and that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1).
 #'
@@ -465,11 +483,12 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param m_FOI_Brazil FOI multiplier for Brazil regions
 #'
 #' @export
 #'
 mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max=c(),prior_type=NULL,enviro_data=NULL,
-                        R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL){
+                    R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=NULL){
 
   param_names=names(pars_ini)
   n_params=length(pars_ini)
@@ -500,6 +519,13 @@ mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max
     } else {
     flag_death=1
     assert_that("p_rep_death" %in% param_names)
+    }
+  if(is.numeric(m_FOI_Brazil)==TRUE){
+    flag_br=0
+    assert_that(0.0<=m_FOI_Brazil && m_FOI_Brazil<=1.0)
+  } else {
+    flag_br=1
+    assert_that("m_FOI_Brazil" %in% param_names)
   }
 
   #If environmental data has been supplied, get names of variables
@@ -511,22 +537,22 @@ mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max
   #Check that total number of parameters is correct based on "type" and on number of additional parameters (vaccine
   #efficacy, reporting probabilities)
   if(type=="FOI+R0"){
-    assert_that(n_params==(2*n_regions)+flag_vacc_eff+flag_severe+flag_death)
+    assert_that(n_params==(2*n_regions)+flag_vacc_eff+flag_severe+flag_death+flag_br)
   }
   if(type=="FOI"){
     assert_that(is.null(R0_fixed_values)==FALSE)
     assert_that(length(R0_fixed_values)==n_regions)
-    assert_that(n_params==n_regions+flag_vacc_eff+flag_severe+flag_death)
+    assert_that(n_params==n_regions+flag_vacc_eff+flag_severe+flag_death+flag_br)
   }
   if(type=="FOI+R0 enviro"){
     assert_that(is.null(enviro_data)==FALSE)
-    assert_that(n_params==(2*n_env_vars)+flag_vacc_eff+flag_severe+flag_death)
+    assert_that(n_params==(2*n_env_vars)+flag_vacc_eff+flag_severe+flag_death+flag_br)
   }
   if(type=="FOI enviro"){
     assert_that(is.null(enviro_data)==FALSE)
     assert_that(is.null(R0_fixed_values)==FALSE)
     assert_that(length(R0_fixed_values)==n_regions)
-    assert_that(n_params==n_env_vars+flag_vacc_eff+flag_severe+flag_death)
+    assert_that(n_params==n_env_vars+flag_vacc_eff+flag_severe+flag_death+flag_br)
   }
 
   return(NULL)
