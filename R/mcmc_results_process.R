@@ -41,9 +41,8 @@ get_mcmc_params <- function(chain=list()){
 #'
 get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
   assert_that(file.exists(input_folder))
-  setwd(input_folder)
 
-  file_list=list.files(pattern="*.csv")
+  file_list=list.files(path=input_folder,pattern="*.csv")
   input_frame=data.frame()
   for(i in 1:length(file_list)){
     data=read.csv(file_list[i],header=TRUE)
@@ -78,7 +77,9 @@ get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
 #'
 truncate_mcmc_data <- function(input_frame=list(),rows=c(1),plot_graph=TRUE){
   assert_that(is.data.frame(input_frame))
+  assert_that("posterior_current" %in% colnames(input_frame))
   assert_that(is.integer(rows))
+  assert_that(is.logical(plot_graph))
 
   line_list=c(1:nrow(input_frame))
   input_frame <- cbind(input_frame,line_list)
@@ -108,13 +109,11 @@ truncate_mcmc_data <- function(input_frame=list(),rows=c(1),plot_graph=TRUE){
 #' @export
 #'
 get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
-  #TODO - Add assertthat checks
-  assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
   assert_that(is.data.frame((input_frame)))
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
   if(type %in% c("FOI enviro","FOI+R0 enviro")){
     assert_that(is.data.frame((enviro_data)))
-    assert_that(is.null(enviro_data$adm1)==FALSE)
+    assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
   }
 
   if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
@@ -175,11 +174,12 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
 #' @export
 #'
 get_mcmc_enviro_coeff_data <- function(input_frame=list(),type="FOI+R0",enviro_data=list()){
-  #TODO - Add assertthat checks
   assert_that(is.data.frame((input_frame)))
   assert_that(type %in% c("FOI enviro","FOI+R0 enviro"))
-  assert_that(is.data.frame((enviro_data)))
-  assert_that(is.null(enviro_data$adm1)==FALSE)
+  if(type %in% c("FOI enviro","FOI+R0 enviro")){
+    assert_that(is.data.frame((enviro_data)))
+    assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
+  }
 
   if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
     param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
@@ -223,7 +223,9 @@ get_mcmc_enviro_coeff_data <- function(input_frame=list(),type="FOI+R0",enviro_d
 #' @export
 #'
 plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",text_size1=10.0){
-  #TODO - Add assertthat checks
+  assert_that(is.data.frame((data_frame)))
+  assert_that(is.character(regions))
+  assert_that(is.numeric(text_size1))
   if(is.null(data_frame$R0)==TRUE){
     assert_that(plot_type %in% c("box","violin","error_bars"))
   } else {
@@ -231,6 +233,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
   }
 
   n_regions=length(regions)
+  assert_that(n_regions==length(names(table(data_frame$n_region))))
   output_labels=rep(NA,n_regions)
   for(i in 1:n_regions){output_labels[i]=substr(regions[i],1,5)}
 
@@ -341,10 +344,14 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
 #' @export
 #'
 plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type="box",text_size1=10.0){
-  #TODO - Add assertthat checks
+  #TODO - Add assertthat checksassert_that(is.data.frame((data_frame)))
+  assert_that(is.character(regions))
+  assert_that(is.numeric(text_size1))
   assert_that(plot_type %in% c("box","violin"))
 
   n_env_vars=length(env_vars)
+  assert_that(n_env_vars==length(names(table(data_frame$n_env_var))))
+
   FOI_limits=c(max(-11,floor(log(min(data_frame$FOI_coeffs),10))),min(-3,ceiling(log(max(data_frame$FOI_coeffs),10))))
   FOI_labels=10^c(FOI_limits[1]:FOI_limits[2])
   R0_limits=c(max(-4,floor(log(min(data_frame$R0_coeffs),10))),min(1,ceiling(log(max(data_frame$R0_coeffs),10))))
@@ -405,7 +412,10 @@ plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type
 #' @export
 #'
 plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vaccine_efficacy"),text_size1=10.0){
+  assert_that(is.data.frame((input_frame)))
   assert_that(plot_type %in% c("box","violin","error_bars"))
+  assert_that(is.character(values))
+  assert_that(is.numeric(text_size1))
 
   n_values=length(values)
   for(i in 1:n_values){assert_that(values[i] %in% colnames(input_frame))}

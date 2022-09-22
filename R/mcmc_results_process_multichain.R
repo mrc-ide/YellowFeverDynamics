@@ -12,7 +12,7 @@
 #' @export
 #'
 get_mcmc_datasets_multichain <- function(input_folders=c()){
-  #TODO Add assert_that functions
+  assert_that(is.character(input_folders))
 
   datasets=list()
   for(i in c(1:length(input_folders))){
@@ -41,8 +41,13 @@ get_mcmc_datasets_multichain <- function(input_folders=c()){
 display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
                                         flag_diag2=FALSE){
   #TODO Add assert_that functions
+  assert_that(is.list(datasets))
+  assert_that(is.numeric(datasets_selected))
+  assert_that(all(datasets_selected %in% c(1:length(datasets))))
   assert_that(is.logical(flag_diag2))
-  if(is.null(burnin_values)==TRUE){burnin_values=rep(1,length(datasets_selected))} else {
+  if(is.null(burnin_values)==TRUE){
+    burnin_values=rep(1,length(datasets_selected))
+  } else {
     assert_that(length(datasets_selected)==length(burnin_values))}
   if(is.null(end_values)==TRUE){
     for(i in 1:length(datasets_selected)){
@@ -108,9 +113,13 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
 #'
 get_mcmc_FOI_R0_multichain <- function(datasets=c(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
                                        type="FOI+R0",enviro_data=NULL){
-  #TODO Add assert_that functions
+  assert_that(is.list(datasets))
+  assert_that(is.numeric(datasets_selected))
+  assert_that(all(datasets_selected %in% c(1:length(datasets))))
   assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
-  if(is.null(burnin_values)==TRUE){burnin_values=rep(1,length(datasets_selected))} else {
+  if(is.null(burnin_values)==TRUE){
+    burnin_values=rep(1,length(datasets_selected))
+  } else {
     assert_that(length(datasets_selected)==length(burnin_values))}
   if(is.null(end_values)==TRUE){
     for(i in 1:length(datasets_selected)){
@@ -148,8 +157,12 @@ get_mcmc_FOI_R0_multichain <- function(datasets=c(),datasets_selected=c(1),burni
 #'
 get_mcmc_enviro_coeff_multichain <- function(datasets=c(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
                                        type="FOI+R0",enviro_data=NULL){
-  #TODO Add assert_that functions
-  if(is.null(burnin_values)==TRUE){burnin_values=rep(1,length(datasets_selected))} else {
+  assert_that(is.list(datasets))
+  assert_that(is.numeric(datasets_selected))
+  assert_that(all(datasets_selected %in% c(1:length(datasets))))
+  if(is.null(burnin_values)==TRUE){
+    burnin_values=rep(1,length(datasets_selected))
+  } else {
     assert_that(length(datasets_selected)==length(burnin_values))}
   if(is.null(end_values)==TRUE){
     for(i in 1:length(datasets_selected)){
@@ -186,8 +199,12 @@ get_mcmc_enviro_coeff_multichain <- function(datasets=c(),datasets_selected=c(1)
 #'
 get_mcmc_probs_multichain <- function(datasets=c(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
                                       prob_names=c("vaccine_efficacy")){
-  #TODO Add assert_that functions
-  if(is.null(burnin_values)==TRUE){burnin_values=rep(1,length(datasets_selected))} else {
+  assert_that(is.list(datasets))
+  assert_that(is.numeric(datasets_selected))
+  assert_that(all(datasets_selected %in% c(1:length(datasets))))
+  if(is.null(burnin_values)==TRUE){
+    burnin_values=rep(1,length(datasets_selected))
+  } else {
     assert_that(length(datasets_selected)==length(burnin_values))}
   if(is.null(end_values)==TRUE){
     for(i in 1:length(datasets_selected)){
