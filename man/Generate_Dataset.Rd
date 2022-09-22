@@ -58,6 +58,6 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 Generate serological, annual case/death and/or annual outbreak risk data
 }
 \details{
-Generate serological, annual case/death and/or annual outbreak risk data based on observed or dummy
-  data sets; normally used by single_like_calc() and data_match_single() functions
+This function is used to generate serological, annual case/death and/or annual outbreak risk data based on
+  observed or dummy data sets; it is normally used by single_like_calc() and data_match_single() functions
 }

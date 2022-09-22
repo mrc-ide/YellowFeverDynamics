@@ -72,8 +72,8 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
 #' @export
 #'
 sero_calculate2 <- function(sero_data=list(),model_data=list()){
-
-  #TODO - Add assert_that functions
+  assert_that(is.data.frame(sero_data))
+  assert_that(is.list(model_data))
   nrows=nrow(sero_data)
   output_frame=data.frame(samples=rep(NA,nrows),positives=rep(NA,nrows))
 

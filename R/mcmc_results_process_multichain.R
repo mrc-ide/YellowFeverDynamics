@@ -34,17 +34,16 @@ get_mcmc_datasets_multichain <- function(input_folders=c()){
 #' @param datasets_selected Vector of dataset numbers to be selected from list
 #' @param burnin_values Vector of burnin values to use for selected datasets (set to 1 by default)
 #' @param end_values Vector of end values to use for selected datasets (set to last value by default)
-#' @param flag_diag2 Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())
+#' @param flag_grb Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())
 #'
 #' @export
 #'
 display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
-                                        flag_diag2=FALSE){
-  #TODO Add assert_that functions
+                                        flag_grb=FALSE){
   assert_that(is.list(datasets))
   assert_that(is.numeric(datasets_selected))
   assert_that(all(datasets_selected %in% c(1:length(datasets))))
-  assert_that(is.logical(flag_diag2))
+  assert_that(is.logical(flag_grb))
   if(is.null(burnin_values)==TRUE){
     burnin_values=rep(1,length(datasets_selected))
   } else {
@@ -80,7 +79,7 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
     diag1=gelman.diag(mcmc_list,autoburnin=FALSE)
     MPSRF=signif(diag1$mpsrf,4)
   } else {MPSRF=NA}
-  if(flag_diag2){diag2<-gelman.plot(mcmc_list,autoburnin=FALSE,ask=FALSE,bin.width=1000,max.bins=100)} else {diag2=NULL}
+  if(flag_grb){diag2<-gelman.plot(mcmc_list,autoburnin=FALSE,ask=FALSE,bin.width=1000,max.bins=100)} else {diag2=NULL}
   title_text="Chains:"
   for(i in 1:length(datasets_selected)){title_text=paste(title_text,datasets_selected[i],sep=" ")}
   title_text=paste(title_text," - MPSRF = ",MPSRF,sep="")

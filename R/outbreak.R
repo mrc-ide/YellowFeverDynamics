@@ -18,9 +18,12 @@
 #' @export
 #'
 get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_mild=0.0,p_rep_severe=1.0,p_rep_death=1.0){
-
-  #TODO - Add assert_that functions
+  assert_that(is.numeric(case_data))
+  assert_that(is.numeric(year_data))
   assert_that(length(case_data)==length(year_data))
+  assert_that(p_rep_mild>=0 && p_rep_mild<=1.0)
+  assert_that(p_rep_severe>=0 && p_rep_severe<=1.0)
+  assert_that(p_rep_death>=0 && p_rep_death<=1.0)
 
   year0=min(year_data)
   t_pts=length(year_data)
@@ -93,7 +96,8 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_mild=0.0,p_rep_s
 #' @export
 #'
 outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
-
+  assert_that(is.list(model_outbreak_risk))
+  assert_that(is.list(obs_data))
   assert_that(length(model_outbreak_risk)==length(obs_data))
 
   for(i in 1:length(model_outbreak_risk)){
@@ -271,7 +275,6 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 outbreak_risk_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_sets=1,n_reps=1,year_end=2000,year_data_begin=1999,
                               vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0,p_rep_severe=1.0,p_rep_death=1.0){
-  #TODO - Add assert_that functions
   assert_that(p_rep_severe>=0.0 && p_rep_severe<=1.0)
   assert_that(p_rep_death>=0.0 && p_rep_death<=1.0)
 
