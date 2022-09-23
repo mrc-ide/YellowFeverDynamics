@@ -2,17 +2,66 @@
 #-------------------------------------------------------------------------------
 #' @title create_input_data
 #'
-#' @description TBA
+#' @description Creates input data set in correct format for use by other functions
 #'
-#' @details TBA
+#' @details Takes in vaccination and population data in data frames (in columns by age with columns showing the region
+#'   and year for each row), extracts number of age groups (verifying that this is the same in each data frame),
+#'   extracts data for specified regions and years, and creates list in format used by other functions (vectors of
+#'   region names, years and age groups, 3-dimensional arrays of vaccination and population data).
 #'
-#' @param vacc_data TBA
-#' @param pop_data TBA
+#' @param vacc_data Data frame containing vaccination coverage data with region in column 1, year in column 2 and
+#'   coverage values by age in remaining columns
+#' @param pop_data Data frame containing population data with region in column 1, year in column 2 and
+#'   population values by age in remaining columns
+#' @param regions Vector of regions for which to extract data from vacc_data and pop_data
+#' @param years Vector of years for which to extract data from vacc_data and pop_data
 #' '
 #' @export
 #'
-create_input_data <- function(vacc_data=list(),pop_data=list()){
+create_input_data <- function(vacc_data=list(),pop_data=list(),regions=c(),years=c()){
 
+  #Check data
+  assert_that(is.data.frame(vacc_data))
+  assert_that(is.data.frame(pop_data))
+  assert_that(is.character(regions))
+  assert_that(is.numeric(years))
+  assert_that(ncol(pop_data)==ncol(vacc_data))
+  vacc_regions=names(table(vacc_data[,1]))
+  vacc_years=names(table(vacc_data[,2]))
+  assert_that(all(regions %in% vacc_regions))
+  assert_that(all(years %in% vacc_years))
+  pop_regions=names(table(pop_data[,1]))
+  pop_years=names(table(pop_data[,2]))
+  assert_that(all(regions %in% pop_regions))
+  assert_that(all(years %in% pop_years))
+
+  N_age=ncol(vacc_data)-2
+  n_regions=length(regions)
+  n_years=length(years)
+
+  #Subset data and sort into correct order
+  vacc_data_subset=subset(vacc_data,vacc_data[,1] %in% regions)
+  vacc_data_subset=subset(vacc_data_subset,vacc_data_subset[,2] %in% years)
+  vacc_data_subset=vacc_data_subset[order(vacc_data_subset[,1]),]
+  vacc_data_subset=vacc_data_subset[order(vacc_data_subset[,2]),]
+  pop_data_subset=subset(pop_data,pop_data[,1] %in% regions)
+  pop_data_subset=subset(pop_data_subset,pop_data_subset[,2] %in% years)
+  pop_data_subset=pop_data_subset[order(pop_data_subset[,1]),]
+  pop_data_subset=pop_data_subset[order(pop_data_subset[,2]),]
+
+  #Organize vaccination and population data into arrays
+  vacc_coverage_array=pop_array=array(data=rep(0,n_regions*n_years*N_age),dim=c(n_regions,n_years,N_age))
+  for(n_region in 1:n_regions){
+    region=regions[n_region]
+    vacc_data_subset2=subset(vacc_data_subset,vacc_data_subset[,1]==region)
+    pop_data_subset2=subset(pop_data_subset,pop_data_subset[,1]==region)
+    vacc_coverage_array[n_region,,]=as.matrix(vacc_data_subset2[,c(3:(2+N_age))])
+    pop_array[n_region,,]=as.matrix(pop_data_subset2[,c(3:(2+N_age))])
+  }
+
+  #Create and output dataset
+  return(list(region_labels=regions,years_labels=years,age_labels=c(0:(N_age-1)),
+              vacc_data=vacc_coverage_array,pop_data=pop_array))
 }
 #-------------------------------------------------------------------------------
 #' @title input_data_check

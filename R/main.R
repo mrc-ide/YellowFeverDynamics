@@ -158,7 +158,6 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'   observed or dummy data sets; it is normally used by single_like_calc() and data_match_single() functions
 #'
 #' @param input_data List of population and vaccination data for multiple regions
-#' @param enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
 #' @param FOI_values Values for each region of the force of infection due to spillover from sylvatic reservoir
 #' @param R0_values Values for each region of the basic reproduction number for human-human transmission
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
@@ -179,11 +178,17 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #' '
 #' @export
 #'
-Generate_Dataset <- function(input_data=list(),enviro_data=list(),FOI_values=c(),R0_values=c(),
+Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
                              obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
                              vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0,mode_start=1,n_reps=1,dt=1.0){
-  #TODO Add assert_that functions
+
   assert_that(input_data_check(input_data))
+  assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE),is.null(obs_outbreak_data)==FALSE,
+              msg="Need at least one of obs_sero_data, obs_case_data or obs_outbreak_data")
+  assert_that(vaccine_efficacy >=0.0 && vaccine_efficacy <=1.0)
+  if(is.null(obs_case_data)==FALSE ||is.null(obs_outbreak_data)==FALSE){
+    assert_that(p_rep_severe >=0.0 && p_rep_severe <=1.0)
+    assert_that(p_rep_death >=0.0 && p_rep_death <=1.0)}
 
   n_regions=length(input_data$region_labels)
   frac=1.0/n_reps
@@ -337,7 +342,7 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
   assert_that(length(vacc_data[,1])==n_years+1)
   assert_that(length(vacc_data[1,])==N_age)
   assert_that(mode_start %in% c(0,1,2))
-  assert_that(vaccine_efficacy<=1.0)
+  assert_that(vaccine_efficacy<=1.0 && vaccine_efficacy>=0.0)
   if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE)}
   assert_that(year_data_begin>=year0)
   assert_that(year_data_begin<year_end)
@@ -439,7 +444,9 @@ param_calc_enviro <- function(param=c(),enviro_data=c()){
 #' @export
 #'
 plot_model_output <- function(model_output=list()){
-  #TODO - Assert_that functions
+
+  assert_that(is.list(model_output))
+  assert_that(is.null(model_output$day)==FALSE)
 
   values=label=values_mean=values_low=values_high=NULL
   N_age=dim(model_output$S)[1]
@@ -450,8 +457,6 @@ plot_model_output <- function(model_output=list()){
   S_sum=R_sum=V_sum=blank
   for(i in 1:N_age){
     S_sum=S_sum+model_output$S[i,,]
-    # E_sum=E_sum+model_output$E[i,,]
-    # I_sum=I_sum+model_output$I[i,,]
     R_sum=R_sum+model_output$R[i,,]
     V_sum=V_sum+model_output$V[i,,]
   }
@@ -511,7 +516,8 @@ plot_model_output <- function(model_output=list()){
 #' @export
 #'
 create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){
-  #TODO - Add assert_that functions
+
+  assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
   assert_that(input_data_check(input_data))
 
   n_extra=length(extra_params)
@@ -526,6 +532,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
       if(type=="FOI+R0"){param_names[i+n_regions]=paste("R0_",regions[i],sep="")}
     }
   } else {
+    assert_that(is.data.frame(enviro_data))
     env_vars=colnames(enviro_data)[c(2:ncol(enviro_data))]
     n_env_vars=length(env_vars)
     if(type=="FOI enviro"){n_params=n_env_vars+n_extra} else {n_params=(2*n_env_vars)+n_extra}

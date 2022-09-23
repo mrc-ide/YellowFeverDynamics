@@ -290,7 +290,7 @@ single_like_calc <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL
   if (is.finite(prior_prop)) {
 
     #Generate modelled data over all regions
-    dataset <- Generate_Dataset(input_data,const_list$enviro_data,FOI_values,R0_values,
+    dataset <- Generate_Dataset(input_data,FOI_values,R0_values,
                                 obs_sero_data,obs_case_data,obs_outbreak_data,
                                 vaccine_efficacy,p_rep_severe,p_rep_death,
                                 const_list$mode_start,const_list$n_reps,const_list$dt)

@@ -6,7 +6,6 @@
 \usage{
 Generate_Dataset(
   input_data = list(),
-  enviro_data = list(),
   FOI_values = c(),
   R0_values = c(),
   obs_sero_data = NULL,
@@ -22,8 +21,6 @@ Generate_Dataset(
 }
 \arguments{
 \item{input_data}{List of population and vaccination data for multiple regions}
-
-\item{enviro_data}{Data frame containing values of environmental covariates; set to NULL if not in use}
 
 \item{FOI_values}{Values for each region of the force of infection due to spillover from sylvatic reservoir}
 

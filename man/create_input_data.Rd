@@ -4,17 +4,31 @@
 \alias{create_input_data}
 \title{create_input_data}
 \usage{
-create_input_data(vacc_data = list(), pop_data = list())
+create_input_data(
+  vacc_data = list(),
+  pop_data = list(),
+  regions = c(),
+  years = c()
+)
 }
 \arguments{
-\item{vacc_data}{TBA}
+\item{vacc_data}{Data frame containing vaccination coverage data with region in column 1, year in column 2 and
+coverage values by age in remaining columns}
 
-\item{pop_data}{TBA
+\item{pop_data}{Data frame containing population data with region in column 1, year in column 2 and
+population values by age in remaining columns}
+
+\item{regions}{Vector of regions for which to extract data from vacc_data and pop_data}
+
+\item{years}{Vector of years for which to extract data from vacc_data and pop_data
 '}
 }
 \description{
-TBA
+Creates input data set in correct format for use by other functions
 }
 \details{
-TBA
+Takes in vaccination and population data in data frames (in columns by age with columns showing the region
+  and year for each row), extracts number of age groups (verifying that this is the same in each data frame),
+  extracts data for specified regions and years, and creates list in format used by other functions (vectors of
+  region names, years and age groups, 3-dimensional arrays of vaccination and population data).
 }

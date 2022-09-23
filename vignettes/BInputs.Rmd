@@ -66,5 +66,4 @@ pop_data is an array with the same dimensions as vacc_data containing values of 
 input_data_all$pop_data[1,c(61:65),c(1:10)]
 ```
 
-
 [TBA - Sources for age-stratified population and vaccination data]

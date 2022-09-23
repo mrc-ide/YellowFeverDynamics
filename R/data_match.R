@@ -28,8 +28,12 @@
 #'
 data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
-  #TODO - Add assert_that functions
+
+  assert_that(is.numeric(param_prop))
   assert_that(input_data_check(input_data))
+  assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE),is.null(obs_outbreak_data)==FALSE,
+              msg="Need at least one of obs_sero_data, obs_case_data or obs_outbreak_data")
+  assert_that(is.list(const_list))
 
   #Process input data to check that all regions with sero, case and/or outbreak data supplied are present, remove
   #regions without any supplied data, and add cross-referencing tables for use when calculating likelihood. Take
@@ -87,7 +91,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   }
 
   #Generate modelled data over all regions
-  dataset <- Generate_Dataset(input_data,enviro_data,FOI_values,R0_values,
+  dataset <- Generate_Dataset(input_data,FOI_values,R0_values,
                               obs_sero_data,obs_case_data,obs_outbreak_data,
                               vaccine_efficacy,p_rep_severe,p_rep_death,
                               const_list$mode_start,const_list$n_reps,const_list$dt)
@@ -124,8 +128,8 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 #'
 data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                              obs_outbreak_data=NULL,const_list=list()){
-  #TODO - Add assert_that functions
-  assert_that(TRUE %in% names(table(is.na(param_sets))) == FALSE)
+
+  assert_that(is.data.frame(param_sets))
 
   n_param_sets=nrow(param_sets)
   model_data_all=list()
@@ -160,8 +164,11 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
 #' @export
 #'
 sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean",text_size1=1.0){
-  #TODO - Add assert_that functions
+
+  assert_that(is.list(model_data))
+  assert_that(is.data.frame(obs_sero_data))
   assert_that(type %in% c("mean","all"))
+  assert_that(is.numeric(text_size1))
 
   n_param_sets=length(model_data)
   obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
@@ -298,8 +305,11 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
 #' @export
 #'
 case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),type="mean",text_size1=1.0){
-  #TODO - Add assert_that functions
+
+  assert_that(is.list(model_data))
+  assert_that(is.data.frame(obs_case_data))
   assert_that(type %in% c("mean","all"))
+  assert_that(is.numeric(text_size1))
 
   n_param_sets=length(model_data)
   obs_case_values=obs_case_data$cases
