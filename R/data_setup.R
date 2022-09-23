@@ -53,8 +53,9 @@ create_input_data <- function(vacc_data=list(),pop_data=list(),regions=c(),years
   vacc_coverage_array=pop_array=array(data=rep(0,n_regions*n_years*N_age),dim=c(n_regions,n_years,N_age))
   for(n_region in 1:n_regions){
     region=regions[n_region]
-    vacc_data_subset2=subset(vacc_data_subset,vacc_data_subset[,1]==region)
-    pop_data_subset2=subset(pop_data_subset,pop_data_subset[,1]==region)
+    lines=vacc_data_subset[,1]==region
+    vacc_data_subset2=vacc_data_subset[lines,]
+    pop_data_subset2=pop_data_subset[lines,]
     vacc_coverage_array[n_region,,]=as.matrix(vacc_data_subset2[,c(3:(2+N_age))])
     pop_array[n_region,,]=as.matrix(pop_data_subset2[,c(3:(2+N_age))])
   }

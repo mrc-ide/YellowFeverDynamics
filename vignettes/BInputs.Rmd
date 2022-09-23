@@ -20,50 +20,60 @@ Here an example data set is loaded from the package:
 
 ```{r}
 library(YellowFeverDynamics)
-input_data_all <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
 ```
 
-A correctly formated input data set consists of a list containing the following:
+A correctly formatted input data set consists of a list containing the following:
 
 ```{r}
-names(input_data_all)
+names(input_data)
 ```
 region_labels is a vector listing the names of the regions for which population and vaccination data is included:
 
 ```{r}
-input_data_all$region_labels
-n_regions=length(input_data_all$region_labels) #Number of regions
+input_data$region_labels
+n_regions=length(input_data$region_labels) #Number of regions
 ```
 years_labels is a vector listing the sequence of years for which population and vaccination data is included:
 
 ```{r}
-input_data_all$years_labels
-n_years=length(input_data_all$years_labels) #Number of years
+input_data$years_labels
+n_years=length(input_data$years_labels) #Number of years
 ```
 
 age_labels is a vector listing the sequence of age groups (defined as the minimum age of each group, with the maximum age being the next age value) for which population and vaccination data is included. Age groups must be defined in one-year increments as this is assumed in the model.
 
 ```{r}
-input_data_all$age_labels
-N_age=length(input_data_all$age_labels) #Number of age groups
+input_data$age_labels
+N_age=length(input_data$age_labels) #Number of age groups
 ```
 
 vacc_data is an array (with dimensions equal to the number of regions, number of years and number of age groups) containing values of proportional population immunity due to vaccination.
 
 ```{r}
-dim(input_data_all$vacc_data)
+dim(input_data$vacc_data)
 ```
 
 Below is an example: the proportional population immunity due to vaccination in region 1 (IGL01) in years 61-65 (2000-2004) in the 10 lowest age groups (0-1 through to 9-10)
 
 ```{r}
-input_data_all$vacc_data[1,c(61:65),c(1:10)]
+input_data$vacc_data[1,c(61:65),c(1:10)]
 ```
 
 pop_data is an array with the same dimensions as vacc_data containing values of the population of a given age group in a given region and year.
 
 ```{r}
-input_data_all$pop_data[1,c(61:65),c(1:10)]
+input_data$pop_data[1,c(61:65),c(1:10)]
+```
+
+A dataset in the appropriate format can be created from vaccination coverage and population data using the create_input_data() function
+
+```{r}
+pv_example <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/pop_vacc_data_example.Rds",sep=""))
+vacc_data=pv_example$vacc_data
+pop_data=pv_example$pop_data
+input_data2=create_input_data(vacc_data,pop_data,regions=names(table(vacc_data$region)),
+                              years=as.numeric(names(table(vacc_data$year))))
 ```
 
 [TBA - Sources for age-stratified population and vaccination data]
