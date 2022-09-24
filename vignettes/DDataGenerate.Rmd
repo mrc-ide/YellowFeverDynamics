@@ -14,10 +14,39 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette [TBA] 
+This vignette demonstrates how to use the package to generate a set of epidemiological data 
 
 First load the package:
 
 ```{r}
 library(YellowFeverDynamics)
+```
+
+```{r}
+input_data=readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+                      # Input data in standard format (see Vignette 2)
+FOI_values=rep(1.0e-8,length(input_data$region_labels))        
+                      # Force of infection due to spillover from sylvatic reservoir, by region
+R0_values=rep(1.0,length(input_data$region_labels))
+                      # Reproduction number for urban spread of infection, by region
+obs_sero_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example_sparse.csv",sep=""),header=TRUE)    
+                      # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
+obs_case_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_sparse.csv",sep=""),header=TRUE)    
+                      # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
+obs_outbreak_data=NULL# Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
+vaccine_efficacy=1.0  # Proportional vaccine efficacy
+p_rep_severe=1.0      # Reporting probability for non-fatal severe infections (required for case or outbreak data)
+p_rep_death=1.0       # Reporting probability for non-fatal severe infections (required for case or outbreak data)
+mode_start=1          # Flag indicating how to set initial population immunity level in addition to vaccination
+                        # If mode_start=0, only vaccinated individuals
+                        # If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+                        # If mode_start=2, use SEIRVC input in list from previous run(s)
+n_reps=1              # Number of repetitions (used to set number of particles and number of threads)
+dt=1.0                # Time increment in days to use in model (should be either 1.0 or 5.0 days
+```
+
+```{r,eval=FALSE}
+data <- Generate_Dataset(input_data,FOI_values,R0_values,
+                        obs_sero_data,obs_case_data,obs_outbreak_data,
+                        vaccine_efficacy,p_rep_severe,p_rep_death,mode_start,n_reps,dt)
 ```

@@ -191,6 +191,12 @@ Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
     assert_that(p_rep_death >=0.0 && p_rep_death <=1.0)}
 
   n_regions=length(input_data$region_labels)
+  assert_that(length(FOI_values)==n_regions)
+  assert_that(length(R0_values)==n_regions)
+
+  if(is.null(input_data$flag_sero)){
+    input_data=input_data_process(input_data,obs_sero_data,obs_case_data,obs_outbreak_data)
+  }
   frac=1.0/n_reps
 
   #Set up data structures to take modelled data corresponding to observed data
