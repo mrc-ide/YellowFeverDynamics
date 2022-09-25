@@ -27,7 +27,8 @@
     <a class="dropdown-item" href="../articles/AInstallation.html">Vignette 1 - Installation</a>
     <a class="dropdown-item" href="../articles/BInputs.html">Vignette 2 - Inputs</a>
     <a class="dropdown-item" href="../articles/CModelRun.html">Vignette 3 - Running Model</a>
-    <a class="dropdown-item" href="../articles/DDataGenerate.html">Vignette 4 - Generating Epidemiological Data</a>
+    <a class="dropdown-item" href="../articles/DParametersEnvironment.html">Vignette 4 - Calculating Parameters From Environmental Data</a>
+    <a class="dropdown-item" href="../articles/EDataGenerate.html">Vignette 5 - Generating Epidemiological Data</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -56,7 +57,7 @@
 <span>  datasets_selected <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>,</span>
 <span>  burnin_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  end_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  flag_diag2 <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  flag_grb <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,7 +79,7 @@
 <dd><p>Vector of end values to use for selected datasets (set to last value by default)</p></dd>
 
 
-<dt>flag_diag2</dt>
+<dt>flag_grb</dt>
 <dd><p>Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())</p></dd>
 
 </dl></div>
