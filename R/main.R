@@ -414,10 +414,10 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'
 #' @description Parameter calculation from environmental covariates
 #'
-#' @details Takes in parameter set used for Markov Chain Monte Carlo fitting and calculates values of spillover
+#' @details Takes in set of coefficients of environmental covariates and calculates values of spillover
 #' force of infection and reproduction number.
 #'
-#' @param param Parameter values as fitted in MCMC (natural logarithm of actual values)
+#' @param param Values of environmental coefficients (natural logarithm of actual values)
 #' @param enviro_data Environmental data frame line, containing only relevant environmental covariates
 #' '
 #' @export

@@ -1,0 +1,4 @@
+adm1,year,age_min,age_max,samples,positives,vc_factor
+IGL01,2000,5,18,100,18,0
+IGL01,2000,19,35,100,39,0
+IGL01,2000,36,60,100,53,0

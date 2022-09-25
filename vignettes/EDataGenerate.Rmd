@@ -1,8 +1,8 @@
 ---
-title: "Vignette 4 - Generating Epidemiological Data"
+title: "Vignette 5 - Generating Epidemiological Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 4 - Generating Epidemiological Data}
+  %\VignetteIndexEntry{Vignette 5 - Generating Epidemiological Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -29,9 +29,9 @@ FOI_values=rep(1.0e-8,length(input_data$region_labels))
                       # Force of infection due to spillover from sylvatic reservoir, by region
 R0_values=rep(1.0,length(input_data$region_labels))
                       # Reproduction number for urban spread of infection, by region
-obs_sero_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example_sparse.csv",sep=""),header=TRUE)    
+obs_sero_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example_single.csv",sep=""),header=TRUE)    
                       # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-obs_case_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_sparse.csv",sep=""),header=TRUE)    
+obs_case_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
                       # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
 obs_outbreak_data=NULL# Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
 vaccine_efficacy=1.0  # Proportional vaccine efficacy
