@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette demonstrates how to use the package to generate a set of epidemiological data 
+This vignette demonstrates how to use the package to generate a set of epidemiological data (serological, annual reported severe/fatal cases and/or annual outbreak occurence) for specified time periods and regions (and age ranges, in the case of serological data).
 
 First load the package:
 
@@ -34,19 +34,10 @@ obs_sero_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/s
 obs_case_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
                       # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
 obs_outbreak_data=NULL# Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
-vaccine_efficacy=1.0  # Proportional vaccine efficacy
-p_rep_severe=1.0      # Reporting probability for non-fatal severe infections (required for case or outbreak data)
-p_rep_death=1.0       # Reporting probability for non-fatal severe infections (required for case or outbreak data)
-mode_start=1          # Flag indicating how to set initial population immunity level in addition to vaccination
-                        # If mode_start=0, only vaccinated individuals
-                        # If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-                        # If mode_start=2, use SEIRVC input in list from previous run(s)
-n_reps=1              # Number of repetitions (used to set number of particles and number of threads)
-dt=1.0                # Time increment in days to use in model (should be either 1.0 or 5.0 days)
+const_list=list(type="FOI+R0",n_reps=1,mode_start=1,dt=1.0,enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0)
+                      # List containing additional parameters
 ```
 
 ```{r,eval=FALSE}
-data <- Generate_Dataset(input_data,FOI_values,R0_values,
-                        obs_sero_data,obs_case_data,obs_outbreak_data,
-                        vaccine_efficacy,p_rep_severe,p_rep_death,mode_start,n_reps,dt)
+data <- data_match_single(c(FOI_values,R0_values),input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```

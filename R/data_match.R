@@ -31,7 +31,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
 
   assert_that(is.numeric(param_prop))
   assert_that(input_data_check(input_data))
-  assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE),is.null(obs_outbreak_data)==FALSE,
+  assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE,is.null(obs_outbreak_data)==FALSE),
               msg="Need at least one of obs_sero_data, obs_case_data or obs_outbreak_data")
   assert_that(is.list(const_list))
 
