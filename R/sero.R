@@ -38,20 +38,20 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
   for(i in 1:length(years)){
     n_t=which(data$year %in% years[i])
     if(vc_factor==0){
-      samples=data$S[n_t,n_p,ages]+data$E[n_t,n_p,ages]+data$I[n_t,n_p,ages]+data$R[n_t,n_p,ages]
-      positives=data$R[n_t,n_p,ages]
+      samples=data$S[ages,n_p,n_t]+data$E[ages,n_p,n_t]+data$I[ages,n_p,n_t]+data$R[ages,n_p,n_t]
+      positives=data$R[ages,n_p,n_t]
       sero_values[i]=sum(positives)/sum(samples)
     } else {
      if(vc_factor==1){
-       samples=data$S[n_t,n_p,ages]+data$E[n_t,n_p,ages]+data$I[n_t,n_p,ages]+data$R[n_t,n_p,ages]+data$V[n_t,n_p,ages]
-       positives=data$R[n_t,n_p,ages]+data$V[n_t,n_p,ages]
+       samples=data$S[ages,n_p,n_t]+data$E[ages,n_p,n_t]+data$I[ages,n_p,n_t]+data$R[ages,n_p,n_t]+data$V[ages,n_p,n_t]
+       positives=data$R[ages,n_p,n_t]+data$V[ages,n_p,n_t]
        sero_values[i]=sum(positives)/sum(samples)
      } else {
-       samples=data$S[n_t,n_p,ages]+data$E[n_t,n_p,ages]+data$I[n_t,n_p,ages]+data$R[n_t,n_p,ages]
-       positives=data$R[n_t,n_p,ages]
+       samples=data$S[ages,n_p,n_t]+data$E[ages,n_p,n_t]+data$I[ages,n_p,n_t]+data$R[ages,n_p,n_t]
+       positives=data$R[ages,n_p,n_t]
        sero_values[i]=((1.0-vc_factor)*sum(positives))/sum(samples)
-       samples=samples+data$V[n_t,n_p,ages]
-       positives=positives+data$V[n_t,n_p,ages]
+       samples=samples+data$V[ages,n_p,n_t]
+       positives=positives+data$V[ages,n_p,n_t]
        sero_values[i]=sero_values[i]+((vc_factor*sum(positives))/sum(samples))
      }
     }
@@ -91,13 +91,13 @@ sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
     year=sero_data$year[i]
     vc_factor=sero_data$vc_factor[i]
     n_t=which(model_data$year==year)
-    S_sum=sum(model_data$S[n_t,n_p,ages])
-    E_sum=sum(model_data$E[n_t,n_p,ages])
-    I_sum=sum(model_data$I[n_t,n_p,ages])
-    R_sum=sum(model_data$R[n_t,n_p,ages])
+    S_sum=sum(model_data$S[ages,n_p,n_t])
+    E_sum=sum(model_data$E[ages,n_p,n_t])
+    I_sum=sum(model_data$I[ages,n_p,n_t])
+    R_sum=sum(model_data$R[ages,n_p,n_t])
     samples=S_sum+E_sum+I_sum+R_sum
     if(vc_factor>0){
-      V_sum=sum(model_data$V[n_t,n_p,ages])
+      V_sum=sum(model_data$V[ages,n_p,n_t])
       if(vc_factor==1){
         samples=samples+V_sum
         positives=R_sum+V_sum
