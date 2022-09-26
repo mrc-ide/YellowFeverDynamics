@@ -14,10 +14,11 @@
 #' @param years = Years for which to calculate average annual seroprevalence
 #' @param vc_factor = Proportion of patients tested for whom vaccine status unknown
 #' @param data = Output of Basic_Model_Run or Full_Model_Run
+#' @param n_p = Particle to select from data
 #' '
 #' @export
 #'
-sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=list()){
+sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=list(),n_p=1){
 
   assert_that(age_min>=0)
   assert_that(age_max>age_min)
@@ -28,26 +29,30 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
   assert_that(is.null(data$I)==FALSE)
   assert_that(is.null(data$R)==FALSE)
   assert_that(is.null(data$V)==FALSE)
+  assert_that(is.integer(n_p))
+  assert_that(n_p>0)
+  assert_that(n_p<=dim(data$S)[2])
+
   ages=c((age_min+1):age_max)
   sero_values=rep(0,length(years))
 
   for(i in 1:length(years)){
-    days=which(data$year %in% years[i])
+    n_t=which(data$year %in% years[i])
     if(vc_factor==0){
-      samples=data$S[days,ages]+data$E[days,ages]+data$I[days,ages]+data$R[days,ages]
-      positives=data$R[days,ages]
+      samples=data$S[n_t,n_p,ages]+data$E[n_t,n_p,ages]+data$I[n_t,n_p,ages]+data$R[n_t,n_p,ages]
+      positives=data$R[n_t,n_p,ages]
       sero_values[i]=sum(positives)/sum(samples)
     } else {
      if(vc_factor==1){
-       samples=data$S[days,ages]+data$E[days,ages]+data$I[days,ages]+data$R[days,ages]+data$V[days,ages]
-       positives=data$R[days,ages]+data$V[days,ages]
+       samples=data$S[n_t,n_p,ages]+data$E[n_t,n_p,ages]+data$I[n_t,n_p,ages]+data$R[n_t,n_p,ages]+data$V[n_t,n_p,ages]
+       positives=data$R[n_t,n_p,ages]+data$V[n_t,n_p,ages]
        sero_values[i]=sum(positives)/sum(samples)
      } else {
-       samples=data$S[days,ages]+data$E[days,ages]+data$I[days,ages]+data$R[days,ages]
-       positives=data$R[days,ages]
+       samples=data$S[n_t,n_p,ages]+data$E[n_t,n_p,ages]+data$I[n_t,n_p,ages]+data$R[n_t,n_p,ages]
+       positives=data$R[n_t,n_p,ages]
        sero_values[i]=((1.0-vc_factor)*sum(positives))/sum(samples)
-       samples=samples+data$V[days,ages]
-       positives=positives+data$V[days,ages]
+       samples=samples+data$V[n_t,n_p,ages]
+       positives=positives+data$V[n_t,n_p,ages]
        sero_values[i]=sero_values[i]+((vc_factor*sum(positives))/sum(samples))
      }
     }
@@ -68,12 +73,18 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
 #' @param sero_data = Data frame containing years, minimum and maximum ages, and values of vc_factor (proportion of
 #' people for whom vaccination status unknown)
 #' @param model_data = Output of Basic_Model_Run or Full_Model_Run
+#' @param n_p = Particle to select from model_data
 #' '
 #' @export
 #'
-sero_calculate2 <- function(sero_data=list(),model_data=list()){
+sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
   assert_that(is.data.frame(sero_data))
   assert_that(is.list(model_data))
+  assert_that(is.null(model_data$S==FALSE))
+  assert_that(is.integer(n_p))
+  assert_that(n_p>0)
+  assert_that(n_p<=dim(model_data$S)[2])
+
   nrows=nrow(sero_data)
   output_frame=data.frame(samples=rep(NA,nrows),positives=rep(NA,nrows))
 
@@ -81,14 +92,14 @@ sero_calculate2 <- function(sero_data=list(),model_data=list()){
     ages=c((sero_data$age_min[i]+1):sero_data$age_max[i])
     year=sero_data$year[i]
     vc_factor=sero_data$vc_factor[i]
-    days=which(model_data$year==year)
-    S_sum=sum(model_data$S[days,ages])
-    E_sum=sum(model_data$E[days,ages])
-    I_sum=sum(model_data$I[days,ages])
-    R_sum=sum(model_data$R[days,ages])
+    n_t=which(model_data$year==year)
+    S_sum=sum(model_data$S[n_t,n_p,ages])
+    E_sum=sum(model_data$E[n_t,n_p,ages])
+    I_sum=sum(model_data$I[n_t,n_p,ages])
+    R_sum=sum(model_data$R[n_t,n_p,ages])
     samples=S_sum+E_sum+I_sum+R_sum
     if(vc_factor>0){
-      V_sum=sum(model_data$V[days,ages])
+      V_sum=sum(model_data$V[n_t,n_p,ages])
       if(vc_factor==1){
         samples=samples+V_sum
         positives=R_sum+V_sum
@@ -117,11 +128,12 @@ sero_calculate2 <- function(sero_data=list(),model_data=list()){
 #'
 #' @param model_data = Output of Basic_Model_Run_OD or Full_Model_Run_OD
 #' @param obs_sero_data = Seroprevalence data for comparison, by year and age group, in format
-#' no. samples/no. positives
+#'   no. samples/no. positives
+#' @param n_particle = Particle to select from model_data
 #' '
 #' @export
 #'
-sero_compare <- function(model_data=list(),obs_sero_data=list()){
+sero_compare <- function(model_data=list(),obs_sero_data=list(),n_particle=1){
 
   assert_that(is.null(model_data$S)==FALSE)
   assert_that(is.null(model_data$E)==FALSE)
@@ -140,7 +152,7 @@ sero_compare <- function(model_data=list(),obs_sero_data=list()){
 
   for(i in 1:n_lines){
     model_sero_data[i]=sero_calculate(obs_sero_data$age_min[i],obs_sero_data$age_max[i],
-                                        obs_sero_data$year[i],obs_sero_data$vc_factor[i],model_data)
+                                        obs_sero_data$year[i],obs_sero_data$vc_factor[i],model_data,n_particle)
   }
   model_sero_data[is.na(model_sero_data)]=0
   model_sero_data[is.infinite(model_sero_data)]=0
@@ -171,23 +183,12 @@ sero_compare <- function(model_data=list(),obs_sero_data=list()){
 sero_compare_multiparticle <- function(model_data=list(),obs_sero_data=list()){
 
   dimensions=dim(model_data$S)
-  if(length(dimensions)==3){
-    N_age=dimensions[1]
-    n_particles=dimensions[2]
-    n_pts=dimensions[3]
-  } else {
-    N_age=dimensions[1]
-    n_particles=1
-    n_pts=dimensions[2]
-  }
+  N_age=dimensions[1]
+  n_particles=dimensions[2]
+  n_pts=dimensions[3]
 
   like_values=rep(0,n_particles)
-
-  for(i in 1:n_particles){
-    data_1set=list(day=model_data$day[i,],year=model_data$year[i,],S=t(model_data$S[,i,]),E=t(model_data$E[,i,]),
-                   I=t(model_data$I[,i,]),R=t(model_data$R[,i,]),V=t(model_data$V[,i,]))
-    like_values[i]=sero_compare(data_1set,obs_sero_data)
-  }
+  for(i in 1:n_particles){like_values[i]=sero_compare(model_data,obs_sero_data,i)}
 
   return(like_values)
 }

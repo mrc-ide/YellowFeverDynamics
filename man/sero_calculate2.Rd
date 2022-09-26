@@ -4,13 +4,15 @@
 \alias{sero_calculate2}
 \title{sero_calculate2}
 \usage{
-sero_calculate2(sero_data = list(), model_data = list())
+sero_calculate2(sero_data = list(), model_data = list(), n_p = 1)
 }
 \arguments{
 \item{sero_data}{= Data frame containing years, minimum and maximum ages, and values of vc_factor (proportion of
 people for whom vaccination status unknown)}
 
-\item{model_data}{= Output of Basic_Model_Run or Full_Model_Run
+\item{model_data}{= Output of Basic_Model_Run or Full_Model_Run}
+
+\item{n_p}{= Particle to select from model_data
 '}
 }
 \description{

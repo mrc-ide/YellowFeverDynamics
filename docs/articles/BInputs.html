@@ -43,9 +43,11 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/AInstallation.html">Vignette 1 - Installation</a>
     <a class="dropdown-item" href="../articles/BInputs.html">Vignette 2 - Inputs</a>
-    <a class="dropdown-item" href="../articles/CModelRun.html">Vignette 3 - Running Model</a>
-    <a class="dropdown-item" href="../articles/DParametersEnvironment.html">Vignette 4 - Calculating Parameters From Environmental Data</a>
-    <a class="dropdown-item" href="../articles/EDataGenerate.html">Vignette 5 - Generating Epidemiological Data</a>
+    <a class="dropdown-item" href="../articles/CParametersEnvironment.html">Vignette 3 - Calculating Parameters From Environmental Data</a>
+    <a class="dropdown-item" href="../articles/DModelRun.html">Vignette 4 - Running Model</a>
+    <a class="dropdown-item" href="../articles/EModelResultsProcess.html">Vignette 5 - Processing Model Results</a>
+    <a class="dropdown-item" href="../articles/FDataGenerate.html">Vignette 6 - Generating Epidemiological Data Sets</a>
+    <a class="dropdown-item" href="../articles/GMCMC.html">Vignette 7 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
   </div>
 </li>
       </ul>
@@ -82,7 +84,7 @@ divided.</p>
 <p>Here an example data set is loaded from the package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
-<span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>A correctly formatted input data set consists of a list containing
 the following:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -96,7 +98,7 @@ population and vaccination data is included:</p>
 <span><span class="co">#&gt;  [1] "IGL01" "IGL02" "IGL03" "IGL04" "IGL05" "IGL06" "IGL07" "IGL08" "IGL09"</span></span>
 <span><span class="co">#&gt; [10] "IGL10" "IGL11" "IGL12" "IGL13" "IGL14" "IGL15" "IGL16" "IGL17" "IGL18"</span></span>
 <span><span class="co">#&gt; [19] "IGL19" "IGL20" "IGL21" "IGL22" "IGL23" "IGL24" "IGL25"</span></span>
-<span><span class="va">n_regions</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_data</span><span class="op">$</span><span class="va">region_labels</span><span class="op">)</span> <span class="co">#Number of regions</span></span></code></pre></div>
+<span><span class="va">n_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_data</span><span class="op">$</span><span class="va">region_labels</span><span class="op">)</span> <span class="co">#Number of regions</span></span></code></pre></div>
 <p>years_labels is a vector listing the sequence of years for which
 population and vaccination data is included:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
@@ -107,7 +109,7 @@ population and vaccination data is included:</p>
 <span><span class="co">#&gt; [46] 1985 1986 1987 1988 1989 1990 1991 1992 1993 1994 1995 1996 1997 1998 1999</span></span>
 <span><span class="co">#&gt; [61] 2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 2010 2011 2012 2013 2014</span></span>
 <span><span class="co">#&gt; [76] 2015 2016 2017 2018 2019</span></span>
-<span><span class="va">n_years</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">)</span> <span class="co">#Number of years</span></span></code></pre></div>
+<span><span class="va">n_years</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">)</span> <span class="co">#Number of years</span></span></code></pre></div>
 <p>age_labels is a vector listing the sequence of age groups (defined as
 the minimum age of each group, with the maximum age being the next age
 value) for which population and vaccination data is included. Age groups
@@ -121,7 +123,7 @@ model.</p>
 <span><span class="co">#&gt;  [55]  54  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70  71</span></span>
 <span><span class="co">#&gt;  [73]  72  73  74  75  76  77  78  79  80  81  82  83  84  85  86  87  88  89</span></span>
 <span><span class="co">#&gt;  [91]  90  91  92  93  94  95  96  97  98  99 100</span></span>
-<span><span class="va">N_age</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_data</span><span class="op">$</span><span class="va">age_labels</span><span class="op">)</span> <span class="co">#Number of age groups</span></span></code></pre></div>
+<span><span class="va">N_age</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">input_data</span><span class="op">$</span><span class="va">age_labels</span><span class="op">)</span> <span class="co">#Number of age groups</span></span></code></pre></div>
 <p>vacc_data is an array (with dimensions equal to the number of
 regions, number of years and number of age groups) containing values of
 proportional population immunity due to vaccination.</p>
@@ -162,11 +164,11 @@ coverage and population data should be organized into data frames with
 each line giving the region, the year and the coverage/population by age
 for that region in that year</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">pv_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/pop_vacc_data_example.Rds"</span>,sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">pv_example</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/pop_vacc_data_example.Rds"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">pv_example</span><span class="op">$</span><span class="va">vacc_data</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">pv_example</span><span class="op">$</span><span class="va">pop_data</span></span>
-<span><span class="va">input_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_input_data.html">create_input_data</a></span><span class="op">(</span><span class="va">vacc_data</span>,<span class="va">pop_data</span>,regions<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                              years<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">input_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_input_data.html">create_input_data</a></span><span class="op">(</span><span class="va">vacc_data</span>,<span class="va">pop_data</span>,regions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                              years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">pop_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co">#&gt;   region year pop_age1 pop_age2 pop_age3</span></span>
 <span><span class="co">#&gt; 1  IGL01 1940 41875.63 39261.09 36926.28</span></span>

@@ -1,0 +1,23 @@
+---
+title: "Vignette 7 - Parameter Estimation Using Markov Chain Monte Carlo Functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 7 - Parameter Estimation Using Markov Chain Monte Carlo Functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette describes how to use the package to estimate parameters of the yellow fever model from observed epidemiological data within a Bayesian framework using Markov chain Monte Carlo sampling.
+
+First load the package:
+
+```{r}
+library(YellowFeverDynamics)
+```
