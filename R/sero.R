@@ -29,7 +29,6 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
   assert_that(is.null(data$I)==FALSE)
   assert_that(is.null(data$R)==FALSE)
   assert_that(is.null(data$V)==FALSE)
-  assert_that(is.integer(n_p))
   assert_that(n_p>0)
   assert_that(n_p<=dim(data$S)[2])
 
@@ -81,7 +80,6 @@ sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
   assert_that(is.data.frame(sero_data))
   assert_that(is.list(model_data))
   assert_that(is.null(model_data$S==FALSE))
-  assert_that(is.integer(n_p))
   assert_that(n_p>0)
   assert_that(n_p<=dim(model_data$S)[2])
 

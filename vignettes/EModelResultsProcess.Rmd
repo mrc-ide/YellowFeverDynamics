@@ -42,5 +42,6 @@ age_min <- 0
 age_max <- 15
 years <- c(2000)
 vc_factor <- 0
-seroprevalence <- sero_calculate(age_min,age_max,years,vc_factor,model_data)
+n_particle <- 1
+seroprevalence <- sero_calculate(age_min,age_max,years,vc_factor,model_data,n_particle)
 ```
