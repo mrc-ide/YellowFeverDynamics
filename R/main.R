@@ -293,7 +293,7 @@ Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
     if(flag_sero==1){
       sero_line_list=input_data$sero_line_list[[n_region]]
       for(i in 1:n_reps){
-        sero_results=sero_calculate2(obs_sero_data[sero_line_list,],model_data,i)
+        sero_results=sero_calculate2(obs_sero_data[sero_line_list,],model_output,i)
         model_sero_data$samples[sero_line_list]=model_sero_data$samples[sero_line_list]+sero_results$samples
         model_sero_data$positives[sero_line_list]=model_sero_data$positives[sero_line_list]+sero_results$positives
       }

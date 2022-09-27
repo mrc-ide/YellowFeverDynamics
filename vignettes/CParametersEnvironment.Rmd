@@ -38,7 +38,7 @@ enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exd
 enviro_coeffs
 ```
 
-Covariate and coefficient values can be combined to produce values of the spillover force of infection and basic reproduction number using the param_calc_enviro function.
+Covariate and coefficient values can be combined to produce values of the spillover force of infection and basic reproduction number using the param_calc_enviro() function.
 
 ```{r}
 n_regions <- nrow(enviro_data)

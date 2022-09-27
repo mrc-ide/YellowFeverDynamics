@@ -36,7 +36,7 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
   sero_values=rep(0,length(years))
 
   for(i in 1:length(years)){
-    n_t=which(data$year %in% years[i])
+    n_t=which(data$year[n_p,] %in% years[i])
     if(vc_factor==0){
       samples=data$S[ages,n_p,n_t]+data$E[ages,n_p,n_t]+data$I[ages,n_p,n_t]+data$R[ages,n_p,n_t]
       positives=data$R[ages,n_p,n_t]
@@ -90,7 +90,7 @@ sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
     ages=c((sero_data$age_min[i]+1):sero_data$age_max[i])
     year=sero_data$year[i]
     vc_factor=sero_data$vc_factor[i]
-    n_t=which(model_data$year==year)
+    n_t=which(model_data$year[n_p,]==year)
     S_sum=sum(model_data$S[ages,n_p,n_t])
     E_sum=sum(model_data$E[ages,n_p,n_t])
     I_sum=sum(model_data$I[ages,n_p,n_t])

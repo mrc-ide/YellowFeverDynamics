@@ -32,47 +32,47 @@ vacc_data <- input_data$vacc_data[1,,]
 pop_data <- input_data$pop_data[1,,]  
 ```
 
-The other input parameters to the functions which run the model are as follows. Here the spillover FOI and basic reproduction number are set directly; they may alternatively be calculated from environmental covariates as described in Vignette 3.
+The other input parameters to the functions which run the model are as follows. Here the spillover FOI and basic reproduction number are set directly; they may alternatively be calculated from environmental covariates as described in Vignette 3. The mode_start variable is used to set the initial conditions in one of 3 ways. The n_particles variable is used to run the model multiple times for the same inputs; the results can be compared and/or combined to test and/or average out the effects of the model stochasticity. The n_threads variable is used to set the number of particles run in parallel (subject to the limitations of the computer being used).
 
 ```{r}
-FOI_spillover <- 1.0e-8            # Force of infection due to spillover from sylvatic reservoir
-R0 <- 1.5                          # Reproduction number for urban spread of infection
-year0 <- 1940                      # First year in population/vaccination data
-mode_start <- 1                    # Flag indicating how to set initial population immunity level in addition to vaccination
-                                   # If mode_start = 0, only vaccinated individuals
-                                   # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
-                                   # If mode_start = 2, use SEIRVC input in list from previous run(s)
-n_particles <- 10                  # Number of particles to run (maximum allowed value = 20)
-n_threads <- 1                     # Number of threads to run (equal to or less than n_particles)
-year_end <- 2001                   # Year at which to stop generating data (year after last year where data is desired)
-year_data_begin <- 1999            # Year to begin saving data
-vaccine_efficacy <- 1.0            # Proportional vaccine efficacy
-start_SEIRV <- NULL                # SEIRV data from end of a previous run to use as input (if mode_start = 2)
-dt <- 1.0                          # Time increment in days to use in model (should be either 1.0 or 5.0 days
+FOI_spillover <- 1.0e-8             # Force of infection due to spillover from sylvatic reservoir
+R0 <- 1.5                           # Reproduction number for urban spread of infection
+year0 <- input_data$years_labels[1] # First year in population/vaccination data (here taken from the input data set; if the population and vaccination data is set manually, this similarly needs to be set manually)
+mode_start <- 1                     # Flag indicating how to set initial population immunity level in addition to vaccination
+                                    # If mode_start = 0, only vaccinated individuals
+                                    # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
+                                    # If mode_start = 2, use SEIRV input in list from previous run(s)
+n_particles <- 10                   # Number of particles to run (maximum allowed value = 20)
+n_threads <- 1                      # Number of threads to run (equal to or less than n_particles)
+year_end <- 2001                    # Year at which to stop generating data (year after last year where data is desired)
+year_data_begin <- 1999             # Year to begin saving data
+vaccine_efficacy <- 1.0             # Proportional vaccine efficacy (from 0 to 1)
+start_SEIRV <- NULL                 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not used here and hence set to NULL)
+dt <- 1.0                           # Time increment in days to use in model (should be either 1.0 or 5.0 days)
 ```
 
-The Full_Model_Run function is normally used to run the model for the inputs above:
+The Full_Model_Run() function is normally used to run the model for the inputs above:
 
 ```{r}
 test1 <- Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                         year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 ```
 
-The output of Full_Model_Run includes, for each repetition, date information, the total force of infection FOI_total at each data point, the numbers of people in groups S, E, I, R and V at each time point and the number of newly infectious people (C) at each time point organized by age group.
+The output of Full_Model_Run() includes, for each particle, date information, the total force of infection FOI_total at each data point, the numbers of people in groups S, E, I, R and V at each time point and the number of newly infectious people (C) at each time point organized by age group. The plot_model function can be used as shown below to display values of S, R and V over time, with error bars to show the variation between particles caused by stochasticity.
 
 ```{r}
 plot<-plot_model_output(test1)
 print(plot)
 ```
 
-For some applications, the Basic_Model_Run function can be used instead. This is identical to Full_Model_Run but does not output the total force of infection at each time point or the number of new infections at each time point.
+For some applications, the Basic_Model_Run() function can be used instead. This is largely identical to Full_Model_Run() but does not output the total force of infection at each time point or the number of new infections at each time point. This reduces the amount of data output by each run of the function, reducing computational requirements. Basic_Model_Run is used, for example, when the intention is only to calculate seroprevalence, which is derived (as described in vignette 5) from SEIRV values, with the rate of newly infectious individuals being irrelevant.
 
 ```{r,eval = FALSE}
 test2 <- Basic_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                      year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 ```
 
-For applications where only the number of daily infections is desired, the case_data_generate function can be used instead. This functions similarly to Basic_Model_Run and Full_Model_Run but only outputs infection data. It is also designed to run large numbers of repetitions, automatically sequentially running smaller groups of particles and threads to avoid causing errors or freezing the computer while running. The ability to run a large number of repetitions is valuable when modelling outbreak occurrence in situations where the overall force of infection is low. Hence in the example below, case_data_generate is run for 1000 repetitions with a low spillover FOI and no human-to-human transmission, resulting in a very low daily infection rate.
+For applications where only the number of new infectious people at each time point is desired, the case_data_generate() function can be used instead. This functions similarly to Basic_Model_Run() and Full_Model_Run() but only outputs data on the total number (across all age groups) of newly infectious people at each time point. It is also designed to run large numbers of repetitions, automatically sequentially running smaller groups of particles and threads to avoid causing errors or freezing the computer while running (Basic_Model_Run() and Full_Model_Run() are limited to 20 particles/threads for this reason). The ability to run a large number of repetitions is valuable when modelling annual case rates and/or outbreak occurrence (see vignette 5) in situations where the overall force of infection is low. Hence in the example below, case_data_generate is run for 1000 repetitions with a low spillover FOI and no human-to-human transmission, resulting in a very low daily infection rate.
 
 ```{r,eval = FALSE}
 n_reps <- 1000
