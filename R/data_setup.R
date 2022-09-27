@@ -127,6 +127,8 @@ input_data_check <- function(input_data=list()){
 input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL){
 
   assert_that(input_data_check(input_data))
+  N_age=length(input_data$age_labels)
+  n_years=length(input_data$years_labels)
 
   regions_input_data=input_data$region_labels
   #TODO - Make sure regions always in alphabetical order?
@@ -200,12 +202,14 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
       outbreak_line_list[[i]]=outbreak_line_list[[i]][c(2:length(outbreak_line_list[[i]]))]
     }
   }
+  n_regions=length(input_regions_check[input_regions_check==TRUE])
 
   input_data_new=list(region_labels=input_data$region_labels[input_regions_check],
                       years_labels=input_data$years_labels,age_labels=input_data$age_labels,
-                      vacc_data=input_data$vacc_data[input_regions_check,,],
-                      pop_data=input_data$pop_data[input_regions_check,,],year_data_begin=year_data_begin,
-                      year_end=year_end,flag_sero=flag_sero,flag_case=flag_case,flag_outbreak=flag_outbreak,
+                      vacc_data=array(input_data$vacc_data[input_regions_check,,],dim=c(n_regions,n_years,N_age)),
+                      pop_data=array(input_data$pop_data[input_regions_check,,],dim=c(n_regions,n_years,N_age)),
+                      year_data_begin=year_data_begin,year_end=year_end,
+                      flag_sero=flag_sero,flag_case=flag_case,flag_outbreak=flag_outbreak,
                     sero_line_list=sero_line_list,case_line_list=case_line_list,outbreak_line_list=outbreak_line_list)
 
   return(input_data_new)

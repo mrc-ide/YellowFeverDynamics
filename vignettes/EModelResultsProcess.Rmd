@@ -48,7 +48,7 @@ model_data <- Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_star
 
 The seroprevalence in a given age range in one or more years for one particle may be calculated from model data using the sero_calculate() function as shown below (in this case, for 0-15 year olds from 1990-2000). Seroprevalence for a given year calculated in this way is a year-round average. The variable vc_factor is used when creating modelled seroprevalence data to compare with real-world surveys, to account for the fact that in real-world seroprevalence surveys, while normally only unvaccinated individuals are tested, some surveyed individuals' vaccination status may be unknown. If vc_factor = 0 (i.e. all individuals tested are confirmed unvaccinated), seroprevalence is calculated only for the unvaccinated population. If vc_factor > 0, seroprevalence is calculated for an appropriate mixture of the unvaccinated population (where seroprevalence = R/(S+E+I+R)) and the overall population (where seroprevalence = (R+V)/(S+E+I+R+V)).
 
-```{r,eval=FALSE}
+```{r}
 age_min <- 0      # Minimum age in age range to survey
 age_max <- 15     # Maximum age in age range to survey
 years <- c(1990:2000)  # Year(s) for which to calculate seroprevalence
@@ -60,7 +60,7 @@ matplot(x=years,y=seroprevalence,type="b",pch=1,xlab="Year",ylab="Seroprevalence
 
 Annual reported severe and fatal case data is generated from C, the output data on the number of new infectious individuals at each time point. The actual number of severe and fatal cases is calculated stochastically using the variables p_severe_inf (the probability of an infection leading to severe symptoms) and p_death_severe_inf (the probability that a severe infection with lead to death). The values set for these below (0.12 and 0.47, taken from [TBA - link to source for values]) are incorporated into the package as global variables. The number of reported severe and fatal cases is then calculated stochastically using the variables p_rep_severe (probability of a severe case being reported in public health figures, usually meaning lab-confirmed cases) and p_rep_death (probability of a fatal case being reported). The total number of reported cases (rep_cases in the output data frame annual_data below) is the sum of reported severe cases and reported fatal cases (so it will always be equal to or greater than the number of reported deaths).
 
-```{r,eval=FALSE}
+```{r}
 p_severe_inf=0.12
 p_death_severe_inf=0.47
 p_rep_severe=0.05
@@ -81,19 +81,33 @@ legend("topright",legend=c("Reported cases","Reported deaths"),lty=c(1,1),pch=c(
 
 Outbreak occurrence data can be calculated from annual reported case data; if the case count for a given year is greater than zero, it is flagged as a year in which one or more outbreaks will be reported and the outbreak occurrence value is set to 1; otherwise, it is 0.
 
-```{r,eval=FALSE}
+```{r}
 outbreak_occurrence=rep(0,n_years)
 for(n_year in 1:n_years){
   if(annual_data$rep_cases[n_year]>0){outbreak_occurrence[n_year]=1}
 }
 barplot(height=outbreak_occurrence,names.arg=years)
 ```
+
 When the model is run for multiple particles, outbreak risk can be calculated for each year from the proportion of particles in which the year is flagged as an outbreak year.
 
-```{r,eval=FALSE}
+```{r}
 n_reps <- 1000
-FOI_spillover <- 1.0e-10
+FOI_spillover <- 1.0e-8
 R0 <- 0.0
 model_data2 <- case_data_generate(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_reps,year_end,year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 
+outbreak_risk=rep(0,n_years)
+dp=1/n_reps
+for(n_rep in 1:n_reps){
+  for(n_year in 1:n_years){
+    infs=sum(model_data2$C[n_particle,model_data2$year==years[n_year]])
+    severe_infs=rbinom(1,floor(infs),p_severe_inf)
+    deaths=rbinom(1,severe_infs,p_death_severe_inf)
+    rep_deaths=rbinom(1,deaths,p_rep_death)
+    rep_cases=rep_deaths+rbinom(1,severe_infs-deaths,p_rep_severe)
+    if(rep_cases>0){outbreak_risk[n_year]=outbreak_risk[n_year]+dp}
+  }
+}
+matplot(x=years,y=outbreak_risk,type="b",pch=1,xlab="Year",ylab="Outbreak risk")
 ```
