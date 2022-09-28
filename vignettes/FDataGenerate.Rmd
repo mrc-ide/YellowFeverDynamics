@@ -51,18 +51,23 @@ The data_match_single() function is run to produce a set of modelled data matchi
 -Numbers of reported cases and deaths in the same year(s)
 -Outbreak occurence data for the same year(s)
 
-```{r,eval=FALSE}
+```{r}
 data1 <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
 A data_match_multi() function exists to run data_match_single() for a series of sets of values of the input parameters. The inputs are the same except that the parameter values are input as a data frame containing one set of parameter values per line. 
 
-```{r,eval=FALSE}
+```{r}
 data2 <- data_match_multi(param_sets=data.frame(enviro_coeffs),input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
 Data output from data_match_multi() can be plotted together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Results from multiple parameter sets can be combined together in different ways [TBA].
 
-```{r,eval=FALSE}
-sero_graph <- sero_match_graphs(data2,obs_sero_data,"all",1)
+```{r}
+sero_graph <- sero_match_graphs(data2,obs_sero_data,"all",text_size1=10)
+print(sero_graph[[1]])
+```
+```{r}
+case_graph <- case_match_graphs(data2,obs_case_data,input_data,"all",text_size1=10)
+Rmisc::multiplot(case_graph$cases_graphs[[1]],case_graph$deaths_graphs[[1]])
 ```
