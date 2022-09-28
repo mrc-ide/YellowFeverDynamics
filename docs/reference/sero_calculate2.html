@@ -32,7 +32,8 @@ and year(s)'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
     <a class="dropdown-item" href="../articles/DModelRun.html">Vignette 4 - Running Model</a>
     <a class="dropdown-item" href="../articles/EModelResultsProcess.html">Vignette 5 - Processing Model Results</a>
     <a class="dropdown-item" href="../articles/FDataGenerate.html">Vignette 6 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/GMCMC.html">Vignette 7 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/GLikelihood.html">Vignette 7 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/HMCMC.html">Vignette 8 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -57,7 +58,7 @@ and year(s)</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sero_calculate2</span><span class="op">(</span>sero_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, model_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">sero_calculate2</span><span class="op">(</span>sero_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, model_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, n_p <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,7 +69,11 @@ people for whom vaccination status unknown)</p></dd>
 
 
 <dt>model_data</dt>
-<dd><p>= Output of Basic_Model_Run or Full_Model_Run
+<dd><p>= Output of Basic_Model_Run or Full_Model_Run</p></dd>
+
+
+<dt>n_p</dt>
+<dd><p>= Particle to select from model_data
 '</p></dd>
 
 </dl></div>

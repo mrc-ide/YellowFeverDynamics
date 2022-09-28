@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette demonstrates how to use the package to generate a set of epidemiological data (serological, annual reported severe/fatal cases and/or annual outbreak occurence) for specified time periods and regions (and age ranges, in the case of serological data).
+This vignette demonstrates how to use the package to generate a set of epidemiological data (serological, annual reported severe/fatal cases and/or annual outbreak occurence) for specified time periods and regions (and age ranges, in the case of serological data). This can either be set up to match a set of observed data or to create a hypothetical set of data with no existing counterpart (by matching to "dummy" data).
 
 First load the package:
 
@@ -22,22 +22,35 @@ First load the package:
 library(YellowFeverDynamics)
 ```
 
-```{r}
-input_data=readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
-                      # Input data in standard format (see Vignette 2)
-FOI_values=rep(1.0e-8,length(input_data$region_labels))        
-                      # Force of infection due to spillover from sylvatic reservoir, by region
-R0_values=rep(1.0,length(input_data$region_labels))
-                      # Reproduction number for urban spread of infection, by region
-obs_sero_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example_single.csv",sep=""),header=TRUE)    
-                      # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-obs_case_data=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
-                      # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-obs_outbreak_data=NULL# Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
-const_list=list(type="FOI+R0",n_reps=1,mode_start=1,dt=1.0,enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0)
-                      # List containing additional parameters
-```
+The inputs for the data_match_single() function, which is used to generate model data to match observed or dummy data, are as follows:
 
 ```{r,eval=FALSE}
-data <- data_match_single(c(FOI_values,R0_values),input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+FOI_values <- rep(1.0e-8,length(input_data$region_labels))        
+                      # Force of infection due to spillover from sylvatic reservoir, by region
+R0_values <- rep(1.0,length(input_data$region_labels))
+                      # Reproduction number for urban spread of infection, by region
+params <- c(FOI_values,R0_values) #TBA
+input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+                      # Input data in standard format (see Vignette 2)
+obs_sero_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example_single.csv",sep=""),header=TRUE)    
+                      # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
+obs_case_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
+                      # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
+obs_outbreak_data <- NULL
+                      # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
+const_list <- list(type="FOI+R0",n_reps=1,mode_start=1,dt=1.0,enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0)
+                      # List containing additional parameters (TBA)
 ```
+
+The data_match_single() function is run to produce a set of modelled data matching the observed data:
+
+```{r,eval=FALSE}
+data <- data_match_single(params,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+#[TBA]
+```
+
+A data_match_multi() function exists to run data_match_single() for a series of sets of values of the input parameters. The inputs are the same except that the param variable can be a data frame containing one set of parameter values per line.
+
+```{r,eval=FALSE}
+data <- data_match_multi(params,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
+#[TBA]

@@ -47,7 +47,8 @@
     <a class="dropdown-item" href="../articles/DModelRun.html">Vignette 4 - Running Model</a>
     <a class="dropdown-item" href="../articles/EModelResultsProcess.html">Vignette 5 - Processing Model Results</a>
     <a class="dropdown-item" href="../articles/FDataGenerate.html">Vignette 6 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/GMCMC.html">Vignette 7 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/GLikelihood.html">Vignette 7 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/HMCMC.html">Vignette 8 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
   </div>
 </li>
       </ul>
@@ -79,7 +80,9 @@
 <p>This vignette demonstrates how the package generates values of
 epidemiological parameters (the force of infection for spillover from
 the sylvatic reservoir and the basic reproduction number for
-human-to-human transmission) from environmental covariates. This
+human-to-human transmission) from environmental covariates (including
+population, vegetation coverage, temperature suitability for yellow
+fever-carrying mosquitoes and non-human primate species richness). This
 approach is used to calculate epidemiological parameter values for a set
 of regions with known values of environmental covariates from a single
 set of coefficients.</p>
@@ -91,7 +94,8 @@ fever (Gaythorpe et al, 2021, eLife)</a>.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span></code></pre></div>
 <p>Environmental data is stored as a data frame with each line
 containing covariate values for one region, with the headings giving the
-variable names.</p>
+variable names. In this imaginary example, the environmental covariates
+are simply named Var1-5.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">enviro_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/enviro_data_example.csv"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enviro_data</span>,<span class="fl">5</span><span class="op">)</span></span>
@@ -104,9 +108,9 @@ variable names.</p>
 <p>Logarithmic values of the coefficients of the environmental
 covariates are stored as a data frame with the headings in the format
 FOI_(variable name) and R0_(variable name). In the example below, only
-one set of coefficient values are given, but multiple sets of values
-(e.g. a distribution of value estimates) can be used to produce a
-distribution of results.</p>
+one set of coefficient values are given, but multiple sets of
+coefficient values (e.g. a distribution of value estimates) can be used
+to produce a distribution of epidemiological parameter values.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">enviro_coeffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/enviro_coeffs_example.csv"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">enviro_coeffs</span></span>
@@ -114,9 +118,9 @@ distribution of results.</p>
 <span><span class="co">#&gt; 1      -13      -14      -22      -18      -24      -5    -2.5    -0.2    -2.5</span></span>
 <span><span class="co">#&gt;   R0_Var5</span></span>
 <span><span class="co">#&gt; 1    -0.5</span></span></code></pre></div>
-<p>Covariate and coefficient values can be combined to produce value of
+<p>Covariate and coefficient values can be combined to produce values of
 the spillover force of infection and basic reproduction number using the
-param_calc_enviro function.</p>
+param_calc_enviro() function.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">enviro_data</span><span class="op">)</span></span>
 <span><span class="va">epi_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>region <span class="op">=</span> <span class="va">enviro_data</span><span class="op">$</span><span class="va">adm1</span>,FOI <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="va">n_regions</span><span class="op">)</span>,R0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="va">n_regions</span><span class="op">)</span><span class="op">)</span></span>

@@ -47,7 +47,8 @@
     <a class="dropdown-item" href="../articles/DModelRun.html">Vignette 4 - Running Model</a>
     <a class="dropdown-item" href="../articles/EModelResultsProcess.html">Vignette 5 - Processing Model Results</a>
     <a class="dropdown-item" href="../articles/FDataGenerate.html">Vignette 6 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/GMCMC.html">Vignette 7 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/GLikelihood.html">Vignette 7 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/HMCMC.html">Vignette 8 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
   </div>
 </li>
       </ul>
@@ -168,14 +169,7 @@ for that region in that year</p>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">pv_example</span><span class="op">$</span><span class="va">vacc_data</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">pv_example</span><span class="op">$</span><span class="va">pop_data</span></span>
 <span><span class="va">input_data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_input_data.html">create_input_data</a></span><span class="op">(</span><span class="va">vacc_data</span>,<span class="va">pop_data</span>,regions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">region</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                              years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">pop_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#&gt;   region year pop_age1 pop_age2 pop_age3</span></span>
-<span><span class="co">#&gt; 1  IGL01 1940 41875.63 39261.09 36926.28</span></span>
-<span><span class="co">#&gt; 2  IGL02 1940 41875.63 39261.09 36926.28</span></span>
-<span><span class="co">#&gt; 3  IGL03 1940 41875.63 39261.09 36926.28</span></span>
-<span><span class="co">#&gt; 4  IGL04 1940 41875.63 39261.09 36926.28</span></span>
-<span><span class="co">#&gt; 5  IGL05 1940 41875.63 39261.09 36926.28</span></span></code></pre></div>
+<span>                              years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">vacc_data</span><span class="op">$</span><span class="va">year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>[TBA - Sources for age-stratified population and vaccination
 data]</p>
   </main>

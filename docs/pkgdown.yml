@@ -8,6 +8,7 @@ articles:
   DModelRun: DModelRun.html
   EModelResultsProcess: EModelResultsProcess.html
   FDataGenerate: FDataGenerate.html
-  GMCMC: GMCMC.html
-last_built: 2022-09-26T20:02Z
+  GLikelihood: GLikelihood.html
+  HMCMC: HMCMC.html
+last_built: 2022-09-27T23:57Z
 
