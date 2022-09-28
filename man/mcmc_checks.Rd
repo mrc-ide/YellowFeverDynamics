@@ -10,7 +10,7 @@ mcmc_checks(
   type = NULL,
   pars_min = c(),
   pars_max = c(),
-  prior_type = NULL,
+  prior_type = "zero",
   enviro_data = NULL,
   R0_fixed_values = NULL,
   vaccine_efficacy = NULL,

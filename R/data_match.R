@@ -53,6 +53,9 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   if(is.null(const_list$p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
   if(is.null(const_list$p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
   names(param_prop)=create_param_labels(const_list$type,input_data,const_list$enviro_data,extra_params)
+  mcmc_checks(param_prop,n_regions,const_list$type,param_prop,param_prop,"zero",
+              const_list$enviro_data,const_list$R0_fixed_values,
+              const_list$vaccine_efficacy,const_list$p_rep_severe,const_list$p_rep_death)
 
   #Get vaccine efficacy
   if(is.numeric(const_list$vaccine_efficacy)==FALSE){
@@ -203,9 +206,9 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
     }
   } else {
     n_095_low=ceiling(n_param_sets*0.025)
-    n_095_high=floor(n_param_sets*0.975)
+    n_095_high=max(1,floor(n_param_sets*0.975))
     n_050_low=ceiling(n_param_sets*0.25)
-    n_050_high=floor(n_param_sets*0.75)
+    n_050_high=max(1,floor(n_param_sets*0.75))
     for(i in lines_all){
       model_values_sorted=sort(model_sero_values[i,])
       model_CI95_low[i]=model_values_sorted[n_095_low]
@@ -354,9 +357,9 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
     }
   } else {
     n_095_low=ceiling(n_param_sets*0.025)
-    n_095_high=floor(n_param_sets*0.975)
+    n_095_high=max(1,floor(n_param_sets*0.975))
     n_050_low=ceiling(n_param_sets*0.25)
-    n_050_high=floor(n_param_sets*0.75)
+    n_050_high=max(1,floor(n_param_sets*0.75))
     for(i in 1:n_case_values){
       model_case_values_sorted=sort(model_case_values[i,])
       model_cases_CI95_low[i]=model_case_values_sorted[n_095_low]
