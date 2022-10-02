@@ -31,21 +31,21 @@ names(input_data)
 region_labels is a vector listing the names of the regions for which population and vaccination data is included:
 
 ```{r}
-input_data$region_labels
 n_regions <- length(input_data$region_labels) #Number of regions
+input_data$region_labels
 ```
 years_labels is a vector listing the sequence of years for which population and vaccination data is included:
 
 ```{r}
-input_data$years_labels
 n_years <- length(input_data$years_labels) #Number of years
+input_data$years_labels
 ```
 
 age_labels is a vector listing the sequence of age groups (defined as the minimum age of each group, with the maximum age being the next age value) for which population and vaccination data is included. Age groups must be defined in one-year increments as this is assumed in the model.
 
 ```{r}
-input_data$age_labels
 N_age <- length(input_data$age_labels) #Number of age groups
+input_data$age_labels
 ```
 
 vacc_data is an array (with dimensions equal to the number of regions, number of years and number of age groups) containing values of proportional population immunity due to vaccination.

@@ -76,6 +76,9 @@
     <loc>/reference/create_input_data.html</loc>
   </url>
   <url>
+    <loc>/reference/create_map.html</loc>
+  </url>
+  <url>
     <loc>/reference/create_param_labels.html</loc>
   </url>
   <url>
@@ -137,6 +140,9 @@
   </url>
   <url>
     <loc>/reference/input_data_process2.html</loc>
+  </url>
+  <url>
+    <loc>/reference/map_shapes_load.html</loc>
   </url>
   <url>
     <loc>/reference/MCMC.html</loc>
