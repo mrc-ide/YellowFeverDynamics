@@ -10,10 +10,13 @@ p_death_severe_inf=0.47 #Probability that a severe infection becomes fatal
 #' @import coda
 #' @import ggplot2
 #' @import graphics
+#' @import grDevices
 #' @import maptree
 #' @import mvtnorm
 #' @import qpdf
+#' @import rgdal
 #' @import Rmisc
+#' @import sp
 #' @import stats
 #' @import testthat
 #' @import tgp

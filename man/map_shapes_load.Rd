@@ -7,16 +7,18 @@
 map_shapes_load(regions = c(), shapefiles = c(), region_label_type = "")
 }
 \arguments{
-\item{regions}{TBA}
+\item{regions}{Vector of names of the regions for which to extract data}
 
-\item{shapefiles}{TBA}
+\item{shapefiles}{Vector of names of shapefiles from which to extract data}
 
-\item{region_label_type}{TBA
+\item{region_label_type}{Type of region ID used in vector of regions, corresponding to a data type appearing in the
+  shapefiles (e.g. "GID_1" for first subnational region IDs in the form of the three-letter country code plus a
+  number, e.g. "AGO.1_1", "AGO.2_1", etc.)
 '}
 }
 \description{
-TBA
+Create a set of shape data to make into one or more maps
 }
 \details{
-TBA
+Takes in one or more shapefiles (.shp) and extracts data for selected regions of a specified type
 }

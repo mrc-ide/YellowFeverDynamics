@@ -51,4 +51,15 @@ for(n_region in 1:n_regions){
 head(epi_data,5)
 ```
 
-[TBA - Draw map of FOI or R0 values across Imaginaryland]
+Spillover FOI and R0 data obtained in this way can be plotted on a map of the regions under consideration using the create_map function(), as can other regional data such as the values of the environmental covariates. Regional boundary data is loaded from one or more shapefiles of the format used by [GADM](https://gadm.org/download_country_v3.html) using the map_shapes_load() function
+
+```{r,eval=FALSE}
+regions=epi_data$adm1
+shape_data <- map_shapes_load(regions,shapefiles=c(paste(path.package("YellowFeverDynamics"),"/exdata/shapefile_example.shp",sep = "")),region_label_type="GID_1")
+colour_scheme=readRDS(file=paste(path.package("YellowFeverDynamics"),"exdata/colour_scheme_example.Rds",sep="/"))
+colour_scale=colour_scheme$colour_scale
+create_map(shape_data,epi_data$FOI,scale=pretty(epi_data$FOI,8),colour_scale,pixels_max=720,text_size=1,
+           map_title="",legend_title="FOI",legend_position="topleft",legend_format="e",legend_dp=1,output_file=NULL)
+create_map(shape_data,epi_data$R0,scale=pretty(epi_data$R0,8),colour_scale,pixels_max=720,text_size=1,
+           map_title="",legend_title="FOI",legend_position="topleft",legend_format="f",legend_dp=1,output_file=NULL)
+```

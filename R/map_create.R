@@ -21,11 +21,11 @@ map_shapes_load <- function(regions=c(),shapefiles=c(),region_label_type=""){
   assert_that(is.character(region_label_type))
 
   n_regions=length(regions)
-  shape_data_all=list(regions=regions,shapes=rep(NULL,n_regions_selected),
+  shape_data_all=list(regions=regions,shapes=rep(NULL,n_regions),
                       lat_min=Inf,long_min=Inf,lat_max=-Inf,long_max=-Inf)
 
-  for(i in 1:length(shapefile_list)){
-    shape_data=readOGR(shapefile_list[i])
+  for(i in 1:length(shapefiles)){
+    shape_data=readOGR(shapefiles[i])
     assert_that(region_label_type %in% names(shape_data))
     j=match(region_label_type,names(shape_data))
     file_regions=shape_data[[j]]
@@ -43,8 +43,8 @@ map_shapes_load <- function(regions=c(),shapefiles=c(),region_label_type=""){
       }
     }
   }
-  assert_that(length(shape_data_all$shapes)==n_regions_selected,msg="Region data missing")
-  for(n_region in 1:n_regions_selected){assert_that(is.null(shape_data_all$shapes[[n_region]])==FALSE,
+  assert_that(length(shape_data_all$shapes)==n_regions,msg="Region data missing")
+  for(n_region in 1:n_regions){assert_that(is.null(shape_data_all$shapes[[n_region]])==FALSE,
                                                     msg=paste("No shape data found for region",n_region))}
 
   return(shape_data_all)
@@ -85,7 +85,8 @@ create_map <- function(shape_data=list(),param_values=c(),scale=c(),colour_scale
   assert_that(legend_position %in% c("bottomright","bottom","bottomleft","left",
                                      "topleft","top","topright","right","center"))
   assert_that(legend_format %in% c("f","e","dp"))
-  assert_that(length(param_values)==length(shape_data$shapes))
+  n_regions=length(param_values)
+  assert_that(n_regions==length(shape_data$shapes))
 
   #Set map dimensions
   height_ll=shape_data$lat_max-shape_data$lat_min
@@ -131,7 +132,7 @@ create_map <- function(shape_data=list(),param_values=c(),scale=c(),colour_scale
   {
     matplot(x=c(shape_data$long_min,shape_data$long_max),y=c(shape_data$lat_min,shape_data$lat_max),
             col=0,xlab="",ylab="",axes=FALSE,frame.plot=FALSE)
-    for(n_region in 1:n_regions_selected){
+    for(n_region in 1:n_regions){
       for(i in 1:length(shape_data$shapes[[n_region]]@Polygons)){
         shape=shape_data$shapes[[n_region]]@Polygons[[i]]@coords
         if(shape_data$shapes[[n_region]]@Polygons[[i]]@hole==FALSE){col=colour_scale[scale_values[n_region]]} else {
