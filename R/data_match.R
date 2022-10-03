@@ -160,20 +160,32 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
 #' @param model_data Simulated datasets produced by data_match_multi() function
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 #'   positives
-#' @param type Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
-#'   95\% and 50\% confidence intervals for mean of all values
-#' @param text_size1 Size of text to display on graphs
+#' @param plot_type Form in which to plot model data: "all": bands showing 95\% and 50\% of all values;
+#'   "mean": bands showing 95\% and 50\% confidence intervals for mean of all values
+#' @param text_size Size of text to display on graphs
+#' @param hide_observed If TRUE, indicates that supplied observed data is "dummy" data only supplied to indicate years
+#'   and age ranges, and should not be plotted on the graph(s)
 #'
 #' @export
 #'
-sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean",text_size1=1.0){
+sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),plot_type="mean",text_size=1.0,
+                              hide_observed=FALSE){
 
   assert_that(is.list(model_data))
   assert_that(is.data.frame(obs_sero_data))
-  assert_that(type %in% c("mean","all"))
-  assert_that(is.numeric(text_size1))
+  assert_that(plot_type %in% c("mean","all"))
+  assert_that(is.numeric(text_size))
 
-  n_param_sets=length(model_data)
+  if(typeof(model_data[[1]])=="list"){
+    data_type="multi"
+    n_param_sets=length(model_data)
+  } else
+  {
+    assert_that(typeof(model_data[[1]])=="double")
+    data_type="single"
+    n_param_sets=1
+  }
+
   obs_sero_values=obs_sero_data$positives/obs_sero_data$samples
   n_sero_values=length(obs_sero_values)
   obs_sero_values[is.nan(obs_sero_values)]=0.0
@@ -190,32 +202,44 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
   }
 
   model_sero_values=array(NA,dim=c(length(obs_sero_values),n_param_sets))
-  model_CI50_low=model_CI50_high=model_CI95_low=model_CI95_high=rep(0,length(obs_sero_values))
-  for(i in 1:n_param_sets){
-    model_sero_values[,i]=model_data[[i]]$model_sero_values
-  }
   lines_all=graph_lines=c(1:length(obs_sero_values))
-  if(type=="mean"){
-    for(i in lines_all){
-      CI_095=CI(model_sero_values[i,],ci=0.95)
-      model_CI95_low[i]=CI_095[3][[1]]
-      model_CI95_high[i]=CI_095[1][[1]]
-      CI_050=CI(model_sero_values[i,],ci=0.50)
-      model_CI50_low[i]=CI_050[3][[1]]
-      model_CI50_high[i]=CI_050[1][[1]]
+  model_CI50_low=model_CI50_high=model_CI95_low=model_CI95_high=rep(0,length(obs_sero_values))
+
+  if(data_type=="multi"){
+    for(i in 1:n_param_sets){model_sero_values[,i]=model_data[[i]]$model_sero_values}
+  }
+  if(data_type=="single"){
+    model_sero_values[,1]=model_data$model_sero_values
+  }
+
+  if(data_type=="multi"){
+    if(plot_type=="mean"){
+      for(i in lines_all){
+        CI_095=CI(model_sero_values[i,],ci=0.95)
+        model_CI95_low[i]=CI_095[3][[1]]
+        model_CI95_high[i]=CI_095[1][[1]]
+        CI_050=CI(model_sero_values[i,],ci=0.50)
+        model_CI50_low[i]=CI_050[3][[1]]
+        model_CI50_high[i]=CI_050[1][[1]]
+      }
+    } else {
+      n_095_low=ceiling(n_param_sets*0.025)
+      n_095_high=max(1,floor(n_param_sets*0.975))
+      n_050_low=ceiling(n_param_sets*0.25)
+      n_050_high=max(1,floor(n_param_sets*0.75))
+      for(i in lines_all){
+        model_values_sorted=sort(model_sero_values[i,])
+        model_CI95_low[i]=model_values_sorted[n_095_low]
+        model_CI95_high[i]=model_values_sorted[n_095_high]
+        model_CI50_low[i]=model_values_sorted[n_050_low]
+        model_CI50_high[i]=model_values_sorted[n_050_high]
+      }
     }
-  } else {
-    n_095_low=ceiling(n_param_sets*0.025)
-    n_095_high=max(1,floor(n_param_sets*0.975))
-    n_050_low=ceiling(n_param_sets*0.25)
-    n_050_high=max(1,floor(n_param_sets*0.75))
-    for(i in lines_all){
-      model_values_sorted=sort(model_sero_values[i,])
-      model_CI95_low[i]=model_values_sorted[n_095_low]
-      model_CI95_high[i]=model_values_sorted[n_095_high]
-      model_CI50_low[i]=model_values_sorted[n_050_low]
-      model_CI50_high[i]=model_values_sorted[n_050_high]
-    }
+  }
+  if(data_type=="single"){
+    dS=min(model_sero_values)*0.01
+    model_CI95_low=model_sero_values-dS
+    model_CI95_high=model_sero_values+dS
   }
 
   if(is.null(obs_sero_data$country_zone)==FALSE){
@@ -269,17 +293,23 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
     sero_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=graph_titles[i])
     sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low95,
                                                                  ymax=sero_model_high95),fill="blue",alpha=0.5)
-    sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low50,
-                                                                 ymax=sero_model_high50),fill="green",alpha=0.5)
-    sero_graphs[[i]] <- sero_graphs[[i]]+geom_point(data=df,aes(x=age_values,y=sero_obs,size=log(samples)),
-                                                    show.legend=FALSE)
-    sero_graphs[[i]] <- sero_graphs[[i]]+geom_errorbar(data=df,aes(x=age_values,ymin=sero_obs_low,ymax=sero_obs_high),
-                                                       width=1.0)
+    if(data_type=="multi"){
+      sero_graphs[[i]] <- sero_graphs[[i]]+geom_ribbon(data=df,aes(x=age_values,ymin=sero_model_low50,
+                                                                   ymax=sero_model_high50),fill="green",alpha=0.5)
+    }
+
+    if(hide_observed==FALSE){
+      sero_graphs[[i]] <- sero_graphs[[i]]+geom_point(data=df,aes(x=age_values,y=sero_obs,size=log(samples)),
+                                                      show.legend=FALSE)
+      sero_graphs[[i]] <- sero_graphs[[i]]+geom_errorbar(data=df,aes(x=age_values,ymin=sero_obs_low,
+                                                                     ymax=sero_obs_high),width=1.0)
+    }
+
     sero_graphs[[i]] <- sero_graphs[[i]]+scale_x_continuous(name="Age (min)",breaks=df$age_values,labels=df$age_values)
     sero_graphs[[i]] <- sero_graphs[[i]]+scale_y_continuous(name="Seroprevalence")
-    sero_graphs[[i]] <- sero_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
-                                               axis.text.y = element_text(size = text_size1),
-                                               title=element_text(size=text_size1))
+    sero_graphs[[i]] <- sero_graphs[[i]]+theme(axis.text.x = element_text(size = text_size),
+                                               axis.text.y = element_text(size = text_size),
+                                               title=element_text(size=text_size))
   }
 
   return(sero_graphs)
@@ -301,20 +331,32 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),type="mean"
 #'   deaths
 #' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
 #' with observed data, added using input_data_process
-#' @param type Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
-#'   95\% and 50\% confidence intervals for mean of all values
-#' @param text_size1 Size of text to display on graphs
+#' @param plot_type Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands
+#'   showing 95\% and 50\% confidence intervals for mean of all values
+#' @param text_size Size of text to display on graphs
+#' @param hide_observed If TRUE, indicates that supplied observed data is "dummy" data only supplied to indicate years
+#'   and age ranges, and should not be plotted on the graph(s)
 #'
 #' @export
 #'
-case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),type="mean",text_size1=1.0){
+case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),plot_type="mean",text_size=1.0,
+                              hide_observed=FALSE){
 
   assert_that(is.list(model_data))
   assert_that(is.data.frame(obs_case_data))
-  assert_that(type %in% c("mean","all"))
-  assert_that(is.numeric(text_size1))
+  assert_that(plot_type %in% c("mean","all"))
+  assert_that(is.numeric(text_size))
 
-  n_param_sets=length(model_data)
+  if(typeof(model_data[[1]])=="list"){
+    data_type="multi"
+    n_param_sets=length(model_data)
+  } else
+  {
+    assert_that(typeof(model_data[[1]])=="double")
+    data_type="single"
+    n_param_sets=1
+  }
+
   obs_case_values=obs_case_data$cases
   obs_death_values=obs_case_data$deaths
   n_case_values=length(obs_case_values)
@@ -334,49 +376,65 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
   }
 
   model_case_values=model_death_values=array(NA,dim=c(length(obs_case_values),n_param_sets))
-  for(i in 1:n_param_sets){
-    model_case_values[,i]=model_data[[i]]$model_case_values
-    model_death_values[,i]=model_data[[i]]$model_death_values
+  if(data_type=="multi"){
+    for(i in 1:n_param_sets){
+      model_case_values[,i]=model_data[[i]]$model_case_values
+      model_death_values[,i]=model_data[[i]]$model_death_values
+    }
   }
+  if(data_type=="single"){
+    model_case_values[,1]=model_data$model_case_values
+    model_death_values[,1]=model_data$model_death_values
+  }
+
   model_cases_CI95_low=model_cases_CI95_high=model_cases_CI50_low=model_cases_CI50_high=rep(0,n_case_values)
   model_deaths_CI95_low=model_deaths_CI95_high=model_deaths_CI50_low=model_deaths_CI50_high=rep(0,n_case_values)
-  if(type=="mean"){
-    for(i in 1:n_case_values){
-      CI_095=CI(model_case_values[i,],ci=0.95)
-      model_cases_CI95_low[i]=CI_095[3][[1]]
-      model_cases_CI95_high[i]=CI_095[1][[1]]
-      CI_050=CI(model_case_values[i,],ci=0.50)
-      model_cases_CI50_low[i]=CI_050[3][[1]]
-      model_cases_CI50_high[i]=CI_050[1][[1]]
-      CI_095=CI(model_death_values[i,],ci=0.95)
-      model_deaths_CI95_low[i]=CI_095[3][[1]]
-      model_deaths_CI95_high[i]=CI_095[1][[1]]
-      CI_050=CI(model_death_values[i,],ci=0.50)
-      model_deaths_CI50_low[i]=CI_050[3][[1]]
-      model_deaths_CI50_high[i]=CI_050[1][[1]]
+  if(data_type=="multi"){
+    if(plot_type=="mean"){
+      for(i in 1:n_case_values){
+        CI_095=CI(model_case_values[i,],ci=0.95)
+        model_cases_CI95_low[i]=CI_095[3][[1]]
+        model_cases_CI95_high[i]=CI_095[1][[1]]
+        CI_050=CI(model_case_values[i,],ci=0.50)
+        model_cases_CI50_low[i]=CI_050[3][[1]]
+        model_cases_CI50_high[i]=CI_050[1][[1]]
+        CI_095=CI(model_death_values[i,],ci=0.95)
+        model_deaths_CI95_low[i]=CI_095[3][[1]]
+        model_deaths_CI95_high[i]=CI_095[1][[1]]
+        CI_050=CI(model_death_values[i,],ci=0.50)
+        model_deaths_CI50_low[i]=CI_050[3][[1]]
+        model_deaths_CI50_high[i]=CI_050[1][[1]]
+      }
+    } else {
+      n_095_low=ceiling(n_param_sets*0.025)
+      n_095_high=max(1,floor(n_param_sets*0.975))
+      n_050_low=ceiling(n_param_sets*0.25)
+      n_050_high=max(1,floor(n_param_sets*0.75))
+      for(i in 1:n_case_values){
+        model_case_values_sorted=sort(model_case_values[i,])
+        model_cases_CI95_low[i]=model_case_values_sorted[n_095_low]
+        model_cases_CI95_high[i]=model_case_values_sorted[n_095_high]
+        model_cases_CI50_low[i]=model_case_values_sorted[n_050_low]
+        model_cases_CI50_high[i]=model_case_values_sorted[n_050_high]
+        model_death_values_sorted=sort(model_death_values[i,])
+        model_deaths_CI95_low[i]=model_death_values_sorted[n_095_low]
+        model_deaths_CI95_high[i]=model_death_values_sorted[n_095_high]
+        model_deaths_CI50_low[i]=model_death_values_sorted[n_050_low]
+        model_deaths_CI50_high[i]=model_death_values_sorted[n_050_high]
+      }
     }
-  } else {
-    n_095_low=ceiling(n_param_sets*0.025)
-    n_095_high=max(1,floor(n_param_sets*0.975))
-    n_050_low=ceiling(n_param_sets*0.25)
-    n_050_high=max(1,floor(n_param_sets*0.75))
-    for(i in 1:n_case_values){
-      model_case_values_sorted=sort(model_case_values[i,])
-      model_cases_CI95_low[i]=model_case_values_sorted[n_095_low]
-      model_cases_CI95_high[i]=model_case_values_sorted[n_095_high]
-      model_cases_CI50_low[i]=model_case_values_sorted[n_050_low]
-      model_cases_CI50_high[i]=model_case_values_sorted[n_050_high]
-      model_death_values_sorted=sort(model_death_values[i,])
-      model_deaths_CI95_low[i]=model_death_values_sorted[n_095_low]
-      model_deaths_CI95_high[i]=model_death_values_sorted[n_095_high]
-      model_deaths_CI50_low[i]=model_death_values_sorted[n_050_low]
-      model_deaths_CI50_high[i]=model_death_values_sorted[n_050_high]
-    }
+  }
+  if(data_type=="single"){
+    model_cases_CI95_low=model_case_values-1
+    model_cases_CI95_low[model_cases_CI95_low<0]=0
+    model_cases_CI95_high=model_case_values+1
+    model_deaths_CI95_low=model_death_values-1
+    model_deaths_CI95_low[model_deaths_CI95_low<0]=0
+    model_deaths_CI95_high=model_death_values+1
   }
 
   data_regions=names(table(obs_case_data$adm1))
   n_graphs=length(data_regions)
-
   cases_graphs=deaths_graphs=list()
   years=case_obs=case_obs_low=case_obs_high=case_model_low95=case_model_low50=case_model_high95=case_model_high50=NULL
   death_obs=death_obs_low=death_obs_high=death_model_low95=death_model_low50=death_model_high95=death_model_high50=NULL
@@ -395,33 +453,41 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
     cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,5))
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low95,
                                                                    ymax=case_model_high95),fill="blue",alpha=0.5)
-    cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low50,
-                                                                   ymax=case_model_high50),fill="green",alpha=0.5)
-    cases_graphs[[i]] <- cases_graphs[[i]]+geom_point(data=df,aes(x=years,y=case_obs))
-    cases_graphs[[i]] <- cases_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=case_obs_low,ymax=case_obs_high),
-                                                         width=0.5)
+    if(data_type=="multi"){
+      cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low50,
+                                                                     ymax=case_model_high50),fill="green",alpha=0.5)
+    }
+    if(hide_observed==FALSE){
+      cases_graphs[[i]] <- cases_graphs[[i]]+geom_point(data=df,aes(x=years,y=case_obs))
+      cases_graphs[[i]] <- cases_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=case_obs_low,ymax=case_obs_high),
+                                                           width=0.5)
+    }
     cases_graphs[[i]] <- cases_graphs[[i]]+scale_x_continuous(name="",breaks=c(min(df$years):max(df$years)),
                                                               labels=c(min(df$years):max(df$years)))
     cases_graphs[[i]] <- cases_graphs[[i]]+scale_y_continuous(name="Cases")
-    cases_graphs[[i]] <- cases_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
-                                                 axis.text.y = element_text(size = text_size1),
-                                                 title=element_text(size=text_size1))
+    cases_graphs[[i]] <- cases_graphs[[i]]+theme(axis.text.x = element_text(size = text_size),
+                                                 axis.text.y = element_text(size = text_size),
+                                                 title=element_text(size=text_size))
 
 
     deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,5))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low95,
                                                                      ymax=death_model_high95),fill="blue",alpha=0.5)
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low50,
-                                                                     ymax=death_model_high50),fill="green",alpha=0.5)
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_point(data=df,aes(x=years,y=death_obs))
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=death_obs_low,ymax=death_obs_high),
-                                                           width=0.5)
+    if(data_type=="multi"){
+      deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low50,
+                                                                       ymax=death_model_high50),fill="green",alpha=0.5)
+    }
+    if(hide_observed==FALSE){
+      deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_point(data=df,aes(x=years,y=death_obs))
+      deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_errorbar(data=df,aes(x=years,ymin=death_obs_low,
+                                                                         ymax=death_obs_high),width=0.5)
+    }
     deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_x_continuous(name="",breaks=c(min(df$years):max(df$years)),
                                                                 labels=c(min(df$years):max(df$years)))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+scale_y_continuous(name="Deaths")
-    deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(axis.text.x = element_text(size = text_size1),
-                                                   axis.text.y = element_text(size = text_size1),
-                                                   title=element_text(size=text_size1))
+    deaths_graphs[[i]] <- deaths_graphs[[i]]+theme(axis.text.x = element_text(size = text_size),
+                                                   axis.text.y = element_text(size = text_size),
+                                                   title=element_text(size=text_size))
   }
 
   return(list(cases_graphs=cases_graphs,deaths_graphs=deaths_graphs))

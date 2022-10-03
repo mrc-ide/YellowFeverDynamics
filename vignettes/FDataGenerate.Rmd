@@ -65,12 +65,12 @@ data2 <- data_match_multi(param_sets,input_data,obs_sero_data,obs_case_data,obs_
 Data output from data_match_multi() can be plotted together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Results from multiple parameter sets can be combined together in different ways [TBA].
 
 ```{r,eval=FALSE}
-sero_graph <- sero_match_graphs(data2,obs_sero_data,"mean",text_size1=10)
+sero_graph <- sero_match_graphs(data2,obs_sero_data,plot_type="all",text_size=10,hide_observed=FALSE)
 print(sero_graph[[1]])
 ```
 
 
 ```{r,eval=FALSE}
-case_graph <- case_match_graphs(data2,obs_case_data,input_data,"mean",text_size1=10)
+case_graph <- case_match_graphs(data2,obs_case_data,input_data,plot_type="mean",text_size=10,hide_observed=FALSE)
 Rmisc::multiplot(case_graph$cases_graphs[[1]],case_graph$deaths_graphs[[1]])
 ```
