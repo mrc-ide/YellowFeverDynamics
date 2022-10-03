@@ -57,18 +57,17 @@ data1 <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs
 
 A data_match_multi() function exists to run data_match_single() for a series of sets of values of the input parameters. The inputs are the same except that the parameter values are input as a data frame containing one set of parameter values per line. 
 
-```{r,eval=FALSE}
+```{r}
 param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example2.csv",sep = ""),header = TRUE)
 data2 <- data_match_multi(param_sets,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
-Data output from data_match_multi() can be plotted together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Results from multiple parameter sets can be combined together in different ways [TBA].
+Data output from data_match_single() and data_match_multi() can be plotted together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Observed data is shown in black with error bars representing a binomial confidence interval (serological data) or negative binomial confidence interval (case data). Modelled data is shown in blue and green; if data matching was carried out for multiple parameter sets using data_match_multi(), the distribution of results can be shown. If the plot_type variable is set to "mean", the mean of the results is displayed with 95% and 50% confidence intervals (in blue and green respectively). If plot_type is set to "all"
 
 ```{r,eval=FALSE}
 sero_graph <- sero_match_graphs(data2,obs_sero_data,plot_type="all",text_size=10,hide_observed=FALSE)
 print(sero_graph[[1]])
 ```
-
 
 ```{r,eval=FALSE}
 case_graph <- case_match_graphs(data2,obs_case_data,input_data,plot_type="mean",text_size=10,hide_observed=FALSE)

@@ -7,8 +7,9 @@
 sero_match_graphs(
   model_data = list(),
   obs_sero_data = list(),
-  type = "mean",
-  text_size1 = 1
+  plot_type = "mean",
+  text_size = 1,
+  hide_observed = FALSE
 )
 }
 \arguments{
@@ -17,10 +18,13 @@ sero_match_graphs(
 \item{obs_sero_data}{Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
 positives}
 
-\item{type}{Form in which to plot model data: "all": bands showing 95\% and 50\% of all values; "mean": bands showing
-95\% and 50\% confidence intervals for mean of all values}
+\item{plot_type}{Form in which to plot model data: "all": bands showing 95\% and 50\% of all values;
+"mean": bands showing 95\% and 50\% confidence intervals for mean of all values}
 
-\item{text_size1}{Size of text to display on graphs}
+\item{text_size}{Size of text to display on graphs}
+
+\item{hide_observed}{If TRUE, indicates that supplied observed data is "dummy" data only supplied to indicate years
+and age ranges, and should not be plotted on the graph(s)}
 }
 \description{
 Function to create a series of graphs comparing modelled and observed serological data from results
