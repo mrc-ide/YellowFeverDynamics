@@ -18,15 +18,10 @@ This vignette demonstrates how to set up and carry out a single run of the model
 
 The model of yellow fever used in YellowFeverDynamics is an age-stratified, stochastic SEIRV model in which the number of people in each age group in groups S (susceptible), E (exposed), I (infectious), R (recovered) and V (vaccinated) is computed at each time point, with changes in population also incorporated. The number of new infections (individuals moving from group S to group E) at each time point is calculated stochastically using the total force of infection (FOI) as a binomial probability. Full details of the model are currently being prepared for publication; please contact [Keith Fraser](keith.fraser@imperial.ac.uk) for a detailed description.
 
-First load the package:
-
-```{r}
-library(YellowFeverDynamics)
-```
-
 Population and vaccination data is stored in a list object as described in Vignette 2. Here an example data set for multiple regions is loaded and the vaccination and population data for the first included region is extracted:
 
 ```{r}
+library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep = ""))
 vacc_data <- input_data$vacc_data[1,,]
 pop_data <- input_data$pop_data[1,,]  

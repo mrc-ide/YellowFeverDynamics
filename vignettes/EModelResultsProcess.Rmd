@@ -22,15 +22,10 @@ This vignette demonstrates how the output of the dynamic yellow fever model func
 
 A set of epidemiological data for multiple regions can be constructed using additional functions described in vignette 6; this combines running the model as described in vignette 4 and calculating epidemiological output data as described in this vignette.
 
-First load the package:
-
-```{r}
-library(YellowFeverDynamics)
-```
-
 Data is generated as described in vignette 4, in this case using the Full_Model_Run() function in order to be able to calculate all three epidemiological data types.
 
 ```{r}
+library(YellowFeverDynamics)
 input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
 vacc_data <- input_data$vacc_data[1,,]
 pop_data <- input_data$pop_data[1,,]  

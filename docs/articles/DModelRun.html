@@ -89,15 +89,13 @@ calculated stochastically using the total force of infection (FOI) as a
 binomial probability. Full details of the model are currently being
 prepared for publication; please contact <a href="keith.fraser@imperial.ac.uk">Keith Fraser</a> for a detailed
 description.</p>
-<p>First load the package:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span></code></pre></div>
 <p>Population and vaccination data is stored in a list object as
 described in Vignette 2. Here an example data set for multiple regions
 is loaded and the vaccination and population data for the first included
 region is extracted:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
+<span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="fl">1</span>,,<span class="op">]</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="fl">1</span>,,<span class="op">]</span>  </span></code></pre></div>
 <p>The other input parameters to the functions which run the model are
@@ -110,7 +108,7 @@ can be compared and/or combined to test and/or average out the effects
 of the model stochasticity. The n_threads variable is used to set the
 number of particles run in parallel (subject to the limitations of the
 computer being used).</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-8</span>             <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
 <span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">1.5</span>                           <span class="co"># Reproduction number for urban spread of infection</span></span>
 <span><span class="va">year0</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="co"># First year in population/vaccination data (here taken from the input data set; if the population and vaccination data is set manually, this similarly needs to be set manually)</span></span>
@@ -127,7 +125,7 @@ computer being used).</p>
 <span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>                           <span class="co"># Time increment in days to use in model (should be either 1.0 or 5.0 days)</span></span></code></pre></div>
 <p>The Full_Model_Run() function is normally used to run the model for
 the inputs above:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Full_Model_Run.html">Full_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>,<span class="va">R0</span>,<span class="va">vacc_data</span>,<span class="va">pop_data</span>,<span class="va">year0</span>,<span class="va">mode_start</span>,<span class="va">n_particles</span>,<span class="va">n_threads</span>,<span class="va">year_end</span>,</span>
 <span>                        <span class="va">year_data_begin</span>,<span class="va">vaccine_efficacy</span>,<span class="va">start_SEIRV</span>,<span class="va">dt</span><span class="op">)</span></span></code></pre></div>
 <p>The output of Full_Model_Run() includes, for each particle, date
@@ -137,10 +135,10 @@ the number of newly infectious people (C) at each time point organized
 by age group. The plot_model function can be used as shown below to
 display values of S, R and V over time, with error bars to show the
 variation between particles caused by stochasticity.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/plot_model_output.html">plot_model_output</a></span><span class="op">(</span><span class="va">test1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DModelRun_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="DModelRun_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>For some applications, the Basic_Model_Run() function can be used
 instead. This is largely identical to Full_Model_Run() but does not
 output the total force of infection at each time point or the number of
@@ -150,7 +148,7 @@ Basic_Model_Run is used, for example, when the intention is only to
 calculate seroprevalence, which is derived (as described in vignette 5)
 from SEIRV values, with the rate of newly infectious individuals being
 irrelevant.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Basic_Model_Run.html">Basic_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>,<span class="va">R0</span>,<span class="va">vacc_data</span>,<span class="va">pop_data</span>,<span class="va">year0</span>,<span class="va">mode_start</span>,<span class="va">n_particles</span>,<span class="va">n_threads</span>,<span class="va">year_end</span>,</span>
 <span>                     <span class="va">year_data_begin</span>,<span class="va">vaccine_efficacy</span>,<span class="va">start_SEIRV</span>,<span class="va">dt</span><span class="op">)</span></span></code></pre></div>
 <p>For applications where only the number of new infectious people at
@@ -168,7 +166,7 @@ in situations where the overall force of infection is low. Hence in the
 example below, case_data_generate is run for 1000 repetitions with a low
 spillover FOI and no human-to-human transmission, resulting in a very
 low daily infection rate.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n_reps</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-10</span></span>
 <span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">0.0</span></span>

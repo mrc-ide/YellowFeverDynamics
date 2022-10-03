@@ -18,15 +18,10 @@ This vignette demonstrates how the package generates values of epidemiological p
 
 For more information and background on the use of environmental covariates and the selection of covariates for use, see [The global burden of yellow fever (Gaythorpe et al, 2021, eLife)](https://doi.org/10.7554/eLife.64670).
 
-First load the package:
-
-```{r}
-library(YellowFeverDynamics)
-```
-
 Environmental data is stored as a data frame with each line containing covariate values for one region, with the headings giving the variable names. In this imaginary example, the environmental covariates are simply named Var1-5.
 
 ```{r}
+library(YellowFeverDynamics)
 enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_data_example.csv",sep = ""),header = TRUE)
 head(enviro_data,5)
 ```
