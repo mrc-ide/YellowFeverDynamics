@@ -32,6 +32,8 @@ obs_sero_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdat
                       # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
 obs_case_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
                       # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
+obs_outbreak_data <- NULL
+                      # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s) (here simply set to NULL)
 ```
 
 Additional inputs for the data_match_single() function, which is used to generate model data to match observed or dummy data, are set as follows:
@@ -39,8 +41,6 @@ Additional inputs for the data_match_single() function, which is used to generat
 ```{r}
 param_prop <- as.numeric(enviro_coeffs)
                       # Parameters input to produce model parameters, potentially including spillover FOI and R0 by region, severe and fatal case reporting probability
-obs_outbreak_data <- NULL
-                      # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s) (here simply set to NULL)
 const_list <- list(type="FOI+R0 enviro",n_reps=1,mode_start=1,dt=1.0,enviro_data=enviro_data,R0_fixed_values=NULL,vaccine_efficacy=1.0,p_rep_severe=0.05,p_rep_death=0.1)
                       # List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop
 ```
@@ -62,7 +62,7 @@ param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata
 data2 <- data_match_multi(param_sets,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
-Data output from data_match_single() and data_match_multi() can be plotted together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Observed data is shown in black with error bars representing a binomial confidence interval (serological data) or negative binomial confidence interval (case data). Modelled data is shown in blue and green; if data matching was carried out for multiple parameter sets using data_match_multi(), the distribution of results can be shown. If the plot_type variable is set to "mean", the mean of the results is displayed with 95% and 50% confidence intervals (in blue and green respectively). If plot_type is set to "all"
+Data output from data_match_single() and data_match_multi() can be plotted together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Observed data is shown (unless the hide_observed variable is set to TRUE) in black with error bars representing a binomial confidence interval (serological data) or negative binomial confidence interval (case data). Modelled data is shown in blue and green; if data matching was carried out for multiple parameter sets using data_match_multi(), the distribution of results can be shown. If the plot_type variable is set to "mean", the mean of the results is displayed with 95% and 50% confidence intervals (in blue and green respectively). If plot_type is set to "all", the 95% and 50% of values closest to the mean are shown in blue and green respectively.
 
 ```{r,eval=FALSE}
 sero_graph <- sero_match_graphs(data2,obs_sero_data,plot_type="all",text_size=10,hide_observed=FALSE)

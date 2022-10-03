@@ -95,26 +95,27 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_mild=0.0,p_rep_s
 #' '
 #' @export
 #'
-outbreak_risk_compare <- function(model_outbreak_risk=list(),obs_data=list()){
-  assert_that(is.list(model_outbreak_risk))
-  assert_that(is.list(obs_data))
-  assert_that(length(model_outbreak_risk)==length(obs_data))
+outbreak_risk_compare <- function(model_outbreak_risk=c(),obs_data=c()){
+  assert_that(is.numeric(model_outbreak_risk))
+  assert_that(is.numeric(obs_data))
+  n_values=length(model_outbreak_risk)
+  assert_that(n_values==length(obs_data))
 
-  for(i in 1:length(model_outbreak_risk)){
+  for(i in 1:n_values){
     if(model_outbreak_risk[i]>(1.0-1.0e-4)){model_outbreak_risk[i]=1.0-1.0e-4}
     if(model_outbreak_risk[i]<1.0e-4){model_outbreak_risk[i]=1.0e-4}
   }
 
-  LogLikelihood=0
-  for(i in 1:length(model_outbreak_risk)){
+  like_values=rep(NA,n_values)
+  for(i in 1:n_values){
     if(obs_data[i]>0){
-      LogLikelihood=LogLikelihood+log(model_outbreak_risk[i])
+      like_values[i]=log(model_outbreak_risk[i])
     } else {
-      LogLikelihood=LogLikelihood+log(1.0-model_outbreak_risk[i])
+      like_values[i]=log(1.0-model_outbreak_risk[i])
     }
   }
 
-  return(LogLikelihood)
+  return(like_values)
 }
 
 #-------------------------------------------------------------------------------

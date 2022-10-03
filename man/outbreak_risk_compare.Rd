@@ -4,7 +4,7 @@
 \alias{outbreak_risk_compare}
 \title{outbreak_risk_compare}
 \usage{
-outbreak_risk_compare(model_outbreak_risk = list(), obs_data = list())
+outbreak_risk_compare(model_outbreak_risk = c(), obs_data = c())
 }
 \arguments{
 \item{model_outbreak_risk}{Modelled annual outbreak risk (0-1)}
