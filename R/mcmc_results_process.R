@@ -45,7 +45,7 @@ get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
   file_list=list.files(path=input_folder,pattern="*.csv")
   input_frame=data.frame()
   for(i in 1:length(file_list)){
-    data=read.csv(file_list[i],header=TRUE)
+    data=read.csv(paste(input_folder,file_list[i],sep="/"),header=TRUE)
     if(i==1){
       param_names=get_mcmc_params(data)
       columns=colnames(data) %in% c("posterior_current",param_names)
