@@ -391,7 +391,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
                             type=NULL,pars_min=NULL,pars_max=NULL,input_data=list(),
                             obs_sero_data=list(),obs_case_data=list(),obs_outbreak_data=list(),
                             n_reps=1,mode_start=0,prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=c(),
-                            vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=NULL){
+                            vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=1.0){
 
   #TODO - Add assertthat functions
   assert_that(length(pars_min)==length(pars_max))
@@ -488,7 +488,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
 #' @export
 #'
 mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max=c(),prior_type=NULL,enviro_data=NULL,
-                    R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=NULL){
+                    R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=1.0){
 
   param_names=names(pars_ini)
   n_params=length(pars_ini)
