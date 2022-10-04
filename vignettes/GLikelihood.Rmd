@@ -42,13 +42,13 @@ const_list <- list(type="FOI+R0 enviro",n_reps=1,mode_start=1,dt=1.0,enviro_data
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 model_data <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)-
         lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+obs_sero_data$positives*log(model_data$model_sero_values)+
         (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_data$model_sero_values)
@@ -56,7 +56,7 @@ sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 cases_like_values=dnbinom(x=obs_case_data$cases,mu=model_data$model_case_values,
                                 size=rep(1,length(obs_case_data$cases)),log=TRUE)
 deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_data$model_death_values,
@@ -65,7 +65,7 @@ deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_data$model_death_valu
 
 [TBA]
 
-```{r}
+```{r,eval=FALSE}
 outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_data$model_outbreak_risk_values,
                                                  obs_data=obs_outbreak_data$outbreak_yn)
 ```

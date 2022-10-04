@@ -46,13 +46,13 @@ The data_match_single() function is run to produce a set of modelled data matchi
 -Numbers of reported cases and deaths in the same year(s)
 -Outbreak occurence data for the same year(s)
 
-```{r}
+```{r,eval=FALSE}
 data1 <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
 A data_match_multi() function exists to run data_match_single() for a series of sets of values of the input parameters. The inputs are the same except that the parameter values are input as a data frame containing one set of parameter values per line. 
 
-```{r}
+```{r,eval=FALSE}
 param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example2.csv",sep = ""),header = TRUE)
 data2 <- data_match_multi(param_sets,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
