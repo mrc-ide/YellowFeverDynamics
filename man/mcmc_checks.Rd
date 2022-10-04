@@ -10,12 +10,13 @@ mcmc_checks(
   type = NULL,
   pars_min = c(),
   pars_max = c(),
-  prior_type = "zero",
+  prior_type = NULL,
   enviro_data = NULL,
   R0_fixed_values = NULL,
   vaccine_efficacy = NULL,
   p_rep_severe = NULL,
-  p_rep_death = NULL
+  p_rep_death = NULL,
+  m_FOI_Brazil = NULL
 )
 }
 \arguments{
@@ -45,12 +46,14 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 \item{p_rep_severe}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
 \item{p_rep_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
+
+\item{m_FOI_Brazil}{FOI multiplier for Brazil regions}
 }
 \description{
 Perform checks on MCMC inputs
 }
 \details{
-This function, which is called by MCMC2(), performs a number of checks on data to be used in fitting to
+This function, which is called by MCMC(), performs a number of checks on data to be used in fitting to
 ensure proper functionality. It verifies that the number of parameters being fitted is consistent with other
 settings and that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1).
 }

@@ -23,6 +23,7 @@ MCMC(
   vaccine_efficacy = NULL,
   p_rep_severe = NULL,
   p_rep_death = NULL,
+  m_FOI_Brazil = 1,
   filename_prefix = "Chain"
 )
 }
@@ -90,6 +91,8 @@ enviro"); set to NULL if not in use}
 \item{p_rep_severe}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
 \item{p_rep_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
+
+\item{m_FOI_Brazil}{Multiplier of spillover FOI for Brazil regions}
 
 \item{filename_prefix}{Prefix of names for output files
 '}
