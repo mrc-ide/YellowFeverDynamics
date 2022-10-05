@@ -43,24 +43,30 @@ dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age
 E_new[1:N_age] <- rbinom(as.integer(S[i]), FOI_sum) #New exposed individuals by age group
 I_new[1:N_age] <- E[i]*rate1     #New infectious individuals by age group
 R_new[1:N_age] <- I[i]*rate2     #New recovered individuals by age group
-P[1:N_age] <- S[i] + E[i] + I[i] + R[i] + V[i] #Total population by age group
+P_nV[1:N_age] <- S[i] + E[i] + I[i] + R[i] #Total unvaccinated population by age group
+inv_P_nV[1:N_age] <- 1.0/P_nV[i]
+P[1:N_age] <- P_nV[i] + V[i] #Total population by age group
 P_tot <- sum(P) #Total overall population
 inv_P[1:N_age] <- 1.0/P[i]
 F_S[1:N_age] <- S[i]*inv_P[i] #Susceptible fraction by age group
 F_R[1:N_age] <- R[i]*inv_P[i] #Recovered fraction by age group
 F_V[1:N_age] <- V[i]*inv_P[i] #Vaccinated fraction by age group
-vacc_rate[1:N_age]=vacc_rate_annual[i,as.integer(year_i)]*S[i]*vaccine_efficacy*dt #Vaccination rate by age group
+vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
+V_S[1:N_age] <- vacc_rate[i]*S[i]*inv_P_nV[i] #Number of susceptible people vaccinated by age group
+V_E[1:N_age] <- vacc_rate[i]*E[i]*inv_P_nV[i] #Number of exposed people vaccinated by age group
+V_I[1:N_age] <- vacc_rate[i]*I[i]*inv_P_nV[i] #Number of infectious people vaccinated by age group
+V_R[1:N_age] <- vacc_rate[i]*R[i]*inv_P_nV[i] #Number of recovered people vaccinated by age group
 
 #Updates to output values at each time increment
 update(day) <- day + dt
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
-update(S[1]) <- max(Pmin,S[1] - E_new[1] - vacc_rate[1] + dP1[1] - (dP2[1]*F_S[1]))
-update(S[2:N_age]) <- max(Pmin,S[i] - E_new[i] - vacc_rate[i] + (dP1[i]*F_S[i-1]) - (dP2[i]*F_S[i]))
-update(E[1:N_age]) <- max(Pmin,E[i] + E_new[i] - I_new[i])
-update(I[1:N_age]) <- max(Pmin,I[i] + I_new[i] - R_new[i])
-update(R[1]) <- max(Pmin,R[1] + R_new[1] - (dP2[1]*F_R[1]))
-update(R[2:N_age]) <- max(Pmin,R[i] + R_new[i] + (dP1[i]*F_R[i-1]) - (dP2[i]*F_R[i]))
+update(S[1]) <- max(Pmin,S[1] - E_new[1] - V_S[1] + dP1[1] - (dP2[1]*F_S[1]))
+update(S[2:N_age]) <- max(Pmin,S[i] - E_new[i] - V_S[i] + (dP1[i]*F_S[i-1]) - (dP2[i]*F_S[i]))
+update(E[1:N_age]) <- max(Pmin,E[i] + E_new[i] - I_new[i] - V_E[i])
+update(I[1:N_age]) <- max(Pmin,I[i] + I_new[i] - R_new[i] - V_I[i])
+update(R[1]) <- max(Pmin,R[1] + R_new[1] - V_R[1] - (dP2[1]*F_R[1]))
+update(R[2:N_age]) <- max(Pmin,R[i] + R_new[i] - V_R[i] + (dP1[i]*F_R[i-1]) - (dP2[i]*F_R[i]))
 update(V[1]) <- max(Pmin,V[1] + vacc_rate[1] - (dP2[1]*F_V[1]))
 update(V[2:N_age]) <- max(Pmin,V[i] + vacc_rate[i] + (dP1[i]*F_V[i-1]) - (dP2[i]*F_V[i]))
 update(C[1:N_age]) <- I_new[i]
@@ -92,9 +98,15 @@ dim(F_R) <- N_age
 dim(F_V) <- N_age
 dim(dP1)<-N_age
 dim(dP2)<-N_age
+dim(P_nV) <- N_age
+dim(inv_P_nV) <- N_age
 dim(P) <- N_age
 dim(inv_P) <- N_age
 dim(vacc_rate) <- N_age
+dim(V_S) <- N_age
+dim(V_E) <- N_age
+dim(V_I) <- N_age
+dim(V_R) <- N_age
 
 dim(Sus0) <- N_age
 dim(Exp0) <- N_age
