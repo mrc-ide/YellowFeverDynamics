@@ -16,7 +16,7 @@ mcmc_checks(
   vaccine_efficacy = NULL,
   p_rep_severe = NULL,
   p_rep_death = NULL,
-  m_FOI_Brazil = NULL
+  m_FOI_Brazil = 1
 )
 }
 \arguments{
