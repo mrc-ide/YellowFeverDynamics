@@ -352,9 +352,9 @@ plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type
   n_env_vars=length(env_vars)
   assert_that(n_env_vars==length(names(table(data_frame$n_env_var))))
 
-  FOI_limits=c(max(-11,floor(log(min(data_frame$FOI_coeffs),10))),min(-3,ceiling(log(max(data_frame$FOI_coeffs),10))))
+  FOI_limits=c(floor(log(min(data_frame$FOI_coeffs),10)),ceiling(log(max(data_frame$FOI_coeffs),10)))
   FOI_labels=10^c(FOI_limits[1]:FOI_limits[2])
-  R0_limits=c(max(-4,floor(log(min(data_frame$R0_coeffs),10))),min(1,ceiling(log(max(data_frame$R0_coeffs),10))))
+  R0_limits=c(floor(log(min(data_frame$R0_coeffs),10)),ceiling(log(max(data_frame$R0_coeffs),10)))
   R0_labels=10^c(R0_limits[1]:R0_limits[2])
   n_env_var=NULL
 
