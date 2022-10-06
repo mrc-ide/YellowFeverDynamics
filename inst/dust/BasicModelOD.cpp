@@ -58,9 +58,6 @@ public:
     int dim_E;
     int dim_E_new;
     int dim_Exp0;
-    int dim_F_R;
-    int dim_F_S;
-    int dim_F_V;
     int dim_I;
     int dim_I_new;
     int dim_Inf0;
@@ -74,8 +71,6 @@ public:
     int dim_S;
     int dim_Sus0;
     int dim_V;
-    int dim_V_R;
-    int dim_V_S;
     int dim_Vac0;
     int dim_vacc_rate;
     int dim_vacc_rate_annual;
@@ -120,17 +115,12 @@ public:
     std::vector<real_type> dP1;
     std::vector<real_type> dP2;
     std::vector<real_type> E_new;
-    std::vector<real_type> F_R;
-    std::vector<real_type> F_S;
-    std::vector<real_type> F_V;
     std::vector<real_type> I_new;
     std::vector<real_type> inv_P;
     std::vector<real_type> inv_P_nV;
     std::vector<real_type> P;
     std::vector<real_type> P_nV;
     std::vector<real_type> R_new;
-    std::vector<real_type> V_R;
-    std::vector<real_type> V_S;
     std::vector<real_type> vacc_rate;
   };
   BasicModelOD(const dust::pars_type<BasicModelOD>& pars) :
@@ -193,48 +183,33 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
     }
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.F_R[i - 1] = R[i - 1] * internal.inv_P[i - 1];
-    }
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.F_S[i - 1] = S[i - 1] * internal.inv_P[i - 1];
-    }
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.F_V[i - 1] = V[i - 1] * internal.inv_P[i - 1];
-    }
     real_type FOI_sum = std::min(shared->FOI_max, shared->beta * (odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot) + (shared->FOI_spillover * shared->dt));
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.V_R[i - 1] = internal.vacc_rate[i - 1] * R[i - 1] * internal.inv_P_nV[i - 1];
+    {
+       int i = 1;
+       state_next[shared->offset_variable_R + i - 1] = std::max(shared->Pmin, R[0] + internal.R_new[0] - internal.vacc_rate[0] * R[0] * internal.inv_P_nV[0] - (internal.dP2[0] * R[0] * internal.inv_P[0]));
     }
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.V_S[i - 1] = internal.vacc_rate[i - 1] * S[i - 1] * internal.inv_P_nV[i - 1];
+    for (int i = 2; i <= shared->N_age; ++i) {
+      state_next[shared->offset_variable_R + i - 1] = std::max(shared->Pmin, R[i - 1] + internal.R_new[i - 1] - internal.vacc_rate[i - 1] * R[i - 1] * internal.inv_P_nV[i - 1] + (internal.dP1[i - 1] * R[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * R[i - 1] * internal.inv_P[i - 1]));
+    }
+    {
+       int i = 1;
+       state_next[shared->offset_variable_V + i - 1] = std::max(shared->Pmin, V[0] + internal.vacc_rate[0] - (internal.dP2[0] * V[0] * internal.inv_P[0]));
+    }
+    for (int i = 2; i <= shared->N_age; ++i) {
+      state_next[shared->offset_variable_V + i - 1] = std::max(shared->Pmin, V[i - 1] + internal.vacc_rate[i - 1] + (internal.dP1[i - 1] * V[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * V[i - 1] * internal.inv_P[i - 1]));
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.E_new[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), FOI_sum);
-    }
-    {
-       int i = 1;
-       state_next[shared->offset_variable_R + i - 1] = std::max(shared->Pmin, R[0] + internal.R_new[0] - internal.V_R[0] - (internal.dP2[0] * internal.F_R[0]));
-    }
-    for (int i = 2; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_R + i - 1] = std::max(shared->Pmin, R[i - 1] + internal.R_new[i - 1] - internal.V_R[i - 1] + (internal.dP1[i - 1] * internal.F_R[i - 1 - 1]) - (internal.dP2[i - 1] * internal.F_R[i - 1]));
-    }
-    {
-       int i = 1;
-       state_next[shared->offset_variable_V + i - 1] = std::max(shared->Pmin, V[0] + internal.vacc_rate[0] - (internal.dP2[0] * internal.F_V[0]));
-    }
-    for (int i = 2; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_V + i - 1] = std::max(shared->Pmin, V[i - 1] + internal.vacc_rate[i - 1] + (internal.dP1[i - 1] * internal.F_V[i - 1 - 1]) - (internal.dP2[i - 1] * internal.F_V[i - 1]));
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_E + i - 1] = std::max(shared->Pmin, E[i - 1] + internal.E_new[i - 1] - internal.I_new[i - 1]);
     }
     {
        int i = 1;
-       state_next[3 + i - 1] = std::max(shared->Pmin, S[0] - internal.E_new[0] - internal.V_S[0] + internal.dP1[0] - (internal.dP2[0] * internal.F_S[0]));
+       state_next[3 + i - 1] = std::max(shared->Pmin, S[0] - internal.E_new[0] - internal.vacc_rate[0] * S[0] * internal.inv_P_nV[0] + internal.dP1[0] - (internal.dP2[0] * S[0] * internal.inv_P[0]));
     }
     for (int i = 2; i <= shared->N_age; ++i) {
-      state_next[3 + i - 1] = std::max(shared->Pmin, S[i - 1] - internal.E_new[i - 1] - internal.V_S[i - 1] + (internal.dP1[i - 1] * internal.F_S[i - 1 - 1]) - (internal.dP2[i - 1] * internal.F_S[i - 1]));
+      state_next[3 + i - 1] = std::max(shared->Pmin, S[i - 1] - internal.E_new[i - 1] - internal.vacc_rate[i - 1] * S[i - 1] * internal.inv_P_nV[i - 1] + (internal.dP1[i - 1] * S[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * S[i - 1] * internal.inv_P[i - 1]));
     }
   }
 private:
@@ -503,9 +478,6 @@ dust::pars_type<BasicModelOD> dust_pars<BasicModelOD>(cpp11::list user) {
   shared->dim_E = shared->N_age;
   shared->dim_E_new = shared->N_age;
   shared->dim_Exp0 = shared->N_age;
-  shared->dim_F_R = shared->N_age;
-  shared->dim_F_S = shared->N_age;
-  shared->dim_F_V = shared->N_age;
   shared->dim_I = shared->N_age;
   shared->dim_I_new = shared->N_age;
   shared->dim_Inf0 = shared->N_age;
@@ -519,8 +491,6 @@ dust::pars_type<BasicModelOD> dust_pars<BasicModelOD>(cpp11::list user) {
   shared->dim_S = shared->N_age;
   shared->dim_Sus0 = shared->N_age;
   shared->dim_V = shared->N_age;
-  shared->dim_V_R = shared->N_age;
-  shared->dim_V_S = shared->N_age;
   shared->dim_Vac0 = shared->N_age;
   shared->dim_vacc_rate = shared->N_age;
   shared->dim_vacc_rate_annual_1 = shared->N_age;
@@ -531,9 +501,6 @@ dust::pars_type<BasicModelOD> dust_pars<BasicModelOD>(cpp11::list user) {
   internal.dP1 = std::vector<real_type>(shared->dim_dP1);
   internal.dP2 = std::vector<real_type>(shared->dim_dP2);
   internal.E_new = std::vector<real_type>(shared->dim_E_new);
-  internal.F_R = std::vector<real_type>(shared->dim_F_R);
-  internal.F_S = std::vector<real_type>(shared->dim_F_S);
-  internal.F_V = std::vector<real_type>(shared->dim_F_V);
   internal.I_new = std::vector<real_type>(shared->dim_I_new);
   shared->initial_E = std::vector<real_type>(shared->dim_E);
   shared->initial_I = std::vector<real_type>(shared->dim_I);
@@ -545,8 +512,6 @@ dust::pars_type<BasicModelOD> dust_pars<BasicModelOD>(cpp11::list user) {
   internal.P = std::vector<real_type>(shared->dim_P);
   internal.P_nV = std::vector<real_type>(shared->dim_P_nV);
   internal.R_new = std::vector<real_type>(shared->dim_R_new);
-  internal.V_R = std::vector<real_type>(shared->dim_V_R);
-  internal.V_S = std::vector<real_type>(shared->dim_V_S);
   internal.vacc_rate = std::vector<real_type>(shared->dim_vacc_rate);
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
