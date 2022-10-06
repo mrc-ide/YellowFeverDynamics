@@ -352,7 +352,6 @@ plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type
   n_env_vars=length(env_vars)
   assert_that(n_env_vars==length(names(table(data_frame$n_env_var))))
 
-  #TODO - Change fixed limits for greater flexibility
   FOI_limits=c(floor(log(min(data_frame$FOI_coeffs),10)),ceiling(log(max(data_frame$FOI_coeffs),10)))
   FOI_labels=10^c(FOI_limits[1]:FOI_limits[2])
   R0_limits=c(floor(log(min(data_frame$R0_coeffs),10)),ceiling(log(max(data_frame$R0_coeffs),10)))
