@@ -2,13 +2,13 @@ pandoc: '2.18'
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  AInstallation: AInstallation.html
-  BInputs: BInputs.html
-  CParametersEnvironment: CParametersEnvironment.html
-  DModelRun: DModelRun.html
-  EModelResultsProcess: EModelResultsProcess.html
-  FDataGenerate: FDataGenerate.html
-  GLikelihood: GLikelihood.html
-  HMCMC: HMCMC.html
-last_built: 2022-10-03T20:23Z
+  AWorkedExampleAModelRun: AWorkedExampleAModelRun.html
+  AWorkedExampleBDataGenerate: AWorkedExampleBDataGenerate.html
+  AWorkedExampleCMCMC: AWorkedExampleCMCMC.html
+  BGuideAInstallation: BGuideAInstallation.html
+  BGuideBInputs: BGuideBInputs.html
+  BGuideCParametersEnvironment: BGuideCParametersEnvironment.html
+  BGuideDModelResultsProcess: BGuideDModelResultsProcess.html
+  BGuideELikelihood: BGuideELikelihood.html
+last_built: 2022-10-09T16:52Z
 

@@ -1,8 +1,8 @@
 ---
-title: "Vignette 7 - Calculating Likelihood Of Observed Data"
+title: "Guide 5 - Calculating Likelihood Of Observed Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 7 - Calculating Likelihood Of Observed Data}
+  %\VignetteIndexEntry{Guide 5 - Calculating Likelihood Of Observed Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette describes how to use the package to calculate the likelihood of observing particular epidemiological data based on a particular set of input parameters. This is used to estimate parameter values within a Bayesian framework via Markov chain Monte Carlo sampling, as described in vignette 8.
+This vignette describes how to use the package to calculate the likelihood of observing particular epidemiological data based on a particular set of input parameters. This is used to estimate parameter values within a Bayesian framework via Markov chain Monte Carlo sampling, as described in Worked Example 3 [link TBA].
 
 [TBA]
 

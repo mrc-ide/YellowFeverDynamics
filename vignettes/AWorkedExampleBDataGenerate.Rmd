@@ -1,8 +1,8 @@
 ---
-title: "Vignette 6 - Generating Epidemiological Data Sets"
+title: "Worked Example 2 - Generating Epidemiological Data Sets"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 6 - Generating Epidemiological Data Sets}
+  %\VignetteIndexEntry{Worked Example 2 - Generating Epidemiological Data Sets}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

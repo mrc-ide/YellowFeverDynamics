@@ -1,8 +1,8 @@
 ---
-title: "Vignette 3 - Calculating Parameters From Environmental Data"
+title: "Guide 3 - Calculating Parameters From Environmental Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 3 - Calculating Parameters From Environmental Data}
+  %\VignetteIndexEntry{Guide 3 - Calculating Parameters From Environmental Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

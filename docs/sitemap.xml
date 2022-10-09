@@ -7,6 +7,30 @@
     <loc>/articles/AInstallation.html</loc>
   </url>
   <url>
+    <loc>/articles/AWorkedExampleAModelRun.html</loc>
+  </url>
+  <url>
+    <loc>/articles/AWorkedExampleBDataGenerate.html</loc>
+  </url>
+  <url>
+    <loc>/articles/AWorkedExampleCMCMC.html</loc>
+  </url>
+  <url>
+    <loc>/articles/BGuideAInstallation.html</loc>
+  </url>
+  <url>
+    <loc>/articles/BGuideBInputs.html</loc>
+  </url>
+  <url>
+    <loc>/articles/BGuideCParametersEnvironment.html</loc>
+  </url>
+  <url>
+    <loc>/articles/BGuideDModelResultsProcess.html</loc>
+  </url>
+  <url>
+    <loc>/articles/BGuideELikelihood.html</loc>
+  </url>
+  <url>
     <loc>/articles/BInputs.html</loc>
   </url>
   <url>

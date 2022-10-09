@@ -1,8 +1,8 @@
 ---
-title: "Vignette 5 - Processing Model Results"
+title: "Guide 4 - Processing Model Results"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 5 - Processing Model Results}
+  %\VignetteIndexEntry{Guide 4 - Processing Model Results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -14,15 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette demonstrates how the output of the dynamic yellow fever model functions (see vignette 4) can be processed to produce epidemiological data similar to that produced by real-world surveillance. There are three types of data processed by the package:
+This vignette demonstrates how the output of the dynamic yellow fever model functions (see Worked Example 1 [Link TBA] [Link TBA]) can be processed to produce epidemiological data similar to that produced by real-world surveillance. There are three types of data processed by the package:
 
 -Serological survey data, the proportion of people tested in a chosen age range who test positive for yellow fever antibodies (indicating that they have either recovered from the disease or been vaccinated, with individuals known to have been vaccinated normally excluded from surveys - see below for more on this) [TBA - Link to example publications].
 -Annual reported cases and deaths, representing the number of laboratory-confirmed yellow fever cases in a region in a given year and the number which resulted in death. These usually represent a fraction of the actual number of annual yellow fever infections and deaths in a region (in particular, it is usually assumed that infections causing mild or no symptoms are never reported as non-fatal cases cases).
 -Annual outbreak occurrence, binary data indicating whether one or more outbreaks (usually defined as one or more lab-confirmed cases) are reported in a region in a given year.
 
-A set of epidemiological data for multiple regions can be constructed using additional functions described in vignette 6; this combines running the model as described in vignette 4 and calculating epidemiological output data as described in this vignette.
+A set of epidemiological data for multiple regions can be constructed using additional functions described in Worked Example 2 [Link TBA]; this combines running the model as described in Worked Example 1 [Link TBA] and calculating epidemiological output data as described in this vignette.
 
-Data is generated as described in vignette 4, in this case using the Full_Model_Run() function in order to be able to calculate all three epidemiological data types.
+Data is generated as described in Worked Example 1 [Link TBA], in this case using the Full_Model_Run() function in order to be able to calculate all three epidemiological data types.
 
 ```{r}
 library(YellowFeverDynamics)

@@ -1,8 +1,8 @@
 ---
-title: "Vignette 4 - Running Model"
+title: "Worked Example 1 - Single Model Run"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 4 - Running Model}
+  %\VignetteIndexEntry{Worked Example 1 - Single Model Run}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
