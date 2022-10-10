@@ -143,7 +143,6 @@ overall population (where seroprevalence = (R+V)/(S+E+I+R+V)).</p>
 <span><span class="va">n_particle</span> <span class="op">&lt;-</span> <span class="fl">1</span>   <span class="co"># Particle to select from model_data</span></span>
 <span><span class="va">seroprevalence</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sero_calculate.html">sero_calculate</a></span><span class="op">(</span><span class="va">age_min</span>,<span class="va">age_max</span>,<span class="va">years</span>,<span class="va">vc_factor</span>,<span class="va">model_data</span>,<span class="va">n_particle</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">years</span>,y<span class="op">=</span><span class="va">seroprevalence</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">1</span>,xlab<span class="op">=</span><span class="st">"Year"</span>,ylab<span class="op">=</span><span class="st">"Seroprevalence"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BGuideDModelResultsProcess_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <p>Annual reported severe and fatal case data is generated from C, the
 output data on the number of new infectious individuals at each time
 point. The actual number of severe and fatal cases is calculated
@@ -162,7 +161,7 @@ reported fatal cases (so it will always be equal to or greater than the
 number of reported deaths).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p_severe_inf</span><span class="op">=</span><span class="fl">0.12</span></span>
-<span><span class="va">p_death_severe_inf</span><span class="op">=</span><span class="fl">0.47</span></span>
+<span><span class="va">p_death_severe_inf</span><span class="op">=</span><span class="fl">0.39</span></span>
 <span><span class="va">p_rep_severe</span><span class="op">=</span><span class="fl">0.05</span></span>
 <span><span class="va">p_rep_death</span><span class="op">=</span><span class="fl">0.1</span></span>
 <span><span class="va">n_years</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">years</span><span class="op">)</span></span>
@@ -177,7 +176,6 @@ number of reported deaths).</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">years</span>,y<span class="op">=</span><span class="va">annual_data</span><span class="op">$</span><span class="va">rep_cases</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">1</span>,xlab<span class="op">=</span><span class="st">"Year"</span>,ylab<span class="op">=</span><span class="st">"Individuals"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">years</span>,y<span class="op">=</span><span class="va">annual_data</span><span class="op">$</span><span class="va">rep_deaths</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">1</span>,col<span class="op">=</span><span class="fl">2</span>,add<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>,legend<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reported cases"</span>,<span class="st">"Reported deaths"</span><span class="op">)</span>,lty<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,pch<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>,col<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BGuideDModelResultsProcess_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <p>Outbreak occurrence data can be calculated from annual reported case
 data; if the case count for a given year is greater than zero, it is
 flagged as a year in which one or more outbreaks will be reported and
@@ -188,7 +186,6 @@ the outbreak occurrence value is set to 1; otherwise, it is 0.</p>
 <span>  <span class="kw">if</span><span class="op">(</span><span class="va">annual_data</span><span class="op">$</span><span class="va">rep_cases</span><span class="op">[</span><span class="va">n_year</span><span class="op">]</span><span class="op">&gt;</span><span class="fl">0</span><span class="op">)</span><span class="op">{</span><span class="va">outbreak_occurrence</span><span class="op">[</span><span class="va">n_year</span><span class="op">]</span><span class="op">=</span><span class="fl">1</span><span class="op">}</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span>height<span class="op">=</span><span class="va">outbreak_occurrence</span>,names.arg<span class="op">=</span><span class="va">years</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BGuideDModelResultsProcess_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>When the model is run for multiple particles, outbreak risk can be
 calculated for each year from the proportion of particles in which the
 year is flagged as an outbreak year.</p>
@@ -211,7 +208,6 @@ year is flagged as an outbreak year.</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">years</span>,y<span class="op">=</span><span class="va">outbreak_risk</span>,type<span class="op">=</span><span class="st">"b"</span>,pch<span class="op">=</span><span class="fl">1</span>,xlab<span class="op">=</span><span class="st">"Year"</span>,ylab<span class="op">=</span><span class="st">"Outbreak risk"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BGuideDModelResultsProcess_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
   </main>
 </div>
 

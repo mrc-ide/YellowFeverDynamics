@@ -96,13 +96,7 @@ are simply named Var1-5.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
 <span><span class="va">enviro_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/enviro_data_example.csv"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enviro_data</span>,<span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;    adm1 Var1     Var2 Var3       Var4         Var5</span></span>
-<span><span class="co">#&gt; 1 IGL01    0 5.486808    1 5.7544e-04 1.047129e-02</span></span>
-<span><span class="co">#&gt; 2 IGL02    1 1.279405    1 1.1000e-08 1.290000e-08</span></span>
-<span><span class="co">#&gt; 3 IGL03    0 7.810826    0 3.5500e-07 4.470000e-05</span></span>
-<span><span class="co">#&gt; 4 IGL04    1 9.848377    1 1.5100e-06 1.950000e-09</span></span>
-<span><span class="co">#&gt; 5 IGL05    1 6.640077    0 2.4000e-08 6.456542e-02</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enviro_data</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <p>Logarithmic values of the coefficients of the environmental
 covariates are stored as a data frame with the headings in the format
 FOI_(variable name) and R0_(variable name). In the example below, only
@@ -111,11 +105,7 @@ coefficient values (e.g. a distribution of value estimates) can be used
 to produce a distribution of epidemiological parameter values.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">enviro_coeffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/enviro_coeffs_example.csv"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">enviro_coeffs</span></span>
-<span><span class="co">#&gt;   FOI_Var1 FOI_Var2 FOI_Var3 FOI_Var4 FOI_Var5 R0_Var1 R0_Var2 R0_Var3 R0_Var4</span></span>
-<span><span class="co">#&gt; 1      -13      -14      -22      -18      -24      -5    -2.5    -0.2    -2.5</span></span>
-<span><span class="co">#&gt;   R0_Var5</span></span>
-<span><span class="co">#&gt; 1    -0.5</span></span></code></pre></div>
+<span><span class="va">enviro_coeffs</span></span></code></pre></div>
 <p>Covariate and coefficient values can be combined to produce values of
 the spillover force of infection and basic reproduction number using the
 param_calc_enviro() function.</p>
@@ -127,13 +117,7 @@ param_calc_enviro() function.</p>
 <span> <span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span><span class="op">[</span><span class="va">n_region</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">FOI_R0_values</span><span class="op">$</span><span class="va">FOI</span></span>
 <span> <span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span><span class="op">[</span><span class="va">n_region</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">FOI_R0_values</span><span class="op">$</span><span class="va">R0</span></span>
 <span><span class="op">}</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epi_data</span>,<span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   region          FOI        R0</span></span>
-<span><span class="co">#&gt; 1  IGL01 4.562726e-06 1.2755137</span></span>
-<span><span class="co">#&gt; 2  IGL02 3.324470e-06 0.9304886</span></span>
-<span><span class="co">#&gt; 3  IGL03 6.494926e-06 0.6411788</span></span>
-<span><span class="co">#&gt; 4  IGL04 1.044982e-05 1.6338728</span></span>
-<span><span class="co">#&gt; 5  IGL05 7.781747e-06 0.5909496</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epi_data</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <p>Spillover FOI and R0 data obtained in this way can be plotted on a
 map of the regions under consideration using the create_map function(),
 as can other regional data such as the values of the environmental
@@ -143,19 +127,12 @@ map_shapes_load() function</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regions</span><span class="op">=</span><span class="va">epi_data</span><span class="op">$</span><span class="va">region</span></span>
 <span><span class="va">shape_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_shapes_load.html">map_shapes_load</a></span><span class="op">(</span><span class="va">regions</span>,shapefiles<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/shapefile_example.shp"</span>,sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>,region_label_type<span class="op">=</span><span class="st">"GID_1"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; OGR data source with driver: ESRI Shapefile </span></span>
-<span><span class="co">#&gt; Source: "C:\Users\Work_KJF82\AppData\Local\Temp\RtmpSQaQni\temp_libpath3b98121e5ffa\YellowFeverDynamics\exdata\shapefile_example.shp", layer: "shapefile_example"</span></span>
-<span><span class="co">#&gt; with 25 features</span></span>
-<span><span class="co">#&gt; It has 1 fields</span></span>
 <span><span class="va">colour_scheme</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"exdata/colour_scheme_example.Rds"</span>,sep<span class="op">=</span><span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">colour_scale</span><span class="op">=</span><span class="va">colour_scheme</span><span class="op">$</span><span class="va">colour_scale</span></span>
 <span><span class="va">null1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>,<span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span>,scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span>,<span class="fl">8</span><span class="op">)</span>,<span class="va">colour_scale</span>,pixels_max<span class="op">=</span><span class="fl">720</span>,text_size<span class="op">=</span><span class="fl">1</span>,</span>
-<span>           map_title<span class="op">=</span><span class="st">""</span>,legend_title<span class="op">=</span><span class="st">"FOI"</span>,legend_position<span class="op">=</span><span class="st">"topleft"</span>,legend_format<span class="op">=</span><span class="st">"e"</span>,legend_dp<span class="op">=</span><span class="fl">1</span>,output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BGuideCParametersEnvironment_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">null2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>,<span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>,scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>,<span class="fl">8</span><span class="op">)</span>,<span class="va">colour_scale</span>,pixels_max<span class="op">=</span><span class="fl">720</span>,text_size<span class="op">=</span><span class="fl">1</span>,</span>
+<span>           map_title<span class="op">=</span><span class="st">""</span>,legend_title<span class="op">=</span><span class="st">"FOI"</span>,legend_position<span class="op">=</span><span class="st">"topleft"</span>,legend_format<span class="op">=</span><span class="st">"e"</span>,legend_dp<span class="op">=</span><span class="fl">1</span>,output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">null2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>,<span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>,scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>,<span class="fl">8</span><span class="op">)</span>,<span class="va">colour_scale</span>,pixels_max<span class="op">=</span><span class="fl">720</span>,text_size<span class="op">=</span><span class="fl">1</span>,</span>
 <span>           map_title<span class="op">=</span><span class="st">""</span>,legend_title<span class="op">=</span><span class="st">"R0"</span>,legend_position<span class="op">=</span><span class="st">"topleft"</span>,legend_format<span class="op">=</span><span class="st">"f"</span>,legend_dp<span class="op">=</span><span class="fl">1</span>,output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BGuideCParametersEnvironment_files/figure-html/unnamed-chunk-5-2.png" width="700"></p>
   </main>
 </div>
 

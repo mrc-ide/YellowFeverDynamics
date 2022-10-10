@@ -18,57 +18,57 @@ This vignette discusses the format used for model input data by this package. Po
 
 Here an example data set is loaded from the package:
 
-```{r}
+```{r,eval=FALSE}
 library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep = ""))
 ```
 
 A correctly formatted input data set consists of a list containing the following:
 
-```{r}
+```{r,eval=FALSE}
 names(input_data)
 ```
 region_labels is a vector listing the names of the regions for which population and vaccination data is included:
 
-```{r}
+```{r,eval=FALSE}
 n_regions <- length(input_data$region_labels) #Number of regions
 input_data$region_labels
 ```
 years_labels is a vector listing the sequence of years for which population and vaccination data is included:
 
-```{r}
+```{r,eval=FALSE}
 n_years <- length(input_data$years_labels) #Number of years
 input_data$years_labels
 ```
 
 age_labels is a vector listing the sequence of age groups (defined as the minimum age of each group, with the maximum age being the next age value) for which population and vaccination data is included. Age groups must be defined in one-year increments as this is assumed in the model.
 
-```{r}
+```{r,eval=FALSE}
 N_age <- length(input_data$age_labels) #Number of age groups
 input_data$age_labels
 ```
 
 vacc_data is an array (with dimensions equal to the number of regions, number of years and number of age groups) containing values of proportional population immunity due to vaccination.
 
-```{r}
+```{r,eval=FALSE}
 dim(input_data$vacc_data)
 ```
 
 Below is an example: the proportional population immunity due to vaccination in region 1 (IGL01) in years 61-65 (2000-2004) in the 10 lowest age groups (0-1 through to 9-10)
 
-```{r}
+```{r,eval=FALSE}
 input_data$vacc_data[1,c(61:65),c(1:10)]
 ```
 
 pop_data is an array with the same dimensions as vacc_data containing values of the population of a given age group in a given region and year.
 
-```{r}
+```{r,eval=FALSE}
 input_data$pop_data[1,c(61:65),c(1:10)]
 ```
 
 A dataset in the appropriate format can be created from vaccination coverage and population data using the create_input_data() function. The coverage and population data should be organized into data frames with each line giving the region, the year and the coverage/population by age for that region in that year
 
-```{r}
+```{r,eval=FALSE}
 pv_example <- readRDS(file = paste(path.package("YellowFeverDynamics"),"/exdata/pop_vacc_data_example.Rds",sep = ""))
 vacc_data <- pv_example$vacc_data
 pop_data <- pv_example$pop_data
