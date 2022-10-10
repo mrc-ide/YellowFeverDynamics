@@ -2,7 +2,7 @@
 #------------------------------------------------
 #Global variables
 p_severe_inf=0.12 #Probability that an infection is severe
-p_death_severe_inf=0.47 #Probability that a severe infection becomes fatal
+p_death_severe_inf=0.39 #Probability that a severe infection becomes fatal
 #------------------------------------------------
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @useDynLib YellowFeverDynamics, .registration = TRUE

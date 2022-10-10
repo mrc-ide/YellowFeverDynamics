@@ -65,6 +65,6 @@ print(sero_graph[[1]])
 ```
 
 ```{r,eval=FALSE}
-case_graph <- case_match_graphs(data2,obs_case_data,input_data,plot_type="mean",text_size=10,hide_observed=FALSE)
+case_graph <- case_match_graphs(data1,obs_case_data,input_data,plot_type="mean",text_size=10,hide_observed=FALSE)
 Rmisc::multiplot(case_graph$cases_graphs[[1]],case_graph$deaths_graphs[[1]])
 ```
