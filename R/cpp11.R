@@ -143,3 +143,147 @@ dust_cpu_FullModelOD_set_n_threads <- function(ptr, n_threads) {
 dust_cpu_FullModelOD_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_n_state`, ptr)
 }
+
+dust_InfectionSplitModelOD_capabilities <- function() {
+  .Call(`_YellowFeverDynamics_dust_InfectionSplitModelOD_capabilities`)
+}
+
+dust_InfectionSplitModelOD_gpu_info <- function() {
+  .Call(`_YellowFeverDynamics_dust_InfectionSplitModelOD_gpu_info`)
+}
+
+dust_cpu_InfectionSplitModelOD_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+}
+
+dust_cpu_InfectionSplitModelOD_run <- function(ptr, step_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_run`, ptr, step_end)
+}
+
+dust_cpu_InfectionSplitModelOD_simulate <- function(ptr, step_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_simulate`, ptr, step_end)
+}
+
+dust_cpu_InfectionSplitModelOD_set_index <- function(ptr, r_index) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_index`, ptr, r_index)
+}
+
+dust_cpu_InfectionSplitModelOD_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+}
+
+dust_cpu_InfectionSplitModelOD_state <- function(ptr, r_index) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_state`, ptr, r_index)
+}
+
+dust_cpu_InfectionSplitModelOD_step <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_step`, ptr)
+}
+
+dust_cpu_InfectionSplitModelOD_reorder <- function(ptr, r_index) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_reorder`, ptr, r_index))
+}
+
+dust_cpu_InfectionSplitModelOD_resample <- function(ptr, r_weights) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_resample`, ptr, r_weights)
+}
+
+dust_cpu_InfectionSplitModelOD_rng_state <- function(ptr, first_only, last_only) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_rng_state`, ptr, first_only, last_only)
+}
+
+dust_cpu_InfectionSplitModelOD_set_rng_state <- function(ptr, rng_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_rng_state`, ptr, rng_state)
+}
+
+dust_cpu_InfectionSplitModelOD_set_data <- function(ptr, data, shared) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_data`, ptr, data, shared)
+}
+
+dust_cpu_InfectionSplitModelOD_compare_data <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_compare_data`, ptr)
+}
+
+dust_cpu_InfectionSplitModelOD_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+}
+
+dust_cpu_InfectionSplitModelOD_set_n_threads <- function(ptr, n_threads) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_n_threads`, ptr, n_threads))
+}
+
+dust_cpu_InfectionSplitModelOD_n_state <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_n_state`, ptr)
+}
+
+dust_ReactiveModelOD_capabilities <- function() {
+  .Call(`_YellowFeverDynamics_dust_ReactiveModelOD_capabilities`)
+}
+
+dust_ReactiveModelOD_gpu_info <- function() {
+  .Call(`_YellowFeverDynamics_dust_ReactiveModelOD_gpu_info`)
+}
+
+dust_cpu_ReactiveModelOD_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+}
+
+dust_cpu_ReactiveModelOD_run <- function(ptr, step_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_run`, ptr, step_end)
+}
+
+dust_cpu_ReactiveModelOD_simulate <- function(ptr, step_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_simulate`, ptr, step_end)
+}
+
+dust_cpu_ReactiveModelOD_set_index <- function(ptr, r_index) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_index`, ptr, r_index)
+}
+
+dust_cpu_ReactiveModelOD_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+}
+
+dust_cpu_ReactiveModelOD_state <- function(ptr, r_index) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_state`, ptr, r_index)
+}
+
+dust_cpu_ReactiveModelOD_step <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_step`, ptr)
+}
+
+dust_cpu_ReactiveModelOD_reorder <- function(ptr, r_index) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_reorder`, ptr, r_index))
+}
+
+dust_cpu_ReactiveModelOD_resample <- function(ptr, r_weights) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_resample`, ptr, r_weights)
+}
+
+dust_cpu_ReactiveModelOD_rng_state <- function(ptr, first_only, last_only) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_rng_state`, ptr, first_only, last_only)
+}
+
+dust_cpu_ReactiveModelOD_set_rng_state <- function(ptr, rng_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_rng_state`, ptr, rng_state)
+}
+
+dust_cpu_ReactiveModelOD_set_data <- function(ptr, data, shared) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_data`, ptr, data, shared)
+}
+
+dust_cpu_ReactiveModelOD_compare_data <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_compare_data`, ptr)
+}
+
+dust_cpu_ReactiveModelOD_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+}
+
+dust_cpu_ReactiveModelOD_set_n_threads <- function(ptr, n_threads) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_n_threads`, ptr, n_threads))
+}
+
+dust_cpu_ReactiveModelOD_n_state <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_n_state`, ptr)
+}

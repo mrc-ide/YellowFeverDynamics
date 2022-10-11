@@ -48,12 +48,7 @@ inv_P_nV[1:N_age] <- 1.0/P_nV[i]
 P[1:N_age] <- P_nV[i] + V[i] #Total population by age group
 P_tot <- sum(P) #Total overall population
 inv_P[1:N_age] <- 1.0/P[i]
-#F_S[1:N_age] <- S[i]*inv_P[i] #Susceptible fraction by age group
-#F_R[1:N_age] <- R[i]*inv_P[i] #Recovered fraction by age group
-#F_V[1:N_age] <- V[i]*inv_P[i] #Vaccinated fraction by age group
 vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
-#V_S[1:N_age] <- vacc_rate[i]*S[i]*inv_P_nV[i] #Number of susceptible people vaccinated by age group
-#V_R[1:N_age] <- vacc_rate[i]*R[i]*inv_P_nV[i] #Number of recovered people vaccinated by age group
 
 #Updates to output values at each time increment
 update(day) <- day + dt
@@ -93,18 +88,11 @@ dim(dP2)<-N_age
 dim(E_new) <- N_age
 dim(I_new) <- N_age
 dim(R_new) <- N_age
-#dim(F_S) <- N_age
-#dim(F_R) <- N_age
-#dim(F_V) <- N_age
 dim(P_nV) <- N_age
 dim(inv_P_nV) <- N_age
 dim(P) <- N_age
 dim(inv_P) <- N_age
 dim(vacc_rate) <- N_age
-#dim(V_S) <- N_age
-#dim(V_E) <- N_age
-#dim(V_I) <- N_age
-#dim(V_R) <- N_age
 
 dim(Sus0) <- N_age
 dim(Exp0) <- N_age

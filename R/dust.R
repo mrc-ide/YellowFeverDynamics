@@ -482,6 +482,493 @@ FullModelOD <- R6::R6Class(
     }
   ))
 class(FullModelOD) <- c("dust_generator", class(FullModelOD))
+InfectionSplitModelOD <- R6::R6Class(
+  "dust",
+  cloneable = FALSE,
+
+  private = list(
+    pars_ = NULL,
+    pars_multi_ = NULL,
+    index_ = NULL,
+    info_ = NULL,
+    n_threads_ = NULL,
+    n_particles_ = NULL,
+    n_particles_each_ = NULL,
+    shape_ = NULL,
+    ptr_ = NULL,
+    gpu_config_ = NULL,
+    methods_ = NULL,
+    param_ = list(Cas0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     dP1_all = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     dP2_all = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     dt = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     Exp0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     FOI_spillover = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     Inf0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     N_age = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_years = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     R0 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     Rec0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     Sus0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     Vac0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     vacc_rate_annual = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     vaccine_efficacy = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     year0 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)),
+    reload_ = NULL
+  ),
+
+  public = list(
+    initialize = function(pars, step, n_particles, n_threads = 1L,
+                          seed = NULL, pars_multi = FALSE,
+                          deterministic = FALSE,
+                          gpu_config = NULL) {
+      if (is.null(gpu_config)) {
+        private$methods_ <- list(
+           alloc = dust_cpu_InfectionSplitModelOD_alloc,
+           run = dust_cpu_InfectionSplitModelOD_run,
+           simulate = dust_cpu_InfectionSplitModelOD_simulate,
+           set_index = dust_cpu_InfectionSplitModelOD_set_index,
+           n_state = dust_cpu_InfectionSplitModelOD_n_state,
+           update_state = dust_cpu_InfectionSplitModelOD_update_state,
+           state = dust_cpu_InfectionSplitModelOD_state,
+           step = dust_cpu_InfectionSplitModelOD_step,
+           reorder = dust_cpu_InfectionSplitModelOD_reorder,
+           resample = dust_cpu_InfectionSplitModelOD_resample,
+           rng_state = dust_cpu_InfectionSplitModelOD_rng_state,
+           set_rng_state = dust_cpu_InfectionSplitModelOD_set_rng_state,
+           set_n_threads = dust_cpu_InfectionSplitModelOD_set_n_threads,
+           set_data = dust_cpu_InfectionSplitModelOD_set_data,
+           compare_data = dust_cpu_InfectionSplitModelOD_compare_data,
+           filter = dust_cpu_InfectionSplitModelOD_filter)
+      } else {
+        private$methods_ <- list(alloc = function(...) {
+          stop("GPU support not enabled for this object")
+        })
+      }
+      res <- private$methods_$alloc(pars, pars_multi, step, n_particles,
+                        n_threads, seed, deterministic, gpu_config)
+      private$pars_ <- pars
+      private$pars_multi_ <- pars_multi
+      private$n_threads_ <- n_threads
+      private$ptr_ <- res[[1L]]
+      private$info_ <- res[[2L]]
+      private$shape_ <- res[[3L]]
+      private$gpu_config_ <- res[[4L]]
+      private$n_particles_ <- prod(private$shape_)
+      if (pars_multi) {
+        private$n_particles_each_ <- private$n_particles_ / length(pars)
+      } else {
+        private$n_particles_each_ <- private$n_particles_
+      }
+    },
+
+    name = function() {
+      "InfectionSplitModelOD"
+    },
+
+    param = function() {
+      private$param_
+    },
+
+    run = function(step_end) {
+      m <- private$methods_$run(private$ptr_, step_end)
+      rownames(m) <- names(private$index_)
+      m
+    },
+
+    simulate = function(step_end) {
+      m <- private$methods_$simulate(private$ptr_, step_end)
+      rownames(m) <- names(private$index_)
+      m
+    },
+
+    set_index = function(index) {
+      private$methods_$set_index(private$ptr_, index)
+      private$index_ <- index
+      invisible()
+    },
+
+    index = function() {
+      private$index_
+    },
+
+    n_threads = function() {
+      private$n_threads_
+    },
+
+    n_state = function() {
+      private$methods_$n_state(private$ptr_)
+    },
+
+    n_particles = function() {
+      private$n_particles_
+    },
+
+    n_particles_each = function() {
+      private$n_particles_each_
+    },
+
+    shape = function() {
+      private$shape_
+    },
+
+    update_state = function(pars = NULL, state = NULL, step = NULL,
+                            set_initial_state = NULL) {
+      info <- private$methods_$update_state(private$ptr_, pars, state, step,
+                                          set_initial_state)
+      if (!is.null(pars)) {
+        private$info_ <- info
+        private$pars_ <- pars
+      }
+      invisible()
+    },
+
+    state = function(index = NULL) {
+      m <- private$methods_$state(private$ptr_, index)
+      rownames(m) <- names(index)
+      m
+    },
+
+    step = function() {
+      private$methods_$step(private$ptr_)
+    },
+
+    reorder = function(index) {
+      storage.mode(index) <- "integer"
+      private$methods_$reorder(private$ptr_, index)
+      invisible()
+    },
+
+    resample = function(weights) {
+      invisible(private$methods_$resample(private$ptr_, weights))
+    },
+
+    info = function() {
+      private$info_
+    },
+
+    pars = function() {
+      private$pars_
+    },
+
+    rng_state = function(first_only = FALSE, last_only = FALSE) {
+      private$methods_$rng_state(private$ptr_, first_only, last_only)
+    },
+
+    set_rng_state = function(rng_state) {
+      private$methods_$set_rng_state(private$ptr_, rng_state)
+      invisible()
+    },
+
+    has_openmp = function() {
+      dust_InfectionSplitModelOD_capabilities()[["openmp"]]
+    },
+
+    has_gpu_support = function(fake_gpu = FALSE) {
+      if (fake_gpu) {
+        FALSE
+      } else {
+        dust_InfectionSplitModelOD_capabilities()[["gpu"]]
+      }
+    },
+
+    has_compare = function() {
+      dust_InfectionSplitModelOD_capabilities()[["compare"]]
+    },
+
+    real_size = function() {
+      dust_InfectionSplitModelOD_capabilities()[["real_size"]]
+    },
+
+    rng_algorithm = function() {
+      dust_InfectionSplitModelOD_capabilities()[["rng_algorithm"]]
+    },
+
+    uses_gpu = function(fake_gpu = FALSE) {
+      real_gpu <- private$gpu_config_$real_gpu
+      !is.null(real_gpu) && (fake_gpu || real_gpu)
+    },
+
+    n_pars = function() {
+      if (private$pars_multi_) length(private$pars_) else 0L
+    },
+
+    set_n_threads = function(n_threads) {
+      prev <- private$n_threads_
+      private$methods_$set_n_threads(private$ptr_, n_threads)
+      private$n_threads_ <- n_threads
+      invisible(prev)
+    },
+
+    set_data = function(data, shared = FALSE) {
+      private$methods_$set_data(private$ptr_, data, shared)
+    },
+
+    compare_data = function() {
+      private$methods_$compare_data(private$ptr_)
+    },
+
+    filter = function(step_end = NULL, save_trajectories = FALSE,
+                      step_snapshot = NULL, min_log_likelihood = NULL) {
+      private$methods_$filter(private$ptr_, step_end, save_trajectories,
+                              step_snapshot, min_log_likelihood)
+    },
+
+    gpu_info = function() {
+      ret <- dust_InfectionSplitModelOD_gpu_info()
+      parent <- parent.env(environment())
+      if (ret$has_cuda && exists("private", parent, inherits = FALSE)) {
+        ret$config <- private$gpu_config_
+      }
+      ret
+    }
+  ))
+class(InfectionSplitModelOD) <- c("dust_generator", class(InfectionSplitModelOD))
+ReactiveModelOD <- R6::R6Class(
+  "dust",
+  cloneable = FALSE,
+
+  private = list(
+    pars_ = NULL,
+    pars_multi_ = NULL,
+    index_ = NULL,
+    info_ = NULL,
+    n_threads_ = NULL,
+    n_particles_ = NULL,
+    n_particles_each_ = NULL,
+    shape_ = NULL,
+    ptr_ = NULL,
+    gpu_config_ = NULL,
+    methods_ = NULL,
+    param_ = list(Cas0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     cluster_threshold1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     dP1_all = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     dP2_all = list(has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE),
+     dt = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     Exp0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     FOI_spillover = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     Inf0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     N_age = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_years = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     outbreak_threshold1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     p_rep = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     R0 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     Rec0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     Sus0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     Vac0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
+     vacc_rate_annual = list(has_default = FALSE, default_value = NULL, rank = 3, min = -Inf, max = Inf, integer = FALSE),
+     vaccine_efficacy = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     year0 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)),
+    reload_ = NULL
+  ),
+
+  public = list(
+    initialize = function(pars, step, n_particles, n_threads = 1L,
+                          seed = NULL, pars_multi = FALSE,
+                          deterministic = FALSE,
+                          gpu_config = NULL) {
+      if (is.null(gpu_config)) {
+        private$methods_ <- list(
+           alloc = dust_cpu_ReactiveModelOD_alloc,
+           run = dust_cpu_ReactiveModelOD_run,
+           simulate = dust_cpu_ReactiveModelOD_simulate,
+           set_index = dust_cpu_ReactiveModelOD_set_index,
+           n_state = dust_cpu_ReactiveModelOD_n_state,
+           update_state = dust_cpu_ReactiveModelOD_update_state,
+           state = dust_cpu_ReactiveModelOD_state,
+           step = dust_cpu_ReactiveModelOD_step,
+           reorder = dust_cpu_ReactiveModelOD_reorder,
+           resample = dust_cpu_ReactiveModelOD_resample,
+           rng_state = dust_cpu_ReactiveModelOD_rng_state,
+           set_rng_state = dust_cpu_ReactiveModelOD_set_rng_state,
+           set_n_threads = dust_cpu_ReactiveModelOD_set_n_threads,
+           set_data = dust_cpu_ReactiveModelOD_set_data,
+           compare_data = dust_cpu_ReactiveModelOD_compare_data,
+           filter = dust_cpu_ReactiveModelOD_filter)
+      } else {
+        private$methods_ <- list(alloc = function(...) {
+          stop("GPU support not enabled for this object")
+        })
+      }
+      res <- private$methods_$alloc(pars, pars_multi, step, n_particles,
+                        n_threads, seed, deterministic, gpu_config)
+      private$pars_ <- pars
+      private$pars_multi_ <- pars_multi
+      private$n_threads_ <- n_threads
+      private$ptr_ <- res[[1L]]
+      private$info_ <- res[[2L]]
+      private$shape_ <- res[[3L]]
+      private$gpu_config_ <- res[[4L]]
+      private$n_particles_ <- prod(private$shape_)
+      if (pars_multi) {
+        private$n_particles_each_ <- private$n_particles_ / length(pars)
+      } else {
+        private$n_particles_each_ <- private$n_particles_
+      }
+    },
+
+    name = function() {
+      "ReactiveModelOD"
+    },
+
+    param = function() {
+      private$param_
+    },
+
+    run = function(step_end) {
+      m <- private$methods_$run(private$ptr_, step_end)
+      rownames(m) <- names(private$index_)
+      m
+    },
+
+    simulate = function(step_end) {
+      m <- private$methods_$simulate(private$ptr_, step_end)
+      rownames(m) <- names(private$index_)
+      m
+    },
+
+    set_index = function(index) {
+      private$methods_$set_index(private$ptr_, index)
+      private$index_ <- index
+      invisible()
+    },
+
+    index = function() {
+      private$index_
+    },
+
+    n_threads = function() {
+      private$n_threads_
+    },
+
+    n_state = function() {
+      private$methods_$n_state(private$ptr_)
+    },
+
+    n_particles = function() {
+      private$n_particles_
+    },
+
+    n_particles_each = function() {
+      private$n_particles_each_
+    },
+
+    shape = function() {
+      private$shape_
+    },
+
+    update_state = function(pars = NULL, state = NULL, step = NULL,
+                            set_initial_state = NULL) {
+      info <- private$methods_$update_state(private$ptr_, pars, state, step,
+                                          set_initial_state)
+      if (!is.null(pars)) {
+        private$info_ <- info
+        private$pars_ <- pars
+      }
+      invisible()
+    },
+
+    state = function(index = NULL) {
+      m <- private$methods_$state(private$ptr_, index)
+      rownames(m) <- names(index)
+      m
+    },
+
+    step = function() {
+      private$methods_$step(private$ptr_)
+    },
+
+    reorder = function(index) {
+      storage.mode(index) <- "integer"
+      private$methods_$reorder(private$ptr_, index)
+      invisible()
+    },
+
+    resample = function(weights) {
+      invisible(private$methods_$resample(private$ptr_, weights))
+    },
+
+    info = function() {
+      private$info_
+    },
+
+    pars = function() {
+      private$pars_
+    },
+
+    rng_state = function(first_only = FALSE, last_only = FALSE) {
+      private$methods_$rng_state(private$ptr_, first_only, last_only)
+    },
+
+    set_rng_state = function(rng_state) {
+      private$methods_$set_rng_state(private$ptr_, rng_state)
+      invisible()
+    },
+
+    has_openmp = function() {
+      dust_ReactiveModelOD_capabilities()[["openmp"]]
+    },
+
+    has_gpu_support = function(fake_gpu = FALSE) {
+      if (fake_gpu) {
+        FALSE
+      } else {
+        dust_ReactiveModelOD_capabilities()[["gpu"]]
+      }
+    },
+
+    has_compare = function() {
+      dust_ReactiveModelOD_capabilities()[["compare"]]
+    },
+
+    real_size = function() {
+      dust_ReactiveModelOD_capabilities()[["real_size"]]
+    },
+
+    rng_algorithm = function() {
+      dust_ReactiveModelOD_capabilities()[["rng_algorithm"]]
+    },
+
+    uses_gpu = function(fake_gpu = FALSE) {
+      real_gpu <- private$gpu_config_$real_gpu
+      !is.null(real_gpu) && (fake_gpu || real_gpu)
+    },
+
+    n_pars = function() {
+      if (private$pars_multi_) length(private$pars_) else 0L
+    },
+
+    set_n_threads = function(n_threads) {
+      prev <- private$n_threads_
+      private$methods_$set_n_threads(private$ptr_, n_threads)
+      private$n_threads_ <- n_threads
+      invisible(prev)
+    },
+
+    set_data = function(data, shared = FALSE) {
+      private$methods_$set_data(private$ptr_, data, shared)
+    },
+
+    compare_data = function() {
+      private$methods_$compare_data(private$ptr_)
+    },
+
+    filter = function(step_end = NULL, save_trajectories = FALSE,
+                      step_snapshot = NULL, min_log_likelihood = NULL) {
+      private$methods_$filter(private$ptr_, step_end, save_trajectories,
+                              step_snapshot, min_log_likelihood)
+    },
+
+    gpu_info = function() {
+      ret <- dust_ReactiveModelOD_gpu_info()
+      parent <- parent.env(environment())
+      if (ret$has_cuda && exists("private", parent, inherits = FALSE)) {
+        ret$config <- private$gpu_config_
+      }
+      ret
+    }
+  ))
+class(ReactiveModelOD) <- c("dust_generator", class(ReactiveModelOD))
 ## Generated by odin.dust (version 0.2.22) - do not edit
 BasicModelOD$set("public", "transform_variables", function(y) {
     info <- self$info()
@@ -504,6 +991,46 @@ BasicModelOD$set("public", "transform_variables", function(y) {
     }
 })
 FullModelOD$set("public", "transform_variables", function(y) {
+    info <- self$info()
+    set_dim <- function(x, dimx) {
+        if (length(dimx) > 1L) {
+            dim(x) <- dimx
+        }
+        x
+    }
+    if (is.matrix(y)) {
+        n <- ncol(y)
+        Map(function(i, d) set_dim(y[i, , drop = FALSE], c(d,
+            n)), info$index, info$dim)
+    } else if (is.array(y)) {
+        n <- dim(y)[2:3]
+        Map(function(i, d) set_dim(y[i, , , drop = FALSE], c(d,
+            n)), info$index, info$dim)
+    } else {
+        Map(function(i, d) set_dim(y[i], d), info$index, info$dim)
+    }
+})
+InfectionSplitModelOD$set("public", "transform_variables", function(y) {
+    info <- self$info()
+    set_dim <- function(x, dimx) {
+        if (length(dimx) > 1L) {
+            dim(x) <- dimx
+        }
+        x
+    }
+    if (is.matrix(y)) {
+        n <- ncol(y)
+        Map(function(i, d) set_dim(y[i, , drop = FALSE], c(d,
+            n)), info$index, info$dim)
+    } else if (is.array(y)) {
+        n <- dim(y)[2:3]
+        Map(function(i, d) set_dim(y[i, , , drop = FALSE], c(d,
+            n)), info$index, info$dim)
+    } else {
+        Map(function(i, d) set_dim(y[i], d), info$index, info$dim)
+    }
+})
+ReactiveModelOD$set("public", "transform_variables", function(y) {
     info <- self$info()
     set_dim <- function(x, dimx) {
         if (length(dimx) > 1L) {

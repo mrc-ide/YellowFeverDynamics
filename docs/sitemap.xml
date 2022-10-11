@@ -157,6 +157,9 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/Infection_Split_Model_Run.html</loc>
+  </url>
+  <url>
     <loc>/reference/input_data_check.html</loc>
   </url>
   <url>
@@ -205,6 +208,9 @@
     <loc>/reference/parameter_setup.html</loc>
   </url>
   <url>
+    <loc>/reference/parameter_setup2.html</loc>
+  </url>
+  <url>
     <loc>/reference/param_calc_enviro.html</loc>
   </url>
   <url>
@@ -221,6 +227,9 @@
   </url>
   <url>
     <loc>/reference/plot_model_output.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Reactive_Model_Run.html</loc>
   </url>
   <url>
     <loc>/reference/sero_calculate.html</loc>
