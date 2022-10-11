@@ -14,15 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette demonstrates how the output of the dynamic yellow fever model functions (see Worked Example 1 [Link TBA] [Link TBA]) can be processed to produce epidemiological data similar to that produced by real-world surveillance. There are three types of data processed by the package:
+This vignette demonstrates how the output of the dynamic yellow fever model functions (see [Worked Example 1 - Single Model Run](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleAModelRun.html)) can be processed to produce epidemiological data similar to that produced by real-world surveillance. There are three types of data processed by the package:
 
 -Serological survey data, the proportion of people tested in a chosen age range who test positive for yellow fever antibodies (indicating that they have either recovered from the disease or been vaccinated, with individuals known to have been vaccinated normally excluded from surveys - see below for more on this) [TBA - Link to example publications].
 -Annual reported cases and deaths, representing the number of laboratory-confirmed yellow fever cases in a region in a given year and the number which resulted in death. These usually represent a fraction of the actual number of annual yellow fever infections and deaths in a region (in particular, it is usually assumed that infections causing mild or no symptoms are never reported as non-fatal cases cases).
 -Annual outbreak occurrence, binary data indicating whether one or more outbreaks (usually defined as one or more lab-confirmed cases) are reported in a region in a given year.
 
-A set of epidemiological data for multiple regions can be constructed using additional functions described in Worked Example 2 [Link TBA]; this combines running the model as described in Worked Example 1 [Link TBA] and calculating epidemiological output data as described in this vignette.
+A set of epidemiological data for multiple regions can be constructed using additional functions described in [Worked Example 2 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleBDataGenerate.html); this combines running the model as described in Worked Example 1 and calculating epidemiological output data as described in this vignette.
 
-Data is generated as described in Worked Example 1 [Link TBA], in this case using the Full_Model_Run() function in order to be able to calculate all three epidemiological data types.
+Data is generated as described in Worked Example 1, in this case using the Full_Model_Run() function in order to be able to calculate all three epidemiological data types.
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
@@ -55,7 +55,7 @@ seroprevalence <- sero_calculate(age_min,age_max,years,vc_factor,model_data,n_pa
 matplot(x=years,y=seroprevalence,type="b",pch=1,xlab="Year",ylab="Seroprevalence")
 ```
 
-Annual reported severe and fatal case data is generated from C, the output data on the number of new infectious individuals at each time point. The actual number of severe and fatal cases is calculated stochastically using the variables p_severe_inf (the probability of an infection leading to severe symptoms) and p_death_severe_inf (the probability that a severe infection with lead to death). The values set for these below (0.12 and 0.47, taken from [TBA - link to source for values]) are incorporated into the package as global variables. The number of reported severe and fatal cases is then calculated stochastically using the variables p_rep_severe (probability of a severe case being reported in public health figures, usually meaning lab-confirmed cases) and p_rep_death (probability of a fatal case being reported). The total number of reported cases (rep_cases in the output data frame annual_data below) is the sum of reported severe cases and reported fatal cases (so it will always be equal to or greater than the number of reported deaths).
+Annual reported severe and fatal case data is generated from C, the output data on the number of new infectious individuals at each time point. The actual number of severe and fatal cases is calculated stochastically using the variables p_severe_inf (the probability of an infection leading to severe symptoms) and p_death_severe_inf (the probability that a severe infection with lead to death). The values set for these below (0.12 and 0.39, taken from [TBA - link to source for values]) are incorporated into the package as global variables. The number of reported severe and fatal cases is then calculated stochastically using the variables p_rep_severe (probability of a severe case being reported in public health figures, usually meaning lab-confirmed cases) and p_rep_death (probability of a fatal case being reported). The total number of reported cases (rep_cases in the output data frame annual_data below) is the sum of reported severe cases and reported fatal cases (so it will always be equal to or greater than the number of reported deaths).
 
 ```{r,eval=FALSE}
 p_severe_inf=0.12

@@ -81,7 +81,14 @@
 of the yellow fever model from observed epidemiological data within a
 Bayesian framework using Markov chain Monte Carlo sampling.</p>
 <p>Input data, environmental data and the observed data to be used for
-comparison are loaded as described in other vignettes (links TBA):</p>
+comparison are loaded in the formats used in the previous worked
+examples (see <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html" class="external-link">Guide
+2 - Inputs</a> for details of the input format, <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html" class="external-link">Guide
+3 - Calculating Parameters From Environmental Data</a> for details of
+how environmental data is formatted and used to generate parameter
+values, and <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleBDataGenerate.html" class="external-link">Worked
+Example 2 - Generating Epidemiological Data Sets</a> for details of
+observed data formats):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
 <span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span>

@@ -18,18 +18,18 @@ This vignette demonstrates how to set up and carry out a single run of the model
 
 The model of yellow fever used in YellowFeverDynamics is an age-stratified, stochastic SEIRV model in which the number of people in each age group in groups S (susceptible), E (exposed), I (infectious), R (recovered) and V (vaccinated) is computed at each time point, with changes in population also incorporated. The number of new infections (individuals moving from group S to group E) at each time point is calculated stochastically using the total force of infection (FOI) as a binomial probability. Full details of the model are currently being prepared for publication; please contact [Keith Fraser](keith.fraser@imperial.ac.uk) for a detailed description.
 
-Population and vaccination data is stored in a list object as described in Guide 2 - Inputs [Link TBA]. Here an example data set for multiple regions is loaded and the vaccination and population data for the first included region is extracted:
+Population and vaccination data is stored in a list object as described in [Guide 2 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html). Here an example data set for multiple regions is loaded and the vaccination and population data for the first included region is extracted:
 
-```{r,eval=FALSE}
+```{r}
 library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep = ""))
 vacc_data <- input_data$vacc_data[1,,]
 pop_data <- input_data$pop_data[1,,]  
 ```
 
-The other input parameters to the functions which run the model are as follows. Here the spillover FOI and basic reproduction number are set directly; they may alternatively be calculated from environmental covariates as described in Guide 3 - Calculating Parameters From Environmental Data [Link TBA]. The mode_start variable is used to set the initial conditions in one of 3 ways. The n_particles variable is used to run the model multiple times for the same inputs; the results can be compared and/or combined to test and/or average out the effects of the stochasticity of the model. The n_threads variable is used to set the number of particles run in parallel (subject to the limitations of the computer being used).
+The other input parameters to the functions which run the model are as follows. Here the spillover FOI and basic reproduction number are set directly; they may alternatively be calculated from environmental covariates as described in [Guide 3 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html). The mode_start variable is used to set the initial conditions in one of 3 ways. The n_particles variable is used to run the model multiple times for the same inputs; the results can be compared and/or combined to test and/or average out the effects of the stochasticity of the model. The n_threads variable is used to set the number of particles run in parallel (subject to the limitations of the computer being used).
 
-```{r,eval=FALSE}
+```{r}
 FOI_spillover <- 1.0e-8             # Force of infection due to spillover from sylvatic reservoir
 R0 <- 1.5                           # Basic reproduction number for urban spread of infection
 year0 <- input_data$years_labels[1] # First year in population/vaccination data (here taken from the input data set; if the population and vaccination data is set manually, this similarly needs to be set manually)
@@ -48,26 +48,26 @@ dt <- 1.0                           # Time increment in days to use in model (sh
 
 The Full_Model_Run() function is normally used to run the model for the inputs above:
 
-```{r,eval=FALSE}
+```{r}
 test1 <- Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                         year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 ```
 
 The output of Full_Model_Run() includes, for each particle, date information, the total force of infection FOI_total at each data point, the numbers of people in groups S, E, I, R and V at each time point and the number of newly infectious people (C) at each time point organized by age group. The plot_model function can be used as shown below to display values of S, R and V over time, with error bars to show the variation between particles caused by stochasticity.
 
-```{r,eval=FALSE}
+```{r}
 plot<-plot_model_output(test1)
 print(plot)
 ```
 
-For some applications, the Basic_Model_Run() function can be used instead. This is largely identical to Full_Model_Run() but does not output the total force of infection at each time point or the number of new infections at each time point. This reduces the amount of data output by each run of the function, reducing computational requirements. Basic_Model_Run is used, for example, when the intention is only to calculate seroprevalence, which is derived (as described in vignette 5) from SEIRV values, with the rate of newly infectious individuals being irrelevant.
+For some applications, the Basic_Model_Run() function can be used instead. This is largely identical to Full_Model_Run() but does not output the total force of infection at each time point or the number of new infections at each time point. This reduces the amount of data output by each run of the function, reducing computational requirements. Basic_Model_Run is used, for example, when the intention is only to calculate seroprevalence, which is derived (as described in [Guide 4 - Processing Model Results](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideDModelResultsProcess.html)) from SEIRV values, with the rate of newly infectious individuals being irrelevant.
 
 ```{r,eval = FALSE}
 test2 <- Basic_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
                      year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 ```
 
-For applications where only the number of new infectious people at each time point is desired, the case_data_generate() function can be used instead. This functions similarly to Basic_Model_Run() and Full_Model_Run() but only outputs data on the total number (across all age groups) of newly infectious people at each time point. It is also designed to run large numbers of repetitions, automatically sequentially running smaller groups of particles and threads to avoid causing errors or freezing the computer while running (Basic_Model_Run() and Full_Model_Run() are limited to 20 particles/threads for this reason). The ability to run a large number of repetitions is valuable when modelling annual case rates and/or outbreak occurrence (see vignette 5) in situations where the overall force of infection is low and therefore new infections are rare. Hence in the example below, case_data_generate is run for 1000 repetitions with a low spillover FOI and no human-to-human transmission, resulting in a very low daily infection rate.
+For applications where only the number of new infectious people at each time point is desired, the case_data_generate() function can be used instead. This functions similarly to Basic_Model_Run() and Full_Model_Run() but only outputs data on the total number (across all age groups) of newly infectious people at each time point. It is also designed to run large numbers of repetitions, automatically sequentially running smaller groups of particles and threads to avoid causing errors or freezing the computer while running (Basic_Model_Run() and Full_Model_Run() are limited to 20 particles/threads for this reason). The ability to run a large number of repetitions is valuable when modelling annual case rates and/or outbreak occurrence (see [Guide 4 - Processing Model Results](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideDModelResultsProcess.html)) in situations where the overall force of infection is low and therefore new infections are rare. Hence in the example below, case_data_generate is run for 1000 repetitions with a low spillover FOI and no human-to-human transmission, resulting in a very low daily infection rate.
 
 ```{r,eval = FALSE}
 n_reps <- 1000

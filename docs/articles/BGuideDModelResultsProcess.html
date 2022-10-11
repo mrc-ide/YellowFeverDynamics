@@ -78,9 +78,10 @@
     
     
 <p>This vignette demonstrates how the output of the dynamic yellow fever
-model functions (see Worked Example 1 [Link TBA] [Link TBA]) can be
-processed to produce epidemiological data similar to that produced by
-real-world surveillance. There are three types of data processed by the
+model functions (see <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleAModelRun.html" class="external-link">Worked
+Example 1 - Single Model Run</a>) can be processed to produce
+epidemiological data similar to that produced by real-world
+surveillance. There are three types of data processed by the
 package:</p>
 <p>-Serological survey data, the proportion of people tested in a chosen
 age range who test positive for yellow fever antibodies (indicating that
@@ -97,13 +98,13 @@ mild or no symptoms are never reported as non-fatal cases cases).
 outbreaks (usually defined as one or more lab-confirmed cases) are
 reported in a region in a given year.</p>
 <p>A set of epidemiological data for multiple regions can be constructed
-using additional functions described in Worked Example 2 [Link TBA];
-this combines running the model as described in Worked Example 1 [Link
-TBA] and calculating epidemiological output data as described in this
-vignette.</p>
-<p>Data is generated as described in Worked Example 1 [Link TBA], in
-this case using the Full_Model_Run() function in order to be able to
-calculate all three epidemiological data types.</p>
+using additional functions described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleBDataGenerate.html" class="external-link">Worked
+Example 2 - Generating Epidemiological Data Sets</a>; this combines
+running the model as described in Worked Example 1 and calculating
+epidemiological output data as described in this vignette.</p>
+<p>Data is generated as described in Worked Example 1, in this case
+using the Full_Model_Run() function in order to be able to calculate all
+three epidemiological data types.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
 <span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>,<span class="st">"/exdata/input_data_example.Rds"</span>,sep<span class="op">=</span><span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
@@ -149,7 +150,7 @@ point. The actual number of severe and fatal cases is calculated
 stochastically using the variables p_severe_inf (the probability of an
 infection leading to severe symptoms) and p_death_severe_inf (the
 probability that a severe infection with lead to death). The values set
-for these below (0.12 and 0.47, taken from [TBA - link to source for
+for these below (0.12 and 0.39, taken from [TBA - link to source for
 values]) are incorporated into the package as global variables. The
 number of reported severe and fatal cases is then calculated
 stochastically using the variables p_rep_severe (probability of a severe

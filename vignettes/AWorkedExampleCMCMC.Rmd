@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette describes how to use the package to estimate parameters of the yellow fever model from observed epidemiological data within a Bayesian framework using Markov chain Monte Carlo sampling.
 
-Input data, environmental data and the observed data to be used for comparison are loaded as described in other vignettes (links TBA):
+Input data, environmental data and the observed data to be used for comparison are loaded in the formats used in the previous worked examples (see [Guide 2 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html) for details of the input format, [Guide 3 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html) for details of how environmental data is formatted and used to generate parameter values, and [Worked Example 2 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleBDataGenerate.html) for details of observed data formats):
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
