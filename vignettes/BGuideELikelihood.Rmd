@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This vignette describes how to use the package to calculate the likelihood of observing particular epidemiological data based on a particular set of input parameters. This is used to estimate parameter values within a Bayesian framework via Markov chain Monte Carlo sampling, as described in [Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCMCMC.html).
 
-[TBA]
+Data is loaded in the same manner as in [Worked Example 2 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleBDataGenerate.html):
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
@@ -28,33 +28,28 @@ obs_sero_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdat
 obs_case_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
                       # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
 obs_outbreak_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/outbreak_data_example_single.csv",sep=""),header=TRUE)    
-                      # TBA
+                      # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
 ```
 
-[TBA]
+Modelled data to use for the likelihood calculation is created using data_match_single() as in Worked Example 2:
 
 ```{r,eval=FALSE}
 param_prop <- as.numeric(enviro_coeffs)
                       # Parameters input to produce model parameters, potentially including spillover FOI and R0 by region, severe and fatal case reporting probability
 const_list <- list(type="FOI+R0 enviro",n_reps=1,mode_start=1,dt=1.0,enviro_data=enviro_data,R0_fixed_values=NULL,vaccine_efficacy=1.0,p_rep_severe=0.05,p_rep_death=0.1)
                       # List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop
-```
-
-[TBA]
-
-```{r,eval=FALSE}
 model_data <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
-[TBA]
+The likelihood of the observed serological data based on the epidemiological parameters is calculated using a gamma distribution, with (for each line of data) the modelled seroprevalence as the probability of "success", the number of samples for the specified region, age range and year as the number of "observations", and the number of positive tests as the number of "successes".
 
 ```{r,eval=FALSE}
 sero_like_values=lgamma(obs_sero_data$samples+1)-lgamma(obs_sero_data$positives+1)-
-        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+obs_sero_data$positives*log(model_data$model_sero_values)+
-        (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_data$model_sero_values)
+        lgamma(obs_sero_data$samples-obs_sero_data$positives+1)+obs_sero_data$positives*log(model_data$model_sero_values + (obs_sero_data$samples-obs_sero_data$positives)*log(1.0-model_data$model_sero_values)
+LogLikelihood=sum(sero_like_values)
 ```
 
-[TBA]
+The likelihood of the observed annual case and death data based on the epidemiological parameters is calculated using a negative binomial distribution, with (for each line of data) the modelled number of cases or deaths as the mean and the observed number of cases or deaths as the number of "successes".
 
 ```{r,eval=FALSE}
 cases_like_values=dnbinom(x=obs_case_data$cases,mu=model_data$model_case_values,
@@ -63,7 +58,7 @@ deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_data$model_death_valu
                                  size=rep(1,length(obs_case_data$deaths)),log=TRUE)
 ```
 
-[TBA]
+[TBA or possible removal]
 
 ```{r,eval=FALSE}
 outbreak_like_values=outbreak_risk_compare(model_outbreak_risk=model_data$model_outbreak_risk_values,

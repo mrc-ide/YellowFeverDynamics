@@ -5,10 +5,12 @@ articles:
   AWorkedExampleAModelRun: AWorkedExampleAModelRun.html
   AWorkedExampleBDataGenerate: AWorkedExampleBDataGenerate.html
   AWorkedExampleCMCMC: AWorkedExampleCMCMC.html
+  AWorkedExampleDOutbreakRisk: AWorkedExampleDOutbreakRisk.html
+  AWorkedExampleEBurden: AWorkedExampleEBurden.html
   BGuideAInstallation: BGuideAInstallation.html
   BGuideBInputs: BGuideBInputs.html
   BGuideCParametersEnvironment: BGuideCParametersEnvironment.html
   BGuideDModelResultsProcess: BGuideDModelResultsProcess.html
   BGuideELikelihood: BGuideELikelihood.html
-last_built: 2022-10-11T21:55Z
+last_built: 2022-10-13T19:17Z
 
