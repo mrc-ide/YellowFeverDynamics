@@ -26,7 +26,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleBDataGenerate.html">Worked Example 2 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCOutbreakRisk.html">Worked Example 3 - Outbreak Risk Calculation</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleCOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
     <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
@@ -144,8 +144,11 @@ If mode_start=2, use SEIRV input in list from previous run(s)</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This function is used to calculate the annual risk of one or more outbreaks in a region over one or more
-  years, based on epidemiological parameters</p>
+    <p>Accepts epidemiological, population and case reporting parameters and model settings; generates annual
+outbreak risk over a specified time period for one region. Runs basic SEIRV model (Basic_Model_Run function) for the
+specified region and time period for the specified number of output datasets (n_sets), then runs case data
+generation  function (case_data_generate) for a larger number of repetitions (n_reps) for each dataset, with annual
+outbreak risk given by (number of repetitions where one or more cases are reported)/n_reps.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

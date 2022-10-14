@@ -20,43 +20,41 @@ Input data, environmental data and the observed data to be used for comparison a
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
-input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
-enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_data_example.csv",sep = ""),header = TRUE)
-n_env_vars=ncol(enviro_data)-1
-obs_sero_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example.csv",sep=""),header=TRUE)
-obs_case_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example.csv",sep=""),header=TRUE)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
+enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""), header = TRUE)
+n_env_vars = ncol(enviro_data)-1
+obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/sero_data_example.csv", sep = ""), header = TRUE)
+obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/case_data_example.csv", sep = ""), header = TRUE)
 obs_outbreak_data <- NULL
 ```
 
 Additional input parameters are loaded as follows:
 
 ```{r,eval=FALSE}
-Niter=1 #Number of iterations to run
-type="FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
-pars_min=c(rep(-30,n_env_vars),rep(-5,n_env_vars),log(c(0.01,0.01,0.9))) # Minimum parameter values
-pars_max=c(rep(-10,n_env_vars),rep(0,n_env_vars),log(c(0.25,0.25,1.0))) # Maximum parameter values
-pars_ini=c(pars_min+1) # Initial parameter values
-n_reps=5 # Number of repetitions for which to run model and obtain average outputs
-mode_start=1 # Flag indicating how to set initial population immunity level in addition to vaccination
+Niter <- 1 #Number of iterations to run
+type <- "FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
+pars_min <- c(rep(-30, n_env_vars), rep(-5, n_env_vars), log(c(0.01, 0.01, 0.9))) # Minimum parameter values
+pars_max <- c(rep(-10, n_env_vars), rep(0, n_env_vars), log(c(0.25, 0.25, 1.0))) # Maximum parameter values
+pars_ini <- c(pars_min+1) # Initial parameter values
+n_reps <- 5 # Number of repetitions for which to run model and obtain average outputs
+mode_start <- 1 # Flag indicating how to set initial population immunity level in addition to vaccination
                                     # If mode_start = 0, only vaccinated individuals
                                     # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
-prior_type="norm" # Type of prior likelihood calculation to use
-dt=5.0 # Time increment in days
-R0_fixed_values=vaccine_efficacy=p_rep_severe=p_rep_death=NULL #Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being estimated
-filename_prefix="Chain" # Prefix to be used for .csv output files; a new file is created every 10,000 iterations with incremental number suffixes (Chain1.csv, Chain2.csv, etc.)
+prior_type <- "norm" # Type of prior likelihood calculation to use
+dt <- 5.0 # Time increment in days
+R0_fixed_values = vaccine_efficacy = p_rep_severe = p_rep_death = NULL #Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being estimated
+filename_prefix <- "Chain" # Prefix to be used for .csv output files; a new file is created every 10,000 iterations with incremental number suffixes (Chain1.csv, Chain2.csv, etc.)
 ```
 
 The MCMC() function is then run. Output data recorded at each iteration is saved to an output file every 10 iterations.
 
 ```{r,eval=FALSE}
-MCMC(pars_ini,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,
-     Niter,type,pars_min,pars_max,n_reps,mode_start,prior_type,dt,enviro_data,R0_fixed_values,vaccine_efficacy,
-     p_rep_severe,p_rep_death,filename_prefix)
+MCMC(pars_ini, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, Niter, type, pars_min, pars_max, n_reps, mode_start, prior_type, dt, enviro_data, R0_fixed_values, vaccine_efficacy, p_rep_severe, p_rep_death, filename_prefix)
 ```
 
 The saved output of MCMC() takes the form of a data frame of values of the current likelihood, likelihood calculated from proposed parameter values, current and proposed parameter values, a flag indicating whether the proposed parameter values were accepted, and the chain covariance.
 
 ```{r,eval=FALSE}
-chain_example=read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/Chain_example.csv",sep = ""),header=TRUE)
-head(chain_example,1)
+chain_example <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/Chain_example.csv", sep = ""), header = TRUE)
+head(chain_example, 1)
 ```

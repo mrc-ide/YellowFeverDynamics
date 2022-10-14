@@ -9,7 +9,7 @@ outbreak_risk_compare(model_outbreak_risk = c(), obs_data = c())
 \arguments{
 \item{model_outbreak_risk}{Modelled annual outbreak risk (0-1)}
 
-\item{obs_data}{Observed annual outbreak Y/N data
+\item{obs_data}{Observed annual outbreak Y/N data (0 or 1)
 '}
 }
 \description{

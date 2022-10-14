@@ -61,6 +61,9 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 Generate annual outbreak risk data
 }
 \details{
-This function is used to calculate the annual risk of one or more outbreaks in a region over one or more
-  years, based on epidemiological parameters
+Accepts epidemiological, population and case reporting parameters and model settings; generates annual
+outbreak risk over a specified time period for one region. Runs basic SEIRV model (Basic_Model_Run function) for the
+specified region and time period for the specified number of output datasets (n_sets), then runs case data
+generation  function (case_data_generate) for a larger number of repetitions (n_reps) for each dataset, with annual
+outbreak risk given by (number of repetitions where one or more cases are reported)/n_reps.
 }

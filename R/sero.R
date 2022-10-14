@@ -115,6 +115,7 @@ sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
   return(output_frame)
 }
 #-------------------------------------------------------------------------------
+# [TODO: CHANGE AND IF NECESSARY CREATE SEPARATE FUNCTION FOR OTHER DATA FORMATS]
 #' @title sero_compare
 #'
 #' @description Take model results, calculate seroprevalence for comparison with observed seroprevalence and

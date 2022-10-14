@@ -22,14 +22,14 @@ Environmental data is stored as a data frame with each line containing covariate
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
-enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_data_example.csv",sep = ""),header = TRUE)
-head(enviro_data,5)
+enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""), header = TRUE)
+head(enviro_data, 5)
 ```
 
 Logarithmic values of the coefficients of the environmental covariates are stored as a data frame with the headings in the format FOI_(variable name) and R0_(variable name). In the example below, only one set of coefficient values are given, but multiple sets of coefficient values (e.g. a distribution of value estimates) can be used to produce a distribution of epidemiological parameter values, as shown below.
 
 ```{r,eval=FALSE}
-enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example.csv",sep = ""),header = TRUE)
+enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example.csv", sep = ""), header = TRUE)
 enviro_coeffs
 ```
 
@@ -37,36 +37,34 @@ Covariate and coefficient values can be combined to produce values of the spillo
 
 ```{r,eval=FALSE}
 n_regions <- nrow(enviro_data)
-epi_data <- data.frame(region = enviro_data$region,FOI = rep(NA,n_regions),R0 = rep(NA,n_regions))
+epi_data <- data.frame(region = enviro_data$region, FOI = rep(NA, n_regions), R0 = rep(NA, n_regions))
 for(n_region in 1:n_regions){
- FOI_R0_values <- param_calc_enviro(param = as.numeric(enviro_coeffs[1,]),enviro_data = enviro_data[n_region,])
+ FOI_R0_values <- param_calc_enviro(param = as.numeric(enviro_coeffs[1, ]), enviro_data = enviro_data[n_region, ])
  epi_data$FOI[n_region] <- FOI_R0_values$FOI
  epi_data$R0[n_region] <- FOI_R0_values$R0
 }
-head(epi_data,5)
+head(epi_data, 5)
 ```
 
 Spillover FOI and R0 data obtained in this way can be plotted on a map of the regions under consideration using the create_map function(), as can other regional data such as the values of the environmental covariates. Regional boundary data is loaded from one or more shapefiles of the format used by [GADM](https://gadm.org/download_country_v3.html) using the map_shapes_load() function
 
 ```{r,eval=FALSE}
 regions=epi_data$region
-shape_data <- map_shapes_load(regions,shapefiles=c(paste(path.package("YellowFeverDynamics"),"/exdata/shapefile_example.shp",sep = "")),region_label_type="GID_1")
-colour_scheme=readRDS(file=paste(path.package("YellowFeverDynamics"),"exdata/colour_scheme_example.Rds",sep="/"))
+shape_data <- map_shapes_load(regions, shapefiles=c(paste(path.package("YellowFeverDynamics"), "/exdata/shapefile_example.shp", sep = "")), region_label_type="GID_1")
+colour_scheme=readRDS(file=paste(path.package("YellowFeverDynamics"), "exdata/colour_scheme_example.Rds", sep="/"))
 colour_scale=colour_scheme$colour_scale
-null1 <- create_map(shape_data,epi_data$FOI,scale=pretty(epi_data$FOI,8),colour_scale,pixels_max=720,text_size=1,
-           map_title="",legend_title="FOI",legend_position="topleft",legend_format="e",legend_dp=1,output_file=NULL)
-null2 <- create_map(shape_data,epi_data$R0,scale=pretty(epi_data$R0,8),colour_scale,pixels_max=720,text_size=1,
-           map_title="",legend_title="R0",legend_position="topleft",legend_format="f",legend_dp=1,output_file=NULL)
+null1 <- create_map(shape_data, epi_data$FOI, scale=pretty(epi_data$FOI, 8), colour_scale, pixels_max=720, text_size=1, map_title="", legend_title="FOI", legend_position="topleft", legend_format="e", legend_dp=1, output_file=NULL)
+null2 <- create_map(shape_data, epi_data$R0, scale=pretty(epi_data$R0, 8), colour_scale, pixels_max=720, text_size=1, map_title="", legend_title="R0", legend_position="topleft", legend_format="f", legend_dp=1, output_file=NULL)
 ```
 
 To generate a distribution of spillover FOI and R0 values for each region, a distribution of environmental coefficient values can be used:
 
 ```{r,eval=FALSE}
-enviro_coeffs2 <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example2.csv",sep = ""),header = TRUE)
-head(enviro_coeffs2,5)
-epi_data <- data.frame(region = enviro_data$region,FOI = rep(NA,n_regions),R0 = rep(NA,n_regions))
+enviro_coeffs2 <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example2.csv", sep = ""), header = TRUE)
+head(enviro_coeffs2, 5)
+epi_data <- data.frame(region = enviro_data$region, FOI = rep(NA, n_regions), R0 = rep(NA, n_regions))
 for(n_region in 1:n_regions){
- FOI_R0_values <- param_calc_enviro(param = as.numeric(enviro_coeffs2[1,]),enviro_data = enviro_data[n_region,])
+ FOI_R0_values <- param_calc_enviro(param = as.numeric(enviro_coeffs2[1, ]), enviro_data = enviro_data[n_region, ])
  epi_data$FOI[n_region] <- FOI_R0_values$FOI
  epi_data$R0[n_region] <- FOI_R0_values$R0
 }
