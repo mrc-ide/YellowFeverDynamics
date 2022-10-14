@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette discusses the format used for model input data by this package. Population and vaccination data for one or more regions to be considered are stored in a list object along with a list of regions, the years included, and the age groups into which the population is divided. 
+This vignette discusses the format used for model input data by this package. Population and vaccination data for one or more regions to be considered are stored in a list object along with a list of regions, the years included, and the age groups into which the population is divided.
 
 Here an example data set is loaded from the package:
 
@@ -28,12 +28,14 @@ A correctly formatted input data set consists of a list containing the following
 ```{r,eval=FALSE}
 names(input_data)
 ```
+
 region_labels is a vector listing the names of the regions for which population and vaccination data is included:
 
 ```{r,eval=FALSE}
 n_regions <- length(input_data$region_labels) #Number of regions
 input_data$region_labels
 ```
+
 years_labels is a vector listing the sequence of years for which population and vaccination data is included:
 
 ```{r,eval=FALSE}

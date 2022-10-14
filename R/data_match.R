@@ -42,8 +42,8 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   regions=names(table(input_data$region_labels)) #Regions in new processed input data list
   n_regions=length(regions)
   if(is.null(const_list$enviro_data)==FALSE){
-    for(region in regions){assert_that(region %in% const_list$enviro_data$adm1)}
-    enviro_data=subset(const_list$enviro_data,const_list$enviro_data$adm1 %in% regions)
+    for(region in regions){assert_that(region %in% const_list$enviro_data$region)}
+    enviro_data=subset(const_list$enviro_data,const_list$enviro_data$region %in% regions)
   }
 
   frac=1.0/const_list$n_reps
@@ -81,7 +81,7 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
     for(i in 1:n_regions){
       model_params=param_calc_enviro(param=param_prop,
-                                     enviro_data=enviro_data[enviro_data$adm1==regions[i],])
+                                     enviro_data=enviro_data[enviro_data$region==regions[i],])
       FOI_values[i]=as.numeric(model_params[[1]])
       if(const_list$type=="FOI+R0 enviro"){R0_values[i]=as.numeric(model_params[[2]])} else {
         R0_values[i]=const_list$R0_fixed_values[i]}
@@ -259,12 +259,12 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),plot_type="
       }
     }
   } else {
-    data_regions=names(table(obs_sero_data$adm1))
+    data_regions=names(table(obs_sero_data$region))
     graph_titles=c()
     n_graphs=0
     for(region in data_regions){
-      lines=lines_all[obs_sero_data$adm1==region]
-      subset=subset(obs_sero_data,obs_sero_data$adm1==region)
+      lines=lines_all[obs_sero_data$region==region]
+      subset=subset(obs_sero_data,obs_sero_data$region==region)
       years=names(table(subset$year))
       for(year in years){
         lines2=lines[subset$year==year]
@@ -361,10 +361,10 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
   obs_death_values=obs_case_data$deaths
   n_case_values=length(obs_case_values)
   n_year_values=match(obs_case_data$year,input_data$years_labels)
-  n_region_values=match(obs_case_data$adm1,input_data$region_labels)
+  n_region_values=match(obs_case_data$region,input_data$region_labels)
   obs_case_values_low=obs_case_values_high=obs_death_values_low=obs_death_values_high=rep(NA,n_case_values)
   for(i in 1:n_case_values){
-    regions=strsplit(obs_case_data$adm1[i],",")[[1]]
+    regions=strsplit(obs_case_data$region[i],",")[[1]]
     n_region_values=input_data$region_labels %in% regions
     population=round(sum(input_data$pop_data[n_region_values,n_year_values[i],]),digits=0)
     CI=prop.test(x=obs_case_data$cases[i],n=population)
@@ -433,14 +433,14 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
     model_deaths_CI95_high=model_death_values+1
   }
 
-  data_regions=names(table(obs_case_data$adm1))
+  data_regions=names(table(obs_case_data$region))
   n_graphs=length(data_regions)
   cases_graphs=deaths_graphs=list()
   years=case_obs=case_obs_low=case_obs_high=case_model_low95=case_model_low50=case_model_high95=case_model_high50=NULL
   death_obs=death_obs_low=death_obs_high=death_model_low95=death_model_low50=death_model_high95=death_model_high50=NULL
   for(i in 1:n_graphs){
     region=data_regions[i]
-    lines=obs_case_data$adm1==region
+    lines=obs_case_data$region==region
 
     df=data.frame(years=obs_case_data$year[lines],case_obs=obs_case_values[lines],death_obs=obs_death_values[lines],
                   case_obs_low=obs_case_values_low[lines],case_obs_high=obs_case_values_high[lines],

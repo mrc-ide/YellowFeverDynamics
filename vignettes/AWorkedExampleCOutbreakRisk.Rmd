@@ -1,8 +1,8 @@
 ---
-title: "Worked Example 4 - Outbreak Risk Calculation"
+title: "Worked Example 3 - Outbreak Risk Calculation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Worked Example 4 - Outbreak Risk Calculation}
+  %\VignetteIndexEntry{Worked Example 3 - Outbreak Risk Calculation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

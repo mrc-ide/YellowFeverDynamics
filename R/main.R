@@ -587,7 +587,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
                                   p_rep_severe0=NULL,p_rep_death0=NULL,flag_reporting=TRUE){
 
   assert_that(input_data_check(input_data))
-  assert_that(all(input_data$region_labels==enviro_data$adm1)==TRUE)
+  assert_that(all(input_data$region_labels==enviro_data$region)==TRUE)
   assert_that(min(years_data)>=input_data$years_labels[1])
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
   assert_that(is.logical(flag_reporting))
@@ -617,7 +617,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
     if(type %in% c("FOI+R0 enviro","FOI enviro")){
       for(n_region in 1:n_regions){
         model_params=param_calc_enviro(as.numeric(params),
-                                       enviro_data=enviro_data[enviro_data$adm1==regions[n_region],])
+                                       enviro_data=enviro_data[enviro_data$region==regions[n_region],])
         FOI_values[n_region]=model_params$FOI
         if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
           R0_values[n_region]=R0_fixed_values[n_region]}

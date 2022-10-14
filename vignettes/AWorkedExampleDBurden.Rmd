@@ -1,8 +1,8 @@
 ---
-title: "Worked Example 5 - Yellow Fever Burden Calculation"
+title: "Worked Example 4 - Yellow Fever Burden Calculation"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Worked Example 5 - Yellow Fever Burden Calculation}
+  %\VignetteIndexEntry{Worked Example 4 - Yellow Fever Burden Calculation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

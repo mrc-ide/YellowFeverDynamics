@@ -133,9 +133,9 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
   regions_input_data=input_data$region_labels
   #TODO - Make sure regions always in alphabetical order?
   #if(table(sort(regions_input_data)==regions_input_data)[[TRUE]]==length(regions_input_data)){}
-  regions_sero_com=names(table(obs_sero_data$adm1))
-  regions_case_com=names(table(obs_case_data$adm1))
-  regions_outbreak_com=names(table(obs_outbreak_data$adm1))
+  regions_sero_com=names(table(obs_sero_data$region))
+  regions_case_com=names(table(obs_case_data$region))
+  regions_outbreak_com=names(table(obs_outbreak_data$region))
   regions_sero_unc=regions_case_unc=regions_outbreak_unc=c()
 
   for(region in regions_sero_com){regions_sero_unc=append(regions_sero_unc,strsplit(region,",")[[1]])}
@@ -169,7 +169,7 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
       flag_sero[i]=1
       sero_line_list[[i]]=c(0)
       for(j in 1:nrow(obs_sero_data)){
-        if(grepl(region,obs_sero_data$adm1[j])==TRUE){
+        if(grepl(region,obs_sero_data$region[j])==TRUE){
           sero_line_list[[i]]=append(sero_line_list[[i]],j)
           year_data_begin[i]=min(obs_sero_data$year[j],year_data_begin[i])
           year_end[i]=max(obs_sero_data$year[j]+1,year_end[i])
@@ -181,7 +181,7 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
       flag_case[i]=1
       case_line_list[[i]]=c(0)
       for(j in 1:nrow(obs_case_data)){
-        if(grepl(region,obs_case_data$adm1[j])==TRUE){
+        if(grepl(region,obs_case_data$region[j])==TRUE){
           case_line_list[[i]]=append(case_line_list[[i]],j)
           year_data_begin[i]=min(obs_case_data$year[j],year_data_begin[i])
           year_end[i]=max(obs_case_data$year[j]+1,year_end[i])
@@ -193,7 +193,7 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
       flag_outbreak[i]=1
       outbreak_line_list[[i]]=c(0)
       for(j in 1:nrow(obs_outbreak_data)){
-        if(grepl(region,obs_outbreak_data$adm1[j])==TRUE){
+        if(grepl(region,obs_outbreak_data$region[j])==TRUE){
           outbreak_line_list[[i]]=append(outbreak_line_list[[i]],j)
           year_data_begin[i]=min(obs_outbreak_data$year[j],year_data_begin[i])
           year_end[i]=max(obs_outbreak_data$year[j]+1,year_end[i])

@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette describes how to use the package to calculate the likelihood of observing particular epidemiological data based on a particular set of input parameters. This is used to estimate parameter values within a Bayesian framework via Markov chain Monte Carlo sampling, as described in [Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCMCMC.html).
+This vignette describes how to use the package to calculate the likelihood of observing particular epidemiological data based on a particular set of input parameters. This is used to estimate parameter values within a Bayesian framework via Markov chain Monte Carlo sampling, as described in [Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleEMCMC.html).
 
 Data is loaded in the same manner as in [Worked Example 2 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleBDataGenerate.html):
 
@@ -23,11 +23,11 @@ library(YellowFeverDynamics)
 input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
 enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_data_example.csv",sep = ""),header = TRUE)
 enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example.csv",sep = ""),header = TRUE)
-obs_sero_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/sero_data_example_single.csv",sep=""),header=TRUE)    
+obs_sero_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/obs_sero_data_example_single.csv",sep=""),header=TRUE)    
                       # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-obs_case_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/case_data_example_single.csv",sep=""),header=TRUE)    
+obs_case_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/obs_case_data_example_single.csv",sep=""),header=TRUE)    
                       # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-obs_outbreak_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/outbreak_data_example_single.csv",sep=""),header=TRUE)    
+obs_outbreak_data <- read.csv(file=paste(path.package("YellowFeverDynamics"),"/exdata/obs_outbreak_data_example_single.csv",sep=""),header=TRUE)    
                       # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
 ```
 

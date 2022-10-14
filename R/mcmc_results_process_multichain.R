@@ -115,7 +115,7 @@ get_mcmc_FOI_R0_multichain <- function(datasets=c(),datasets_selected=c(1),burni
   assert_that(is.list(datasets))
   assert_that(is.numeric(datasets_selected))
   assert_that(all(datasets_selected %in% c(1:length(datasets))))
-  assert_that(all(enviro_data$adm1==sort(enviro_data$adm1)))
+  assert_that(all(enviro_data$region==sort(enviro_data$region)))
   if(is.null(burnin_values)==TRUE){
     burnin_values=rep(1,length(datasets_selected))
   } else {

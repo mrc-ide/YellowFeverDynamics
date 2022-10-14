@@ -82,8 +82,8 @@ MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data
   regions=names(table(input_data$region_labels)) #Regions in new processed input data list
   n_regions=length(regions)
   if(is.null(enviro_data)==FALSE){
-    for(region in regions){assert_that(region %in% enviro_data$adm1)}
-    enviro_data=subset(enviro_data,enviro_data$adm1 %in% regions)
+    for(region in regions){assert_that(region %in% enviro_data$region)}
+    enviro_data=subset(enviro_data,enviro_data$region %in% regions)
     }
 
   #Label parameters according to order and fitting type
@@ -592,7 +592,7 @@ mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),en
 
   if(type %in% c("FOI+R0 enviro","FOI enviro")){
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$adm1==regions[i],])
+      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$region==regions[i],])
       FOI_values[i]=model_params$FOI
       if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
     }
