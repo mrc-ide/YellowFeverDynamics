@@ -25,8 +25,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleBDataGenerate.html">Worked Example 2 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
     <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
@@ -60,7 +60,6 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_outbreak_data</span><span class="op">(</span></span>
 <span>  case_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  year_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  p_rep_mild <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  p_rep_severe <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  p_rep_death <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -74,10 +73,6 @@
 
 <dt>year_data</dt>
 <dd><p>Vector of year values corresponding to case data</p></dd>
-
-
-<dt>p_rep_mild</dt>
-<dd><p>probability of a mild infection being reported</p></dd>
 
 
 <dt>p_rep_severe</dt>

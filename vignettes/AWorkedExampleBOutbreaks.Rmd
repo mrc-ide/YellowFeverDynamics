@@ -1,0 +1,37 @@
+---
+title: "Worked Example 3 - Outbreak Modelling"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Worked Example 3 - Outbreak Modelling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette describes several ways the package can be used to model the occurrence and risk of yellow fever outbreaks. An "outbreak" is defined as taking place whenever a case of yellow fever is reported, and lasts as long as the time interval between new cases remains less than 10 days (the sum of the incubation and infectious periods used by the package).
+
+[TBA]
+
+```{r,eval=FALSE}
+library(YellowFeverDynamics)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
+vacc_data <- input_data$vacc_data[1, , ]
+pop_data <- input_data$pop_data[1, , ]  
+FOI_spillover <- 1.0e-9             # Force of infection due to spillover from sylvatic reservoir
+R0 <- 0.0                           # Basic reproduction number for urban spread of infection
+model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_reps = 1, year_end = 2001, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
+# TBA - Use of get_outbreak_data() function
+outbreak_data <- get_outbreak_data(case_data=model_results$C,year_data=model_results$year,p_rep_severe = 0.1,p_rep_death = 0.2)
+```
+
+[TBA]
+
+```{r,eval=FALSE}
+# TBA - Use of outbreak_risk_generate() function
+```

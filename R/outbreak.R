@@ -12,17 +12,15 @@
 #'
 #' @param case_data Vector of cases by time point summed over age
 #' @param year_data Vector of year values corresponding to case data
-#' @param p_rep_mild probability of a mild infection being reported
 #' @param p_rep_severe probability of a severe infection being reported
 #' @param p_rep_death probability of a death being reported
 #' '
 #' @export
 #'
-get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_mild=0.0,p_rep_severe=1.0,p_rep_death=1.0){
+get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_severe=1.0,p_rep_death=1.0){
   assert_that(is.numeric(case_data))
   assert_that(is.numeric(year_data))
   assert_that(length(case_data)==length(year_data))
-  assert_that(p_rep_mild>=0 && p_rep_mild<=1.0)
   assert_that(p_rep_severe>=0 && p_rep_severe<=1.0)
   assert_that(p_rep_death>=0 && p_rep_death<=1.0)
 
@@ -30,16 +28,14 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_mild=0.0,p_rep_s
   t_pts=length(year_data)
   n_years=length(table(year_data))
   dt=(n_years*365.0)/t_pts
-  pt_severe_infs=pt_mild_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
+  pt_severe_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
   annual_rep_cases=annual_rep_deaths=rep(0,n_years)
   for(i in 1:t_pts){
     n_year=year_data[i]-year0+1
     pt_severe_infs[i]=rbinom(1,case_data[i],p_severe_inf)
-    pt_mild_infs[i]=case_data[i]-pt_severe_infs[i]
     pt_deaths[i]=rbinom(1,pt_severe_infs[i],p_death_severe_inf)
     pt_rep_deaths[i]=rbinom(1,pt_deaths[i],p_rep_death)
-    pt_rep_cases[i]=rbinom(1,pt_mild_infs,p_rep_mild)+rbinom(1,pt_severe_infs[i]-pt_rep_deaths[i],
-                                                                    p_rep_severe)+pt_rep_deaths[i]
+    pt_rep_cases[i]=rbinom(1,pt_severe_infs[i]-pt_rep_deaths[i],p_rep_severe)+pt_rep_deaths[i]
     annual_rep_cases[n_year]=annual_rep_cases[n_year]+pt_rep_cases[i]
     annual_rep_deaths[n_year]=annual_rep_deaths[n_year]+pt_rep_deaths[i]
   }

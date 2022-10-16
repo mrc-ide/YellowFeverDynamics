@@ -14,4 +14,40 @@ knitr::opts_chunk$set(
 )
 ```
 
+This vignette demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. The total_burden_estimate() function is used for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html):
+
+```{r,eval=FALSE}
+library(YellowFeverDynamics)
+type="FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
+param_dist <- exp(read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example2.csv", sep = ""), header = TRUE)) # Data frame containing one or more sets of parameter values (here the actual values are used, rather than the logarithmic values as in the case of the data-matching functions)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = "")) # Population and vaccination data in standard format (see Guide 2)
+enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""), header = TRUE) #Environmental data
+years_data <- c(2000) #Years for which to calculate burden data
+n_reps <- 5 # Number of repetitions for which to run model and obtain average outputs
+mode_start <- 1 # Flag indicating how to set initial population immunity level in addition to vaccination
+                                    # If mode_start = 0, only vaccinated individuals
+                                    # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
+                                    # If mode_start = 2, use SEIRV input in list from previous run(s), set using start_SEIRV variable
+dt <- 5.0 # Time increment in days
+R0_fixed_values <- NULL # Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being estimated
+vaccine_efficacy0 <- 1.0 # Vaccine efficacy
+p_rep_severe0 <- 0.1 # Probability of reporting of individuals with severe symptoms
+p_rep_death0 <- 0.2 # Probability of reporting of fatal infections
+flag_reporting=TRUE #Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers
+results<-total_burden_estimate(type,param_dist,input_data,NULL,years_data,n_reps,mode_start,dt,enviro_data,
+                               R0_fixed_values,vaccine_efficacy0,p_rep_severe0,p_rep_death0,flag_reporting)
+```
+
+The output of total_burden_estimate() consists of two data frames in a list, one (by_region) giving the number of cases, deaths and (if flag_reporting is set to TRUE) observed cases and deaths for each year, region and parameter set. The second (all) gives the totals combined across all regions for each year and parameter set.
+
+```{r,eval=FALSE}
+head(results$by_region,5)
+```
+
+```{r,eval=FALSE}
+head(results$all,5)
+```
+
+The output of total_burden_estimate() may be used, for example, to model vaccine impact by examining the difference in burden between a no-vaccination scenario and a scenario featuring a specified vaccination program.
+
 [TBA]

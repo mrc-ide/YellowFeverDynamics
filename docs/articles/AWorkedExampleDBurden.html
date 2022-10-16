@@ -42,8 +42,8 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleBDataGenerate.html">Worked Example 2 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
     <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
@@ -79,6 +79,44 @@
 
     
     
+<p>This vignette demonstrates how to use the package to calculate annual
+yellow fever burden () for multiple regions. The total_burden_estimate()
+function is used for this, using similar inputs to the
+data_match_single() and data_match_multi() functions described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html" class="external-link">Worked
+Example 3 - Generating Epidemiological Data Sets</a>:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
+<span><span class="va">type</span><span class="op">=</span><span class="st">"FOI+R0 enviro"</span> <span class="co"># Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)</span></span>
+<span><span class="va">param_dist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_coeffs_example2.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="co"># Data frame containing one or more sets of parameter values (here the actual values are used, rather than the logarithmic values as in the case of the data-matching functions)</span></span>
+<span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span> <span class="co"># Population and vaccination data in standard format (see Guide 2)</span></span>
+<span><span class="va">enviro_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_data_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co">#Environmental data</span></span>
+<span><span class="va">years_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span><span class="op">)</span> <span class="co">#Years for which to calculate burden data</span></span>
+<span><span class="va">n_reps</span> <span class="op">&lt;-</span> <span class="fl">5</span> <span class="co"># Number of repetitions for which to run model and obtain average outputs</span></span>
+<span><span class="va">mode_start</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co"># Flag indicating how to set initial population immunity level in addition to vaccination</span></span>
+<span>                                    <span class="co"># If mode_start = 0, only vaccinated individuals</span></span>
+<span>                                    <span class="co"># If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity</span></span>
+<span>                                    <span class="co"># If mode_start = 2, use SEIRV input in list from previous run(s), set using start_SEIRV variable</span></span>
+<span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fl">5.0</span> <span class="co"># Time increment in days</span></span>
+<span><span class="va">R0_fixed_values</span> <span class="op">&lt;-</span> <span class="cn">NULL</span> <span class="co"># Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being estimated</span></span>
+<span><span class="va">vaccine_efficacy0</span> <span class="op">&lt;-</span> <span class="fl">1.0</span> <span class="co"># Vaccine efficacy</span></span>
+<span><span class="va">p_rep_severe0</span> <span class="op">&lt;-</span> <span class="fl">0.1</span> <span class="co"># Probability of reporting of individuals with severe symptoms</span></span>
+<span><span class="va">p_rep_death0</span> <span class="op">&lt;-</span> <span class="fl">0.2</span> <span class="co"># Probability of reporting of fatal infections</span></span>
+<span><span class="va">flag_reporting</span><span class="op">=</span><span class="cn">TRUE</span> <span class="co">#Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers</span></span>
+<span><span class="va">results</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/total_burden_estimate.html">total_burden_estimate</a></span><span class="op">(</span><span class="va">type</span>,<span class="va">param_dist</span>,<span class="va">input_data</span>,<span class="cn">NULL</span>,<span class="va">years_data</span>,<span class="va">n_reps</span>,<span class="va">mode_start</span>,<span class="va">dt</span>,<span class="va">enviro_data</span>,</span>
+<span>                               <span class="va">R0_fixed_values</span>,<span class="va">vaccine_efficacy0</span>,<span class="va">p_rep_severe0</span>,<span class="va">p_rep_death0</span>,<span class="va">flag_reporting</span><span class="op">)</span></span></code></pre></div>
+<p>The output of total_burden_estimate() consists of two data frames in
+a list, one (by_region) giving the number of cases, deaths and (if
+flag_reporting is set to TRUE) observed cases and deaths for each year,
+region and parameter set. The second (all) gives the totals combined
+across all regions for each year and parameter set.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">by_region</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">all</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<p>The output of total_burden_estimate() may be used, for example, to
+model vaccine impact by examining the difference in burden between a
+no-vaccination scenario and a scenario featuring a specified vaccination
+program.</p>
 <p>[TBA]</p>
   </main>
 </div>
