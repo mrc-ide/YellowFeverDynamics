@@ -32,7 +32,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_severe=1.0,p_rep
   annual_rep_cases=annual_rep_deaths=rep(0,n_years)
   for(i in 1:t_pts){
     n_year=year_data[i]-year0+1
-    pt_severe_infs[i]=rbinom(1,round(case_data[i]),p_severe_inf)
+    pt_severe_infs[i]=rbinom(1,floor(case_data[i]),p_severe_inf)
     pt_deaths[i]=rbinom(1,pt_severe_infs[i],p_death_severe_inf)
     pt_rep_deaths[i]=rbinom(1,pt_deaths[i],p_rep_death)
     pt_rep_cases[i]=rbinom(1,pt_severe_infs[i]-pt_rep_deaths[i],p_rep_severe)+pt_rep_deaths[i]
@@ -74,7 +74,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_severe=1.0,p_rep
   outbreak_data=list(n_outbreaks=n_outbreaks,
                      outbreak_list=data.frame(size=sizes,start_day=start_days,end_day=end_days,start_year=start_years,
                                               end_year=end_years),
-                     rep_pts=data.frame(pt=c(1:length(pt_rep_cases),rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths)),
+                     rep_pts=data.frame(pt=c(1:length(pt_rep_cases)),rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths),
                      rep_annual=data.frame(year=as.numeric(names(table(year_data))),rep_cases=annual_rep_cases,
                                            rep_deaths=annual_rep_deaths))
 
