@@ -79,44 +79,83 @@
 
     
     
-<p>This vignette describes several ways the package can be used to model
-the occurrence and risk of yellow fever outbreaks. An “outbreak” is
-defined as taking place whenever a case of yellow fever is reported, and
-lasts as long as the time interval between new cases remains less than
-10 days (the sum of the incubation and infectious periods used by the
-package).</p>
+<p>This worked example demonstrates several ways the package can be used
+to model the occurrence and risk of yellow fever outbreaks. An
+“outbreak” is defined as taking place whenever a case of yellow fever is
+reported, and lasts as long as the time interval between new cases
+remains less than 10 days (the sum of the incubation and infectious
+periods used by the package).</p>
+<p>The reporting of yellow fever cases is governed by the probability of
+an infection which causes severe but non-fatal symptoms being reported
+(p_rep_severe) and the probability of a fatal infection being reported
+(p_rep_death). It is assumed that infections not leading to severe or
+fatal symptoms are not reported. The proportion of infections which
+cause severe symptoms is given by the quantity p_severe_inf, and the
+proportion of severe infections which lead to death is given by the
+quantity p_death_severe_inf. These have values of 0.12 and 0.39
+respectively within the package, based on [REF], but can be set to other
+values for manual calculations, as shown below.</p>
 <p>As described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleAModelRun.html" class="external-link">Worked
-Example 1 - Single Model Run</a>, data on the number of “cases” (new
-infectious individuals) at each time point during a modelled period can
-be output by the Full_Model_Run() and case_data_generate()
-functions.</p>
+Example 1 - Single Model Run</a>, we obtain data on the number of new
+infectious individuals at each time point during a modelled period from
+the case_data_generate() function:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
 <span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span>  </span>
-<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-8</span>             <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
-<span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>                           <span class="co"># Basic reproduction number for urban spread of infection</span></span>
+<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">5.0e-8</span>             <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
+<span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">0.0</span>                           <span class="co"># Basic reproduction number for urban spread of infection</span></span>
 <span><span class="va">model_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_data_generate.html">case_data_generate</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, year0 <span class="op">=</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, n_reps <span class="op">=</span> <span class="fl">1</span>, year_end <span class="op">=</span> <span class="fl">2001</span>, year_data_begin <span class="op">=</span> <span class="fl">1999</span>, vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, start_SEIRV <span class="op">=</span> <span class="cn">NULL</span>, dt <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span></code></pre></div>
-<p>The results can be processed using the get_outbreak_data() function
-to produce information on all outbreaks and reported cases during the
-modelled time period.</p>
+<p>We process results using the get_outbreak_data() function to produce
+information on all outbreaks and reported cases during the modelled time
+period.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">case_data</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">model_results</span><span class="op">$</span><span class="va">C</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span><span class="op">)</span> <span class="co"># Vector of data points showing number of new cases at each time point [TBC]</span></span>
+<code class="sourceCode R"><span><span class="va">case_data</span> <span class="op">=</span> <span class="va">model_results</span><span class="op">$</span><span class="va">C</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span> <span class="co"># Vector of data points showing number of new cases at each time point [TBC]</span></span>
 <span><span class="va">year_data</span> <span class="op">=</span> <span class="va">model_results</span><span class="op">$</span><span class="va">year</span> <span class="co"># Matching vector indicating the year for each time point [TBC]</span></span>
 <span><span class="va">p_rep_severe</span> <span class="op">=</span> <span class="fl">0.1</span> <span class="co"># The probability of a case with severe but non-fatal symptoms being reported</span></span>
 <span><span class="va">p_rep_death</span> <span class="op">=</span> <span class="fl">0.2</span> <span class="co"># The probability of a fatal case being reported</span></span>
 <span><span class="va">outbreak_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_outbreak_data.html">get_outbreak_data</a></span><span class="op">(</span><span class="va">case_data</span>, <span class="va">year_data</span>, <span class="va">p_rep_severe</span>, <span class="va">p_rep_death</span><span class="op">)</span></span></code></pre></div>
 <p>get_outbreak_data() produces a list containing the number of
-outbreaks, data on each individual outbreak (number of reported cases,
-start and end days and years), time series showing the number of
-reported cases and deaths at each time point, and time series showing
-the number of reported cases and deaths in each year.</p>
+outbreaks (n_outbreaks), data on each individual outbreak (outbreak_list
+- number of reported cases, start and end days and years), a time series
+showing the number of reported cases and deaths at each time point
+(rep_pts), and a time series showing the number of reported cases and
+deaths in each year (rep_annual).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">#[TBA - Results]</span></span></code></pre></div>
-<p>[TBA]</p>
+<code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">outbreak_list</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># TBA - Use of outbreak_risk_generate() function</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">rep_annual</span></span></code></pre></div>
+<p>As noted in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleAModelRun.html" class="external-link">Worked
+Example 1</a>, we can estimate the outbreak risk (the probability of one
+or more outbreaks, i.e. one or more reported cases) in a given time
+period by running the model a large number of times and calculating the
+proportion of repetitions in which one or more cases are reported.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p_severe_inf</span> <span class="op">&lt;-</span> <span class="fl">0.12</span></span>
+<span><span class="va">p_death_severe_inf</span> <span class="op">&lt;-</span> <span class="fl">0.39</span></span>
+<span><span class="va">n_reps</span> <span class="op">&lt;-</span> <span class="fl">1000</span> <span class="co"># Number of repetitions</span></span>
+<span><span class="va">model_results_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_data_generate.html">case_data_generate</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, year0 <span class="op">=</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, <span class="va">n_reps</span>, year_end <span class="op">=</span> <span class="fl">2001</span>, year_data_begin <span class="op">=</span> <span class="fl">1999</span>, vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, start_SEIRV <span class="op">=</span> <span class="cn">NULL</span>, dt <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span>
+<span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="va">model_results_multi</span><span class="op">$</span><span class="va">year</span> <span class="op">==</span> <span class="fl">1999</span> <span class="co"># Time period for which to calculate outbreak risk, here defined as a particular year</span></span>
+<span><span class="va">outbreak_occurence_values</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n_reps</span><span class="op">)</span> <span class="co"># Vector of n_reps 0/1 values indicating whether an outbreak occurs for that repetition</span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">rep</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n_reps</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">C_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">model_results_multi</span><span class="op">$</span><span class="va">C</span><span class="op">[</span><span class="va">rep</span>, <span class="va">pts</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="co"># Total new infections in time period</span></span>
+<span>  <span class="va">C_severe_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">C_sum</span>, <span class="va">p_severe_inf</span><span class="op">)</span>   <span class="co"># Total new severe infections</span></span>
+<span>  <span class="va">C_death_sum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">C_severe_sum</span>, <span class="va">p_death_severe_inf</span><span class="op">)</span> <span class="co"># Total fatal infections</span></span>
+<span>  <span class="va">C_death_sum_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">C_death_sum</span>, <span class="va">p_rep_death</span><span class="op">)</span>     <span class="co"># Total reported fatal infections</span></span>
+<span>  <span class="va">C_sum_rep</span> <span class="op">&lt;-</span> <span class="va">C_death_sum_rep</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Binomial.html" class="external-link">rbinom</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">C_severe_sum</span><span class="op">-</span><span class="va">C_death_sum</span>, <span class="va">p_rep_severe</span><span class="op">)</span> <span class="co"># Total reported infections</span></span>
+<span>  <span class="kw">if</span><span class="op">(</span><span class="va">C_sum_rep</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span><span class="op">{</span><span class="va">outbreak_occurence_values</span><span class="op">[</span><span class="va">rep</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">outbreak_risk</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">outbreak_occurence_values</span><span class="op">)</span></span>
+<span><span class="va">outbreak_risk</span></span></code></pre></div>
+<p>We can compute the outbreak risk in a year automatically and more
+efficiently using the outbreak_risk_generate() function. This function
+runs the time before the period of interest n_sets times, then models
+the period of interest n_reps times for each set, giving n_sets sets of
+values of annual outbreak risk:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">outbreak_risk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/outbreak_risk_generate.html">outbreak_risk_generate</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, year0 <span class="op">=</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, n_sets<span class="op">=</span><span class="fl">1</span>, n_reps <span class="op">=</span> <span class="fl">1000</span>, year_end <span class="op">=</span> <span class="fl">2005</span>, year_data_begin <span class="op">=</span> <span class="fl">1999</span>, vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, start_SEIRV <span class="op">=</span> <span class="cn">NULL</span>, dt <span class="op">=</span> <span class="fl">1.0</span>, <span class="va">p_rep_severe</span>, <span class="va">p_rep_death</span><span class="op">)</span></span>
+<span><span class="va">outbreak_risk</span></span></code></pre></div>
   </main>
 </div>
 

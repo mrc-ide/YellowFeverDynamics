@@ -79,9 +79,9 @@
 
     
     
-<p>This vignette demonstrates how to use the package to calculate annual
-yellow fever burden () for multiple regions. The total_burden_estimate()
-function is used for this, using similar inputs to the
+<p>This worked example demonstrates how to use the package to calculate
+annual yellow fever burden () for multiple regions. We use the
+total_burden_estimate() function for this, using similar inputs to the
 data_match_single() and data_match_multi() functions described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html" class="external-link">Worked
 Example 3 - Generating Epidemiological Data Sets</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -101,7 +101,7 @@ Example 3 - Generating Epidemiological Data Sets</a>:</p>
 <span><span class="va">vaccine_efficacy0</span> <span class="op">&lt;-</span> <span class="fl">1.0</span> <span class="co"># Vaccine efficacy</span></span>
 <span><span class="va">p_rep_severe0</span> <span class="op">&lt;-</span> <span class="fl">0.1</span> <span class="co"># Probability of reporting of individuals with severe symptoms</span></span>
 <span><span class="va">p_rep_death0</span> <span class="op">&lt;-</span> <span class="fl">0.2</span> <span class="co"># Probability of reporting of fatal infections</span></span>
-<span><span class="va">flag_reporting</span><span class="op">=</span><span class="cn">TRUE</span> <span class="co">#Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers</span></span>
+<span><span class="va">flag_reporting</span><span class="op">=</span><span class="cn">FALSE</span> <span class="co">#Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers</span></span>
 <span><span class="va">results</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/total_burden_estimate.html">total_burden_estimate</a></span><span class="op">(</span><span class="va">type</span>,<span class="va">param_dist</span>,<span class="va">input_data</span>,<span class="cn">NULL</span>,<span class="va">years_data</span>,<span class="va">n_reps</span>,<span class="va">mode_start</span>,<span class="va">dt</span>,<span class="va">enviro_data</span>,</span>
 <span>                               <span class="va">R0_fixed_values</span>,<span class="va">vaccine_efficacy0</span>,<span class="va">p_rep_severe0</span>,<span class="va">p_rep_death0</span>,<span class="va">flag_reporting</span><span class="op">)</span></span></code></pre></div>
 <p>The output of total_burden_estimate() consists of two data frames in
@@ -113,11 +113,16 @@ across all regions for each year and parameter set.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">by_region</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">all</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<p>The output of total_burden_estimate() may be used, for example, to
+<p>We can use the output of total_burden_estimate() to, for example,
 model vaccine impact by examining the difference in burden between a
 no-vaccination scenario and a scenario featuring a specified vaccination
 program.</p>
-<p>[TBA]</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">input_data_novacc</span> <span class="op">&lt;-</span> <span class="va">input_data</span></span>
+<span><span class="va">input_data_novacc</span><span class="op">$</span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">input_data_novacc</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">*</span><span class="fl">0</span> <span class="co">#Amend input data to remove all vaccination</span></span>
+<span><span class="va">results_novacc</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/total_burden_estimate.html">total_burden_estimate</a></span><span class="op">(</span><span class="va">type</span>,<span class="va">param_dist</span>,<span class="va">input_data_novacc</span>,<span class="cn">NULL</span>,<span class="va">years_data</span>,<span class="va">n_reps</span>,<span class="va">mode_start</span>,<span class="va">dt</span>,<span class="va">enviro_data</span>,</span>
+<span>                                      <span class="va">R0_fixed_values</span>,<span class="va">vaccine_efficacy0</span>,<span class="va">p_rep_severe0</span>,<span class="va">p_rep_death0</span>,<span class="va">flag_reporting</span><span class="op">)</span></span>
+<span><span class="va">deaths_prevented</span><span class="op">=</span><span class="va">results_novacc</span><span class="op">$</span><span class="va">all</span><span class="op">$</span><span class="va">deaths</span><span class="op">-</span><span class="va">results</span><span class="op">$</span><span class="va">all</span><span class="op">$</span><span class="va">deaths</span></span></code></pre></div>
   </main>
 </div>
 

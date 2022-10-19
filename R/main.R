@@ -668,7 +668,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
         for(n_year in 1:n_years){
           cases=case_ar2[n_year,n_region,n_param_set]
           deaths=death_ar2[n_year,n_region,n_param_set]
-          obs_deaths=rbinom(1,deaths,p_rep_death)
+          obs_deaths=rbinom(1,floor(deaths),p_rep_death)
           obs_cases=obs_deaths+rbinom(1,floor(cases-deaths),p_rep_severe)
           obs_case_ar2[n_year,n_region,n_param_set]=obs_cases
           obs_death_ar2[n_year,n_region,n_param_set]=obs_deaths

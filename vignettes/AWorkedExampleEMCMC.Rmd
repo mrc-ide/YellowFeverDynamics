@@ -14,9 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette describes how to use the package to estimate parameters of the yellow fever model from observed epidemiological data within a Bayesian framework using Markov chain Monte Carlo sampling.
+This worked example demonstrates how to use the package to estimate parameters of the yellow fever model from observed epidemiological data within a Bayesian framework using Markov chain Monte Carlo sampling.
 
-Input data, environmental data and the observed data to be used for comparison are loaded in the formats used in the previous worked examples (see [Guide 2 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html) for details of the input format, [Guide 3 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html) for details of how environmental data is formatted and used to generate parameter values, and [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html) for details of observed data formats):
+We load input data, environmental data and the observed data to be used for comparison in the formats used in previous worked examples (see [Guide 2 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html) for details of the input format, [Guide 3 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html) for details of how environmental data is formatted and used to generate parameter values, and [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html) for details of observed data formats):
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
@@ -28,7 +28,7 @@ obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/ex
 obs_outbreak_data <- NULL
 ```
 
-Additional input parameters are loaded as follows:
+We set additional input parameters as follows:
 
 ```{r,eval=FALSE}
 Niter <- 1 #Number of iterations to run
@@ -46,7 +46,7 @@ R0_fixed_values = vaccine_efficacy = p_rep_severe = p_rep_death = NULL #Fixed R0
 filename_prefix <- "Chain" # Prefix to be used for .csv output files; a new file is created every 10,000 iterations with incremental number suffixes (Chain1.csv, Chain2.csv, etc.)
 ```
 
-The MCMC() function is then run. Output data recorded at each iteration is saved to an output file every 10 iterations.
+We then run the MCMC() function. Output data recorded at each iteration is saved to an output file every 10 iterations.
 
 ```{r,eval=FALSE}
 MCMC(pars_ini, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, Niter, type, pars_min, pars_max, n_reps, mode_start, prior_type, dt, enviro_data, R0_fixed_values, vaccine_efficacy, p_rep_severe, p_rep_death, filename_prefix)

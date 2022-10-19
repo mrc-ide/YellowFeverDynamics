@@ -79,12 +79,12 @@
 
     
     
-<p>This vignette describes how to use the package to estimate parameters
-of the yellow fever model from observed epidemiological data within a
-Bayesian framework using Markov chain Monte Carlo sampling.</p>
-<p>Input data, environmental data and the observed data to be used for
-comparison are loaded in the formats used in the previous worked
-examples (see <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html" class="external-link">Guide
+<p>This worked example demonstrates how to use the package to estimate
+parameters of the yellow fever model from observed epidemiological data
+within a Bayesian framework using Markov chain Monte Carlo sampling.</p>
+<p>We load input data, environmental data and the observed data to be
+used for comparison in the formats used in previous worked examples (see
+<a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html" class="external-link">Guide
 2 - Inputs</a> for details of the input format, <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html" class="external-link">Guide
 3 - Calculating Parameters From Environmental Data</a> for details of
 how environmental data is formatted and used to generate parameter
@@ -99,7 +99,7 @@ observed data formats):</p>
 <span><span class="va">obs_sero_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/sero_data_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">obs_case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/case_data_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">obs_outbreak_data</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></code></pre></div>
-<p>Additional input parameters are loaded as follows:</p>
+<p>We set additional input parameters as follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Niter</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="co">#Number of iterations to run</span></span>
 <span><span class="va">type</span> <span class="op">&lt;-</span> <span class="st">"FOI+R0 enviro"</span> <span class="co"># Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)</span></span>
@@ -114,7 +114,7 @@ observed data formats):</p>
 <span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fl">5.0</span> <span class="co"># Time increment in days</span></span>
 <span><span class="va">R0_fixed_values</span> <span class="op">=</span> <span class="va">vaccine_efficacy</span> <span class="op">=</span> <span class="va">p_rep_severe</span> <span class="op">=</span> <span class="va">p_rep_death</span> <span class="op">=</span> <span class="cn">NULL</span> <span class="co">#Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being estimated</span></span>
 <span><span class="va">filename_prefix</span> <span class="op">&lt;-</span> <span class="st">"Chain"</span> <span class="co"># Prefix to be used for .csv output files; a new file is created every 10,000 iterations with incremental number suffixes (Chain1.csv, Chain2.csv, etc.)</span></span></code></pre></div>
-<p>The MCMC() function is then run. Output data recorded at each
+<p>We then run the MCMC() function. Output data recorded at each
 iteration is saved to an output file every 10 iterations.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/MCMC.html">MCMC</a></span><span class="op">(</span><span class="va">pars_ini</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">Niter</span>, <span class="va">type</span>, <span class="va">pars_min</span>, <span class="va">pars_max</span>, <span class="va">n_reps</span>, <span class="va">mode_start</span>, <span class="va">prior_type</span>, <span class="va">dt</span>, <span class="va">enviro_data</span>, <span class="va">R0_fixed_values</span>, <span class="va">vaccine_efficacy</span>, <span class="va">p_rep_severe</span>, <span class="va">p_rep_death</span>, <span class="va">filename_prefix</span><span class="op">)</span></span></code></pre></div>

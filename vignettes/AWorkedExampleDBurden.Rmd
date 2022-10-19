@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. The total_burden_estimate() function is used for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html):
+This worked example demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. We use the total_burden_estimate() function for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html):
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
@@ -33,7 +33,7 @@ R0_fixed_values <- NULL # Fixed R0 values, vaccine efficacy and severe and fatal
 vaccine_efficacy0 <- 1.0 # Vaccine efficacy
 p_rep_severe0 <- 0.1 # Probability of reporting of individuals with severe symptoms
 p_rep_death0 <- 0.2 # Probability of reporting of fatal infections
-flag_reporting=TRUE #Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers
+flag_reporting=FALSE #Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers
 results<-total_burden_estimate(type,param_dist,input_data,NULL,years_data,n_reps,mode_start,dt,enviro_data,
                                R0_fixed_values,vaccine_efficacy0,p_rep_severe0,p_rep_death0,flag_reporting)
 ```
@@ -48,6 +48,12 @@ head(results$by_region,5)
 head(results$all,5)
 ```
 
-The output of total_burden_estimate() may be used, for example, to model vaccine impact by examining the difference in burden between a no-vaccination scenario and a scenario featuring a specified vaccination program.
+We can use the output of total_burden_estimate() to, for example, model vaccine impact by examining the difference in burden between a no-vaccination scenario and a scenario featuring a specified vaccination program.
 
-[TBA]
+```{r,eval=FALSE}
+input_data_novacc <- input_data
+input_data_novacc$vacc_data <- input_data_novacc$vacc_data*0 #Amend input data to remove all vaccination
+results_novacc<-total_burden_estimate(type,param_dist,input_data_novacc,NULL,years_data,n_reps,mode_start,dt,enviro_data,
+                                      R0_fixed_values,vaccine_efficacy0,p_rep_severe0,p_rep_death0,flag_reporting)
+deaths_prevented=results_novacc$all$deaths-results$all$deaths
+```

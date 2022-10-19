@@ -118,6 +118,9 @@
     <loc>/reference/case_data_generate.html</loc>
   </url>
   <url>
+    <loc>/reference/case_data_generate_deterministic.html</loc>
+  </url>
+  <url>
     <loc>/reference/case_match_graphs.html</loc>
   </url>
   <url>
@@ -146,6 +149,9 @@
   </url>
   <url>
     <loc>/reference/Full_Model_Run.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Full_Model_Run_Deterministic.html</loc>
   </url>
   <url>
     <loc>/reference/Generate_Dataset.html</loc>
