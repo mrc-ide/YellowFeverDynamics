@@ -62,10 +62,16 @@ To generate a distribution of spillover FOI and R0 values for each region, a dis
 ```{r,eval=FALSE}
 enviro_coeffs2 <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example2.csv", sep = ""), header = TRUE)
 head(enviro_coeffs2, 5)
-epi_data <- data.frame(region = enviro_data$region, FOI = rep(NA, n_regions), R0 = rep(NA, n_regions))
-for(n_region in 1:n_regions){
- FOI_R0_values <- param_calc_enviro(param = as.numeric(enviro_coeffs2[1, ]), enviro_data = enviro_data[n_region, ])
- epi_data$FOI[n_region] <- FOI_R0_values$FOI
- epi_data$R0[n_region] <- FOI_R0_values$R0
+```
+
+```{r,eval=FALSE}
+n_values=nrow(enviro_coeffs2)
+epi_data <- list(FOI = array(NA, dim = c(n_values,n_regions)), R0 = array(NA, dim = c(n_values,n_regions)))
+for(n_value in 1:n_values){
+  for(n_region in 1:n_regions){
+    FOI_R0_values <- param_calc_enviro(param = as.numeric(enviro_coeffs2[1, ]), enviro_data = enviro_data[n_region, ])
+    epi_data$FOI[n_value,n_region] <- FOI_R0_values$FOI
+    epi_data$R0[n_value,n_region] <- FOI_R0_values$R0
+  }
 }
 ```

@@ -561,8 +561,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
-#' @param param_dist Data frame of parameter values output by MCMC fitting to use to generate FOI/R0/reporting
-#' probability values
+#' @param param_dist Data frame of log values of input parameters, one set per row
 #' @param input_data List of population and vaccination data for multiple regions
 #' @param start_SEIRV0 SEIRV data to use as input
 #' @param years_data Vector of years for which to output data
@@ -607,7 +606,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
   for(n_param_set in 1:n_param_sets){
     cat(" ",n_param_set,sep="")
     if(n_param_set %% 10 == 0){cat("\n")}
-    params=log(param_dist[n_param_set,])
+    params=param_dist[n_param_set,]
     names(params)=colnames(param_dist)
     if(is.null(vaccine_efficacy0)){vaccine_efficacy=exp(params$vaccine_efficacy)
     }else{vaccine_efficacy=vaccine_efficacy0}
