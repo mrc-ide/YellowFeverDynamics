@@ -25,8 +25,7 @@ total_burden_estimate(
 \item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{param_dist}{Data frame of parameter values output by MCMC fitting to use to generate FOI/R0/reporting
-probability values}
+\item{param_dist}{Data frame of log values of input parameters, one set per row}
 
 \item{input_data}{List of population and vaccination data for multiple regions}
 
