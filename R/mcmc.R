@@ -535,24 +535,45 @@ mcmc_checks <- function(pars_ini=c(),n_regions=1,type=NULL,pars_min=c(),pars_max
   }
 
   #Check that total number of parameters is correct based on "type" and on number of additional parameters (vaccine
-  #efficacy, reporting probabilities)
+  #efficacy, reporting probabilities); check parameters named in correct order
   if(type=="FOI+R0"){
     assert_that(n_params==(2*n_regions)+flag_vacc_eff+flag_severe+flag_death+flag_br)
+    if(flag_vacc_eff==1){assert_that(param_names[1+(2*n_regions)]=="vaccine_efficacy")}
+    if(flag_severe==1){assert_that(param_names[1+flag_vacc_eff+(2*n_regions)]=="p_rep_severe")}
+    if(flag_death==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+(2*n_regions)]=="p_rep_death")}
+    if(flag_br==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+flag_death+(2*n_regions)]=="m_FOI_Brazil")}
   }
   if(type=="FOI"){
     assert_that(is.null(R0_fixed_values)==FALSE)
     assert_that(length(R0_fixed_values)==n_regions)
     assert_that(n_params==n_regions+flag_vacc_eff+flag_severe+flag_death+flag_br)
+    if(flag_vacc_eff==1){assert_that(param_names[1+n_regions]=="vaccine_efficacy")}
+    if(flag_severe==1){assert_that(param_names[1+flag_vacc_eff+n_regions]=="p_rep_severe")}
+    if(flag_death==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+n_regions]=="p_rep_death")}
+    if(flag_br==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+flag_death+n_regions]=="m_FOI_Brazil")}
   }
   if(type=="FOI+R0 enviro"){
     assert_that(is.null(enviro_data)==FALSE)
     assert_that(n_params==(2*n_env_vars)+flag_vacc_eff+flag_severe+flag_death+flag_br)
+    for(i in 1:n_env_vars){
+      assert_that(param_names[i]==paste("FOI_",env_vars[i],sep=""))
+      assert_that(param_names[i+n_env_vars]==paste("R0_",env_vars[i],sep=""))
+    }
+    if(flag_vacc_eff==1){assert_that(param_names[1+(2*n_env_vars)]=="vaccine_efficacy")}
+    if(flag_severe==1){assert_that(param_names[1+flag_vacc_eff+(2*n_env_vars)]=="p_rep_severe")}
+    if(flag_death==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+(2*n_env_vars)]=="p_rep_death")}
+    if(flag_br==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+flag_death+(2*n_env_vars)]=="m_FOI_Brazil")}
   }
   if(type=="FOI enviro"){
     assert_that(is.null(enviro_data)==FALSE)
     assert_that(is.null(R0_fixed_values)==FALSE)
     assert_that(length(R0_fixed_values)==n_regions)
     assert_that(n_params==n_env_vars+flag_vacc_eff+flag_severe+flag_death+flag_br)
+    for(i in 1:n_env_vars){assert_that(param_names[i]==paste("FOI_",env_vars[i],sep=""))}
+    if(flag_vacc_eff==1){assert_that(param_names[1+n_env_vars]=="vaccine_efficacy")}
+    if(flag_severe==1){assert_that(param_names[1+flag_vacc_eff+n_env_vars]=="p_rep_severe")}
+    if(flag_death==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+n_env_vars]=="p_rep_death")}
+    if(flag_br==1){assert_that(param_names[1+flag_vacc_eff+flag_severe+flag_death+n_env_vars]=="m_FOI_Brazil")}
   }
 
   return(NULL)
@@ -587,12 +608,16 @@ mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",param_prop=c(),en
 
   n_params=length(param_prop)
   n_regions=length(regions)
-  if(type %in% c("FOI+R0 enviro","FOI enviro")){n_env_vars=ncol(enviro_data)-1}
   FOI_values=R0_values=rep(0,n_regions)
 
   if(type %in% c("FOI+R0 enviro","FOI enviro")){
+    n_env_vars=ncol(enviro_data)-1
+    if(type=="FOI+R0 enviro"){
+      enviro_coeffs=exp(param_prop[c(1:(2*n_env_vars))])
+    } else {
+      enviro_coeffs=exp(param_prop[c(1:n_env_vars)])}
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(param=param_prop,enviro_data=enviro_data[enviro_data$region==regions[i],])
+      model_params=param_calc_enviro(enviro_coeffs,enviro_data[enviro_data$region==regions[i],])
       FOI_values[i]=model_params$FOI
       if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
     }

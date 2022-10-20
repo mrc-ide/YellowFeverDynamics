@@ -18,6 +18,7 @@ total_burden_estimate(
   vaccine_efficacy0 = NULL,
   p_rep_severe0 = NULL,
   p_rep_death0 = NULL,
+  m_FOI_Brazil0 = NULL,
   flag_reporting = TRUE
 )
 }
@@ -25,7 +26,7 @@ total_burden_estimate(
 \item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{param_dist}{Data frame of log values of input parameters, one set per row}
+\item{param_dist}{Data frame of values of input parameters, one set per row}
 
 \item{input_data}{List of population and vaccination data for multiple regions}
 
@@ -51,6 +52,8 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 \item{p_rep_severe0}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
 \item{p_rep_death0}{Probability of observation of death (set to NULL if being varied as a parameter)}
+
+\item{m_FOI_Brazil0}{Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)}
 
 \item{flag_reporting}{Flag indicating whether to output number of reported severe and fatal cases}
 }

@@ -6,13 +6,13 @@
 #'   single set of parameters with one or more repetitions
 #'
 #' @details This function takes in observed data and produces a corresponding simulated dataset for comparison using
-#'   supplied model parameters (in the param_prop input variable), population and vaccination settings (in the
+#'   supplied model parameters (in the params input variable), population and vaccination settings (in the
 #'   input_data input variable) and other settings including parameter type, time increment and environmental covariate
 #'   values (in the const_list input variable). The simulated dataset will be able to be compared directly to the
 #'   observed dataset - individual data values will be produced for the same years and regions (or combinations of
 #'   regions), seroprevalence data will be produced for the same age groups, etc.
 #'
-#' @param param_prop Log values of proposed parameters
+#' @param params Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients,
 #' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
 #' with observed data, added using input_data_process
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
@@ -22,14 +22,14 @@
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
 #' @param const_list = List of constant parameters/flags/etc. (type,n_reps,mode_start,dt,enviro_data,R0_fixed_values,
-#'   vaccine_efficacy,p_rep_severe,p_rep_death)
+#'   vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)
 #'
 #' @export
 #'
-data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
+data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
 
-  assert_that(is.numeric(param_prop))
+  assert_that(is.numeric(params))
   assert_that(input_data_check(input_data))
   assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE,is.null(obs_outbreak_data)==FALSE),
               msg="Need at least one of obs_sero_data, obs_case_data or obs_outbreak_data")
@@ -41,37 +41,39 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   input_data=input_data_process(input_data,obs_sero_data,obs_case_data,obs_outbreak_data)
   regions=names(table(input_data$region_labels)) #Regions in new processed input data list
   n_regions=length(regions)
-  if(is.null(const_list$enviro_data)==FALSE){
+  if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
+    assert_that(is.null(const_list$enviro_data)==FALSE)
     for(region in regions){assert_that(region %in% const_list$enviro_data$region)}
     enviro_data=subset(const_list$enviro_data,const_list$enviro_data$region %in% regions)
+    n_env_vars=ncol(enviro_data)-1
   }
 
   frac=1.0/const_list$n_reps
-  n_params=length(param_prop)
+  n_params=length(params)
   extra_params=c()
   if(is.null(const_list$vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
   if(is.null(const_list$p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
   if(is.null(const_list$p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
-  names(param_prop)=create_param_labels(const_list$type,input_data,const_list$enviro_data,extra_params)
-  mcmc_checks(param_prop,n_regions,const_list$type,param_prop,param_prop,"zero",
+  names(params)=create_param_labels(const_list$type,input_data,const_list$enviro_data,extra_params)
+  mcmc_checks(params,n_regions,const_list$type,params,params,"zero",
               const_list$enviro_data,const_list$R0_fixed_values,
               const_list$vaccine_efficacy,const_list$p_rep_severe,const_list$p_rep_death)
 
   #Get vaccine efficacy
   if(is.numeric(const_list$vaccine_efficacy)==FALSE){
-    vaccine_efficacy=exp(param_prop[names(param_prop)=="vaccine_efficacy"])
+    vaccine_efficacy=params[names(params)=="vaccine_efficacy"]
   } else {
     vaccine_efficacy=const_list$vaccine_efficacy
   }
 
   #Get reporting probabilities
   if(is.numeric(const_list$p_rep_severe)==FALSE){
-    p_rep_severe=as.numeric(exp(param_prop[names(param_prop)=="p_rep_severe"]))
+    p_rep_severe=as.numeric(params[names(params)=="p_rep_severe"])
   } else {
     p_rep_severe=const_list$p_rep_severe
   }
   if(is.numeric(const_list$p_rep_death)==FALSE){
-    p_rep_death=as.numeric(exp(param_prop[names(param_prop)=="p_rep_death"]))
+    p_rep_death=as.numeric(params[names(params)=="p_rep_death"])
   } else {
     p_rep_death=const_list$p_rep_death
   }
@@ -79,17 +81,19 @@ data_match_single <- function(param_prop=c(),input_data=list(),obs_sero_data=NUL
   #Get FOI and R0 values
   FOI_values=R0_values=rep(0,n_regions)
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
+    if(const_list$type=="FOI+R0 enviro"){enviro_coeffs=params[c(1:(2*n_env_vars))]
+    } else {
+      enviro_coeffs=params[c(1:n_env_vars)]}
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(param=param_prop,
-                                     enviro_data=enviro_data[enviro_data$region==regions[i],])
-      FOI_values[i]=as.numeric(model_params[[1]])
-      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=as.numeric(model_params[[2]])} else {
+      model_params=param_calc_enviro(enviro_coeffs,enviro_data[enviro_data$region==regions[i],])
+      FOI_values[i]=model_params$FOI
+      if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {
         R0_values[i]=const_list$R0_fixed_values[i]}
     }
   }
   if(const_list$type %in% c("FOI+R0","FOI")){
-    FOI_values=exp(param_prop[c(1:n_regions)])
-    if(const_list$type=="FOI+R0"){R0_values=exp(param_prop[c((n_regions+1):(2*n_regions))])
+    FOI_values=params[c(1:n_regions)]
+    if(const_list$type=="FOI+R0"){R0_values=params[c((n_regions+1):(2*n_regions))]
     } else {R0_values=const_list$R0_fixed_values}
   }
 
@@ -139,8 +143,8 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
   cat("\nSet:\n")
   for(i in 1:n_param_sets){
     cat("\t",i)
-    param_prop=as.numeric(param_sets[i,])
-    model_data_all[[i]] <- data_match_single(param_prop,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,
+    params=as.numeric(param_sets[i,])
+    model_data_all[[i]] <- data_match_single(params,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,
                                              const_list)
   }
 

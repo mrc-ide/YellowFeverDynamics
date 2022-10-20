@@ -416,22 +416,29 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #' @details Takes in set of coefficients of environmental covariates and calculates values of spillover
 #' force of infection and reproduction number.
 #'
-#' @param param Values of environmental coefficients (natural logarithm of actual values)
+#' @param enviro_coeffs Values of environmental coefficients
 #' @param enviro_data Environmental data frame line, containing only relevant environmental covariates
 #' '
 #' @export
 #'
-param_calc_enviro <- function(param=c(),enviro_data=c()){
+param_calc_enviro <- function(enviro_coeffs=c(),enviro_data=c()){
 
-  n_vars=dim(enviro_data)[2]-1
-  variable_names=names(enviro_data)[c(2:(n_vars+1))]
+  assert_that(all(enviro_coeffs>=0))
+  n_env_vars=dim(enviro_data)[2]-1
+  assert_that(length(enviro_coeffs) %in% c(n_env_vars,2*n_env_vars))
+  env_vars_names=names(enviro_data)[c(2:(n_env_vars+1))]
+  if(length(enviro_coeffs)==n_env_vars){
+    n_type=1
+    for(i in 1:n_env_vars){}
+  } else {
+    n_type=2
+  }
+
   output=list(FOI=0.0,R0=0.0)
-
-  for(i in 1:n_vars){
-    variable=variable_names[i]
-    variable_value=as.numeric(enviro_data[[variable]])
-    output$FOI=output$FOI+(variable_value*exp(param[i]))
-    if(i+n_vars<=length(param)){output$R0=output$R0+(variable_value*exp(param[i+n_vars]))}
+  for(i in 1:n_env_vars){
+    variable=env_vars_names[i]
+    output$FOI=sum(enviro_coeffs[c(1:n_env_vars)]*enviro_data[c(1:n_env_vars+1)])
+    if(n_type==2){output$R0=sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_data[c(1:n_env_vars+1)])}
   }
 
   return(output)
@@ -561,7 +568,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #'
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
-#' @param param_dist Data frame of log values of input parameters, one set per row
+#' @param param_dist Data frame of values of input parameters, one set per row
 #' @param input_data List of population and vaccination data for multiple regions
 #' @param start_SEIRV0 SEIRV data to use as input
 #' @param years_data Vector of years for which to output data
@@ -576,6 +583,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #' @param vaccine_efficacy0 Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_rep_severe0 Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death0 Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param m_FOI_Brazil0 Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
 #' @param flag_reporting Flag indicating whether to output number of reported severe and fatal cases
 #'
 #' @export
@@ -583,13 +591,14 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_data=list(),start_SEIRV0=NULL,
                                   years_data=c(),n_reps=1,mode_start=1,dt=5.0,
                                   enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy0=NULL,
-                                  p_rep_severe0=NULL,p_rep_death0=NULL,flag_reporting=TRUE){
+                                  p_rep_severe0=NULL,p_rep_death0=NULL,m_FOI_Brazil0=NULL,flag_reporting=TRUE){
 
   assert_that(input_data_check(input_data))
   assert_that(all(input_data$region_labels==enviro_data$region)==TRUE)
   assert_that(min(years_data)>=input_data$years_labels[1])
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
   assert_that(is.logical(flag_reporting))
+  assert_that(all(param_dist>0.0))
 
   n_param_sets=nrow(param_dist)
   n_years=length(years_data)
@@ -601,6 +610,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
   case_ar2=death_ar2=array(NA,dim=c(n_years,n_regions,n_param_sets))
   case_ar3=death_ar3=array(NA,dim=c(n_years,n_param_sets))
   FOI_values=R0_values=rep(NA,n_regions)
+  if(type %in% c("FOI+R0 enviro","FOI enviro")){n_env_vars=ncol(enviro_data)-1}
 
   cat("\nSets:\n")
   for(n_param_set in 1:n_param_sets){
@@ -608,23 +618,23 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
     if(n_param_set %% 10 == 0){cat("\n")}
     params=param_dist[n_param_set,]
     names(params)=colnames(param_dist)
-    if(is.null(vaccine_efficacy0)){vaccine_efficacy=exp(params$vaccine_efficacy)
-    }else{vaccine_efficacy=vaccine_efficacy0}
-    if(is.null(p_rep_severe0)){p_rep_severe=exp(params$p_rep_severe)}else{p_rep_severe=p_rep_severe0}
-    if(is.null(p_rep_death0)){p_rep_death=exp(params$p_rep_death)}else{p_rep_death=p_rep_death0}
+    if(is.null(vaccine_efficacy0)){vaccine_efficacy=params$vaccine_efficacy} else {vaccine_efficacy=vaccine_efficacy0}
+    if(is.null(p_rep_severe0)){p_rep_severe=params$p_rep_severe} else {p_rep_severe=p_rep_severe0}
+    if(is.null(p_rep_death0)){p_rep_death=params$p_rep_death} else {p_rep_death=p_rep_death0}
+    if(is.null(m_FOI_Brazil)){m_FOI_Brazil=params$m_FOI_Brazil} else {m_FOI_Brazil=m_FOI_Brazil0}
 
     if(type %in% c("FOI+R0 enviro","FOI enviro")){
+      if(type=="FOI+R0 enviro"){enviro_coeffs=params[c(1:(2*n_env_vars))]} else {enviro_coeffs=params[c(1:n_env_vars)]}
       for(n_region in 1:n_regions){
-        model_params=param_calc_enviro(as.numeric(params),
-                                       enviro_data=enviro_data[enviro_data$region==regions[n_region],])
+        model_params=param_calc_enviro(enviro_coeffs,enviro_data[enviro_data$region==regions[n_region],])
         FOI_values[n_region]=model_params$FOI
         if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
           R0_values[n_region]=R0_fixed_values[n_region]}
       }
     }
     if(type %in% c("FOI+R0","FOI")){
-      FOI_values=exp(as.numeric(params)[c(1:n_regions)])
-      if(type=="FOI+R0"){R0_values=exp(as.numeric(params)[c((n_regions+1):(2*n_regions))])
+      FOI_values=as.numeric(params)[c(1:n_regions)]
+      if(type=="FOI+R0"){R0_values=as.numeric(params[c((n_regions+1):(2*n_regions))])
       } else {R0_values=R0_fixed_values}
     }
 
@@ -634,8 +644,8 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
         start_SEIRV=list(S=start_SEIRV0$S[,n_region,n_param_set],
                          E=start_SEIRV0$E[,n_region,n_param_set],I=start_SEIRV0$I[,n_region,n_param_set],
                          R=start_SEIRV0$R[,n_region,n_param_set],V=start_SEIRV0$V[,n_region,n_param_set])
-        }else{start_SEIRV=NULL}
-      case_data <- case_data_generate(FOI_values[n_region],R0_values[n_region],
+      } else {start_SEIRV=NULL}
+      case_data <- case_data_generate(FOI_values[n_region]*m_FOI_Brazil,R0_values[n_region],
                                   vacc_data=input_data$vacc_data[n_region,,],pop_data=input_data$pop_data[n_region,,],
                                   year0=input_data$years_labels[1],mode_start,n_reps,year_end,year_data_begin,
                                   vaccine_efficacy,start_SEIRV,dt)

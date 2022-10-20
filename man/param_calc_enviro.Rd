@@ -4,10 +4,10 @@
 \alias{param_calc_enviro}
 \title{param_calc_enviro}
 \usage{
-param_calc_enviro(param = c(), enviro_data = c())
+param_calc_enviro(enviro_coeffs = c(), enviro_data = c())
 }
 \arguments{
-\item{param}{Values of environmental coefficients (natural logarithm of actual values)}
+\item{enviro_coeffs}{Values of environmental coefficients}
 
 \item{enviro_data}{Environmental data frame line, containing only relevant environmental covariates
 '}

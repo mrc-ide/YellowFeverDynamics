@@ -5,7 +5,7 @@
 \title{data_match_single}
 \usage{
 data_match_single(
-  param_prop = c(),
+  params = c(),
   input_data = list(),
   obs_sero_data = NULL,
   obs_case_data = NULL,
@@ -14,7 +14,7 @@ data_match_single(
 )
 }
 \arguments{
-\item{param_prop}{Log values of proposed parameters}
+\item{params}{Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients,}
 
 \item{input_data}{List of population and vaccination data for multiple regions, with tables to cross-reference
 with observed data, added using input_data_process}
@@ -29,7 +29,7 @@ deaths}
 1 = 1 or more outbreak(s)}
 
 \item{const_list}{= List of constant parameters/flags/etc. (type,n_reps,mode_start,dt,enviro_data,R0_fixed_values,
-vaccine_efficacy,p_rep_severe,p_rep_death)}
+vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)}
 }
 \description{
 Function which runs the model to create simulated data corresponding to supplied observed data for a
@@ -37,7 +37,7 @@ Function which runs the model to create simulated data corresponding to supplied
 }
 \details{
 This function takes in observed data and produces a corresponding simulated dataset for comparison using
-  supplied model parameters (in the param_prop input variable), population and vaccination settings (in the
+  supplied model parameters (in the params input variable), population and vaccination settings (in the
   input_data input variable) and other settings including parameter type, time increment and environmental covariate
   values (in the const_list input variable). The simulated dataset will be able to be compared directly to the
   observed dataset - individual data values will be produced for the same years and regions (or combinations of
