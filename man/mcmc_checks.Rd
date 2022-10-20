@@ -5,11 +5,11 @@
 \title{mcmc_checks}
 \usage{
 mcmc_checks(
-  pars_ini = c(),
+  log_params_ini = c(),
   n_regions = 1,
   type = NULL,
-  pars_min = c(),
-  pars_max = c(),
+  log_params_min = c(),
+  log_params_max = c(),
   prior_type = NULL,
   enviro_data = NULL,
   R0_fixed_values = NULL,
@@ -20,16 +20,16 @@ mcmc_checks(
 )
 }
 \arguments{
-\item{pars_ini}{= Initial parameter values}
+\item{log_params_ini}{Initial values of varied parameters (natural logarithm of actual parameters)}
 
-\item{n_regions}{= Number of regions}
+\item{n_regions}{Number of regions}
 
 \item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{pars_min}{Lower limits of parameter values if specified}
+\item{log_params_min}{Lower limits of varied parameter values if specified}
 
-\item{pars_max}{Upper limits of parameter values if specified}
+\item{log_params_max}{Upper limits of varied parameter values if specified}
 
 \item{prior_type}{Text indicating which type of calculation to use for prior probability
 If prior_type = "zero", prior probability is always zero
@@ -39,7 +39,7 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{enviro_data}{Values of environmental covariates (if in use)}
 
-\item{R0_fixed_values}{Values of R0 to use if not being fitted (set to NULL if R0 is being fitted)}
+\item{R0_fixed_values}{Values of R0 to use if not being varied (set to NULL if R0 is being varied)}
 
 \item{vaccine_efficacy}{Vaccine efficacy (set to NULL if being varied as a parameter)}
 
@@ -54,6 +54,6 @@ Perform checks on MCMC inputs
 }
 \details{
 This function, which is called by MCMC(), performs a number of checks on data to be used in fitting to
-ensure proper functionality. It verifies that the number of parameters being fitted is consistent with other
+ensure proper functionality. It verifies that the number of parameters being varied is consistent with other
 settings and that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1).
 }

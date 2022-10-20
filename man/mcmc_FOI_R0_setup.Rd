@@ -8,11 +8,11 @@ mcmc_FOI_R0_setup(
   type = "",
   prior_type = "",
   regions = "",
-  param_prop = c(),
+  log_params_prop = c(),
   enviro_data = list(),
   R0_fixed_values = c(),
-  pars_min = c(),
-  pars_max = c()
+  log_params_min = c(),
+  log_params_max = c()
 )
 }
 \arguments{
@@ -27,15 +27,15 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{regions}{Vector of region names}
 
-\item{param_prop}{Proposed parameter values}
+\item{log_params_prop}{Proposed values of varied parameters (natural logarithm of actual parameters)}
 
 \item{enviro_data}{Environmental data frame, containing only relevant environmental variables}
 
-\item{R0_fixed_values}{Values of R0 to use if not being fitted}
+\item{R0_fixed_values}{Values of R0 to use if not being varied}
 
-\item{pars_min}{Lower limits of parameter values if specified}
+\item{log_params_min}{Lower limits of varied parameter values if specified}
 
-\item{pars_max}{Upper limits of parameter values if specified
+\item{log_params_max}{Upper limits of varied parameter values if specified
 '}
 }
 \description{

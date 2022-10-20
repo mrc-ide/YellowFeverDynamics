@@ -9,8 +9,8 @@ mcmc_prelim_fit(
   n_param_sets = 1,
   n_bounds = 1,
   type = NULL,
-  pars_min = NULL,
-  pars_max = NULL,
+  log_params_min = NULL,
+  log_params_max = NULL,
   input_data = list(),
   obs_sero_data = list(),
   obs_case_data = list(),
@@ -38,9 +38,9 @@ maximum/minimum values}
 \item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{pars_min}{Initial lower limits of parameter values}
+\item{log_params_min}{Initial lower limits of varied parameter values (natural logarithm of actual limits)}
 
-\item{pars_max}{Initial upper limits of parameter values}
+\item{log_params_max}{Initial upper limits of varied parameter values (natural logarithm of actual limits)}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
 code and usually loaded from RDS file)}
@@ -70,7 +70,7 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 \item{enviro_data}{Values of environmental variables (if in use)}
 
-\item{R0_fixed_values}{Values of R0 to use if not being fitted}
+\item{R0_fixed_values}{Values of R0 to use if not being varied}
 
 \item{vaccine_efficacy}{Vaccine efficacy (set to NULL if being varied as a parameter)}
 

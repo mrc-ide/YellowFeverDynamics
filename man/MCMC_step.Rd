@@ -5,7 +5,7 @@
 \title{MCMC_step}
 \usage{
 MCMC_step(
-  param = c(),
+  log_params = c(),
   input_data = list(),
   obs_sero_data = NULL,
   obs_case_data = NULL,
@@ -17,7 +17,7 @@ MCMC_step(
 )
 }
 \arguments{
-\item{param}{Log values of parameters}
+\item{log_params}{Varied parameters (log values of actual parameters)}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
 code and usually loaded from RDS file)}
@@ -37,8 +37,9 @@ deaths}
 
 \item{like_current}{= Current accepted likelihood value}
 
-\item{const_list}{= List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
-mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)}
+\item{const_list}{= List of constant parameters/flags/etc. loaded to mcmc() (type,log_params_min,log_params_max,
+n_reps,mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,
+m_FOI_Brazil)}
 }
 \description{
 Single MCMC step - one or more regions

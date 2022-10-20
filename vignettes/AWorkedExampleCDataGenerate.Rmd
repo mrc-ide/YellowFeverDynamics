@@ -51,7 +51,7 @@ data1 <- data_match_single(params, input_data, obs_sero_data, obs_case_data, obs
 We use the data_match_multi() function to run data_match_single() for a series of sets of values of the input parameters. The inputs are the same except that the parameter values are input as a data frame containing one set of parameter values per line. 
 
 ```{r,eval=FALSE}
-param_sets <- exp(read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", sep = ""), header = TRUE)) # Data frame containing one set of parameter values per line
+param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", sep = ""), header = TRUE) # Data frame containing one set of parameter values per line
 data2 <- data_match_multi(param_sets, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
 ```
 

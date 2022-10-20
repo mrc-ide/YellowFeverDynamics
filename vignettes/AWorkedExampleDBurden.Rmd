@@ -19,7 +19,7 @@ This worked example demonstrates how to use the package to calculate annual yell
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
 type="FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
-param_dist <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", sep = ""), header = TRUE) # Data frame containing one or more sets of parameter values (here the actual values are used, rather than the logarithmic values as in the case of the data-matching functions)
+param_dist <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", sep = ""), header = TRUE) # Data frame containing one or more sets of parameter values
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = "")) # Population and vaccination data in standard format (see Guide 2)
 enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""), header = TRUE) #Environmental data
 years_data <- c(2000) #Years for which to calculate burden data

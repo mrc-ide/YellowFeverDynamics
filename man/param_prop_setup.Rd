@@ -4,10 +4,10 @@
 \alias{param_prop_setup}
 \title{param_prop_setup}
 \usage{
-param_prop_setup(param = c(), chain_cov = 1, adapt = 0)
+param_prop_setup(log_params = c(), chain_cov = 1, adapt = 0)
 }
 \arguments{
-\item{param}{Previous parameter values used as input}
+\item{log_params}{Previous log parameter values used as input}
 
 \item{chain_cov}{Covariance calculated from previous steps in chain}
 
@@ -15,7 +15,7 @@ param_prop_setup(param = c(), chain_cov = 1, adapt = 0)
 '}
 }
 \description{
-Set up proposed new parameter values for next step in chain
+Set up proposed new log parameter values for next step in chain
 }
 \details{
 Takes in current values of parameter set used for Markov Chain Monte Carlo fitting and proposes new values

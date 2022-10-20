@@ -5,7 +5,7 @@
 \title{single_like_calc}
 \usage{
 single_like_calc(
-  param_prop = c(),
+  log_params_prop = c(),
   input_data = list(),
   obs_sero_data = NULL,
   obs_case_data = NULL,
@@ -14,7 +14,7 @@ single_like_calc(
 )
 }
 \arguments{
-\item{param_prop}{Log values of proposed parameters}
+\item{log_params_prop}{Proposed values of varied parameters (natural logarithm of actual parameters)}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
 code and usually loaded from RDS file), with cross-reference tables added using input_data_process2 in MCMC2}
@@ -28,8 +28,9 @@ deaths}
 \item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 1 = 1 or more outbreak(s)}
 
-\item{const_list}{= List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
-mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)}
+\item{const_list}{= List of constant parameters/flags/etc. loaded to mcmc() (type,log_params_min,log_params_max,
+n_reps, mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,
+m_FOI_Brazil)}
 }
 \description{
 Function which calculates and outputs likelihood of observing simulated data

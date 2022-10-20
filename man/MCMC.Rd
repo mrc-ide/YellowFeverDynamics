@@ -5,7 +5,7 @@
 \title{MCMC}
 \usage{
 MCMC(
-  pars_ini = c(),
+  log_params_ini = c(),
   input_data = list(),
   obs_sero_data = NULL,
   obs_case_data = NULL,
@@ -13,8 +13,8 @@ MCMC(
   filename_prefix = "Chain",
   Niter = 1,
   type = NULL,
-  pars_min = NULL,
-  pars_max = NULL,
+  log_params_min = c(),
+  log_params_max = c(),
   n_reps = 1,
   mode_start = 0,
   prior_type = "zero",
@@ -28,22 +28,22 @@ MCMC(
 )
 }
 \arguments{
-\item{pars_ini}{Initial values of parameters to be fitted. These should always be the log() values of the actual
-epidemiological parameters, ordered as follows:
+\item{log_params_ini}{Initial values of parameters to be varied These should always be the log() values of the
+actual parameters, ordered as follows:
 1) Parameters controlling the value of spillover force of infection FOI, either a) a number of FOI values equal to
 the total number of regions to be considered or b) a number of environmental coefficients used to calculate FOI
 values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
 frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
 environmental data frame in case (b).
-2) If the basic reproduction number for human-human transmission R0 is to be fitted (i.e. type is set to
+2) If the basic reproduction number for human-human transmission R0 is to be varied (i.e. type is set to
 "FOI+R0" or "FOI+R0 enviro"), parameters controlling the value of R0, either a) a number of R0 values equal to
 the total number of regions to be considered or b) a number of environmental coefficients used to calculate R0
 values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
 frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
 environmental data frame in case (b).
 3) Values of the additional parameters (vaccine efficacy vaccine_efficacy, severe case reporting probability
-p_rep_severe and fatal case reporting probability p_rep_death) if these are to be fitted, in the order
-vaccine_efficacy->p_rep_severe->p_rep_death. If these parameters are to be fitted, the values separately supplied
+p_rep_severe and fatal case reporting probability p_rep_death) if these are to be varied, in the order
+vaccine_efficacy->p_rep_severe->p_rep_death. If these parameters are to be varied, the values separately supplied
 to this function (see below) should be set to NULL, the default.}
 
 \item{input_data}{List of population and vaccination data for multiple regions (created using data input creation
@@ -65,9 +65,9 @@ cases/no. deaths}
 \item{type}{Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
-\item{pars_min}{Lower limits of parameter values if specified}
+\item{log_params_min}{Lower limits of varied parameter values if specified}
 
-\item{pars_max}{Upper limits of parameter values if specified}
+\item{log_params_max}{Upper limits of varied parameter values if specified}
 
 \item{n_reps}{Number of times to repeat calculations to get average likelihood at each step}
 

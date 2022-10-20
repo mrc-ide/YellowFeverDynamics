@@ -85,26 +85,3 @@ for(n_year in 1:n_years){
 }
 barplot(height=outbreak_occurrence,names.arg=years)
 ```
-
-When the model is run for multiple particles, outbreak risk can be calculated for each year from the proportion of particles in which the year is flagged as an outbreak year.
-
-```{r,eval=FALSE}
-n_reps <- 1000
-FOI_spillover <- 1.0e-8
-R0 <- 0.0
-model_data2 <- case_data_generate(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_reps,year_end,year_data_begin,vaccine_efficacy,start_SEIRV,dt)
-
-outbreak_risk=rep(0,n_years)
-dp=1/n_reps
-for(n_rep in 1:n_reps){
-  for(n_year in 1:n_years){
-    infs=sum(model_data2$C[n_particle,model_data2$year==years[n_year]])
-    severe_infs=rbinom(1,floor(infs),p_severe_inf)
-    deaths=rbinom(1,severe_infs,p_death_severe_inf)
-    rep_deaths=rbinom(1,deaths,p_rep_death)
-    rep_cases=rep_deaths+rbinom(1,severe_infs-deaths,p_rep_severe)
-    if(rep_cases>0){outbreak_risk[n_year]=outbreak_risk[n_year]+dp}
-  }
-}
-matplot(x=years,y=outbreak_risk,type="b",pch=1,xlab="Year",ylab="Outbreak risk")
-```
