@@ -10,6 +10,7 @@ MCMC(
   obs_sero_data = NULL,
   obs_case_data = NULL,
   obs_outbreak_data = NULL,
+  filename_prefix = "Chain",
   Niter = 1,
   type = NULL,
   pars_min = NULL,
@@ -23,8 +24,7 @@ MCMC(
   vaccine_efficacy = NULL,
   p_rep_severe = NULL,
   p_rep_death = NULL,
-  m_FOI_Brazil = 1,
-  filename_prefix = "Chain"
+  m_FOI_Brazil = 1
 )
 }
 \arguments{
@@ -57,6 +57,8 @@ cases/no. deaths}
 
 \item{obs_outbreak_data}{Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 1 = 1 or more outbreak(s)}
+
+\item{filename_prefix}{Prefix of names for output files}
 
 \item{Niter}{Total number of steps to run}
 
@@ -92,9 +94,7 @@ enviro"); set to NULL if not in use}
 
 \item{p_rep_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
 
-\item{m_FOI_Brazil}{Multiplier of spillover FOI for Brazil regions}
-
-\item{filename_prefix}{Prefix of names for output files
+\item{m_FOI_Brazil}{Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
 '}
 }
 \description{

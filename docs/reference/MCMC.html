@@ -63,6 +63,7 @@
 <span>  obs_sero_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  obs_case_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  obs_outbreak_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  filename_prefix <span class="op">=</span> <span class="st">"Chain"</span>,</span>
 <span>  Niter <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pars_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -76,8 +77,7 @@
 <span>  vaccine_efficacy <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_rep_severe <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_rep_death <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  m_FOI_Brazil <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  filename_prefix <span class="op">=</span> <span class="st">"Chain"</span></span>
+<span>  m_FOI_Brazil <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -121,6 +121,10 @@ cases/no. deaths</p></dd>
 <dt>obs_outbreak_data</dt>
 <dd><p>Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 1 = 1 or more outbreak(s)</p></dd>
+
+
+<dt>filename_prefix</dt>
+<dd><p>Prefix of names for output files</p></dd>
 
 
 <dt>Niter</dt>
@@ -184,11 +188,7 @@ enviro"); set to NULL if not in use</p></dd>
 
 
 <dt>m_FOI_Brazil</dt>
-<dd><p>Multiplier of spillover FOI for Brazil regions</p></dd>
-
-
-<dt>filename_prefix</dt>
-<dd><p>Prefix of names for output files
+<dd><p>Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
 '</p></dd>
 
 </dl></div>

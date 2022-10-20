@@ -33,6 +33,7 @@
 #'   cases/no. deaths
 #' @param obs_outbreak_data Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks,
 #'   1 = 1 or more outbreak(s)
+#' @param filename_prefix Prefix of names for output files
 #' @param Niter Total number of steps to run
 #' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
@@ -54,15 +55,14 @@
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
 #' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
-#' @param m_FOI_Brazil Multiplier of spillover FOI for Brazil regions
-#' @param filename_prefix Prefix of names for output files
+#' @param m_FOI_Brazil Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
 #' '
 #' @export
 #'
-MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,Niter=1,
-                 type=NULL,pars_min=NULL,pars_max=NULL,n_reps=1,mode_start=0,prior_type="zero",dt=1.0,
-                 enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,
-                 m_FOI_Brazil=1.0,filename_prefix="Chain"){
+MCMC <- function(pars_ini=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
+                 filename_prefix="Chain",Niter=1,type=NULL,pars_min=NULL,pars_max=NULL,n_reps=1,mode_start=0,
+                 prior_type="zero",dt=1.0,enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=NULL,p_rep_severe=NULL,
+                 p_rep_death=NULL,m_FOI_Brazil=1.0){
 
   #Check that initial, minimum and maximum parameters are in vectors of same sizes
   n_params=length(pars_ini)

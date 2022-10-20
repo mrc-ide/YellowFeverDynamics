@@ -61,7 +61,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">data_match_single</span><span class="op">(</span></span>
-<span>  param_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  obs_sero_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  obs_case_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -72,8 +72,8 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>param_prop</dt>
-<dd><p>Log values of proposed parameters</p></dd>
+    <dl><dt>params</dt>
+<dd><p>Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients,</p></dd>
 
 
 <dt>input_data</dt>
@@ -98,13 +98,13 @@ deaths</p></dd>
 
 <dt>const_list</dt>
 <dd><p>= List of constant parameters/flags/etc. (type,n_reps,mode_start,dt,enviro_data,R0_fixed_values,
-vaccine_efficacy,p_rep_severe,p_rep_death)</p></dd>
+vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function takes in observed data and produces a corresponding simulated dataset for comparison using
-  supplied model parameters (in the param_prop input variable), population and vaccination settings (in the
+  supplied model parameters (in the params input variable), population and vaccination settings (in the
   input_data input variable) and other settings including parameter type, time increment and environmental covariate
   values (in the const_list input variable). The simulated dataset will be able to be compared directly to the
   observed dataset - individual data values will be produced for the same years and regions (or combinations of

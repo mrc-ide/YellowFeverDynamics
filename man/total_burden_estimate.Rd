@@ -12,14 +12,14 @@ total_burden_estimate(
   years_data = c(),
   n_reps = 1,
   mode_start = 1,
+  flag_reporting = FALSE,
   dt = 5,
   enviro_data = NULL,
   R0_fixed_values = NULL,
   vaccine_efficacy0 = NULL,
   p_rep_severe0 = NULL,
   p_rep_death0 = NULL,
-  m_FOI_Brazil0 = NULL,
-  flag_reporting = TRUE
+  m_FOI_Brazil0 = 1
 )
 }
 \arguments{
@@ -41,6 +41,8 @@ If mode_start=0, only vaccinated individuals
 If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
 If mode_start=2, use SEIRV input in list from previous run(s)}
 
+\item{flag_reporting}{Flag indicating whether to output number of reported severe and fatal cases}
+
 \item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)}
 
 \item{enviro_data}{enviro_data Data frame containing values of environmental covariates; set to NULL if not in use}
@@ -54,8 +56,6 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 \item{p_rep_death0}{Probability of observation of death (set to NULL if being varied as a parameter)}
 
 \item{m_FOI_Brazil0}{Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)}
-
-\item{flag_reporting}{Flag indicating whether to output number of reported severe and fatal cases}
 }
 \description{
 Function to calculate annual yellow fever burden across multiple regions based on derived parameters

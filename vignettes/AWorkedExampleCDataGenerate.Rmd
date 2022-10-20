@@ -23,9 +23,9 @@ library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
 enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""), header = TRUE)
 enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example.csv", sep = ""), header = TRUE)
-obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/sero_data_example_single.csv", sep = ""), header = TRUE)    
+obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/obs_sero_data_example_single.csv", sep = ""), header = TRUE)    
                       # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/case_data_example_single.csv", sep = ""), header = TRUE)    
+obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/obs_case_data_example_single.csv", sep = ""), header = TRUE)    
                       # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
 obs_outbreak_data <- NULL
                       # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s) (here simply set to NULL)
@@ -34,10 +34,8 @@ obs_outbreak_data <- NULL
 We set additional inputs for the data_match_single() function, which is used to generate model data to match observed or dummy data, as follows:
 
 ```{r,eval=FALSE}
-param_prop <- as.numeric(enviro_coeffs)
-                      # Parameters input to produce model parameters, potentially including spillover FOI and R0 by region, severe and fatal case reporting probability
-const_list <- list(type = "FOI+R0 enviro", n_reps = 1, mode_start = 1, dt = 1.0, enviro_data = enviro_data, R0_fixed_values = NULL, vaccine_efficacy = 1.0, p_rep_severe = 0.05, p_rep_death = 0.1)
-                      # List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop
+params <- as.numeric(enviro_coeffs) # Parameter values input to produce model parameters, potentially including spillover FOI and R0 by region, severe and fatal case reporting probability
+const_list <- list(type = "FOI+R0 enviro", n_reps = 1, mode_start = 1, dt = 1.0, enviro_data = enviro_data, R0_fixed_values = NULL, vaccine_efficacy = 1.0, p_rep_severe = 0.1, p_rep_death = 0.2) # List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop
 ```
 
 We run the data_match_single() function to produce a set of modelled data matching the observed data, i.e.:
@@ -47,13 +45,13 @@ We run the data_match_single() function to produce a set of modelled data matchi
 -Outbreak occurrence data for the same year(s)
 
 ```{r,eval=FALSE}
-data1 <- data_match_single(param_prop, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
+data1 <- data_match_single(params, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
 ```
 
 We use the data_match_multi() function to run data_match_single() for a series of sets of values of the input parameters. The inputs are the same except that the parameter values are input as a data frame containing one set of parameter values per line. 
 
 ```{r,eval=FALSE}
-param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example2.csv", sep = ""), header = TRUE)
+param_sets <- exp(read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", sep = ""), header = TRUE)) # Data frame containing one set of parameter values per line
 data2 <- data_match_multi(param_sets, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
 ```
 
@@ -65,6 +63,6 @@ print(sero_graph[[1]])
 ```
 
 ```{r,eval=FALSE}
-case_graph <- case_match_graphs(data1, obs_case_data, input_data, plot_type = "mean", text_size = 10, hide_observed = FALSE)
+case_graph <- case_match_graphs(data2, obs_case_data, input_data, plot_type = "mean", text_size = 10, hide_observed = FALSE)
 Rmisc::multiplot(case_graph$cases_graphs[[1]], case_graph$deaths_graphs[[1]])
 ```

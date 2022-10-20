@@ -65,13 +65,14 @@
 <span>  years_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  n_reps <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  mode_start <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  flag_reporting <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  dt <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  enviro_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  vaccine_efficacy0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_rep_severe0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  p_rep_death0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  flag_reporting <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  m_FOI_Brazil0 <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -83,7 +84,7 @@ covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"</p></dd>
 
 
 <dt>param_dist</dt>
-<dd><p>Data frame of log values of input parameters, one set per row</p></dd>
+<dd><p>Data frame of values of input parameters, one set per row</p></dd>
 
 
 <dt>input_data</dt>
@@ -107,6 +108,10 @@ covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"</p></dd>
 If mode_start=0, only vaccinated individuals
 If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
 If mode_start=2, use SEIRV input in list from previous run(s)</p></dd>
+
+
+<dt>flag_reporting</dt>
+<dd><p>Flag indicating whether to output number of reported severe and fatal cases</p></dd>
 
 
 <dt>dt</dt>
@@ -133,8 +138,8 @@ If mode_start=2, use SEIRV input in list from previous run(s)</p></dd>
 <dd><p>Probability of observation of death (set to NULL if being varied as a parameter)</p></dd>
 
 
-<dt>flag_reporting</dt>
-<dd><p>Flag indicating whether to output number of reported severe and fatal cases</p></dd>
+<dt>m_FOI_Brazil0</dt>
+<dd><p>Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)</p></dd>
 
 </dl></div>
     <div class="section level2">

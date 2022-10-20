@@ -577,6 +577,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
 #'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param flag_reporting Flag indicating whether to output number of reported severe and fatal cases
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' @param enviro_data enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
 #' @param R0_fixed_values Values of R0 to use if not being taken from parameter distribution
@@ -584,14 +585,13 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #' @param p_rep_severe0 Probability of observation of severe infection (set to NULL if being varied as a parameter)
 #' @param p_rep_death0 Probability of observation of death (set to NULL if being varied as a parameter)
 #' @param m_FOI_Brazil0 Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
-#' @param flag_reporting Flag indicating whether to output number of reported severe and fatal cases
 #'
 #' @export
 #'
 total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_data=list(),start_SEIRV0=NULL,
-                                  years_data=c(),n_reps=1,mode_start=1,dt=5.0,
+                                  years_data=c(),n_reps=1,mode_start=1,flag_reporting=FALSE,dt=5.0,
                                   enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy0=NULL,
-                                  p_rep_severe0=NULL,p_rep_death0=NULL,m_FOI_Brazil0=NULL,flag_reporting=TRUE){
+                                  p_rep_severe0=NULL,p_rep_death0=NULL,m_FOI_Brazil0=1.0){
 
   assert_that(input_data_check(input_data))
   assert_that(all(input_data$region_labels==enviro_data$region)==TRUE)
@@ -621,7 +621,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
     if(is.null(vaccine_efficacy0)){vaccine_efficacy=params$vaccine_efficacy} else {vaccine_efficacy=vaccine_efficacy0}
     if(is.null(p_rep_severe0)){p_rep_severe=params$p_rep_severe} else {p_rep_severe=p_rep_severe0}
     if(is.null(p_rep_death0)){p_rep_death=params$p_rep_death} else {p_rep_death=p_rep_death0}
-    if(is.null(m_FOI_Brazil)){m_FOI_Brazil=params$m_FOI_Brazil} else {m_FOI_Brazil=m_FOI_Brazil0}
+    if(is.null(m_FOI_Brazil0)){m_FOI_Brazil=params$m_FOI_Brazil} else {m_FOI_Brazil=m_FOI_Brazil0}
 
     if(type %in% c("FOI+R0 enviro","FOI enviro")){
       if(type=="FOI+R0 enviro"){enviro_coeffs=params[c(1:(2*n_env_vars))]} else {enviro_coeffs=params[c(1:n_env_vars)]}
