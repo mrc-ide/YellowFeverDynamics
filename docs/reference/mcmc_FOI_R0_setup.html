@@ -61,11 +61,11 @@
 <span>  type <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  prior_type <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  regions <span class="op">=</span> <span class="st">""</span>,</span>
-<span>  param_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  enviro_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  R0_fixed_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  pars_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  pars_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  log_params_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -88,8 +88,8 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 <dd><p>Vector of region names</p></dd>
 
 
-<dt>param_prop</dt>
-<dd><p>Proposed parameter values</p></dd>
+<dt>log_params_prop</dt>
+<dd><p>Proposed values of varied parameters (natural logarithm of actual parameters)</p></dd>
 
 
 <dt>enviro_data</dt>
@@ -97,15 +97,15 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 
 <dt>R0_fixed_values</dt>
-<dd><p>Values of R0 to use if not being fitted</p></dd>
+<dd><p>Values of R0 to use if not being varied</p></dd>
 
 
-<dt>pars_min</dt>
-<dd><p>Lower limits of parameter values if specified</p></dd>
+<dt>log_params_min</dt>
+<dd><p>Lower limits of varied parameter values if specified</p></dd>
 
 
-<dt>pars_max</dt>
-<dd><p>Upper limits of parameter values if specified
+<dt>log_params_max</dt>
+<dd><p>Upper limits of varied parameter values if specified
 '</p></dd>
 
 </dl></div>

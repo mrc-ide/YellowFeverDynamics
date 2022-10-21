@@ -1,8 +1,8 @@
 ---
-title: "Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions"
+title: "Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions}
+  %\VignetteIndexEntry{Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -29,7 +29,7 @@ obs_outbreak_data <- NULL
 enviro_coeffs_ini <- as.numeric(read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example.csv", sep = ""), header = TRUE)) # Values of environmental coefficients to use as initial parameter values
 ```
 
-We set additional inputs as follows. The MCMC process uses the natural logarithm values of the actual parameters varied in the chain; the inputs pars_min, pars_max and pars_ini are set accordingly. The maximum, minimum and initial values of the varied parameters must be entered into pars_min, pars_max and pars_ini in the following order:
+We set additional inputs as follows. The parameters varied in the chain are the natural logarithm values of the actual parameters of interest; the inputs log_params_min, log_params_max and log_params_ini are set accordingly. The maximum, minimum and initial values of the varied parameters must be entered into log_params_min, log_params_max and log_params_ini in the following order:
 
 -Values of spillover FOI or the coefficients used to calculate spillover FOI from environmental data
 -Values of R0 or the coefficients used to calculate R0 from environmental data (if R0 is to be varied)
@@ -37,12 +37,14 @@ We set additional inputs as follows. The MCMC process uses the natural logarithm
 -Severe non-fatal case reporting probability (if varied)
 -Fatal case reporting probability (if varied)
 
+The maximum and minimum values are not all necessarily used; if prior_type is set to "flat", then they are hard limits for all parameters. If prior_type is set to "zero" or "norm", only the limits for p_rep_severe and p_rep_death are used.
+
 ```{r,eval=FALSE}
 Niter <- 1 #Number of iterations to run
 type <- "FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
-pars_min <- c(rep(-30, n_env_vars), rep(-5, n_env_vars), log(c(0.9,0.01, 0.01))) # Minimum log parameter values (here FOI coefficients, R0 coefficients, vaccine efficacy, severe non-fatal case reporting probability, fatal case reporting probability)
-pars_max <- c(rep(-10, n_env_vars), rep(0, n_env_vars), log(c(1.0,0.25, 0.25))) # Maximum log parameter values
-pars_ini <- c(log(enviro_coeffs_ini), log(c(0.95,0.1,0.2))) # Initial log parameter values
+log_params_min <- c(rep(-30, n_env_vars), rep(-5, n_env_vars), log(c(0.9,0.01, 0.01))) # Minimum log parameter values (here FOI coefficients, R0 coefficients, vaccine efficacy, severe non-fatal case reporting probability, fatal case reporting probability)
+log_params_max <- c(rep(-10, n_env_vars), rep(0, n_env_vars), log(c(1.0,0.25, 0.25))) # Maximum log parameter values
+log_params_ini <- c(log(enviro_coeffs_ini), log(c(0.95,0.1,0.2))) # Initial log parameter values
 n_reps <- 5 # Number of repetitions for which to run model and obtain average outputs
 mode_start <- 1 # Flag indicating how to set initial population immunity level in addition to vaccination
                                     # If mode_start = 0, only vaccinated individuals
@@ -56,9 +58,9 @@ filename_prefix <- "Chain" # Prefix to be used for .csv output files; a new file
 We then run the MCMC() function. Output data recorded at each iteration is saved to an output file every 10 iterations.
 
 ```{r,eval=FALSE}
-MCMC(pars_ini, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, filename_prefix, Niter, type, pars_min,
-     pars_max, n_reps, mode_start, prior_type, dt, enviro_data, R0_fixed_values, vaccine_efficacy, p_rep_severe,
-     p_rep_death)
+MCMC(log_params_ini, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, filename_prefix, Niter, type,
+     log_params_min,log_params_max, n_reps, mode_start, prior_type, dt, enviro_data, R0_fixed_values, vaccine_efficacy,
+     p_rep_severe,p_rep_death)
 ```
 
 The saved output of MCMC() takes the form of a data frame of values of the current likelihood (posterior_current), likelihood calculated from proposed parameter values (posterior_prop), current and proposed parameter values, a flag indicating whether the proposed parameter values were accepted (set to 1 if they were accepted, 0 if they were not), and the chain covariance.

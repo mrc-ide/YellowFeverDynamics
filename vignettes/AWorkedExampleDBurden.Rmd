@@ -55,5 +55,6 @@ input_data_novacc <- input_data # Input data for no-vaccination scenario
 input_data_novacc$vacc_data[,input_data_novacc$years_labels>=years_data[1],] <- input_data_novacc$vacc_data[,input_data_novacc$years_labels>=years_data[1],]*0 # Amend input data to remove all vaccination in or after the first year of the period considered
 results_novacc<-total_burden_estimate(type,param_dist,input_data_novacc,start_SEIRV0=NULL,years_data,n_reps,mode_start,
                               flag_reporting,dt,enviro_data,R0_fixed_values,vaccine_efficacy0,p_rep_severe0,p_rep_death0)
-deaths_prevented=results_novacc$all$deaths-results$all$deaths # 
+deaths_prevented_by_region=results_novacc$by_region$deaths-results$by_region$deaths #
+deaths_prevented_all=results_novacc$all$deaths-results$all$deaths # 
 ```

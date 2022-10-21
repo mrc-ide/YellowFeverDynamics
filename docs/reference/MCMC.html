@@ -58,7 +58,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">MCMC</span><span class="op">(</span></span>
-<span>  pars_ini <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_ini <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  obs_sero_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  obs_case_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -66,8 +66,8 @@
 <span>  filename_prefix <span class="op">=</span> <span class="st">"Chain"</span>,</span>
 <span>  Niter <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pars_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pars_max <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log_params_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  n_reps <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  mode_start <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  prior_type <span class="op">=</span> <span class="st">"zero"</span>,</span>
@@ -83,23 +83,23 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>pars_ini</dt>
-<dd><p>Initial values of parameters to be fitted. These should always be the log() values of the actual
-epidemiological parameters, ordered as follows:
+    <dl><dt>log_params_ini</dt>
+<dd><p>Initial values of parameters to be varied These should always be the log() values of the
+actual parameters, ordered as follows:
 1) Parameters controlling the value of spillover force of infection FOI, either a) a number of FOI values equal to
 the total number of regions to be considered or b) a number of environmental coefficients used to calculate FOI
 values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
 frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
 environmental data frame in case (b).
-2) If the basic reproduction number for human-human transmission R0 is to be fitted (i.e. type is set to
+2) If the basic reproduction number for human-human transmission R0 is to be varied (i.e. type is set to
 "FOI+R0" or "FOI+R0 enviro"), parameters controlling the value of R0, either a) a number of R0 values equal to
 the total number of regions to be considered or b) a number of environmental coefficients used to calculate R0
 values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
 frame. Values should be in alphabetical order by region in case (a) or in the order of the columns in the
 environmental data frame in case (b).
 3) Values of the additional parameters (vaccine efficacy vaccine_efficacy, severe case reporting probability
-p_rep_severe and fatal case reporting probability p_rep_death) if these are to be fitted, in the order
-vaccine_efficacy-&gt;p_rep_severe-&gt;p_rep_death. If these parameters are to be fitted, the values separately supplied
+p_rep_severe and fatal case reporting probability p_rep_death) if these are to be varied, in the order
+vaccine_efficacy-&gt;p_rep_severe-&gt;p_rep_death. If these parameters are to be varied, the values separately supplied
 to this function (see below) should be set to NULL, the default.</p></dd>
 
 
@@ -136,12 +136,12 @@ cases/no. deaths</p></dd>
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"</p></dd>
 
 
-<dt>pars_min</dt>
-<dd><p>Lower limits of parameter values if specified</p></dd>
+<dt>log_params_min</dt>
+<dd><p>Lower limits of varied parameter values if specified</p></dd>
 
 
-<dt>pars_max</dt>
-<dd><p>Upper limits of parameter values if specified</p></dd>
+<dt>log_params_max</dt>
+<dd><p>Upper limits of varied parameter values if specified</p></dd>
 
 
 <dt>n_reps</dt>

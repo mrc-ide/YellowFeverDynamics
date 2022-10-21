@@ -114,12 +114,12 @@ MCMC <- function(log_params_ini=c(),input_data=list(),obs_sero_data=NULL,obs_cas
   #Iterative fitting
   for (iter in 1:Niter){
     #save current step
-    param = out$param
+    log_params = out$log_params
     log_params_prop=out$log_params_prop
     like_current = out$like_current
     like_prop=out$like_prop
     accept = out$accept
-    chain = rbind(chain, param)
+    chain = rbind(chain, log_params)
     chain_prop=rbind(chain_prop,log_params_prop)
     posterior_current=rbind(posterior_current,like_current)
     posterior_prop=rbind(posterior_prop,like_prop)

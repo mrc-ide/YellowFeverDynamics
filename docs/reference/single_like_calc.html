@@ -58,7 +58,7 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">single_like_calc</span><span class="op">(</span></span>
-<span>  param_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_prop <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  obs_sero_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  obs_case_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -69,8 +69,8 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>param_prop</dt>
-<dd><p>Log values of proposed parameters</p></dd>
+    <dl><dt>log_params_prop</dt>
+<dd><p>Proposed values of varied parameters (natural logarithm of actual parameters)</p></dd>
 
 
 <dt>input_data</dt>
@@ -94,8 +94,9 @@ deaths</p></dd>
 
 
 <dt>const_list</dt>
-<dd><p>= List of constant parameters/flags/etc. loaded to mcmc() (type,pars_min,pars_max,n_reps,
-mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,m_FOI_Brazil)</p></dd>
+<dd><p>= List of constant parameters/flags/etc. loaded to mcmc() (type,log_params_min,log_params_max,
+n_reps, mode_start,prior_type,dt=dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death,
+m_FOI_Brazil)</p></dd>
 
 </dl></div>
     <div class="section level2">

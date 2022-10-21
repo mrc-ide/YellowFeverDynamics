@@ -65,8 +65,8 @@ values in order to find approximate values giving maximum likelihood</p>
 <span>  n_param_sets <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n_bounds <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pars_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pars_max <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log_params_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  log_params_max <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  obs_sero_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  obs_case_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -104,12 +104,12 @@ maximum/minimum values</p></dd>
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"</p></dd>
 
 
-<dt>pars_min</dt>
-<dd><p>Initial lower limits of parameter values</p></dd>
+<dt>log_params_min</dt>
+<dd><p>Initial lower limits of varied parameter values (natural logarithm of actual limits)</p></dd>
 
 
-<dt>pars_max</dt>
-<dd><p>Initial upper limits of parameter values</p></dd>
+<dt>log_params_max</dt>
+<dd><p>Initial upper limits of varied parameter values (natural logarithm of actual limits)</p></dd>
 
 
 <dt>input_data</dt>
@@ -159,7 +159,7 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 
 <dt>R0_fixed_values</dt>
-<dd><p>Values of R0 to use if not being fitted</p></dd>
+<dd><p>Values of R0 to use if not being varied</p></dd>
 
 
 <dt>vaccine_efficacy</dt>

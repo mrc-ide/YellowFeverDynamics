@@ -58,11 +58,11 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">mcmc_checks</span><span class="op">(</span></span>
-<span>  pars_ini <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_ini <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  n_regions <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  type <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pars_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  pars_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  log_params_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  prior_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  enviro_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -75,12 +75,12 @@
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>pars_ini</dt>
-<dd><p>= Initial parameter values</p></dd>
+    <dl><dt>log_params_ini</dt>
+<dd><p>Initial values of varied parameters (natural logarithm of actual parameters)</p></dd>
 
 
 <dt>n_regions</dt>
-<dd><p>= Number of regions</p></dd>
+<dd><p>Number of regions</p></dd>
 
 
 <dt>type</dt>
@@ -88,12 +88,12 @@
 covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"</p></dd>
 
 
-<dt>pars_min</dt>
-<dd><p>Lower limits of parameter values if specified</p></dd>
+<dt>log_params_min</dt>
+<dd><p>Lower limits of varied parameter values if specified</p></dd>
 
 
-<dt>pars_max</dt>
-<dd><p>Upper limits of parameter values if specified</p></dd>
+<dt>log_params_max</dt>
+<dd><p>Upper limits of varied parameter values if specified</p></dd>
 
 
 <dt>prior_type</dt>
@@ -109,7 +109,7 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
 
 
 <dt>R0_fixed_values</dt>
-<dd><p>Values of R0 to use if not being fitted (set to NULL if R0 is being fitted)</p></dd>
+<dd><p>Values of R0 to use if not being varied (set to NULL if R0 is being varied)</p></dd>
 
 
 <dt>vaccine_efficacy</dt>
@@ -131,7 +131,7 @@ If prior_type = "norm", prior probability is given by dnorm calculation on param
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function, which is called by MCMC(), performs a number of checks on data to be used in fitting to
-ensure proper functionality. It verifies that the number of parameters being fitted is consistent with other
+ensure proper functionality. It verifies that the number of parameters being varied is consistent with other
 settings and that certain values are not outwith sensible boundaries (e.g. probabilities must be between 0 and 1).</p>
     </div>
 
