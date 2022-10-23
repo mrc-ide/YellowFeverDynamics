@@ -341,6 +341,7 @@ single_like_calc <- function(log_params_prop=c(),input_data=list(),obs_sero_data
     likelihood=prior_prop+mean(c(sum(sero_like_values,na.rm=TRUE),sum(cases_like_values,na.rm=TRUE),
                      sum(deaths_like_values,na.rm=TRUE),sum(outbreak_like_values,na.rm=TRUE)),na.rm=TRUE)
 
+
   } else {likelihood=-Inf}
 
   return(likelihood)
