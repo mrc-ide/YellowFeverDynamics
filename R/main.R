@@ -437,8 +437,8 @@ param_calc_enviro <- function(enviro_coeffs=c(),enviro_data=c()){
   output=list(FOI=0.0,R0=0.0)
   for(i in 1:n_env_vars){
     variable=env_vars_names[i]
-    output$FOI=sum(enviro_coeffs[c(1:n_env_vars)]*enviro_data[c(1:n_env_vars+1)])
-    if(n_type==2){output$R0=sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_data[c(1:n_env_vars+1)])}
+    output$FOI=sum(enviro_coeffs[c(1:n_env_vars)]*enviro_data[c(1:n_env_vars)+1])
+    if(n_type==2){output$R0=sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_data[c(1:n_env_vars)+1])}
   }
 
   return(output)

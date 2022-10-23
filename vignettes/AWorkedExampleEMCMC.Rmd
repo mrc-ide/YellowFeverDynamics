@@ -42,16 +42,17 @@ The maximum and minimum values are not all necessarily used; if prior_type is se
 ```{r,eval=FALSE}
 Niter <- 1 #Number of iterations to run
 type <- "FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
-log_params_min <- c(rep(-30, n_env_vars), rep(-5, n_env_vars), log(c(0.9,0.01, 0.01))) # Minimum log parameter values (here FOI coefficients, R0 coefficients, vaccine efficacy, severe non-fatal case reporting probability, fatal case reporting probability)
-log_params_max <- c(rep(-10, n_env_vars), rep(0, n_env_vars), log(c(1.0,0.25, 0.25))) # Maximum log parameter values
-log_params_ini <- c(log(enviro_coeffs_ini), log(c(0.95,0.1,0.2))) # Initial log parameter values
+log_params_min <- c(rep(-30, n_env_vars), rep(-5, n_env_vars), log(c(0.01, 0.01))) # Minimum log parameter values (here FOI coefficients, R0 coefficients, vaccine efficacy, severe non-fatal case reporting probability, fatal case reporting probability)
+log_params_max <- c(rep(-10, n_env_vars), rep(0, n_env_vars), log(c(0.25, 0.25))) # Maximum log parameter values
+log_params_ini <- c(log(enviro_coeffs_ini), log(c(0.1,0.2))) # Initial log parameter values
 n_reps <- 5 # Number of repetitions for which to run model and obtain average outputs
 mode_start <- 1 # Flag indicating how to set initial population immunity level in addition to vaccination
                                     # If mode_start = 0, only vaccinated individuals
                                     # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
 prior_type <- "norm" # Type of prior likelihood calculation to use
 dt <- 5.0 # Time increment in days
-R0_fixed_values = vaccine_efficacy = p_rep_severe = p_rep_death = NULL #Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being estimated
+vaccine_efficacy <- 1.0 # Vaccine efficacy (fixed)
+R0_fixed_values = p_rep_severe = p_rep_death = NULL #Fixed R0 values and severe and fatal case reporting probabilities; here set to NULL because R0 and reporting probabilities are variable
 filename_prefix <- "Chain" # Prefix to be used for .csv output files; a new file is created every 10,000 iterations with incremental number suffixes (Chain1.csv, Chain2.csv, etc.)
 ```
 
