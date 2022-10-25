@@ -85,7 +85,8 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
     } else {
       enviro_coeffs=params[c(1:n_env_vars)]}
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(enviro_coeffs,enviro_data[enviro_data$region==regions[i],1+c(1:n_env_vars)])
+      model_params=param_calc_enviro(enviro_coeffs,
+                                     as.numeric(enviro_data[enviro_data$region==regions[i],1+c(1:n_env_vars)]))
       FOI_values[i]=model_params$FOI
       if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {
         R0_values[i]=const_list$R0_fixed_values[i]}

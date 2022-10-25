@@ -19,14 +19,14 @@ This worked example demonstrates how to use the package to estimate parameters o
 We load input data, environmental data and the observed data to be used for comparison in the formats used in previous worked examples (see [Guide 2 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html) for details of the input format, [Guide 3 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html) for details of how environmental data is formatted and used to generate parameter values, and [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html) for details of observed data formats):
 
 ```{r,eval=FALSE}
-#library(YellowFeverDynamics)
-input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/inst/exdata/input_data_example.Rds", sep = ""))
-enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/inst/exdata/enviro_data_example.csv", sep = ""), header = TRUE)
+library(YellowFeverDynamics)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
+enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""), header = TRUE)
 n_env_vars = ncol(enviro_data)-1
-obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/inst/exdata/obs_sero_data_example.csv", sep = ""), header = TRUE)
-obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/inst/exdata/obs_case_data_example.csv", sep = ""), header = TRUE)
+obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/obs_sero_data_example.csv", sep = ""), header = TRUE)
+obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/obs_case_data_example.csv", sep = ""), header = TRUE)
 obs_outbreak_data <- NULL
-enviro_coeffs_ini <- as.numeric(read.csv(file = paste(path.package("YellowFeverDynamics"), "/inst/exdata/enviro_coeffs_example.csv", sep = ""), header = TRUE)) # Values of environmental coefficients to use as initial parameter values
+enviro_coeffs_ini <- as.numeric(read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example.csv", sep = ""), header = TRUE)) # Values of environmental coefficients to use as initial parameter values
 ```
 
 We set additional inputs as follows. The parameters varied in the chain are the natural logarithm values of the actual parameters of interest; the inputs log_params_min, log_params_max and log_params_ini are set accordingly. The maximum, minimum and initial values of the varied parameters must be entered into log_params_min, log_params_max and log_params_ini in the following order:
@@ -67,6 +67,6 @@ MCMC(log_params_ini, input_data, obs_sero_data, obs_case_data, obs_outbreak_data
 The saved output of MCMC() takes the form of a data frame of values of the current likelihood (posterior_current), likelihood calculated from proposed parameter values (posterior_prop), current and proposed parameter values, a flag indicating whether the proposed parameter values were accepted (set to 1 if they were accepted, 0 if they were not), and the chain covariance.
 
 ```{r,eval=FALSE}
-chain_example <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/inst/exdata/Chain_example.csv", sep = ""), header = TRUE)
+chain_example <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/Chain_example.csv", sep = ""), header = TRUE)
 head(chain_example, 1)
 ```

@@ -623,7 +623,7 @@ mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",log_params_prop=c
       enviro_coeffs=exp(log_params_prop[c(1:n_env_vars)])}
     for(i in 1:n_regions){
       model_params=param_calc_enviro(enviro_coeffs,
-                                     enviro_data[enviro_data$region==regions[i],1+c(1:n_env_vars)])
+                                     as.numeric(enviro_data[enviro_data$region==regions[i],1+c(1:n_env_vars)]))
       FOI_values[i]=model_params$FOI
       if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
     }

@@ -617,7 +617,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
       if(type=="FOI+R0 enviro"){enviro_coeffs=params[c(1:(2*n_env_vars))]} else {enviro_coeffs=params[c(1:n_env_vars)]}
       for(n_region in 1:n_regions){
         model_params=param_calc_enviro(enviro_coeffs,
-                                       enviro_data[enviro_data$region==regions[n_region],1+c(1:n_env_vars)])
+                                       as.numeric(enviro_data[enviro_data$region==regions[n_region],1+c(1:n_env_vars)]))
         FOI_values[n_region]=model_params$FOI
         if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
           R0_values[n_region]=R0_fixed_values[n_region]}
