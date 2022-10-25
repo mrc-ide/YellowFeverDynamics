@@ -4,18 +4,18 @@
 \alias{param_calc_enviro}
 \title{param_calc_enviro}
 \usage{
-param_calc_enviro(enviro_coeffs = c(), enviro_data = c())
+param_calc_enviro(enviro_coeffs = c(), enviro_covar_values = c())
 }
 \arguments{
 \item{enviro_coeffs}{Values of environmental coefficients}
 
-\item{enviro_data}{Environmental data frame line, containing only relevant environmental covariates
+\item{enviro_covar_values}{Values of environmental covariates
 '}
 }
 \description{
 Parameter calculation from environmental covariates
 }
 \details{
-Takes in set of coefficients of environmental covariates and calculates values of spillover
-force of infection and reproduction number.
+Takes in set of coefficients of environmental covariates and covariate values and calculates values of
+  spillover force of infection and reproduction number.
 }

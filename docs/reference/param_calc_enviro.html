@@ -28,7 +28,7 @@
     <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
     <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
     <a class="dropdown-item" href="../articles/BGuideBInputs.html">Guide 2 - Inputs</a>
     <a class="dropdown-item" href="../articles/BGuideCParametersEnvironment.html">Guide 3 - Calculating Parameters From Environmental Data</a>
@@ -57,7 +57,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">param_calc_enviro</span><span class="op">(</span>enviro_coeffs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, enviro_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">param_calc_enviro</span><span class="op">(</span>enviro_coeffs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, enviro_covar_values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -66,15 +66,15 @@
 <dd><p>Values of environmental coefficients</p></dd>
 
 
-<dt>enviro_data</dt>
-<dd><p>Environmental data frame line, containing only relevant environmental covariates
+<dt>enviro_covar_values</dt>
+<dd><p>Values of environmental covariates
 '</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Takes in set of coefficients of environmental covariates and calculates values of spillover
-force of infection and reproduction number.</p>
+    <p>Takes in set of coefficients of environmental covariates and covariate values and calculates values of
+  spillover force of infection and reproduction number.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

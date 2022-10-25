@@ -162,7 +162,7 @@ MCMC <- function(log_params_ini=c(),input_data=list(),obs_sero_data=NULL,obs_cas
   }
 
   #Get final parameter values
-  param_out=exp(out$param)
+  param_out=exp(out$log_params)
   names(param_out)=names(log_params_ini)
 
   return(param_out)
@@ -622,7 +622,8 @@ mcmc_FOI_R0_setup <- function(type="",prior_type="",regions="",log_params_prop=c
     } else {
       enviro_coeffs=exp(log_params_prop[c(1:n_env_vars)])}
     for(i in 1:n_regions){
-      model_params=param_calc_enviro(enviro_coeffs,enviro_data[enviro_data$region==regions[i],])
+      model_params=param_calc_enviro(enviro_coeffs,
+                                     enviro_data[enviro_data$region==regions[i],1+c(1:n_env_vars)])
       FOI_values[i]=model_params$FOI
       if(type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {R0_values[i]=R0_fixed_values[i]}
     }

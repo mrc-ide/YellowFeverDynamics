@@ -413,33 +413,23 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'
 #' @description Parameter calculation from environmental covariates
 #'
-#' @details Takes in set of coefficients of environmental covariates and calculates values of spillover
-#' force of infection and reproduction number.
+#' @details Takes in set of coefficients of environmental covariates and covariate values and calculates values of
+#'   spillover force of infection and reproduction number.
 #'
 #' @param enviro_coeffs Values of environmental coefficients
-#' @param enviro_data Environmental data frame line, containing only relevant environmental covariates
+#' @param enviro_covar_values Values of environmental covariates
 #' '
 #' @export
 #'
-param_calc_enviro <- function(enviro_coeffs=c(),enviro_data=c()){
+param_calc_enviro <- function(enviro_coeffs=c(),enviro_covar_values=c()){
 
   assert_that(all(enviro_coeffs>=0))
-  n_env_vars=dim(enviro_data)[2]-1
+  n_env_vars=length(enviro_covar_values)
   assert_that(length(enviro_coeffs) %in% c(n_env_vars,2*n_env_vars))
-  env_vars_names=names(enviro_data)[c(2:(n_env_vars+1))]
-  if(length(enviro_coeffs)==n_env_vars){
-    n_type=1
-    for(i in 1:n_env_vars){}
-  } else {
-    n_type=2
-  }
 
-  output=list(FOI=0.0,R0=0.0)
-  for(i in 1:n_env_vars){
-    variable=env_vars_names[i]
-    output$FOI=sum(enviro_coeffs[c(1:n_env_vars)]*enviro_data[c(1:n_env_vars)+1])
-    if(n_type==2){output$R0=sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_data[c(1:n_env_vars)+1])}
-  }
+  output=list(FOI=NA,R0=NA)
+  output$FOI=sum(enviro_coeffs[c(1:n_env_vars)]*enviro_covar_values)
+  if(length(enviro_coeffs)==2*n_env_vars){output$R0=sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_covar_values)}
 
   return(output)
 }
@@ -626,7 +616,8 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
     if(type %in% c("FOI+R0 enviro","FOI enviro")){
       if(type=="FOI+R0 enviro"){enviro_coeffs=params[c(1:(2*n_env_vars))]} else {enviro_coeffs=params[c(1:n_env_vars)]}
       for(n_region in 1:n_regions){
-        model_params=param_calc_enviro(enviro_coeffs,enviro_data[enviro_data$region==regions[n_region],])
+        model_params=param_calc_enviro(enviro_coeffs,
+                                       enviro_data[enviro_data$region==regions[n_region],1+c(1:n_env_vars)])
         FOI_values[n_region]=model_params$FOI
         if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
           R0_values[n_region]=R0_fixed_values[n_region]}

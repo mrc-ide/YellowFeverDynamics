@@ -45,7 +45,7 @@
     <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
     <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
     <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
     <a class="dropdown-item" href="../articles/BGuideBInputs.html">Guide 2 - Inputs</a>
     <a class="dropdown-item" href="../articles/BGuideCParametersEnvironment.html">Guide 3 - Calculating Parameters From Environmental Data</a>
@@ -102,11 +102,11 @@ Example 2 - Generating Epidemiological Data Sets</a>:</p>
 <p>Modelled data to use for the likelihood calculation is created using
 data_match_single() as in Worked Example 2:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">param_prop</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">enviro_coeffs</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">enviro_coeffs</span><span class="op">)</span></span>
 <span>                      <span class="co"># Parameters input to produce model parameters, potentially including spillover FOI and R0 by region, severe and fatal case reporting probability</span></span>
 <span><span class="va">const_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"FOI+R0 enviro"</span>,n_reps <span class="op">=</span> <span class="fl">1</span>,mode_start <span class="op">=</span> <span class="fl">1</span>,dt <span class="op">=</span> <span class="fl">1.0</span>,enviro_data <span class="op">=</span> <span class="va">enviro_data</span>,R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>,vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>,p_rep_severe <span class="op">=</span> <span class="fl">0.05</span>,p_rep_death <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span>                      <span class="co"># List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop</span></span>
-<span><span class="va">model_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">param_prop</span>,<span class="va">input_data</span>,<span class="va">obs_sero_data</span>,<span class="va">obs_case_data</span>,<span class="va">obs_outbreak_data</span>,<span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">model_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">params</span>,<span class="va">input_data</span>,<span class="va">obs_sero_data</span>,<span class="va">obs_case_data</span>,<span class="va">obs_outbreak_data</span>,<span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
 <p>The likelihood of the observed serological data based on the
 epidemiological parameters is calculated using a gamma distribution,
 with (for each line of data) the modelled seroprevalence as the
