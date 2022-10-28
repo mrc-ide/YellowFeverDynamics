@@ -18,7 +18,7 @@ coverage values by age in remaining columns}
 \item{pop_data}{Data frame containing population data with region in column 1, year in column 2 and
 population values by age in remaining columns}
 
-\item{regions}{Vector of regions for which to extract data from vacc_data and pop_data}
+\item{regions}{Vector of regions for which to extract data from vacc_data and pop_data (in alphabetical order)}
 
 \item{years}{Vector of years for which to extract data from vacc_data and pop_data
 '}
