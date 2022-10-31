@@ -54,10 +54,11 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
   if(is.null(const_list$vaccine_efficacy)==TRUE){extra_params=append(extra_params,"vaccine_efficacy")}
   if(is.null(const_list$p_rep_severe)==TRUE){extra_params=append(extra_params,"p_rep_severe")}
   if(is.null(const_list$p_rep_death)==TRUE){extra_params=append(extra_params,"p_rep_death")}
+  if(is.null(const_list$m_FOI_Brazil)==TRUE){extra_params=append(extra_params,"m_FOI_Brazil")}
   names(params)=create_param_labels(const_list$type,input_data,const_list$enviro_data,extra_params)
   mcmc_checks(params,n_regions,const_list$type,params,params,"zero",
               const_list$enviro_data,const_list$R0_fixed_values,
-              const_list$vaccine_efficacy,const_list$p_rep_severe,const_list$p_rep_death)
+              const_list$vaccine_efficacy,const_list$p_rep_severe,const_list$p_rep_death,const_list$m_FOI_Brazil)
 
   #Get vaccine efficacy
   if(is.numeric(const_list$vaccine_efficacy)==FALSE){
@@ -78,6 +79,13 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
     p_rep_death=const_list$p_rep_death
   }
 
+  #Get Brazil modifier
+  if(is.numeric(const_list$m_FOI_Brazil)==FALSE){
+    m_FOI_Brazil=as.numeric(params[names(params)=="m_FOI_Brazil"])
+  } else {
+    m_FOI_Brazil=const_list$m_FOI_Brazil
+  }
+
   #Get FOI and R0 values
   FOI_values=R0_values=rep(0,n_regions)
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
@@ -88,12 +96,14 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
       model_params=param_calc_enviro(enviro_coeffs,
                                      as.numeric(enviro_data[enviro_data$region==regions[i],1+c(1:n_env_vars)]))
       FOI_values[i]=model_params$FOI
+      if(substr(regions[i],1,3)=="BRA"){FOI_values[i]=FOI_values[i]*m_FOI_Brazil}
       if(const_list$type=="FOI+R0 enviro"){R0_values[i]=model_params$R0} else {
         R0_values[i]=const_list$R0_fixed_values[i]}
     }
   }
   if(const_list$type %in% c("FOI+R0","FOI")){
     FOI_values=params[c(1:n_regions)]
+
     if(const_list$type=="FOI+R0"){R0_values=params[c((n_regions+1):(2*n_regions))]
     } else {R0_values=const_list$R0_fixed_values}
   }
@@ -253,8 +263,8 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),plot_type="
     n_graphs=0
     for(region in data_regions){
       lines=lines_all[obs_sero_data$country_zone==region]
-      subset=subset(obs_sero_data,obs_sero_data$country_zone==region)
-      years=names(table(subset$year))
+      subset=obs_sero_data[lines,]
+      years=as.numeric(names(table(subset$year)))
       for(year in years){
         lines2=lines[subset$year==year]
         subset2=subset(subset,year==year)

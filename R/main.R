@@ -619,6 +619,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
         model_params=param_calc_enviro(enviro_coeffs,
                                        as.numeric(enviro_data[enviro_data$region==regions[n_region],1+c(1:n_env_vars)]))
         FOI_values[n_region]=model_params$FOI
+        if(substr(regions[n_region],1,3)=="BRA"){FOI_values[n_region]=FOI_values[n_region]*m_FOI_Brazil}
         if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
           R0_values[n_region]=R0_fixed_values[n_region]}
       }
@@ -636,7 +637,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
                          E=start_SEIRV0$E[,n_region,n_param_set],I=start_SEIRV0$I[,n_region,n_param_set],
                          R=start_SEIRV0$R[,n_region,n_param_set],V=start_SEIRV0$V[,n_region,n_param_set])
       } else {start_SEIRV=NULL}
-      case_data <- case_data_generate(FOI_values[n_region]*m_FOI_Brazil,R0_values[n_region],
+      case_data <- case_data_generate(FOI_values[n_region],R0_values[n_region],
                                   vacc_data=input_data$vacc_data[n_region,,],pop_data=input_data$pop_data[n_region,,],
                                   year0=input_data$years_labels[1],mode_start,n_reps,year_end,year_data_begin,
                                   vaccine_efficacy,start_SEIRV,dt)
