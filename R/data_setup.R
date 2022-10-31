@@ -13,7 +13,7 @@
 #'   coverage values by age in remaining columns
 #' @param pop_data Data frame containing population data with region in column 1, year in column 2 and
 #'   population values by age in remaining columns
-#' @param regions Vector of regions for which to extract data from vacc_data and pop_data
+#' @param regions Vector of regions for which to extract data from vacc_data and pop_data (in alphabetical order)
 #' @param years Vector of years for which to extract data from vacc_data and pop_data
 #' '
 #' @export
@@ -24,13 +24,16 @@ create_input_data <- function(vacc_data=list(),pop_data=list(),regions=c(),years
   assert_that(is.data.frame(vacc_data))
   assert_that(is.data.frame(pop_data))
   assert_that(is.character(regions))
+  assert_that(all(regions==sort(regions)))
   assert_that(is.numeric(years))
   assert_that(ncol(pop_data)==ncol(vacc_data))
   vacc_regions=names(table(vacc_data[,1]))
+  assert_that(all(vacc_regions==sort(vacc_regions)))
   vacc_years=names(table(vacc_data[,2]))
   assert_that(all(regions %in% vacc_regions))
   assert_that(all(years %in% vacc_years))
   pop_regions=names(table(pop_data[,1]))
+  assert_that(all(pop_regions==sort(pop_regions)))
   pop_years=names(table(pop_data[,2]))
   assert_that(all(regions %in% pop_regions))
   assert_that(all(years %in% pop_years))
@@ -131,8 +134,7 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
   n_years=length(input_data$years_labels)
 
   regions_input_data=input_data$region_labels
-  #TODO - Make sure regions always in alphabetical order?
-  #if(table(sort(regions_input_data)==regions_input_data)[[TRUE]]==length(regions_input_data)){}
+  assert_that(all(regions_input_data==sort(regions_input_data)))
   regions_sero_com=names(table(obs_sero_data$region))
   regions_case_com=names(table(obs_case_data$region))
   regions_outbreak_com=names(table(obs_outbreak_data$region))
@@ -211,6 +213,40 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
                       year_data_begin=year_data_begin,year_end=year_end,
                       flag_sero=flag_sero,flag_case=flag_case,flag_outbreak=flag_outbreak,
                     sero_line_list=sero_line_list,case_line_list=case_line_list,outbreak_line_list=outbreak_line_list)
+
+  return(input_data_new)
+}
+
+#-------------------------------------------------------------------------------
+#' @title input_data_truncate
+#'
+#' @description Truncate input data list for shorter set of regions
+#'
+#' @details TBA
+#'
+#' @param input_data List of population and vaccination data for multiple regions (created using create_input_data()
+#'   function and usually loaded from an RDS file)
+#' @param regions_new Vector of regions (subset of input_data$region_labels) for which to create new, shorter dataset
+#'
+#' @export
+#'
+input_data_truncate <- function(input_data=list(),regions_new=c()){
+
+  assert_that(input_data_check(input_data))
+  N_age=length(input_data$age_labels)
+  n_years=length(input_data$years_labels)
+
+  assert_that(all(input_data$region_labels==sort(input_data$region_labels)))
+  assert_that(all(regions_new==sort(regions_new)))
+  assert_that(all(regions_new %in% input_data$region_labels))
+
+  input_regions_check=input_data$region_labels %in% regions_new
+  n_regions=length(input_regions_check)
+
+  input_data_new=list(region_labels=input_data$region_labels[input_regions_check],
+                      years_labels=input_data$years_labels,age_labels=input_data$age_labels,
+                      vacc_data=array(input_data$vacc_data[input_regions_check,,],dim=c(n_regions,n_years,N_age)),
+                      pop_data=array(input_data$pop_data[input_regions_check,,],dim=c(n_regions,n_years,N_age)))
 
   return(input_data_new)
 }
