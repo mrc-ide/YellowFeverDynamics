@@ -214,7 +214,7 @@ MCMC_step <- function(log_params=c(),input_data=list(),obs_sero_data=NULL,obs_ca
   ## accept/reject step:
   tmp = runif(1)
   if(tmp<min(exp(p_accept),1)) { # accept:
-    param = log_params_prop
+    log_params = log_params_prop
     like_current = like_prop
     accept = 1
   } else { # reject:
