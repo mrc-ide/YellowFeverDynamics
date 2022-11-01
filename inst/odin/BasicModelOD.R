@@ -31,12 +31,12 @@ Pmin <- 0 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 t_incubation <- 5 #Time for cases to incubate in mosquito
 t_latent <- 5 #Latent period before cases become infectious
-rate1=dt/(t_incubation+t_latent)
+rate1 <- dt/(t_incubation+t_latent)
 t_infectious <- 5 #Time cases remain infectious
 rate2 <- dt/t_infectious
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
-year_i=floor((step*dt)/365) + 1 #Number of years since start, as integer
+year_i <- floor((step*dt)/365) + 1 #Number of years since start, as integer
 dP1[1:N_age] <- dP1_all[i, as.integer(year_i)]*dt #Increase in population by age group over 1 time increment
 dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age group over 1 time increment
 
