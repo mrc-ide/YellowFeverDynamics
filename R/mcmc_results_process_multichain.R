@@ -34,16 +34,18 @@ get_mcmc_datasets_multichain <- function(input_folders=c()){
 #' @param datasets_selected Vector of dataset numbers to be selected from list
 #' @param burnin_values Vector of burnin values to use for selected datasets (set to 1 by default)
 #' @param end_values Vector of end values to use for selected datasets (set to last value by default)
-#' @param flag_grb Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())
+#' @param flag_grb Flag indicating whether to calculate Gelman-Rubin-Brooks convergence metric (MPSRF)
+#' @param grb_plot Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())
 #'
 #' @export
 #'
 display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),burnin_values=NULL,end_values=NULL,
-                                        flag_grb=FALSE){
+                                        flag_grb=TRUE,grb_plot=FALSE){
   assert_that(is.list(datasets))
   assert_that(is.numeric(datasets_selected))
   assert_that(all(datasets_selected %in% c(1:length(datasets))))
   assert_that(is.logical(flag_grb))
+  assert_that(is.logical(grb_plot))
   if(is.null(burnin_values)==TRUE){
     burnin_values=rep(1,length(datasets_selected))
   } else {
@@ -68,18 +70,17 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
       param_names=colnames(input_frame)[c(2:ncol(input_frame))]}
     columns=which(colnames(input_frame) %in% param_names)
 
-    mcmc_list[[i]]=mcmc(data=input_frame[,columns],start=burnin_values[i],
-                         end=end_values[i],thin=1)
+    mcmc_list[[i]]=mcmc(data=input_frame[,columns],start=burnin_values[i],end=end_values[i],thin=1)
     like_values[[n_data]]=input_frame$posterior_current[rows[[i]]]
     like_values[[n_data]][is.infinite(like_values[[n_data]])]=-10000
     like_min=min(like_min,min(like_values[[n_data]]))
     like_max=max(like_max,max(like_values[[n_data]]))
   }
-  if(length(datasets_selected)>1){
+  if(length(datasets_selected)>1 && flag_grb==TRUE){
     diag1=gelman.diag(mcmc_list,autoburnin=FALSE)
     MPSRF=signif(diag1$mpsrf,4)
   } else {MPSRF=NA}
-  if(flag_grb){diag2<-gelman.plot(mcmc_list,autoburnin=FALSE,ask=FALSE,bin.width=1000,max.bins=100)} else {diag2=NULL}
+  if(grb_plot){diag2<-gelman.plot(mcmc_list,autoburnin=FALSE,ask=FALSE,bin.width=1000,max.bins=100)} else {diag2=NULL}
   title_text="Chains:"
   for(i in 1:length(datasets_selected)){title_text=paste(title_text,datasets_selected[i],sep=" ")}
   title_text=paste(title_text," - MPSRF = ",MPSRF,sep="")
