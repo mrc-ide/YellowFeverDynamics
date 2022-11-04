@@ -9,7 +9,8 @@ display_multichain_progress(
   datasets_selected = c(1),
   burnin_values = NULL,
   end_values = NULL,
-  flag_grb = FALSE
+  flag_grb = TRUE,
+  grb_plot = FALSE
 )
 }
 \arguments{
@@ -21,7 +22,9 @@ display_multichain_progress(
 
 \item{end_values}{Vector of end values to use for selected datasets (set to last value by default)}
 
-\item{flag_grb}{Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())}
+\item{flag_grb}{Flag indicating whether to calculate Gelman-Rubin-Brooks convergence metric (MPSRF)}
+
+\item{grb_plot}{Flag indicating whether to plot Gelman-Rubin-Brooks convergence diagnostic (coda::gelman.plot())}
 }
 \description{
 Plot graph of Markov chain progress

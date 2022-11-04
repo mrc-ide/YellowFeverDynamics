@@ -76,7 +76,7 @@ display_multichain_progress <- function(datasets=list(),datasets_selected=c(1),b
     like_min=min(like_min,min(like_values[[n_data]]))
     like_max=max(like_max,max(like_values[[n_data]]))
   }
-  if(length(datasets_selected)>1 && flag_grb=TRUE){
+  if(length(datasets_selected)>1 && flag_grb==TRUE){
     diag1=gelman.diag(mcmc_list,autoburnin=FALSE)
     MPSRF=signif(diag1$mpsrf,4)
   } else {MPSRF=NA}
