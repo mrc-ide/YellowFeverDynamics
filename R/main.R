@@ -3,6 +3,9 @@
 #Global variables
 p_severe_inf=0.12 #Probability that an infection is severe
 p_death_severe_inf=0.39 #Probability that a severe infection becomes fatal
+t_incubation <- 5 #Time for cases to incubate in mosquito
+t_latent <- 5 #Latent period before cases become infectious
+t_infectious <- 5 #Time cases remain infectious
 #------------------------------------------------
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
