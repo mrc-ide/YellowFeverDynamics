@@ -8,32 +8,32 @@ dust_BasicModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_BasicModelOD_gpu_info`)
 }
 
-dust_cpu_BasicModelOD_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_BasicModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_BasicModelOD_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_run`, ptr, step_end)
+dust_cpu_BasicModelOD_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_run`, ptr, time_end)
 }
 
-dust_cpu_BasicModelOD_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_simulate`, ptr, step_end)
+dust_cpu_BasicModelOD_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_simulate`, ptr, time_end)
 }
 
 dust_cpu_BasicModelOD_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_set_index`, ptr, r_index)
 }
 
-dust_cpu_BasicModelOD_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_BasicModelOD_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_BasicModelOD_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_state`, ptr, r_index)
 }
 
-dust_cpu_BasicModelOD_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_step`, ptr)
+dust_cpu_BasicModelOD_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_time`, ptr)
 }
 
 dust_cpu_BasicModelOD_reorder <- function(ptr, r_index) {
@@ -60,8 +60,8 @@ dust_cpu_BasicModelOD_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_compare_data`, ptr)
 }
 
-dust_cpu_BasicModelOD_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_BasicModelOD_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_BasicModelOD_set_n_threads <- function(ptr, n_threads) {
@@ -80,32 +80,32 @@ dust_FullModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelOD_gpu_info`)
 }
 
-dust_cpu_FullModelOD_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_FullModelOD_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_run`, ptr, step_end)
+dust_cpu_FullModelOD_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_run`, ptr, time_end)
 }
 
-dust_cpu_FullModelOD_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_simulate`, ptr, step_end)
+dust_cpu_FullModelOD_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_simulate`, ptr, time_end)
 }
 
 dust_cpu_FullModelOD_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_set_index`, ptr, r_index)
 }
 
-dust_cpu_FullModelOD_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_FullModelOD_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_FullModelOD_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_state`, ptr, r_index)
 }
 
-dust_cpu_FullModelOD_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_step`, ptr)
+dust_cpu_FullModelOD_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_time`, ptr)
 }
 
 dust_cpu_FullModelOD_reorder <- function(ptr, r_index) {
@@ -132,8 +132,8 @@ dust_cpu_FullModelOD_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_compare_data`, ptr)
 }
 
-dust_cpu_FullModelOD_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_FullModelOD_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_FullModelOD_set_n_threads <- function(ptr, n_threads) {
@@ -152,32 +152,32 @@ dust_FullModelOD2_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelOD2_gpu_info`)
 }
 
-dust_cpu_FullModelOD2_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelOD2_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_FullModelOD2_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_run`, ptr, step_end)
+dust_cpu_FullModelOD2_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_run`, ptr, time_end)
 }
 
-dust_cpu_FullModelOD2_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_simulate`, ptr, step_end)
+dust_cpu_FullModelOD2_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_simulate`, ptr, time_end)
 }
 
 dust_cpu_FullModelOD2_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_set_index`, ptr, r_index)
 }
 
-dust_cpu_FullModelOD2_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_FullModelOD2_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_FullModelOD2_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_state`, ptr, r_index)
 }
 
-dust_cpu_FullModelOD2_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_step`, ptr)
+dust_cpu_FullModelOD2_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_time`, ptr)
 }
 
 dust_cpu_FullModelOD2_reorder <- function(ptr, r_index) {
@@ -204,8 +204,8 @@ dust_cpu_FullModelOD2_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_compare_data`, ptr)
 }
 
-dust_cpu_FullModelOD2_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_FullModelOD2_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD2_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_FullModelOD2_set_n_threads <- function(ptr, n_threads) {
@@ -224,32 +224,32 @@ dust_FullModelODDelay_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDelay_gpu_info`)
 }
 
-dust_cpu_FullModelODDelay_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelODDelay_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_FullModelODDelay_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_run`, ptr, step_end)
+dust_cpu_FullModelODDelay_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_run`, ptr, time_end)
 }
 
-dust_cpu_FullModelODDelay_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_simulate`, ptr, step_end)
+dust_cpu_FullModelODDelay_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_simulate`, ptr, time_end)
 }
 
 dust_cpu_FullModelODDelay_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_set_index`, ptr, r_index)
 }
 
-dust_cpu_FullModelODDelay_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_FullModelODDelay_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_FullModelODDelay_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_state`, ptr, r_index)
 }
 
-dust_cpu_FullModelODDelay_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_step`, ptr)
+dust_cpu_FullModelODDelay_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_time`, ptr)
 }
 
 dust_cpu_FullModelODDelay_reorder <- function(ptr, r_index) {
@@ -276,8 +276,8 @@ dust_cpu_FullModelODDelay_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_compare_data`, ptr)
 }
 
-dust_cpu_FullModelODDelay_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_FullModelODDelay_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_FullModelODDelay_set_n_threads <- function(ptr, n_threads) {
@@ -296,32 +296,32 @@ dust_FullModelODDelay2_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDelay2_gpu_info`)
 }
 
-dust_cpu_FullModelODDelay2_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelODDelay2_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_FullModelODDelay2_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_run`, ptr, step_end)
+dust_cpu_FullModelODDelay2_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_run`, ptr, time_end)
 }
 
-dust_cpu_FullModelODDelay2_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_simulate`, ptr, step_end)
+dust_cpu_FullModelODDelay2_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_simulate`, ptr, time_end)
 }
 
 dust_cpu_FullModelODDelay2_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_set_index`, ptr, r_index)
 }
 
-dust_cpu_FullModelODDelay2_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_FullModelODDelay2_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_FullModelODDelay2_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_state`, ptr, r_index)
 }
 
-dust_cpu_FullModelODDelay2_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_step`, ptr)
+dust_cpu_FullModelODDelay2_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_time`, ptr)
 }
 
 dust_cpu_FullModelODDelay2_reorder <- function(ptr, r_index) {
@@ -348,8 +348,8 @@ dust_cpu_FullModelODDelay2_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_compare_data`, ptr)
 }
 
-dust_cpu_FullModelODDelay2_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_FullModelODDelay2_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay2_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_FullModelODDelay2_set_n_threads <- function(ptr, n_threads) {
@@ -368,32 +368,32 @@ dust_FullModelODDeterministic_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDeterministic_gpu_info`)
 }
 
-dust_cpu_FullModelODDeterministic_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelODDeterministic_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_FullModelODDeterministic_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_run`, ptr, step_end)
+dust_cpu_FullModelODDeterministic_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_run`, ptr, time_end)
 }
 
-dust_cpu_FullModelODDeterministic_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_simulate`, ptr, step_end)
+dust_cpu_FullModelODDeterministic_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_simulate`, ptr, time_end)
 }
 
 dust_cpu_FullModelODDeterministic_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_set_index`, ptr, r_index)
 }
 
-dust_cpu_FullModelODDeterministic_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_FullModelODDeterministic_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_FullModelODDeterministic_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_state`, ptr, r_index)
 }
 
-dust_cpu_FullModelODDeterministic_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_step`, ptr)
+dust_cpu_FullModelODDeterministic_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_time`, ptr)
 }
 
 dust_cpu_FullModelODDeterministic_reorder <- function(ptr, r_index) {
@@ -420,8 +420,8 @@ dust_cpu_FullModelODDeterministic_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_compare_data`, ptr)
 }
 
-dust_cpu_FullModelODDeterministic_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_FullModelODDeterministic_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_FullModelODDeterministic_set_n_threads <- function(ptr, n_threads) {
@@ -440,32 +440,32 @@ dust_InfectionSplitModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_InfectionSplitModelOD_gpu_info`)
 }
 
-dust_cpu_InfectionSplitModelOD_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_InfectionSplitModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_InfectionSplitModelOD_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_run`, ptr, step_end)
+dust_cpu_InfectionSplitModelOD_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_run`, ptr, time_end)
 }
 
-dust_cpu_InfectionSplitModelOD_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_simulate`, ptr, step_end)
+dust_cpu_InfectionSplitModelOD_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_simulate`, ptr, time_end)
 }
 
 dust_cpu_InfectionSplitModelOD_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_index`, ptr, r_index)
 }
 
-dust_cpu_InfectionSplitModelOD_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_InfectionSplitModelOD_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_InfectionSplitModelOD_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_state`, ptr, r_index)
 }
 
-dust_cpu_InfectionSplitModelOD_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_step`, ptr)
+dust_cpu_InfectionSplitModelOD_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_time`, ptr)
 }
 
 dust_cpu_InfectionSplitModelOD_reorder <- function(ptr, r_index) {
@@ -492,8 +492,8 @@ dust_cpu_InfectionSplitModelOD_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_compare_data`, ptr)
 }
 
-dust_cpu_InfectionSplitModelOD_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_InfectionSplitModelOD_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_InfectionSplitModelOD_set_n_threads <- function(ptr, n_threads) {
@@ -512,32 +512,32 @@ dust_ModelInfGenerate_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_ModelInfGenerate_gpu_info`)
 }
 
-dust_cpu_ModelInfGenerate_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_ModelInfGenerate_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_ModelInfGenerate_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_run`, ptr, step_end)
+dust_cpu_ModelInfGenerate_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_run`, ptr, time_end)
 }
 
-dust_cpu_ModelInfGenerate_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_simulate`, ptr, step_end)
+dust_cpu_ModelInfGenerate_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_simulate`, ptr, time_end)
 }
 
 dust_cpu_ModelInfGenerate_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_set_index`, ptr, r_index)
 }
 
-dust_cpu_ModelInfGenerate_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_ModelInfGenerate_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_ModelInfGenerate_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_state`, ptr, r_index)
 }
 
-dust_cpu_ModelInfGenerate_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_step`, ptr)
+dust_cpu_ModelInfGenerate_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_time`, ptr)
 }
 
 dust_cpu_ModelInfGenerate_reorder <- function(ptr, r_index) {
@@ -564,8 +564,8 @@ dust_cpu_ModelInfGenerate_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_compare_data`, ptr)
 }
 
-dust_cpu_ModelInfGenerate_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_ModelInfGenerate_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ModelInfGenerate_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_ModelInfGenerate_set_n_threads <- function(ptr, n_threads) {
@@ -584,32 +584,32 @@ dust_ReactiveModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_ReactiveModelOD_gpu_info`)
 }
 
-dust_cpu_ReactiveModelOD_alloc <- function(r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc`, r_pars, pars_multi, step, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_ReactiveModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
 }
 
-dust_cpu_ReactiveModelOD_run <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_run`, ptr, step_end)
+dust_cpu_ReactiveModelOD_run <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_run`, ptr, time_end)
 }
 
-dust_cpu_ReactiveModelOD_simulate <- function(ptr, step_end) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_simulate`, ptr, step_end)
+dust_cpu_ReactiveModelOD_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_simulate`, ptr, time_end)
 }
 
 dust_cpu_ReactiveModelOD_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_index`, ptr, r_index)
 }
 
-dust_cpu_ReactiveModelOD_update_state <- function(ptr, r_pars, r_state, r_step, r_set_initial_state) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_update_state`, ptr, r_pars, r_state, r_step, r_set_initial_state)
+dust_cpu_ReactiveModelOD_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state)
 }
 
 dust_cpu_ReactiveModelOD_state <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_state`, ptr, r_index)
 }
 
-dust_cpu_ReactiveModelOD_step <- function(ptr) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_step`, ptr)
+dust_cpu_ReactiveModelOD_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_time`, ptr)
 }
 
 dust_cpu_ReactiveModelOD_reorder <- function(ptr, r_index) {
@@ -636,8 +636,8 @@ dust_cpu_ReactiveModelOD_compare_data <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_compare_data`, ptr)
 }
 
-dust_cpu_ReactiveModelOD_filter <- function(ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_filter`, ptr, step_end, save_trajectories, step_snapshot, min_log_likelihood)
+dust_cpu_ReactiveModelOD_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
 }
 
 dust_cpu_ReactiveModelOD_set_n_threads <- function(ptr, n_threads) {
