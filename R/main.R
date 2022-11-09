@@ -70,7 +70,7 @@ Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=li
 
   x <- FullModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                           year_data_begin,vaccine_efficacy,start_SEIRV,dt),
-                     step = 1,n_particles = n_particles,n_threads = n_threads)
+                     time = 1,n_particles = n_particles,n_threads = n_threads)
 
   n_nv=4 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
@@ -133,7 +133,7 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 
   x <- BasicModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                           year_data_begin,vaccine_efficacy,start_SEIRV,dt),
-                     step = 1,n_particles = n_particles,n_threads = n_threads)
+                     time = 1,n_particles = n_particles,n_threads = n_threads)
 
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups

@@ -59,7 +59,7 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
   for(div in 1:n_divs){
     n_particles=n_particles_list[div]
     reps=c(1:n_particles)+((div-1)*division)
-    x <- FullModelOD$new(pars=pars,step = 1,n_particles = n_particles,n_threads = n_threads)
+    x <- FullModelOD$new(pars=pars,time = 1,n_particles = n_particles,n_threads = n_threads)
 
     x_res <- array(NA, dim = c(n_data_pts, n_particles))
     for(t in step0:n_steps){

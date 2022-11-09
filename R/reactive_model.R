@@ -42,10 +42,10 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_d
   assert_that(n_threads<=n_particles)
   assert_that(n_threads>0)
 
-  x <- ReactiveModelOD$new(pars=parameter_setup2(FOI_spillover,R0,vacc_data1,vacc_data2,pop_data,year0,mode_start,
+  x <- ReactiveModelOD$new(pars=parameter_setup_react(FOI_spillover,R0,vacc_data1,vacc_data2,pop_data,year0,mode_start,
                                             year_end,year_data_begin,vaccine_efficacy,start_SEIRV,dt,p_rep,
                                             outbreak_threshold1,cluster_threshold1),
-                       step = 1,n_particles = n_particles,n_threads = n_threads)
+                       time = 1,n_particles = n_particles,n_threads = n_threads)
 
   n_nv=12 #Number of non-vector outputs at beginning of output
   N_age=length(pop_data[1,]) #Number of age groups
@@ -77,7 +77,7 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_d
               C_rep=array(x_res[c(((6*N_age)+1+n_nv):((7*N_age)+n_nv)),,],dim=c(N_age,n_particles,t_pts_out))))
 }
 #-------------------------------------------------------------------------------
-#' @title Parameter setup 2
+#' @title Parameter setup (reactive)
 #'
 #' @description Set up parameters to input into model
 #'
@@ -104,9 +104,10 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_d
 #' '
 #' @export
 #'
-parameter_setup2 <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_data2=list(),pop_data=list(),year0=1940,
-                             mode_start=0,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,start_SEIRV=list(),
-                             dt=1.0,p_rep=c(1.0e-6,1.0e-6),outbreak_threshold1=1,cluster_threshold1=1.0){
+parameter_setup_react <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_data2=list(),pop_data=list(),
+                                  year0=1940,mode_start=0,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
+                                  start_SEIRV=list(),dt=1.0,p_rep=c(1.0e-6,1.0e-6),outbreak_threshold1=1,
+                                  cluster_threshold1=1.0){
 
   assert_that(length(pop_data[,1])>1)
   assert_that(length(pop_data[1,])>1)

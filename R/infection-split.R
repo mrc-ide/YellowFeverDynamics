@@ -29,16 +29,16 @@
 Infection_Split_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
                                       n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
                                       start_SEIRV=list(),dt=1.0) {
-  
+
   assert_that(n_particles>0)
   assert_that(n_particles<=20)
   assert_that(n_threads<=n_particles)
   assert_that(n_threads>0)
-  
+
   x <- InfectionSplitModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                                       year_data_begin,vaccine_efficacy,start_SEIRV,dt),
-                                 step = 1,n_particles = n_particles,n_threads = n_threads)
-  
+                                 time = 1,n_particles = n_particles,n_threads = n_threads)
+
   n_nv=5 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
   t_pts_all=c(1:((year_end-year0)*(365/dt))) #All output time points
@@ -50,7 +50,7 @@ Infection_Split_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),
   for(t in step0:n_steps){
     x_res[,,t-step0] <- x$run(t)
   }
-  
+
   return(list(day=array(x_res[2,,],dim=c(n_particles,t_pts_out)), year=array(x_res[3,,],dim=c(n_particles,t_pts_out)),
               FOI_sylvatic=array(x_res[4,,],dim=c(n_particles,t_pts_out)),
               FOI_urban=array(x_res[5,,],dim=c(n_particles,t_pts_out)),

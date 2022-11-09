@@ -37,7 +37,7 @@ Full_Model_Run_Deterministic <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list
 
   x <- FullModelODDeterministic$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                                          year_data_begin,vaccine_efficacy,start_SEIRV,dt),
-                                    step = 1,n_particles = n_particles,n_threads = n_threads)
+                                    time = 1,n_particles = n_particles,n_threads = n_threads)
 
   n_nv=4 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
@@ -121,7 +121,7 @@ case_data_generate_deterministic <- function(FOI_spillover=0.0,R0=1.0,vacc_data=
   for(div in 1:n_divs){
     n_particles=n_particles_list[div]
     reps=c(1:n_particles)+((div-1)*division)
-    x <- FullModelODDeterministic$new(pars=pars,step = 1,n_particles = n_particles,n_threads = n_threads)
+    x <- FullModelODDeterministic$new(pars=pars,time = 1,n_particles = n_particles,n_threads = n_threads)
 
     x_res <- array(NA, dim = c(n_data_pts, n_particles))
     for(t in step0:n_steps){
