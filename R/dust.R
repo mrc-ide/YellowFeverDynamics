@@ -748,7 +748,8 @@ FullModelODDelay <- R6::R6Class(
      FOI_spillover = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      Inf0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
      N_age = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
-     n_delay_steps = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_delay_steps1 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
+     n_delay_steps2 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      n_years = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      R0 = list(has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE),
      Rec0 = list(has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE),
@@ -2224,26 +2225,6 @@ FullModelOD$set("public", "transform_variables", function(y) {
     }
 })
 FullModelODDelay$set("public", "transform_variables", function(y) {
-    info <- self$info()
-    set_dim <- function(x, dimx) {
-        if (length(dimx) > 1L) {
-            dim(x) <- dimx
-        }
-        x
-    }
-    if (is.matrix(y)) {
-        n <- ncol(y)
-        Map(function(i, d) set_dim(y[i, , drop = FALSE], c(d,
-            n)), info$index, info$dim)
-    } else if (is.array(y)) {
-        n <- dim(y)[2:3]
-        Map(function(i, d) set_dim(y[i, , , drop = FALSE], c(d,
-            n)), info$index, info$dim)
-    } else {
-        Map(function(i, d) set_dim(y[i], d), info$index, info$dim)
-    }
-})
-FullModelODDelay2$set("public", "transform_variables", function(y) {
     info <- self$info()
     set_dim <- function(x, dimx) {
         if (length(dimx) > 1L) {

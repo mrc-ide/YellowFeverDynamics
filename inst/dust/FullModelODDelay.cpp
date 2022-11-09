@@ -33,7 +33,8 @@ __host__ __device__ T odin_max(T x, T y) {
 // [[dust::param(FOI_spillover, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Inf0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_age, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(n_delay_steps, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_delay_steps1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(n_delay_steps2, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_years, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(R0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Rec0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -50,7 +51,8 @@ public:
   struct shared_type {
     real_type beta;
     std::vector<real_type> Cas0;
-    real_type di;
+    real_type di1;
+    real_type di2;
     int dim_C;
     int dim_Cas0;
     int dim_dP1;
@@ -66,6 +68,7 @@ public:
     int dim_E_new;
     int dim_Exp0;
     int dim_I;
+    int dim_I_delay;
     int dim_I_new;
     int dim_Inf0;
     int dim_inv_P;
@@ -96,23 +99,25 @@ public:
     std::vector<real_type> initial_E_delay;
     real_type initial_FOI_total;
     std::vector<real_type> initial_I;
+    std::vector<real_type> initial_I_delay;
     std::vector<real_type> initial_R;
     std::vector<real_type> initial_S;
     real_type initial_time;
     std::vector<real_type> initial_V;
     real_type initial_year;
     int N_age;
-    int n_delay_steps;
+    int n_delay_steps1;
+    int n_delay_steps2;
     int n_years;
     int offset_variable_C;
     int offset_variable_E;
     int offset_variable_E_delay;
     int offset_variable_I;
+    int offset_variable_I_delay;
     int offset_variable_R;
     int offset_variable_V;
     real_type Pmin;
     real_type R0;
-    real_type rate2;
     std::vector<real_type> Rec0;
     std::vector<real_type> Sus0;
     real_type t_infectious;
@@ -137,10 +142,10 @@ public:
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() {
-    return shared->dim_C + shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 4;
+    return shared->dim_C + shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_R + shared->dim_S + shared->dim_V + 4;
   }
   std::vector<real_type> initial(size_t step) {
-    std::vector<real_type> state(shared->dim_C + shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 4);
+    std::vector<real_type> state(shared->dim_C + shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_R + shared->dim_S + shared->dim_V + 4);
     state[0] = shared->initial_time;
     state[1] = shared->initial_day;
     state[2] = shared->initial_year;
@@ -149,6 +154,7 @@ public:
     std::copy(shared->initial_E.begin(), shared->initial_E.end(), state.begin() + shared->offset_variable_E);
     std::copy(shared->initial_E_delay.begin(), shared->initial_E_delay.end(), state.begin() + shared->offset_variable_E_delay);
     std::copy(shared->initial_I.begin(), shared->initial_I.end(), state.begin() + shared->offset_variable_I);
+    std::copy(shared->initial_I_delay.begin(), shared->initial_I_delay.end(), state.begin() + shared->offset_variable_I_delay);
     std::copy(shared->initial_R.begin(), shared->initial_R.end(), state.begin() + shared->offset_variable_R);
     std::copy(shared->initial_V.begin(), shared->initial_V.end(), state.begin() + shared->offset_variable_V);
     std::copy(shared->initial_C.begin(), shared->initial_C.end(), state.begin() + shared->offset_variable_C);
@@ -160,6 +166,7 @@ public:
     const real_type * E = state + shared->offset_variable_E;
     const real_type * E_delay = state + shared->offset_variable_E_delay;
     const real_type * I = state + shared->offset_variable_I;
+    const real_type * I_delay = state + shared->offset_variable_I_delay;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
     state_next[1] = day + shared->dt;
@@ -167,13 +174,13 @@ public:
     real_type year_i = std::floor((step * shared->dt) / (real_type) 365) + 1;
     state_next[2] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.I_new[i - 1] = E_delay[static_cast<int>(i + shared->di) - 1];
+      internal.I_new[i - 1] = E_delay[static_cast<int>(i + shared->di1) - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.P_nV[i - 1] = S[i - 1] + R[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.R_new[i - 1] = I[i - 1] * shared->rate2;
+      internal.R_new[i - 1] = I_delay[static_cast<int>(i + shared->di2) - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.dP1[i - 1] = shared->dP1_all[shared->dim_dP1_all_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->dt;
@@ -192,6 +199,12 @@ public:
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_I + i - 1] = std::max(shared->Pmin, I[i - 1] + internal.I_new[i - 1] - internal.R_new[i - 1]);
+    }
+    for (int i = 1; i <= shared->N_age; ++i) {
+      state_next[shared->offset_variable_I_delay + i - 1] = internal.I_new[i - 1];
+    }
+    for (int i = (shared->N_age + 1); i <= shared->n_delay_steps2; ++i) {
+      state_next[shared->offset_variable_I_delay + i - 1] = I_delay[i - shared->N_age - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
@@ -225,7 +238,7 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_E_delay + i - 1] = internal.E_new[i - 1];
     }
-    for (int i = (shared->N_age + 1); i <= shared->n_delay_steps; ++i) {
+    for (int i = (shared->N_age + 1); i <= shared->n_delay_steps1; ++i) {
       state_next[shared->offset_variable_E_delay + i - 1] = E_delay[i - shared->N_age - 1];
     }
     {
@@ -479,7 +492,8 @@ dust::pars_type<FullModelODDelay> dust_pars<FullModelODDelay>(cpp11::list user) 
   shared->dt = NA_REAL;
   shared->FOI_spillover = NA_REAL;
   shared->N_age = NA_INTEGER;
-  shared->n_delay_steps = NA_INTEGER;
+  shared->n_delay_steps1 = NA_INTEGER;
+  shared->n_delay_steps2 = NA_INTEGER;
   shared->n_years = NA_INTEGER;
   shared->R0 = NA_REAL;
   shared->vaccine_efficacy = NA_REAL;
@@ -487,13 +501,15 @@ dust::pars_type<FullModelODDelay> dust_pars<FullModelODDelay>(cpp11::list user) 
   shared->dt = user_get_scalar<real_type>(user, "dt", shared->dt, NA_REAL, NA_REAL);
   shared->FOI_spillover = user_get_scalar<real_type>(user, "FOI_spillover", shared->FOI_spillover, NA_REAL, NA_REAL);
   shared->N_age = user_get_scalar<int>(user, "N_age", shared->N_age, NA_INTEGER, NA_INTEGER);
-  shared->n_delay_steps = user_get_scalar<int>(user, "n_delay_steps", shared->n_delay_steps, NA_INTEGER, NA_INTEGER);
+  shared->n_delay_steps1 = user_get_scalar<int>(user, "n_delay_steps1", shared->n_delay_steps1, NA_INTEGER, NA_INTEGER);
+  shared->n_delay_steps2 = user_get_scalar<int>(user, "n_delay_steps2", shared->n_delay_steps2, NA_INTEGER, NA_INTEGER);
   shared->n_years = user_get_scalar<int>(user, "n_years", shared->n_years, NA_INTEGER, NA_INTEGER);
   shared->R0 = user_get_scalar<real_type>(user, "R0", shared->R0, NA_REAL, NA_REAL);
   shared->vaccine_efficacy = user_get_scalar<real_type>(user, "vaccine_efficacy", shared->vaccine_efficacy, NA_REAL, NA_REAL);
   shared->year0 = user_get_scalar<real_type>(user, "year0", shared->year0, NA_REAL, NA_REAL);
   shared->beta = (shared->R0 * shared->dt) / (real_type) shared->t_infectious;
-  shared->di = shared->n_delay_steps - shared->N_age;
+  shared->di1 = shared->n_delay_steps1 - shared->N_age;
+  shared->di2 = shared->n_delay_steps2 - shared->N_age;
   shared->dim_C = shared->N_age;
   shared->dim_Cas0 = shared->N_age;
   shared->dim_dP1 = shared->N_age;
@@ -503,10 +519,11 @@ dust::pars_type<FullModelODDelay> dust_pars<FullModelODDelay>(cpp11::list user) 
   shared->dim_dP2_all_1 = shared->N_age;
   shared->dim_dP2_all_2 = shared->n_years;
   shared->dim_E = shared->N_age;
-  shared->dim_E_delay = shared->n_delay_steps;
+  shared->dim_E_delay = shared->n_delay_steps1;
   shared->dim_E_new = shared->N_age;
   shared->dim_Exp0 = shared->N_age;
   shared->dim_I = shared->N_age;
+  shared->dim_I_delay = shared->n_delay_steps2;
   shared->dim_I_new = shared->N_age;
   shared->dim_Inf0 = shared->N_age;
   shared->dim_inv_P = shared->N_age;
@@ -525,7 +542,6 @@ dust::pars_type<FullModelODDelay> dust_pars<FullModelODDelay>(cpp11::list user) 
   shared->dim_vacc_rate_annual_2 = shared->n_years;
   shared->initial_FOI_total = shared->FOI_spillover;
   shared->initial_year = shared->year0 - 1;
-  shared->rate2 = shared->dt / (real_type) shared->t_infectious;
   internal.dP1 = std::vector<real_type>(shared->dim_dP1);
   internal.dP2 = std::vector<real_type>(shared->dim_dP2);
   internal.E_new = std::vector<real_type>(shared->dim_E_new);
@@ -534,6 +550,7 @@ dust::pars_type<FullModelODDelay> dust_pars<FullModelODDelay>(cpp11::list user) 
   shared->initial_E = std::vector<real_type>(shared->dim_E);
   shared->initial_E_delay = std::vector<real_type>(shared->dim_E_delay);
   shared->initial_I = std::vector<real_type>(shared->dim_I);
+  shared->initial_I_delay = std::vector<real_type>(shared->dim_I_delay);
   shared->initial_R = std::vector<real_type>(shared->dim_R);
   shared->initial_S = std::vector<real_type>(shared->dim_S);
   shared->initial_V = std::vector<real_type>(shared->dim_V);
@@ -549,15 +566,19 @@ dust::pars_type<FullModelODDelay> dust_pars<FullModelODDelay>(cpp11::list user) 
   shared->dim_vacc_rate_annual = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2;
   shared->Exp0 = user_get_array_fixed<real_type, 1>(user, "Exp0", shared->Exp0, {shared->dim_Exp0}, NA_REAL, NA_REAL);
   shared->Inf0 = user_get_array_fixed<real_type, 1>(user, "Inf0", shared->Inf0, {shared->dim_Inf0}, NA_REAL, NA_REAL);
-  for (int i = 1; i <= shared->n_delay_steps; ++i) {
+  for (int i = 1; i <= shared->n_delay_steps1; ++i) {
     shared->initial_E_delay[i - 1] = 0;
   }
-  shared->offset_variable_C = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_R + shared->dim_S + shared->dim_V + 4;
+  for (int i = 1; i <= shared->n_delay_steps2; ++i) {
+    shared->initial_I_delay[i - 1] = 0;
+  }
+  shared->offset_variable_C = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_R + shared->dim_S + shared->dim_V + 4;
   shared->offset_variable_E = shared->dim_S + 4;
   shared->offset_variable_E_delay = shared->dim_E + shared->dim_S + 4;
   shared->offset_variable_I = shared->dim_E + shared->dim_E_delay + shared->dim_S + 4;
-  shared->offset_variable_R = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_S + 4;
-  shared->offset_variable_V = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_R + shared->dim_S + 4;
+  shared->offset_variable_I_delay = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_S + 4;
+  shared->offset_variable_R = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_S + 4;
+  shared->offset_variable_V = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_R + shared->dim_S + 4;
   shared->Rec0 = user_get_array_fixed<real_type, 1>(user, "Rec0", shared->Rec0, {shared->dim_Rec0}, NA_REAL, NA_REAL);
   shared->Sus0 = user_get_array_fixed<real_type, 1>(user, "Sus0", shared->Sus0, {shared->dim_Sus0}, NA_REAL, NA_REAL);
   shared->Vac0 = user_get_array_fixed<real_type, 1>(user, "Vac0", shared->Vac0, {shared->dim_Vac0}, NA_REAL, NA_REAL);
@@ -588,8 +609,8 @@ template <>
 cpp11::sexp dust_info<FullModelODDelay>(const dust::pars_type<FullModelODDelay>& pars) {
   const FullModelODDelay::internal_type internal = pars.internal;
   const std::shared_ptr<const FullModelODDelay::shared_type> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "day", "year", "FOI_total", "S", "E", "E_delay", "I", "R", "V", "C"});
-  cpp11::writable::list dim(11);
+  cpp11::writable::strings nms({"time", "day", "year", "FOI_total", "S", "E", "E_delay", "I", "I_delay", "R", "V", "C"});
+  cpp11::writable::list dim(12);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
   dim[2] = cpp11::writable::integers({1});
@@ -598,11 +619,12 @@ cpp11::sexp dust_info<FullModelODDelay>(const dust::pars_type<FullModelODDelay>&
   dim[5] = cpp11::writable::integers({shared->dim_E});
   dim[6] = cpp11::writable::integers({shared->dim_E_delay});
   dim[7] = cpp11::writable::integers({shared->dim_I});
-  dim[8] = cpp11::writable::integers({shared->dim_R});
-  dim[9] = cpp11::writable::integers({shared->dim_V});
-  dim[10] = cpp11::writable::integers({shared->dim_C});
+  dim[8] = cpp11::writable::integers({shared->dim_I_delay});
+  dim[9] = cpp11::writable::integers({shared->dim_R});
+  dim[10] = cpp11::writable::integers({shared->dim_V});
+  dim[11] = cpp11::writable::integers({shared->dim_C});
   dim.names() = nms;
-  cpp11::writable::list index(11);
+  cpp11::writable::list index(12);
   index[0] = cpp11::writable::integers({1});
   index[1] = cpp11::writable::integers({2});
   index[2] = cpp11::writable::integers({3});
@@ -611,9 +633,10 @@ cpp11::sexp dust_info<FullModelODDelay>(const dust::pars_type<FullModelODDelay>&
   index[5] = integer_sequence(shared->offset_variable_E + 1, shared->dim_E);
   index[6] = integer_sequence(shared->offset_variable_E_delay + 1, shared->dim_E_delay);
   index[7] = integer_sequence(shared->offset_variable_I + 1, shared->dim_I);
-  index[8] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
-  index[9] = integer_sequence(shared->offset_variable_V + 1, shared->dim_V);
-  index[10] = integer_sequence(shared->offset_variable_C + 1, shared->dim_C);
+  index[8] = integer_sequence(shared->offset_variable_I_delay + 1, shared->dim_I_delay);
+  index[9] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
+  index[10] = integer_sequence(shared->offset_variable_V + 1, shared->dim_V);
+  index[11] = integer_sequence(shared->offset_variable_C + 1, shared->dim_C);
   index.names() = nms;
   size_t len = shared->offset_variable_C + shared->dim_C;
   using namespace cpp11::literals;
