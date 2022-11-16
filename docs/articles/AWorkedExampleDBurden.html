@@ -103,16 +103,31 @@ Example 3 - Generating Epidemiological Data Sets</a>:</p>
 <span><span class="va">p_rep_death0</span> <span class="op">&lt;-</span> <span class="fl">0.2</span> <span class="co"># Probability of reporting of fatal infections</span></span>
 <span><span class="va">flag_reporting</span><span class="op">=</span><span class="cn">FALSE</span> <span class="co">#Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 and p_rep_death0) in addition to actual numbers</span></span>
 <span><span class="va">results</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/total_burden_estimate.html">total_burden_estimate</a></span><span class="op">(</span><span class="va">type</span>,<span class="va">param_dist</span>,<span class="va">input_data</span>,start_SEIRV0<span class="op">=</span><span class="cn">NULL</span>,<span class="va">years_data</span>,<span class="va">n_reps</span>,<span class="va">mode_start</span>,<span class="va">flag_reporting</span>,</span>
-<span>                               <span class="va">dt</span>,<span class="va">enviro_data</span>,<span class="va">R0_fixed_values</span>,<span class="va">vaccine_efficacy0</span>,<span class="va">p_rep_severe0</span>,<span class="va">p_rep_death0</span><span class="op">)</span></span></code></pre></div>
+<span>                               <span class="va">dt</span>,<span class="va">enviro_data</span>,<span class="va">R0_fixed_values</span>,<span class="va">vaccine_efficacy0</span>,<span class="va">p_rep_severe0</span>,<span class="va">p_rep_death0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sets:</span></span>
+<span><span class="co">#&gt;  1 2 3 4 5 6 7 8 9 10</span></span></code></pre></div>
 <p>The output of total_burden_estimate() consists of two data frames in
 a list, one (by_region) giving the number of cases, deaths and (if
 flag_reporting is set to TRUE) observed cases and deaths for each year,
 region and parameter set. The second (all) gives the totals combined
 across all regions for each year and parameter set.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">by_region</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">by_region</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   year region set  cases deaths</span></span>
+<span><span class="co">#&gt; 1 2000  IGL01   1  828.2  311.2</span></span>
+<span><span class="co">#&gt; 2 2000  IGL02   1  123.4   51.8</span></span>
+<span><span class="co">#&gt; 3 2000  IGL03   1 1497.6  597.6</span></span>
+<span><span class="co">#&gt; 4 2000  IGL04   1 2065.6  813.4</span></span>
+<span><span class="co">#&gt; 5 2000  IGL05   1 1556.6  604.2</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">all</span>,<span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">all</span>,<span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   year set   cases deaths</span></span>
+<span><span class="co">#&gt; 1 2000   1 21133.4 8227.4</span></span>
+<span><span class="co">#&gt; 2 2000   2 19650.6 7645.4</span></span>
+<span><span class="co">#&gt; 3 2000   3 19536.0 7614.6</span></span>
+<span><span class="co">#&gt; 4 2000   4 20470.8 8026.6</span></span>
+<span><span class="co">#&gt; 5 2000   5 20105.0 7861.4</span></span></code></pre></div>
 <p>We can use the output of total_burden_estimate() to, for example,
 model vaccine impact by examining the difference in burden between a
 no-vaccination scenario and a scenario featuring a specified vaccination
@@ -122,6 +137,9 @@ program.</p>
 <span><span class="va">input_data_novacc</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span>,<span class="va">input_data_novacc</span><span class="op">$</span><span class="va">years_labels</span><span class="op">&gt;=</span><span class="va">years_data</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="op">]</span> <span class="op">&lt;-</span> <span class="va">input_data_novacc</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span>,<span class="va">input_data_novacc</span><span class="op">$</span><span class="va">years_labels</span><span class="op">&gt;=</span><span class="va">years_data</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="op">]</span><span class="op">*</span><span class="fl">0</span> <span class="co"># Amend input data to remove all vaccination in or after the first year of the period considered</span></span>
 <span><span class="va">results_novacc</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/total_burden_estimate.html">total_burden_estimate</a></span><span class="op">(</span><span class="va">type</span>,<span class="va">param_dist</span>,<span class="va">input_data_novacc</span>,start_SEIRV0<span class="op">=</span><span class="cn">NULL</span>,<span class="va">years_data</span>,<span class="va">n_reps</span>,<span class="va">mode_start</span>,</span>
 <span>                              <span class="va">flag_reporting</span>,<span class="va">dt</span>,<span class="va">enviro_data</span>,<span class="va">R0_fixed_values</span>,<span class="va">vaccine_efficacy0</span>,<span class="va">p_rep_severe0</span>,<span class="va">p_rep_death0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sets:</span></span>
+<span><span class="co">#&gt;  1 2 3 4 5 6 7 8 9 10</span></span>
 <span><span class="va">deaths_prevented_by_region</span><span class="op">=</span><span class="va">results_novacc</span><span class="op">$</span><span class="va">by_region</span><span class="op">$</span><span class="va">deaths</span><span class="op">-</span><span class="va">results</span><span class="op">$</span><span class="va">by_region</span><span class="op">$</span><span class="va">deaths</span> <span class="co">#</span></span>
 <span><span class="va">deaths_prevented_all</span><span class="op">=</span><span class="va">results_novacc</span><span class="op">$</span><span class="va">all</span><span class="op">$</span><span class="va">deaths</span><span class="op">-</span><span class="va">results</span><span class="op">$</span><span class="va">all</span><span class="op">$</span><span class="va">deaths</span> <span class="co"># </span></span></code></pre></div>
   </main>

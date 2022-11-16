@@ -10,31 +10,13 @@
     <loc>/articles/AWorkedExampleAModelRun.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleBDataGenerate.html</loc>
-  </url>
-  <url>
     <loc>/articles/AWorkedExampleBOutbreaks.html</loc>
   </url>
   <url>
     <loc>/articles/AWorkedExampleCDataGenerate.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleCMCMC.html</loc>
-  </url>
-  <url>
-    <loc>/articles/AWorkedExampleCOutbreakRisk.html</loc>
-  </url>
-  <url>
-    <loc>/articles/AWorkedExampleCOutbreaks.html</loc>
-  </url>
-  <url>
     <loc>/articles/AWorkedExampleDBurden.html</loc>
-  </url>
-  <url>
-    <loc>/articles/AWorkedExampleDOutbreakRisk.html</loc>
-  </url>
-  <url>
-    <loc>/articles/AWorkedExampleEBurden.html</loc>
   </url>
   <url>
     <loc>/articles/AWorkedExampleEMCMC.html</loc>
@@ -53,42 +35,6 @@
   </url>
   <url>
     <loc>/articles/BGuideELikelihood.html</loc>
-  </url>
-  <url>
-    <loc>/articles/BInputs.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CModelRun.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CParametersEnvironment.html</loc>
-  </url>
-  <url>
-    <loc>/articles/DDataGenerate.html</loc>
-  </url>
-  <url>
-    <loc>/articles/DModelRun.html</loc>
-  </url>
-  <url>
-    <loc>/articles/DParametersEnvironment.html</loc>
-  </url>
-  <url>
-    <loc>/articles/EDataGenerate.html</loc>
-  </url>
-  <url>
-    <loc>/articles/EModelResultsProcess.html</loc>
-  </url>
-  <url>
-    <loc>/articles/FDataGenerate.html</loc>
-  </url>
-  <url>
-    <loc>/articles/GLikelihood.html</loc>
-  </url>
-  <url>
-    <loc>/articles/GMCMC.html</loc>
-  </url>
-  <url>
-    <loc>/articles/HMCMC.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>
@@ -196,9 +142,6 @@
     <loc>/reference/input_data_process.html</loc>
   </url>
   <url>
-    <loc>/reference/input_data_process2.html</loc>
-  </url>
-  <url>
     <loc>/reference/input_data_truncate.html</loc>
   </url>
   <url>
@@ -208,13 +151,7 @@
     <loc>/reference/MCMC.html</loc>
   </url>
   <url>
-    <loc>/reference/MCMC2.html</loc>
-  </url>
-  <url>
     <loc>/reference/mcmc_checks.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mcmc_checks2.html</loc>
   </url>
   <url>
     <loc>/reference/mcmc_FOI_R0_setup.html</loc>
@@ -223,13 +160,7 @@
     <loc>/reference/mcmc_prelim_fit.html</loc>
   </url>
   <url>
-    <loc>/reference/mcmc_prelim_fit2.html</loc>
-  </url>
-  <url>
     <loc>/reference/MCMC_step.html</loc>
-  </url>
-  <url>
-    <loc>/reference/MCMC_step2.html</loc>
   </url>
   <url>
     <loc>/reference/outbreak_risk_compare.html</loc>
@@ -284,9 +215,6 @@
   </url>
   <url>
     <loc>/reference/single_like_calc.html</loc>
-  </url>
-  <url>
-    <loc>/reference/single_like_calc2.html</loc>
   </url>
   <url>
     <loc>/reference/total_burden_estimate.html</loc>

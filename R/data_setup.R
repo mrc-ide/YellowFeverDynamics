@@ -241,7 +241,7 @@ input_data_truncate <- function(input_data=list(),regions_new=c()){
   assert_that(all(regions_new %in% input_data$region_labels))
 
   input_regions_check=input_data$region_labels %in% regions_new
-  n_regions=length(input_regions_check)
+  n_regions=length(input_regions_check[input_regions_check==TRUE])
 
   input_data_new=list(region_labels=input_data$region_labels[input_regions_check],
                       years_labels=input_data$years_labels,age_labels=input_data$age_labels,
