@@ -69,7 +69,7 @@ n_values=nrow(enviro_coeffs2)
 epi_data <- list(FOI = array(NA, dim = c(n_values,n_regions)), R0 = array(NA, dim = c(n_values,n_regions)))
 for(n_value in 1:n_values){
   for(n_region in 1:n_regions){
-    FOI_R0_values <- param_calc_enviro(enviro_coeffs = as.numeric(enviro_coeffs2[1, ]), enviro_covar_values = enviro_data[n_region, c(2:ncol(enviro_data))])
+    FOI_R0_values <- param_calc_enviro(enviro_coeffs = as.numeric(enviro_coeffs2[n_value, ]), enviro_covar_values = enviro_data[n_region, c(2:ncol(enviro_data))])
     epi_data$FOI[n_value,n_region] <- FOI_R0_values$FOI
     epi_data$R0[n_value,n_region] <- FOI_R0_values$R0
   }
