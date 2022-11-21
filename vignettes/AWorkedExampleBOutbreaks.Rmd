@@ -55,7 +55,7 @@ As noted in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/art
 ```{r}
 p_severe_inf <- 0.12
 p_death_severe_inf <- 0.39
-n_reps <- 1000 # Number of repetitions
+n_reps <- 100 # Number of repetitions
 model_results_multi <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_reps, year_end = 2001, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
 pts <- model_results_multi$year == 1999 # Time period for which to calculate outbreak risk, here defined as a particular year
 outbreak_occurence_values <- rep(0, n_reps) # Vector of n_reps 0/1 values indicating whether an outbreak occurs for that repetition
@@ -74,6 +74,6 @@ outbreak_risk
 We can compute the outbreak risk in a year automatically and more efficiently using the outbreak_risk_generate() function. This function runs the time before the period of interest n_sets times, then models the period of interest n_reps times for each set, giving n_sets sets of values of annual outbreak risk:
 
 ```{r}
-outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_sets=1, n_reps = 1000, year_end = 2005, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0, p_rep_severe, p_rep_death)
+outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_sets=1, n_reps = 100, year_end = 2005, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0, p_rep_severe, p_rep_death)
 outbreak_risk
 ```
