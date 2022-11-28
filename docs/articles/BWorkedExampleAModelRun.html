@@ -41,16 +41,17 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 2 - Outbreak Modelling</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
-    <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
-    <a class="dropdown-item" href="../articles/BGuideBInputs.html">Guide 2 - Inputs</a>
-    <a class="dropdown-item" href="../articles/BGuideCParametersEnvironment.html">Guide 3 - Calculating Parameters From Environmental Data</a>
-    <a class="dropdown-item" href="../articles/BGuideDModelResultsProcess.html">Guide 4 - Processing Model Results</a>
-    <a class="dropdown-item" href="../articles/BGuideELikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/A1Introduction.html">Introduction</a>
+    <a class="dropdown-item" href="../articles/A2Installation.html">Installation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleBOutbreaks.html">Worked Example 2 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
+    <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
+    <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
+    <a class="dropdown-item" href="../articles/CGuideDLikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
   </div>
 </li>
       </ul>
@@ -74,7 +75,7 @@
             
       
       
-      <div class="d-none name"><code>AWorkedExampleAModelRun.Rmd</code></div>
+      <div class="d-none name"><code>BWorkedExampleAModelRun.Rmd</code></div>
     </div>
 
     
@@ -92,8 +93,8 @@ binomial probability. Full details of the model are currently being
 prepared for publication; please contact <a href="keith.fraser@imperial.ac.uk">Keith Fraser</a> for a detailed
 description.</p>
 <p>Population and vaccination data is stored in a list object as
-described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html" class="external-link">Guide
-2 - Inputs</a>. Here we load an example data set for multiple regions
+described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html" class="external-link">Guide
+1 - Inputs</a>. Here we load an example data set for multiple regions
 and extract the vaccination and population data for the first included
 region:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -104,8 +105,8 @@ region:</p>
 <p>We set the other input parameters to the functions which run the
 model as follows. Here we set the spillover FOI and basic reproduction
 number directly; they may alternatively be calculated from environmental
-covariates as described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html" class="external-link">Guide
-3 - Calculating Parameters From Environmental Data</a>. The mode_start
+covariates as described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideBParametersEnvironment.html" class="external-link">Guide
+2 - Calculating Parameters From Environmental Data</a>. The mode_start
 variable is used to set the initial conditions in one of 3 ways. The
 n_particles variable is used to run the model multiple times for the
 same inputs; the results can be compared and/or combined to test and/or
@@ -143,7 +144,7 @@ caused by stochasticity.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plot</span><span class="op">&lt;-</span><span class="fu"><a href="../reference/plot_model_output.html">plot_model_output</a></span><span class="op">(</span><span class="va">test1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="AWorkedExampleAModelRun_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="BWorkedExampleAModelRun_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
 <p>For some applications, we can use the Basic_Model_Run() function
 instead. This is largely identical to Full_Model_Run() but does not
 output the total force of infection at each time point or the number of
@@ -166,8 +167,8 @@ running smaller groups of particles and threads to avoid causing errors
 or freezing the computer while running (Basic_Model_Run() and
 Full_Model_Run() are limited to 20 particles/threads for this reason).
 The ability to run a large number of repetitions is valuable when
-modelling annual case rates and/or outbreak risk/occurrence (see <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideDModelResultsProcess.html" class="external-link">Guide
-4 - Processing Model Results</a>) in situations where the overall force
+modelling annual case rates and/or outbreak risk/occurrence (see <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideCModelResultsProcess.html" class="external-link">Guide
+3 - Processing Model Results</a>) in situations where the overall force
 of infection is low and therefore new infections are rare. Here we run
 case_data_generate() for 1000 repetitions with a low spillover FOI and
 no human-to-human transmission, which gives a very low daily infection

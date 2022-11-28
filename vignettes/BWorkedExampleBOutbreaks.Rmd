@@ -1,0 +1,59 @@
+---
+title: "Worked Example 2 - Outbreak Modelling"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Worked Example 2 - Outbreak Modelling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This worked example demonstrates several ways the package can be used to model the occurrence and risk of yellow fever outbreaks. An "outbreak" is defined as taking place whenever a case of yellow fever is reported, and lasts as long as the time interval between new cases remains less than 10 days (the sum of the incubation and infectious periods used by the package).
+
+The reporting of yellow fever cases is governed by the probability of an infection which causes severe but non-fatal symptoms being reported (p_rep_severe) and the probability of a fatal infection being reported (p_rep_death). It is assumed that infections not leading to severe or fatal symptoms are not reported. The proportion of infections which cause severe symptoms is given by the quantity p_severe_inf, and the proportion of severe infections which lead to death is given by the quantity p_death_severe_inf. These have values of 0.12 and 0.39 respectively within the package, based on [Servadio et al](https://doi.org/10.1186/s12879-021-06535-4).
+
+As described in [Worked Example 1 - Single Model Run](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html), we obtain data on the number of new infectious individuals at each time point during a modelled period from the case_data_generate() function:
+
+```{r}
+set.seed(1)
+library(YellowFeverDynamics)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
+vacc_data <- input_data$vacc_data[1, , ]
+pop_data <- input_data$pop_data[1, , ]  
+FOI_spillover <- 3.0e-7             # Force of infection due to spillover from sylvatic reservoir
+R0 <- 0.0                           # Basic reproduction number for urban spread of infection
+model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_reps = 1, year_end = 2001, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
+```
+
+We process results using the get_outbreak_data() function to produce information on all outbreaks and reported cases during the modelled time period.
+
+```{r}
+case_data = model_results$C[1,] # Vector of data points showing number of new cases at each time point [TBC]
+year_data = model_results$year # Matching vector indicating the year for each time point [TBC]
+p_rep_severe = 0.1 # The probability of a case with severe but non-fatal symptoms being reported
+p_rep_death = 0.2 # The probability of a fatal case being reported
+outbreak_data <- get_outbreak_data(case_data, year_data, p_rep_severe, p_rep_death)
+```
+
+get_outbreak_data() produces a list containing the number of outbreaks (n_outbreaks), data on each individual outbreak (outbreak_list - number of reported cases, start and end days and years), a time series showing the number of reported cases and deaths at each time point (rep_pts), and a time series showing the number of reported cases and deaths in each year (rep_annual).
+
+```{r}
+outbreak_data$outbreak_list
+```
+
+```{r}
+outbreak_data$rep_annual
+```
+
+As noted in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html), we can estimate the outbreak risk (the probability of one or more outbreaks, i.e. one or more reported cases) in a given time period by running the model a large number of times and calculating the proportion of repetitions in which one or more cases are reported. This is automated by using the outbreak_risk_generate() function. This function runs the time before the period of interest n_sets times, then models the period of interest n_reps times for each set, giving n_sets sets of values of annual outbreak risk:
+
+```{r}
+outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_sets=1, n_reps = 100, year_end = 2005, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0, p_rep_severe, p_rep_death)
+outbreak_risk
+```

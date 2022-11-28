@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This worked example demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. We use the total_burden_estimate() function for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html):
+This worked example demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. We use the total_burden_estimate() function for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCDataGenerate.html):
 
 ```{r}
 library(YellowFeverDynamics)

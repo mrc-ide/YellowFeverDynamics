@@ -41,16 +41,17 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 2 - Outbreak Modelling</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
-    <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
-    <a class="dropdown-item" href="../articles/BGuideBInputs.html">Guide 2 - Inputs</a>
-    <a class="dropdown-item" href="../articles/BGuideCParametersEnvironment.html">Guide 3 - Calculating Parameters From Environmental Data</a>
-    <a class="dropdown-item" href="../articles/BGuideDModelResultsProcess.html">Guide 4 - Processing Model Results</a>
-    <a class="dropdown-item" href="../articles/BGuideELikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/A1Introduction.html">Introduction</a>
+    <a class="dropdown-item" href="../articles/A2Installation.html">Installation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleBOutbreaks.html">Worked Example 2 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
+    <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
+    <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
+    <a class="dropdown-item" href="../articles/CGuideDLikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
   </div>
 </li>
       </ul>
@@ -74,7 +75,7 @@
             
       
       
-      <div class="d-none name"><code>AWorkedExampleCDataGenerate.Rmd</code></div>
+      <div class="d-none name"><code>BWorkedExampleCDataGenerate.Rmd</code></div>
     </div>
 
     
@@ -108,9 +109,14 @@ follows:</p>
 <span><span class="va">const_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"FOI+R0 enviro"</span>, n_reps <span class="op">=</span> <span class="fl">1</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, dt <span class="op">=</span> <span class="fl">1.0</span>, enviro_data <span class="op">=</span> <span class="va">enviro_data</span>, R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>, vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, p_rep_severe <span class="op">=</span> <span class="fl">0.1</span>, p_rep_death <span class="op">=</span> <span class="fl">0.2</span>, m_FOI_Brazil <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span> <span class="co"># List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop</span></span></code></pre></div>
 <p>We run the data_match_single() function to produce a set of modelled
 data matching the observed data, i.e.:</p>
-<p>-Seroprevalence values for the same age group(s) in the same year(s)
--Numbers of reported cases and deaths in the same year(s) -Outbreak
-occurrence data for the same year(s)</p>
+<ul>
+<li>Seroprevalence values for the same age group(s) in the same
+year(s)<br>
+</li>
+<li>Numbers of reported cases and deaths in the same year(s)<br>
+</li>
+<li>Outbreak occurrence data for the same year(s)</li>
+</ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
 <p>We use the data_match_multi() function to run data_match_single() for
@@ -134,16 +140,16 @@ was carried out for multiple parameter sets using data_match_multi(),
 the distribution of results can be shown. If the plot_type variable is
 set to “mean”, the mean of the results is displayed with 95% and 50%
 confidence intervals (in blue and green respectively). If plot_type is
-set to “all”, the 95% and 50% of values closest to the mean are shown in
-blue and green respectively.</p>
+set to “all”, the 95% and 50% of values closest to the median are shown
+in blue and green respectively.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sero_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sero_match_graphs.html">sero_match_graphs</a></span><span class="op">(</span><span class="va">data2</span>, <span class="va">obs_sero_data</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, text_size <span class="op">=</span> <span class="fl">10</span>, hide_observed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sero_graph</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="AWorkedExampleCDataGenerate_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="BWorkedExampleCDataGenerate_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">case_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_match_graphs.html">case_match_graphs</a></span><span class="op">(</span><span class="va">data2</span>, <span class="va">obs_case_data</span>, <span class="va">input_data</span>, plot_type <span class="op">=</span> <span class="st">"mean"</span>, text_size <span class="op">=</span> <span class="fl">10</span>, hide_observed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">Rmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rmisc/man/multiplot.html" class="external-link">multiplot</a></span><span class="op">(</span><span class="va">case_graph</span><span class="op">$</span><span class="va">cases_graphs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">case_graph</span><span class="op">$</span><span class="va">deaths_graphs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="AWorkedExampleCDataGenerate_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p><img src="BWorkedExampleCDataGenerate_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
   </main>
 </div>
 

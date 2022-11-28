@@ -4,34 +4,37 @@
     <loc>/404.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleAModelRun.html</loc>
+    <loc>/articles/A1Introduction.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleBOutbreaks.html</loc>
+    <loc>/articles/A2Installation.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleCDataGenerate.html</loc>
+    <loc>/articles/BWorkedExampleAModelRun.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleDBurden.html</loc>
+    <loc>/articles/BWorkedExampleBOutbreaks.html</loc>
   </url>
   <url>
-    <loc>/articles/AWorkedExampleEMCMC.html</loc>
+    <loc>/articles/BWorkedExampleCDataGenerate.html</loc>
   </url>
   <url>
-    <loc>/articles/BGuideAInstallation.html</loc>
+    <loc>/articles/BWorkedExampleDBurden.html</loc>
   </url>
   <url>
-    <loc>/articles/BGuideBInputs.html</loc>
+    <loc>/articles/BWorkedExampleEMCMC.html</loc>
   </url>
   <url>
-    <loc>/articles/BGuideCParametersEnvironment.html</loc>
+    <loc>/articles/CGuideAInputs.html</loc>
   </url>
   <url>
-    <loc>/articles/BGuideDModelResultsProcess.html</loc>
+    <loc>/articles/CGuideBParametersEnvironment.html</loc>
   </url>
   <url>
-    <loc>/articles/BGuideELikelihood.html</loc>
+    <loc>/articles/CGuideCModelResultsProcess.html</loc>
+  </url>
+  <url>
+    <loc>/articles/CGuideDLikelihood.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>

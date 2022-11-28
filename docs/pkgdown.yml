@@ -2,15 +2,16 @@ pandoc: 2.19.2
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  AWorkedExampleAModelRun: AWorkedExampleAModelRun.html
-  AWorkedExampleBOutbreaks: AWorkedExampleBOutbreaks.html
-  AWorkedExampleCDataGenerate: AWorkedExampleCDataGenerate.html
-  AWorkedExampleDBurden: AWorkedExampleDBurden.html
-  AWorkedExampleEMCMC: AWorkedExampleEMCMC.html
-  BGuideAInstallation: BGuideAInstallation.html
-  BGuideBInputs: BGuideBInputs.html
-  BGuideCParametersEnvironment: BGuideCParametersEnvironment.html
-  BGuideDModelResultsProcess: BGuideDModelResultsProcess.html
-  BGuideELikelihood: BGuideELikelihood.html
-last_built: 2022-11-21T12:07Z
+  A1Introduction: A1Introduction.html
+  A2Installation: A2Installation.html
+  BWorkedExampleAModelRun: BWorkedExampleAModelRun.html
+  BWorkedExampleBOutbreaks: BWorkedExampleBOutbreaks.html
+  BWorkedExampleCDataGenerate: BWorkedExampleCDataGenerate.html
+  BWorkedExampleDBurden: BWorkedExampleDBurden.html
+  BWorkedExampleEMCMC: BWorkedExampleEMCMC.html
+  CGuideAInputs: CGuideAInputs.html
+  CGuideBParametersEnvironment: CGuideBParametersEnvironment.html
+  CGuideCModelResultsProcess: CGuideCModelResultsProcess.html
+  CGuideDLikelihood: CGuideDLikelihood.html
+last_built: 2022-11-28T23:32Z
 

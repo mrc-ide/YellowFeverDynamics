@@ -40,9 +40,9 @@ const_list <- list(type = "FOI+R0 enviro", n_reps = 1, mode_start = 1, dt = 1.0,
 
 We run the data_match_single() function to produce a set of modelled data matching the observed data, i.e.:
 
--Seroprevalence values for the same age group(s) in the same year(s)
--Numbers of reported cases and deaths in the same year(s)
--Outbreak occurrence data for the same year(s)
+* Seroprevalence values for the same age group(s) in the same year(s)  
+* Numbers of reported cases and deaths in the same year(s)  
+* Outbreak occurrence data for the same year(s)  
 
 ```{r}
 data1 <- data_match_single(params, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
@@ -55,7 +55,7 @@ param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdat
 data2 <- data_match_multi(param_sets, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
 ```
 
-We plot the data output from data_match_single() or data_match_multi() together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Observed data is shown (unless the hide_observed variable is set to TRUE) in black with error bars representing a binomial confidence interval (serological data) or negative binomial confidence interval (case data). Modelled data is shown in blue and green; if data matching was carried out for multiple parameter sets using data_match_multi(), the distribution of results can be shown. If the plot_type variable is set to "mean", the mean of the results is displayed with 95% and 50% confidence intervals (in blue and green respectively). If plot_type is set to "all", the 95% and 50% of values closest to the mean are shown in blue and green respectively.
+We plot the data output from data_match_single() or data_match_multi() together with the observed data on which it is based, using the sero_match_graphs() and case_match_graphs() functions. Observed data is shown (unless the hide_observed variable is set to TRUE) in black with error bars representing a binomial confidence interval (serological data) or negative binomial confidence interval (case data). Modelled data is shown in blue and green; if data matching was carried out for multiple parameter sets using data_match_multi(), the distribution of results can be shown. If the plot_type variable is set to "mean", the mean of the results is displayed with 95% and 50% confidence intervals (in blue and green respectively). If plot_type is set to "all", the 95% and 50% of values closest to the median are shown in blue and green respectively.
 
 ```{r}
 sero_graph <- sero_match_graphs(data2, obs_sero_data, plot_type = "all", text_size = 10, hide_observed = FALSE)

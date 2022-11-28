@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This worked example demonstrates how to use the package to estimate parameters of the yellow fever model from observed epidemiological data within a Bayesian framework using Markov chain Monte Carlo sampling.
 
-We load input data, environmental data and the observed data to be used for comparison in the formats used in previous worked examples (see [Guide 2 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html) for details of the input format, [Guide 3 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html) for details of how environmental data is formatted and used to generate parameter values, and [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html) for details of observed data formats):
+We load input data, environmental data and the observed data to be used for comparison in the formats used in previous worked examples (see [Guide 1 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html) for details of the input format, [Guide 2 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideBParametersEnvironment.html) for details of how environmental data is formatted and used to generate parameter values, and [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCDataGenerate.html) for details of observed data formats):
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
@@ -31,10 +31,10 @@ enviro_coeffs_ini <- as.numeric(read.csv(file = paste(path.package("YellowFeverD
 
 We set additional inputs as follows. The parameters varied in the chain are the natural logarithm values of the actual parameters of interest; the inputs log_params_min, log_params_max and log_params_ini are set accordingly. The maximum, minimum and initial values of the varied parameters must be entered into log_params_min, log_params_max and log_params_ini in the following order:
 
--Values of spillover FOI or the coefficients used to calculate spillover FOI from environmental data
--Values of R0 or the coefficients used to calculate R0 from environmental data (if R0 is to be varied)
--Vaccine efficacy (if varied)
--Severe non-fatal case reporting probability (if varied)
+-Values of spillover FOI or the coefficients used to calculate spillover FOI from environmental data  
+-Values of R0 or the coefficients used to calculate R0 from environmental data (if R0 is to be varied)  
+-Vaccine efficacy (if varied)  
+-Severe non-fatal case reporting probability (if varied)  
 -Fatal case reporting probability (if varied)
 
 The maximum and minimum values are not all necessarily used; if prior_type is set to "flat", then they are hard limits for all parameters. If prior_type is set to "zero" or "norm", only the limits for p_rep_severe and p_rep_death are used.

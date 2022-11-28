@@ -41,16 +41,17 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
-    <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
-    <a class="dropdown-item" href="../articles/BGuideBInputs.html">Guide 2 - Inputs</a>
-    <a class="dropdown-item" href="../articles/BGuideCParametersEnvironment.html">Guide 3 - Calculating Parameters From Environmental Data</a>
-    <a class="dropdown-item" href="../articles/BGuideDModelResultsProcess.html">Guide 4 - Processing Model Results</a>
-    <a class="dropdown-item" href="../articles/BGuideELikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/A1Introduction.html">Introduction</a>
+    <a class="dropdown-item" href="../articles/A2Installation.html">Installation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleBOutbreaks.html">Worked Example 2 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
+    <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
+    <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
+    <a class="dropdown-item" href="../articles/CGuideDLikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
   </div>
 </li>
       </ul>
@@ -74,7 +75,7 @@
             
       
       
-      <div class="d-none name"><code>AWorkedExampleEMCMC.Rmd</code></div>
+      <div class="d-none name"><code>BWorkedExampleEMCMC.Rmd</code></div>
     </div>
 
     
@@ -84,11 +85,11 @@ parameters of the yellow fever model from observed epidemiological data
 within a Bayesian framework using Markov chain Monte Carlo sampling.</p>
 <p>We load input data, environmental data and the observed data to be
 used for comparison in the formats used in previous worked examples (see
-<a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideBInputs.html" class="external-link">Guide
-2 - Inputs</a> for details of the input format, <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideCParametersEnvironment.html" class="external-link">Guide
-3 - Calculating Parameters From Environmental Data</a> for details of
+<a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html" class="external-link">Guide
+1 - Inputs</a> for details of the input format, <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideBParametersEnvironment.html" class="external-link">Guide
+2 - Calculating Parameters From Environmental Data</a> for details of
 how environmental data is formatted and used to generate parameter
-values, and <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/AWorkedExampleCDataGenerate.html" class="external-link">Worked
+values, and <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCDataGenerate.html" class="external-link">Worked
 Example 3 - Generating Epidemiological Data Sets</a> for details of
 observed data formats):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
@@ -107,11 +108,12 @@ are set accordingly. The maximum, minimum and initial values of the
 varied parameters must be entered into log_params_min, log_params_max
 and log_params_ini in the following order:</p>
 <p>-Values of spillover FOI or the coefficients used to calculate
-spillover FOI from environmental data -Values of R0 or the coefficients
-used to calculate R0 from environmental data (if R0 is to be varied)
--Vaccine efficacy (if varied) -Severe non-fatal case reporting
-probability (if varied) -Fatal case reporting probability (if
-varied)</p>
+spillover FOI from environmental data<br>
+-Values of R0 or the coefficients used to calculate R0 from
+environmental data (if R0 is to be varied)<br>
+-Vaccine efficacy (if varied)<br>
+-Severe non-fatal case reporting probability (if varied)<br>
+-Fatal case reporting probability (if varied)</p>
 <p>The maximum and minimum values are not all necessarily used; if
 prior_type is set to “flat”, then they are hard limits for all
 parameters. If prior_type is set to “zero” or “norm”, only the limits
