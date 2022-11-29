@@ -25,21 +25,19 @@ map_shapes_load <- function(regions=c(),shapefiles=c(),region_label_type=""){
                       lat_min=Inf,long_min=Inf,lat_max=-Inf,long_max=-Inf)
 
   for(i in 1:length(shapefiles)){
-    shape_data=readOGR(shapefiles[i])
+    shape_data=read_sf(shapefiles[i])
     assert_that(region_label_type %in% names(shape_data))
+    bbox=st_bbox(shape_data)
+    shape_data_all$lat_min=min(shape_data_all$lat_min,bbox[2])
+    shape_data_all$lat_max=max(shape_data_all$lat_max,bbox[4])
+    shape_data_all$long_min=min(shape_data_all$long_min,bbox[1])
+    shape_data_all$long_max=max(shape_data_all$long_max,bbox[3])
     j=match(region_label_type,names(shape_data))
     file_regions=shape_data[[j]]
     for(n_region in 1:n_regions){
       k=match(regions[n_region],file_regions)
       if(is.na(k)==FALSE){
-        shape_data_all$shapes[[n_region]]=shape_data@polygons[[k]]
-        for(l in 1:length(shape_data@polygons[[k]]@Polygons)){
-          coords=shape_data@polygons[[k]]@Polygons[[l]]@coords
-          shape_data_all$lat_min=min(shape_data_all$lat_min,min(coords[,2]))
-          shape_data_all$lat_max=max(shape_data_all$lat_max,max(coords[,2]))
-          shape_data_all$long_min=min(shape_data_all$long_min,min(coords[,1]))
-          shape_data_all$long_max=max(shape_data_all$long_max,max(coords[,1]))
-        }
+        shape_data_all$shapes[[n_region]]=shape_data$geometry[[k]]
       }
     }
   }
@@ -133,13 +131,7 @@ create_map <- function(shape_data=list(),param_values=c(),scale=c(),colour_scale
     matplot(x=c(shape_data$long_min,shape_data$long_max),y=c(shape_data$lat_min,shape_data$lat_max),
             col=0,xlab="",ylab="",axes=FALSE,frame.plot=FALSE)
     for(n_region in 1:n_regions){
-      for(i in 1:length(shape_data$shapes[[n_region]]@Polygons)){
-        shape=shape_data$shapes[[n_region]]@Polygons[[i]]@coords
-        if(shape_data$shapes[[n_region]]@Polygons[[i]]@hole==FALSE){col=colour_scale[scale_values[n_region]]} else {
-          col="white"
-        }
-        polygon(x=shape[,1],y=shape[,2],border="grey",col=col)
-      }
+      plot(st_geometry(shape_data$shapes[[n_region]]),col=colour_scale[scale_values[n_region]],border="grey",add=TRUE)
     }
     legend(legend_position,legend=legend_labels,fill=colour_scale,cex=text_size,title=legend_title)
     title(main=map_title,cex=text_size)
