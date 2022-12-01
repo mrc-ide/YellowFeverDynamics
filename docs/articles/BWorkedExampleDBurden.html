@@ -116,19 +116,19 @@ across all regions for each year and parameter set.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">by_region</span>,<span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   year region set  cases deaths</span></span>
-<span><span class="co">#&gt; 1 2000  IGL01   1  960.4  379.8</span></span>
-<span><span class="co">#&gt; 2 2000  IGL02   1  128.8   44.2</span></span>
-<span><span class="co">#&gt; 3 2000  IGL03   1 1562.6  623.2</span></span>
-<span><span class="co">#&gt; 4 2000  IGL04   1 2329.8  907.8</span></span>
-<span><span class="co">#&gt; 5 2000  IGL05   1 1538.8  591.2</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 2000  IGL01   1  885.2  336.4</span></span>
+<span><span class="co">#&gt; 2 2000  IGL02   1  121.6   47.0</span></span>
+<span><span class="co">#&gt; 3 2000  IGL03   1 1472.8  572.4</span></span>
+<span><span class="co">#&gt; 4 2000  IGL04   1 2521.8  983.6</span></span>
+<span><span class="co">#&gt; 5 2000  IGL05   1 1412.4  550.8</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">all</span>,<span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   year set   cases deaths</span></span>
-<span><span class="co">#&gt; 1 2000   1 21370.8 8295.2</span></span>
-<span><span class="co">#&gt; 2 2000   2 19582.2 7609.6</span></span>
-<span><span class="co">#&gt; 3 2000   3 19413.2 7576.4</span></span>
-<span><span class="co">#&gt; 4 2000   4 19935.6 7787.6</span></span>
-<span><span class="co">#&gt; 5 2000   5 20255.2 7879.6</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 2000   1 21216.2 8254.2</span></span>
+<span><span class="co">#&gt; 2 2000   2 19836.0 7711.2</span></span>
+<span><span class="co">#&gt; 3 2000   3 20034.6 7812.6</span></span>
+<span><span class="co">#&gt; 4 2000   4 20270.2 7916.2</span></span>
+<span><span class="co">#&gt; 5 2000   5 19964.0 7787.0</span></span></code></pre></div>
 <p>We can use the output of total_burden_estimate() to, for example,
 model vaccine impact by examining the difference in burden between a
 no-vaccination scenario and a scenario featuring a specified vaccination
