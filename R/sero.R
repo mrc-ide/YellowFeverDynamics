@@ -77,7 +77,7 @@ sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
   assert_that(is.list(model_data))
   assert_that(is.null(model_data$S)==FALSE) #TODO - Improve model_data check
   assert_that(n_p>0 && is.integer(n_p),msg="Selected particle number must be a positive integer")
-  assert_that(n_p<=dim(data$S)[2],msg="Specified particle number is unavailable")
+  assert_that(n_p<=dim(model_data$S)[2],msg="Specified particle number is unavailable")
 
   nrows=nrow(sero_data)
   output_frame=data.frame(samples=rep(NA,nrows),positives=rep(NA,nrows))

@@ -45,7 +45,7 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
     assert_that(is.null(const_list$enviro_data)==FALSE,
                 msg="const_list must include environmental data if FOI/R0 to be calculated from environmental covariates")
-    assert_that(all(region %in% const_list$enviro_data$region),msg="All regions in input data must appear in environmental data")
+    assert_that(all(regions %in% const_list$enviro_data$region),msg="All regions in input data must appear in environmental data")
     enviro_data=subset(const_list$enviro_data,const_list$enviro_data$region %in% regions)
     n_env_vars=ncol(enviro_data)-1
   }
