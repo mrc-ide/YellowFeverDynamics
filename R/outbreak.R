@@ -18,11 +18,11 @@
 #' @export
 #'
 get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_severe=1.0,p_rep_death=1.0){
-  assert_that(is.numeric(case_data))
-  assert_that(is.numeric(year_data))
-  assert_that(length(case_data)==length(year_data))
-  assert_that(p_rep_severe>=0 && p_rep_severe<=1.0)
-  assert_that(p_rep_death>=0 && p_rep_death<=1.0)
+  assert_that(is.numeric(case_data)) #TODO - Improve case_data checking
+  assert_that(is.numeric(year_data)) #TODO - Improve year_data checking
+  assert_that(length(case_data)==length(year_data),msg="Number of entries in case data must match number of years")
+  assert_that(p_rep_severe>=0 && p_rep_severe<=1.0,msg="Severe infection reporting probability must be between 0 and 1")
+  assert_that(p_rep_death>=0 && p_rep_death<=1.0,msg="Fatal infection reporting probability must be between 0 and 1")
 
   year0=min(year_data)
   t_pts=length(year_data)
@@ -98,7 +98,8 @@ outbreak_risk_compare <- function(model_outbreak_risk=c(),obs_data=c()){
   assert_that(is.numeric(model_outbreak_risk))
   assert_that(is.numeric(obs_data))
   n_values=length(model_outbreak_risk)
-  assert_that(n_values==length(obs_data))
+  assert_that(n_values==length(obs_data),
+              msg="Number of outbreak risk values must match number of lines in observed outbreak data")
 
   for(i in 1:n_values){
     if(model_outbreak_risk[i]>(1.0-1.0e-4)){model_outbreak_risk[i]=1.0-1.0e-4}
@@ -143,16 +144,16 @@ outbreak_risk_compare <- function(model_outbreak_risk=c(),obs_data=c()){
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param start_SEIRV SEIRV data from end of a previous run to use as input
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
-#' @param p_rep_severe Probability of a severe case being reported
-#' @param p_rep_death Probability of a fatal case being reported
+#' @param p_rep_severe Probability of a severe infection being reported
+#' @param p_rep_death Probability of a fatal infection being reported
 #' '
 #' @export
 #'
 outbreak_risk_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,
                               mode_start=0,n_sets=1,n_reps=1,year_end=2000,year_data_begin=1999,
                               vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0,p_rep_severe=1.0,p_rep_death=1.0){
-  assert_that(p_rep_severe>=0.0 && p_rep_severe<=1.0)
-  assert_that(p_rep_death>=0.0 && p_rep_death<=1.0)
+  assert_that(p_rep_severe>=0.0 && p_rep_severe<=1.0,msg="Severe infection reporting probability must be between 0 and 1")
+  assert_that(p_rep_death>=0.0 && p_rep_death<=1.0,msg="Fatal infection reporting probability must be between 0 and 1")
 
   years=c(year_data_begin:(year_end-1))
   n_years=length(years)

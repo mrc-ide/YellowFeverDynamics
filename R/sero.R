@@ -20,17 +20,13 @@
 #'
 sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=list(),n_p=1){
 
-  assert_that(age_min>=0)
-  assert_that(age_max>age_min)
-  assert_that(is.null(years)==FALSE)
-  assert_that(vc_factor>=0 && vc_factor<=1)
-  assert_that(is.null(data$S)==FALSE)
-  assert_that(is.null(data$E)==FALSE)
-  assert_that(is.null(data$I)==FALSE)
-  assert_that(is.null(data$R)==FALSE)
-  assert_that(is.null(data$V)==FALSE)
-  assert_that(n_p>0)
-  assert_that(n_p<=dim(data$S)[2])
+  assert_that(age_min>=0,msg="Minimum age must be equal to or greater than 0")
+  assert_that(age_max>age_min,msg="Maximum age must be greater than minimum age")
+  assert_that(is.null(years)==FALSE,msg="Years in which to calculate seroprevalence must be specified")
+  assert_that(vc_factor>=0 && vc_factor<=1,msg="vc_factor must be between 0 and 1")
+  assert_that(is.null(data$S)==FALSE) #TODO - Improve check on SEIRV data
+  assert_that(n_p>0 && is.integer(n_p),msg="Selected particle number must be a positive integer")
+  assert_that(n_p<=dim(data$S)[2],msg="Specified particle number is unavailable")
 
   ages=c((age_min+1):age_max)
   sero_values=rep(0,length(years))
@@ -79,9 +75,9 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
 sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
   assert_that(is.data.frame(sero_data))
   assert_that(is.list(model_data))
-  assert_that(is.null(model_data$S)==FALSE)
-  assert_that(n_p>0)
-  assert_that(n_p<=dim(model_data$S)[2])
+  assert_that(is.null(model_data$S)==FALSE) #TODO - Improve model_data check
+  assert_that(n_p>0 && is.integer(n_p),msg="Selected particle number must be a positive integer")
+  assert_that(n_p<=dim(data$S)[2],msg="Specified particle number is unavailable")
 
   nrows=nrow(sero_data)
   output_frame=data.frame(samples=rep(NA,nrows),positives=rep(NA,nrows))
@@ -134,17 +130,17 @@ sero_calculate2 <- function(sero_data=list(),model_data=list(),n_p=1){
 #'
 sero_compare <- function(model_data=list(),obs_sero_data=list(),n_particle=1){
 
-  assert_that(is.null(model_data$S)==FALSE)
-  assert_that(is.null(model_data$E)==FALSE)
-  assert_that(is.null(model_data$I)==FALSE)
-  assert_that(is.null(model_data$R)==FALSE)
-  assert_that(is.null(model_data$V)==FALSE)
-  assert_that(is.null(obs_sero_data$year)==FALSE)
-  assert_that(is.null(obs_sero_data$age_min)==FALSE)
-  assert_that(is.null(obs_sero_data$age_max)==FALSE)
-  assert_that(is.null(obs_sero_data$samples)==FALSE)
-  assert_that(is.null(obs_sero_data$positives)==FALSE)
-  assert_that(is.null(obs_sero_data$vc_factor)==FALSE)
+  assert_that(is.null(model_data$S)==FALSE) #TODO - Improve model_data checking
+  # assert_that(is.null(model_data$E)==FALSE)
+  # assert_that(is.null(model_data$I)==FALSE)
+  # assert_that(is.null(model_data$R)==FALSE)
+  # assert_that(is.null(model_data$V)==FALSE)
+  assert_that(is.null(obs_sero_data$year)==FALSE) #TODO - Improve obs_sero_data checking
+  # assert_that(is.null(obs_sero_data$age_min)==FALSE)
+  # assert_that(is.null(obs_sero_data$age_max)==FALSE)
+  # assert_that(is.null(obs_sero_data$samples)==FALSE)
+  # assert_that(is.null(obs_sero_data$positives)==FALSE)
+  # assert_that(is.null(obs_sero_data$vc_factor)==FALSE)
 
   n_lines=length(obs_sero_data$year)
   model_sero_data=rep(0,n_lines)

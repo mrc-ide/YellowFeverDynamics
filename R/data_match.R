@@ -29,11 +29,12 @@
 data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                               obs_outbreak_data=NULL,const_list=list()) {
 
-  assert_that(is.numeric(params))
-  assert_that(input_data_check(input_data))
+  assert_that(all(params>0),msg="All parameter values must be positive")
+  assert_that(input_data_check(input_data),
+              msg="Input data must be in standard format (see https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html )")
   assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE,is.null(obs_outbreak_data)==FALSE),
               msg="Need at least one of obs_sero_data, obs_case_data or obs_outbreak_data")
-  assert_that(is.list(const_list))
+  assert_that(is.list(const_list)) #TODO - Better checks for const_list
 
   #Process input data to check that all regions with sero, case and/or outbreak data supplied are present, remove
   #regions without any supplied data, and add cross-referencing tables for use when calculating likelihood. Take
@@ -42,8 +43,9 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
   regions=names(table(input_data$region_labels)) #Regions in new processed input data list
   n_regions=length(regions)
   if(const_list$type %in% c("FOI+R0 enviro","FOI enviro")){
-    assert_that(is.null(const_list$enviro_data)==FALSE)
-    for(region in regions){assert_that(region %in% const_list$enviro_data$region)}
+    assert_that(is.null(const_list$enviro_data)==FALSE,
+                msg="const_list must include environmental data if FOI/R0 to be calculated from environmental covariates")
+    assert_that(all(region %in% const_list$enviro_data$region),msg="All regions in input data must appear in environmental data")
     enviro_data=subset(const_list$enviro_data,const_list$enviro_data$region %in% regions)
     n_env_vars=ncol(enviro_data)-1
   }
@@ -147,7 +149,7 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
 data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=NULL,obs_case_data=NULL,
                              obs_outbreak_data=NULL,const_list=list()){
 
-  assert_that(is.data.frame(param_sets))
+  assert_that(is.data.frame(param_sets),msg="param_sets must be a data frame")
 
   n_param_sets=nrow(param_sets)
   model_data_all=list()
@@ -186,9 +188,9 @@ data_match_multi <- function(param_sets=list(),input_data=list(),obs_sero_data=N
 sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),plot_type="mean",text_size=1.0,
                               hide_observed=FALSE){
 
-  assert_that(is.list(model_data))
+  assert_that(is.list(model_data)) #TODO - improve checks on model_data
   assert_that(is.data.frame(obs_sero_data))
-  assert_that(plot_type %in% c("mean","all"))
+  assert_that(plot_type %in% c("mean","all"),msg="plot_type must be 'mean' or 'all'")
   assert_that(is.numeric(text_size))
 
   if(typeof(model_data[[1]])=="list"){
@@ -196,7 +198,7 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),plot_type="
     n_param_sets=length(model_data)
   } else
   {
-    assert_that(typeof(model_data[[1]])=="double")
+    assert_that(typeof(model_data[[1]])=="double") #TODO - improve checks on model_data
     data_type="single"
     n_param_sets=1
   }
@@ -357,9 +359,9 @@ sero_match_graphs <- function(model_data=list(),obs_sero_data=list(),plot_type="
 case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=list(),plot_type="mean",text_size=1.0,
                               hide_observed=FALSE){
 
-  assert_that(is.list(model_data))
+  assert_that(is.list(model_data)) #TODO - improve checks on model_data
   assert_that(is.data.frame(obs_case_data))
-  assert_that(plot_type %in% c("mean","all"))
+  assert_that(plot_type %in% c("mean","all"),msg="plot_type must be 'mean' or 'all'")
   assert_that(is.numeric(text_size))
 
   if(typeof(model_data[[1]])=="list"){
@@ -367,7 +369,7 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
     n_param_sets=length(model_data)
   } else
   {
-    assert_that(typeof(model_data[[1]])=="double")
+    assert_that(typeof(model_data[[1]])=="double") #TODO - improve checks on model_data
     data_type="single"
     n_param_sets=1
   }

@@ -30,7 +30,7 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
                                mode_start=0,n_reps=1,year_end=2000,year_data_begin=1999,
                                vaccine_efficacy=vaccine_efficacy,start_SEIRV=list(),dt=1.0) {
 
-  assert_that(n_reps>0)
+  assert_that(n_reps>0,msg="Number of runs must be positive")
 
   division=10
   n_particles0=min(division,n_reps)
@@ -90,9 +90,10 @@ case_data_generate <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_dat
 #'
 deaths_compare <- function(model_data=list(),obs_data=list()){
 
-  assert_that(is.null(model_data$rep_deaths)==FALSE)
-  assert_that(is.null(obs_data$deaths)==FALSE)
-  assert_that(length(model_data$rep_deaths)==length(obs_data$deaths))
+  assert_that(is.null(model_data$rep_deaths)==FALSE,msg="Modelled data must include reported deaths")
+  assert_that(is.null(obs_data$deaths)==FALSE,msg="Observed data must include numbers of deaths")
+  assert_that(length(model_data$rep_deaths)==length(obs_data$deaths),
+              msg="Numbers of entries in observed and modelled data must match")
   model_data$rep_deaths[model_data$rep_deaths==0]=0.1
 
   like_values=dnbinom(x=obs_data$deaths,mu=model_data$rep_deaths,size=rep(1,length(obs_data$deaths)),log=TRUE)
@@ -116,9 +117,10 @@ deaths_compare <- function(model_data=list(),obs_data=list()){
 #'
 cases_compare <- function(model_data=list(),obs_data=list()){
 
-  assert_that(is.null(model_data$rep_cases)==FALSE)
-  assert_that(is.null(obs_data$cases)==FALSE)
-  assert_that(length(model_data$rep_cases)==length(obs_data$cases))
+  assert_that(is.null(model_data$rep_cases)==FALSE,msg="Modelled data must include reported cases")
+  assert_that(is.null(obs_data$cases)==FALSE,msg="Observed data must include reported cases")
+  assert_that(length(model_data$rep_cases)==length(obs_data$cases),
+              msg="Numbers of entries in modelled and observed data must match")
   model_data$rep_cases[model_data$rep_cases==0]=0.1
 
   like_values=dnbinom(x=obs_data$cases,mu=model_data$rep_cases,size=rep(1,length(obs_data$cases)),log=TRUE)

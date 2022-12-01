@@ -24,16 +24,17 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/AWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleBOutbreaks.html">Worked Example 3 - Outbreak Modelling</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
-    <a class="dropdown-item" href="../articles/AWorkedExampleEMCMC.html">Worked Example 3 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
-    <a class="dropdown-item" href="../articles/BGuideAInstallation.html">Guide 1 - Installation</a>
-    <a class="dropdown-item" href="../articles/BGuideBInputs.html">Guide 2 - Inputs</a>
-    <a class="dropdown-item" href="../articles/BGuideCParametersEnvironment.html">Guide 3 - Calculating Parameters From Environmental Data</a>
-    <a class="dropdown-item" href="../articles/BGuideDModelResultsProcess.html">Guide 4 - Processing Model Results</a>
-    <a class="dropdown-item" href="../articles/BGuideELikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/A1Introduction.html">Introduction</a>
+    <a class="dropdown-item" href="../articles/A2Installation.html">Installation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleAModelRun.html">Worked Example 1 - Single Model Run</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleBOutbreaks.html">Worked Example 2 - Outbreak Modelling</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
+    <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
+    <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
+    <a class="dropdown-item" href="../articles/CGuideDLikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -61,7 +62,7 @@
 <span>  type <span class="op">=</span> <span class="st">"FOI+R0 enviro"</span>,</span>
 <span>  param_dist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  input_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  start_SEIRV0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  start_SEIRV <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  years_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  n_reps <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  mode_start <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -69,10 +70,10 @@
 <span>  dt <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  enviro_data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vaccine_efficacy0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  p_rep_severe0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  p_rep_death0 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  m_FOI_Brazil0 <span class="op">=</span> <span class="fl">1</span></span>
+<span>  vaccine_efficacy <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_rep_severe <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  p_rep_death <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  m_FOI_Brazil <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -91,7 +92,7 @@ covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"</p></dd>
 <dd><p>List of population and vaccination data for multiple regions</p></dd>
 
 
-<dt>start_SEIRV0</dt>
+<dt>start_SEIRV</dt>
 <dd><p>SEIRV data to use as input</p></dd>
 
 
@@ -126,19 +127,19 @@ If mode_start=2, use SEIRV input in list from previous run(s)</p></dd>
 <dd><p>Values of R0 to use if not being taken from parameter distribution</p></dd>
 
 
-<dt>vaccine_efficacy0</dt>
+<dt>vaccine_efficacy</dt>
 <dd><p>Vaccine efficacy (set to NULL if being varied as a parameter)</p></dd>
 
 
-<dt>p_rep_severe0</dt>
+<dt>p_rep_severe</dt>
 <dd><p>Probability of observation of severe infection (set to NULL if being varied as a parameter)</p></dd>
 
 
-<dt>p_rep_death0</dt>
+<dt>p_rep_death</dt>
 <dd><p>Probability of observation of death (set to NULL if being varied as a parameter)</p></dd>
 
 
-<dt>m_FOI_Brazil0</dt>
+<dt>m_FOI_Brazil</dt>
 <dd><p>Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)</p></dd>
 
 </dl></div>

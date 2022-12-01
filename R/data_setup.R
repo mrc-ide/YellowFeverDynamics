@@ -24,19 +24,19 @@ create_input_data <- function(vacc_data=list(),pop_data=list(),regions=c(),years
   assert_that(is.data.frame(vacc_data))
   assert_that(is.data.frame(pop_data))
   assert_that(is.character(regions))
-  assert_that(all(regions==sort(regions)))
+  assert_that(all(regions==sort(regions)),msg="Regions must be ordered by name")
   assert_that(is.numeric(years))
-  assert_that(ncol(pop_data)==ncol(vacc_data))
+  assert_that(ncol(pop_data)==ncol(vacc_data),msg="Numbers of columns in vaccination and population data must match")
   vacc_regions=names(table(vacc_data[,1]))
-  assert_that(all(vacc_regions==sort(vacc_regions)))
+  assert_that(all(vacc_regions==sort(vacc_regions)),msg="Regions must be ordered by name in vaccination data")
   vacc_years=names(table(vacc_data[,2]))
-  assert_that(all(regions %in% vacc_regions))
-  assert_that(all(years %in% vacc_years))
+  assert_that(all(regions %in% vacc_regions),msg="All specified regions must appear in vaccination data")
+  assert_that(all(years %in% vacc_years),msg="All specified years must appear in vaccination data")
   pop_regions=names(table(pop_data[,1]))
-  assert_that(all(pop_regions==sort(pop_regions)))
+  assert_that(all(pop_regions==sort(pop_regions)),msg="Regions must be ordered by name in population data")
   pop_years=names(table(pop_data[,2]))
-  assert_that(all(regions %in% pop_regions))
-  assert_that(all(years %in% pop_years))
+  assert_that(all(regions %in% pop_regions),msg="All specified regions must appear in population data")
+  assert_that(all(years %in% pop_years),msg="All specified years must appear in population data")
 
   N_age=ncol(vacc_data)-2
   n_regions=length(regions)
@@ -89,21 +89,33 @@ input_data_check <- function(input_data=list()){
 
   assert_that(is.vector(input_data$years_labels))
   n_years=length(input_data$years_labels)
-  for(i in 2:n_years){assert_that(input_data$years_labels[i]==input_data$years_labels[i-1]+1)}
+  for(i in 2:n_years){
+    assert_that(input_data$years_labels[i]==input_data$years_labels[i-1]+1,
+                msg="Year labels in input data must be continuous series of consecutive years")
+    }
 
   assert_that(is.vector(input_data$age_labels))
   N_age=length(input_data$age_labels)
-  for(i in 2:N_age){assert_that(input_data$age_labels[i]==input_data$age_labels[i-1]+1)}
+  for(i in 2:N_age){
+    assert_that(input_data$age_labels[i]==input_data$age_labels[i-1]+1,
+                msg="Age labels in input data must be continuous series of consecutive ages")
+    }
 
-  assert_that(length(dim(input_data$vacc_data))==3)
-  assert_that(dim(input_data$vacc_data)[1]==n_regions)
-  assert_that(dim(input_data$vacc_data)[2]==n_years)
-  assert_that(dim(input_data$vacc_data)[3]==N_age)
+  assert_that(length(dim(input_data$vacc_data))==3,msg="Vaccination data must be 3-dimensional array")
+  assert_that(dim(input_data$vacc_data)[1]==n_regions,
+              msg="First dimension of vaccination data must equal number of region labels")
+  assert_that(dim(input_data$vacc_data)[2]==n_years,
+              msg="Second dimension of vaccination data must equal number of year labels")
+  assert_that(dim(input_data$vacc_data)[3]==N_age,
+              msg="Third dimension of vaccination data must equal number of age labels")
 
-  assert_that(length(dim(input_data$pop_data))==3)
-  assert_that(dim(input_data$pop_data)[1]==n_regions)
-  assert_that(dim(input_data$pop_data)[2]==n_years)
-  assert_that(dim(input_data$pop_data)[3]==N_age)
+  assert_that(length(dim(input_data$pop_data))==3,msg="Population data must be 3-dimensional array")
+  assert_that(dim(input_data$pop_data)[1]==n_regions,
+              msg="First dimension of population data must equal number of region labels")
+  assert_that(dim(input_data$pop_data)[2]==n_years,
+              msg="Second dimension of population data must equal number of year labels")
+  assert_that(dim(input_data$pop_data)[3]==N_age,
+              msg="Third dimension of population data must equal number of age labels")
 
   return(result)
 }
@@ -134,7 +146,7 @@ input_data_process <- function(input_data=list(),obs_sero_data=NULL,obs_case_dat
   n_years=length(input_data$years_labels)
 
   regions_input_data=input_data$region_labels
-  assert_that(all(regions_input_data==sort(regions_input_data)))
+  assert_that(all(regions_input_data==sort(regions_input_data)),msg="Region labels must be in alphabetical order")
   regions_sero_com=names(table(obs_sero_data$region))
   regions_case_com=names(table(obs_case_data$region))
   regions_outbreak_com=names(table(obs_outbreak_data$region))
@@ -236,9 +248,9 @@ input_data_truncate <- function(input_data=list(),regions_new=c()){
   N_age=length(input_data$age_labels)
   n_years=length(input_data$years_labels)
 
-  assert_that(all(input_data$region_labels==sort(input_data$region_labels)))
-  assert_that(all(regions_new==sort(regions_new)))
-  assert_that(all(regions_new %in% input_data$region_labels))
+  assert_that(all(input_data$region_labels==sort(input_data$region_labels)),msg="Region labels must be in alphabetical order")
+  assert_that(all(regions_new==sort(regions_new)),msg="Specified regions must be in alphabetical order")
+  assert_that(all(regions_new %in% input_data$region_labels),msg="Specified regions must be present in dataset")
 
   input_regions_check=input_data$region_labels %in% regions_new
   n_regions=length(input_regions_check[input_regions_check==TRUE])

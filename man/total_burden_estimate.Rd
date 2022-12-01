@@ -8,7 +8,7 @@ total_burden_estimate(
   type = "FOI+R0 enviro",
   param_dist = list(),
   input_data = list(),
-  start_SEIRV0 = NULL,
+  start_SEIRV = NULL,
   years_data = c(),
   n_reps = 1,
   mode_start = 1,
@@ -16,10 +16,10 @@ total_burden_estimate(
   dt = 5,
   enviro_data = NULL,
   R0_fixed_values = NULL,
-  vaccine_efficacy0 = NULL,
-  p_rep_severe0 = NULL,
-  p_rep_death0 = NULL,
-  m_FOI_Brazil0 = 1
+  vaccine_efficacy = NULL,
+  p_rep_severe = NULL,
+  p_rep_death = NULL,
+  m_FOI_Brazil = 1
 )
 }
 \arguments{
@@ -30,7 +30,7 @@ covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"}
 
 \item{input_data}{List of population and vaccination data for multiple regions}
 
-\item{start_SEIRV0}{SEIRV data to use as input}
+\item{start_SEIRV}{SEIRV data to use as input}
 
 \item{years_data}{Vector of years for which to output data}
 
@@ -49,13 +49,13 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 
 \item{R0_fixed_values}{Values of R0 to use if not being taken from parameter distribution}
 
-\item{vaccine_efficacy0}{Vaccine efficacy (set to NULL if being varied as a parameter)}
+\item{vaccine_efficacy}{Vaccine efficacy (set to NULL if being varied as a parameter)}
 
-\item{p_rep_severe0}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
+\item{p_rep_severe}{Probability of observation of severe infection (set to NULL if being varied as a parameter)}
 
-\item{p_rep_death0}{Probability of observation of death (set to NULL if being varied as a parameter)}
+\item{p_rep_death}{Probability of observation of death (set to NULL if being varied as a parameter)}
 
-\item{m_FOI_Brazil0}{Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)}
+\item{m_FOI_Brazil}{Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)}
 }
 \description{
 Function to calculate annual yellow fever burden across multiple regions based on derived parameters

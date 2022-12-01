@@ -62,10 +62,9 @@ Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=li
                            n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
                            start_SEIRV=list(),dt=1.0) {
 
-  assert_that(n_particles>0)
-  assert_that(n_particles<=20)
-  assert_that(n_threads<=n_particles)
-  assert_that(n_threads>0)
+  assert_that(n_particles %in% c(1:20),msg="Number of particles must be an integer between 1 and 20")
+  assert_that(n_threads<=n_particles,msg="Number of threads must be equal to or less than number of particles")
+  assert_that(n_threads>0,msg="Number of threads must be between 1 and number of particles")
 
   x <- FullModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                           year_data_begin,vaccine_efficacy,start_SEIRV,dt),
@@ -125,10 +124,9 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
                             n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
                             start_SEIRV=list(),dt=1.0) {
 
-  assert_that(n_particles>0)
-  assert_that(n_particles<=20)
-  assert_that(n_threads<=n_particles)
-  assert_that(n_threads>0)
+  assert_that(n_particles %in% c(1:20),msg="Number of particles must be an integer between 1 and 20")
+  assert_that(n_threads<=n_particles,msg="Number of threads must be equal to or less than number of particles")
+  assert_that(n_threads>0,msg="Number of threads must be between 1 and number of particles")
 
   x <- BasicModelOD$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
                                           year_data_begin,vaccine_efficacy,start_SEIRV,dt),
@@ -187,17 +185,18 @@ Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
                              obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
                              vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0,mode_start=1,n_reps=1,dt=1.0){
 
-  assert_that(input_data_check(input_data))
+  assert_that(input_data_check(input_data),
+    msg="Input data must be in standard format (see https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html )")
   assert_that(any(is.null(obs_sero_data)==FALSE,is.null(obs_case_data)==FALSE,is.null(obs_outbreak_data)==FALSE),
               msg="Need at least one of obs_sero_data, obs_case_data or obs_outbreak_data")
-  assert_that(vaccine_efficacy >=0.0 && vaccine_efficacy <=1.0)
+  assert_that(vaccine_efficacy >=0.0 && vaccine_efficacy <=1.0,msg="Vaccine efficacy must be between 0 and 1")
   if(is.null(obs_case_data)==FALSE ||is.null(obs_outbreak_data)==FALSE){
-    assert_that(p_rep_severe >=0.0 && p_rep_severe <=1.0)
-    assert_that(p_rep_death >=0.0 && p_rep_death <=1.0)}
+    assert_that(p_rep_severe >=0.0 && p_rep_severe <=1.0,msg="Severe infection reporting probability must be between 0 and 1")
+    assert_that(p_rep_death >=0.0 && p_rep_death <=1.0,msg="Fatal infection reporting probability must be between 0 and 1")}
 
   n_regions=length(input_data$region_labels)
-  assert_that(length(FOI_values)==n_regions)
-  assert_that(length(R0_values)==n_regions)
+  assert_that(length(FOI_values)==n_regions,msg="Length of FOI_values must match number of regions")
+  assert_that(length(R0_values)==n_regions,msg="Length of R0_values must match number of regions")
 
   if(is.null(input_data$flag_sero)){
     input_data=input_data_process(input_data,obs_sero_data,obs_case_data,obs_outbreak_data)
@@ -330,7 +329,7 @@ Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRVC input in list from previous run(s)
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param year_end year to run up to
 #' @param year_data_begin year to begin saving data
 #' @param vaccine_efficacy Proportional vaccine efficacy
@@ -342,20 +341,20 @@ Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
 parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
                             year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0){
 
-  assert_that(length(pop_data[,1])>1)
-  assert_that(length(pop_data[1,])>1)
+  assert_that(length(pop_data[,1])>1) #TODO - msg
+  assert_that(length(pop_data[1,])>1) #TODO - msg
   n_years=length(pop_data[,1])-1
   N_age=length(pop_data[1,])
-  assert_that(length(vacc_data[,1])==n_years+1)
-  assert_that(length(vacc_data[1,])==N_age)
-  assert_that(mode_start %in% c(0,1,2))
-  assert_that(vaccine_efficacy<=1.0 && vaccine_efficacy>=0.0)
-  if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE)}
-  assert_that(year_data_begin>=year0)
-  assert_that(year_data_begin<year_end)
-  assert_that(year_end-year0<=n_years)
+  assert_that(length(vacc_data[,1])==n_years+1,msg="Population and vaccination data must be for same time periods")
+  assert_that(length(vacc_data[1,])==N_age,msg="Number of age groups in population and vaccination data must match")
+  assert_that(mode_start %in% c(0,1,2),msg="mode_start must have value 0, 1 or 2")
+  assert_that(vaccine_efficacy<=1.0 && vaccine_efficacy>=0.0,msg="Vaccine efficacy must be between 0 and 1")
+  if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE,msg="When mode_start=2, start_SEIRV data is required")}
+  assert_that(year_data_begin>=year0,msg="year_data_begin must be greater than or equal to year0")
+  assert_that(year_data_begin<year_end,msg="year_data_begin must be less than year_end")
+  assert_that(year_end-year0<=n_years,msg="Period year0->year_end must lie within population data")
   vacc_initial=vacc_data[1,]
-  assert_that(dt %in% c(1,5))
+  assert_that(dt %in% c(1,5),msg="dt must have value 1 or 5 days")
   inv_365=1.0/365.0
 
   P0=Cas0=Sus0=Exp0=Inf0=Rec0=Vac0=rep(0,N_age)
@@ -402,7 +401,6 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
     Vac0=start_SEIRV$V
     Cas0=rep(0,N_age)
   } else {
-    assert_that(length(vacc_initial)==N_age)
     Vac0=P0*vacc_initial
   }
 
@@ -425,9 +423,10 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'
 param_calc_enviro <- function(enviro_coeffs=c(),enviro_covar_values=c()){
 
-  assert_that(all(enviro_coeffs>=0))
+  assert_that(all(enviro_coeffs>=0),msg="All environmental coefficients must have positive values")
   n_env_vars=length(enviro_covar_values)
-  assert_that(length(enviro_coeffs) %in% c(n_env_vars,2*n_env_vars))
+  assert_that(length(enviro_coeffs) %in% c(n_env_vars,2*n_env_vars),
+              msg="Number of environmental coefficients must equal number of covariates (calculating FOI only) or twice number of covariates (calculating FOI and R0)")
 
   output=list(FOI=NA,R0=NA)
   output$FOI=sum(enviro_coeffs[c(1:n_env_vars)]*enviro_covar_values)
@@ -449,8 +448,8 @@ param_calc_enviro <- function(enviro_coeffs=c(),enviro_covar_values=c()){
 #'
 plot_model_output <- function(model_output=list()){
 
-  assert_that(is.list(model_output))
-  assert_that(is.null(model_output$day)==FALSE)
+  assert_that(is.list(model_output)) #TODO - msg
+  assert_that(is.null(model_output$day)==FALSE) #TODO - msg
 
   values=label=values_mean=values_low=values_high=NULL
   N_age=dim(model_output$S)[1]
@@ -530,7 +529,8 @@ plot_model_output <- function(model_output=list()){
 create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,extra_params=c("vacc_eff")){
 
   assert_that(type %in% c("FOI","FOI+R0","FOI enviro","FOI+R0 enviro"))
-  assert_that(input_data_check(input_data))
+  assert_that(input_data_check(input_data),
+              msg="Input data must be in standard format (see https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html )")
 
   n_extra=length(extra_params)
 
@@ -544,7 +544,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
       if(type=="FOI+R0"){param_names[i+n_regions]=paste("R0_",regions[i],sep="")}
     }
   } else {
-    assert_that(is.data.frame(enviro_data))
+    assert_that(is.data.frame(enviro_data)) #TODO - msg
     env_vars=colnames(enviro_data)[c(2:ncol(enviro_data))]
     n_env_vars=length(env_vars)
     if(type=="FOI enviro"){n_params=n_env_vars+n_extra} else {n_params=(2*n_env_vars)+n_extra}
@@ -570,7 +570,7 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #'   covariates); choose from "FOI","FOI+R0","FOI enviro","FOI+R0 enviro"
 #' @param param_dist Data frame of values of input parameters, one set per row
 #' @param input_data List of population and vaccination data for multiple regions
-#' @param start_SEIRV0 SEIRV data to use as input
+#' @param start_SEIRV SEIRV data to use as input
 #' @param years_data Vector of years for which to output data
 #' @param n_reps Number of repeats over which to average results
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
@@ -581,24 +581,25 @@ create_param_labels <- function(type="FOI",input_data=list(),enviro_data=NULL,ex
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' @param enviro_data enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
 #' @param R0_fixed_values Values of R0 to use if not being taken from parameter distribution
-#' @param vaccine_efficacy0 Vaccine efficacy (set to NULL if being varied as a parameter)
-#' @param p_rep_severe0 Probability of observation of severe infection (set to NULL if being varied as a parameter)
-#' @param p_rep_death0 Probability of observation of death (set to NULL if being varied as a parameter)
-#' @param m_FOI_Brazil0 Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
+#' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
+#' @param p_rep_severe Probability of observation of severe infection (set to NULL if being varied as a parameter)
+#' @param p_rep_death Probability of observation of death (set to NULL if being varied as a parameter)
+#' @param m_FOI_Brazil Multiplier of spillover FOI for Brazil regions (set to NULL if being varied as a parameter)
 #'
 #' @export
 #'
-total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_data=list(),start_SEIRV0=NULL,
+total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_data=list(),start_SEIRV=NULL,
                                   years_data=c(),n_reps=1,mode_start=1,flag_reporting=FALSE,dt=5.0,
-                                  enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy0=NULL,
-                                  p_rep_severe0=NULL,p_rep_death0=NULL,m_FOI_Brazil0=1.0){
+                                  enviro_data=NULL,R0_fixed_values=NULL,vaccine_efficacy=NULL,
+                                  p_rep_severe=NULL,p_rep_death=NULL,m_FOI_Brazil=1.0){
 
-  assert_that(input_data_check(input_data))
-  assert_that(all(input_data$region_labels==enviro_data$region)==TRUE)
-  assert_that(min(years_data)>=input_data$years_labels[1])
+  assert_that(input_data_check(input_data),
+              msg="Input data must be in standard format (see https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html )")
+  assert_that(all(input_data$region_labels==enviro_data$region)==TRUE) #TODO - msg
+  assert_that(min(years_data)>=input_data$years_labels[1]) #TODO - msg
   assert_that(type %in% c("FOI+R0","FOI","FOI+R0 enviro","FOI enviro"))
   assert_that(is.logical(flag_reporting))
-  assert_that(all(param_dist>0.0))
+  assert_that(all(param_dist>0.0),msg="All parameter values in distribution must be positive")
 
   n_param_sets=nrow(param_dist)
   n_years=length(years_data)
@@ -618,10 +619,10 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
     if(n_param_set %% 10 == 0){cat("\n")}
     params=param_dist[n_param_set,]
     names(params)=colnames(param_dist)
-    if(is.null(vaccine_efficacy0)){vaccine_efficacy=params$vaccine_efficacy} else {vaccine_efficacy=vaccine_efficacy0}
-    if(is.null(p_rep_severe0)){p_rep_severe=params$p_rep_severe} else {p_rep_severe=p_rep_severe0}
-    if(is.null(p_rep_death0)){p_rep_death=params$p_rep_death} else {p_rep_death=p_rep_death0}
-    if(is.null(m_FOI_Brazil0)){m_FOI_Brazil=params$m_FOI_Brazil} else {m_FOI_Brazil=m_FOI_Brazil0}
+    if(is.null(vaccine_efficacy)){vaccine_efficacy_set=params$vaccine_efficacy} else {vaccine_efficacy_set=vaccine_efficacy}
+    if(is.null(p_rep_severe)){p_rep_severe_set=params$p_rep_severe} else {p_rep_severe_set=p_rep_severe}
+    if(is.null(p_rep_death)){p_rep_death_set=params$p_rep_death} else {p_rep_death_set=p_rep_death}
+    if(is.null(m_FOI_Brazil)){m_FOI_Brazil_set=params$m_FOI_Brazil} else {m_FOI_Brazil_set=m_FOI_Brazil}
 
     if(type %in% c("FOI+R0 enviro","FOI enviro")){
       if(type=="FOI+R0 enviro"){enviro_coeffs=params[c(1:(2*n_env_vars))]} else {enviro_coeffs=params[c(1:n_env_vars)]}
@@ -629,7 +630,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
         model_params=param_calc_enviro(enviro_coeffs,
                                        as.numeric(enviro_data[enviro_data$region==regions[n_region],1+c(1:n_env_vars)]))
         FOI_values[n_region]=model_params$FOI
-        if(substr(regions[n_region],1,3)=="BRA"){FOI_values[n_region]=FOI_values[n_region]*m_FOI_Brazil}
+        if(substr(regions[n_region],1,3)=="BRA"){FOI_values[n_region]=FOI_values[n_region]*m_FOI_Brazil_set}
         if(type=="FOI+R0 enviro"){R0_values[n_region]=model_params$R0} else {
           R0_values[n_region]=R0_fixed_values[n_region]}
       }
@@ -643,14 +644,14 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
     for(n_region in 1:n_regions){
 
       if(mode_start==2){
-        start_SEIRV=list(S=start_SEIRV0$S[,n_region,n_param_set],
-                         E=start_SEIRV0$E[,n_region,n_param_set],I=start_SEIRV0$I[,n_region,n_param_set],
-                         R=start_SEIRV0$R[,n_region,n_param_set],V=start_SEIRV0$V[,n_region,n_param_set])
-      } else {start_SEIRV=NULL}
+        start_SEIRV_set=list(S=start_SEIRV$S[,n_region,n_param_set],
+                         E=start_SEIRV$E[,n_region,n_param_set],I=start_SEIRV$I[,n_region,n_param_set],
+                         R=start_SEIRV$R[,n_region,n_param_set],V=start_SEIRV$V[,n_region,n_param_set])
+      } else {start_SEIRV_set=NULL}
       case_data <- case_data_generate(FOI_values[n_region],R0_values[n_region],
                                   vacc_data=input_data$vacc_data[n_region,,],pop_data=input_data$pop_data[n_region,,],
                                   year0=input_data$years_labels[1],mode_start,n_reps,year_end,year_data_begin,
-                                  vaccine_efficacy,start_SEIRV,dt)
+                                  vaccine_efficacy_set,start_SEIRV_set,dt)
       for(n_year in 1:n_years){
         for(rep in 1:n_reps){
           infs=floor(sum(case_data$C[rep,case_data$year==years_data[n_year]]))
@@ -679,8 +680,8 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
         for(n_year in 1:n_years){
           cases=case_ar2[n_year,n_region,n_param_set]
           deaths=death_ar2[n_year,n_region,n_param_set]
-          obs_deaths=rbinom(1,floor(deaths),p_rep_death)
-          obs_cases=obs_deaths+rbinom(1,floor(cases-deaths),p_rep_severe)
+          obs_deaths=rbinom(1,floor(deaths),p_rep_death_set)
+          obs_cases=obs_deaths+rbinom(1,floor(cases-deaths),p_rep_severe_set)
           obs_case_ar2[n_year,n_region,n_param_set]=obs_cases
           obs_death_ar2[n_year,n_region,n_param_set]=obs_deaths
         }

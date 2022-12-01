@@ -52,9 +52,9 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 
 \item{dt}{Time increment in days to use in model (should be either 1.0 or 5.0 days)}
 
-\item{p_rep_severe}{Probability of a severe case being reported}
+\item{p_rep_severe}{Probability of a severe infection being reported}
 
-\item{p_rep_death}{Probability of a fatal case being reported
+\item{p_rep_death}{Probability of a fatal infection being reported
 '}
 }
 \description{
