@@ -45,6 +45,7 @@ We run the data_match_single() function to produce a set of modelled data matchi
 * Outbreak occurrence data for the same year(s)  
 
 ```{r}
+set.seed(1)
 data1 <- data_match_single(params, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
 ```
 
@@ -52,6 +53,7 @@ We use the data_match_multi() function to run data_match_single() for a series o
 
 ```{r}
 param_sets <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", sep = ""), header = TRUE) # Data frame containing one set of parameter values per line
+set.seed(1)
 data2 <- data_match_multi(param_sets, input_data, obs_sero_data, obs_case_data, obs_outbreak_data, const_list)
 ```
 

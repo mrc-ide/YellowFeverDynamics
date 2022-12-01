@@ -26,7 +26,7 @@ library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
 vacc_data <- input_data$vacc_data[1, , ]
 pop_data <- input_data$pop_data[1, , ]  
-FOI_spillover <- 3.0e-7             # Force of infection due to spillover from sylvatic reservoir
+FOI_spillover <- 5.0e-7             # Force of infection due to spillover from sylvatic reservoir
 R0 <- 0.0                           # Basic reproduction number for urban spread of infection
 model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_reps = 1, year_end = 2001, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
 ```

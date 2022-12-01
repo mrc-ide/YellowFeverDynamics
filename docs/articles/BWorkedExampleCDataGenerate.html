@@ -118,13 +118,15 @@ year(s)<br>
 <li>Outbreak occurrence data for the same year(s)</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
 <p>We use the data_match_multi() function to run data_match_single() for
 a series of sets of values of the input parameters. The inputs are the
 same except that the parameter values are input as a data frame
 containing one set of parameter values per line.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">param_sets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_coeffs_example_multi.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Data frame containing one set of parameter values per line</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_multi.html">data_match_multi</a></span><span class="op">(</span><span class="va">param_sets</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Set:</span></span>

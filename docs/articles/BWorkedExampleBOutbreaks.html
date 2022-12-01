@@ -106,7 +106,7 @@ the case_data_generate() function:</p>
 <span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span>  </span>
-<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">3.0e-7</span>             <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
+<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">5.0e-7</span>             <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
 <span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">0.0</span>                           <span class="co"># Basic reproduction number for urban spread of infection</span></span>
 <span><span class="va">model_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_data_generate.html">case_data_generate</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, year0 <span class="op">=</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, n_reps <span class="op">=</span> <span class="fl">1</span>, year_end <span class="op">=</span> <span class="fl">2001</span>, year_data_begin <span class="op">=</span> <span class="fl">1999</span>, vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, start_SEIRV <span class="op">=</span> <span class="cn">NULL</span>, dt <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span></span></code></pre></div>
 <p>We process results using the get_outbreak_data() function to produce
@@ -126,18 +126,26 @@ showing the number of reported cases and deaths at each time point
 deaths in each year (rep_annual).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">outbreak_list</span></span>
-<span><span class="co">#&gt;   size start_day end_day start_year end_year</span></span>
-<span><span class="co">#&gt; 1    1       144     154       1999     1999</span></span>
-<span><span class="co">#&gt; 2    1       351     361       1999     1999</span></span>
-<span><span class="co">#&gt; 3    1       412     422       2000     2000</span></span>
-<span><span class="co">#&gt; 4    1       483     493       2000     2000</span></span>
-<span><span class="co">#&gt; 5    1       530     540       2000     2000</span></span>
-<span><span class="co">#&gt; 6    1       656     666       2000     2000</span></span></code></pre></div>
+<span><span class="co">#&gt;    size start_day end_day start_year end_year</span></span>
+<span><span class="co">#&gt; 1     1        89      99       1999     1999</span></span>
+<span><span class="co">#&gt; 2     1       194     204       1999     1999</span></span>
+<span><span class="co">#&gt; 3     1       249     259       1999     1999</span></span>
+<span><span class="co">#&gt; 4     1       307     317       1999     1999</span></span>
+<span><span class="co">#&gt; 5     1       322     332       1999     1999</span></span>
+<span><span class="co">#&gt; 6     1       392     402       2000     2000</span></span>
+<span><span class="co">#&gt; 7     2       435     454       2000     2000</span></span>
+<span><span class="co">#&gt; 8     2       471     484       2000     2000</span></span>
+<span><span class="co">#&gt; 9     1       515     525       2000     2000</span></span>
+<span><span class="co">#&gt; 10    1       579     589       2000     2000</span></span>
+<span><span class="co">#&gt; 11    2       618     638       2000     2000</span></span>
+<span><span class="co">#&gt; 12    1       651     661       2000     2000</span></span>
+<span><span class="co">#&gt; 13    1       686     696       2000     2000</span></span>
+<span><span class="co">#&gt; 14    1       719     729       2000     2000</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">rep_annual</span></span>
 <span><span class="co">#&gt;   year rep_cases rep_deaths</span></span>
-<span><span class="co">#&gt; 1 1999         2          1</span></span>
-<span><span class="co">#&gt; 2 2000         4          3</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 1999         5          4</span></span>
+<span><span class="co">#&gt; 2 2000        12          3</span></span></code></pre></div>
 <p>As noted in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html" class="external-link">Worked
 Example 1</a>, we can estimate the outbreak risk (the probability of one
 or more outbreaks, i.e. one or more reported cases) in a given time

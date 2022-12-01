@@ -100,12 +100,12 @@ are simply named Var1-5.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
 <span><span class="va">enviro_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_data_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enviro_data</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   region Var1     Var2 Var3       Var4         Var5</span></span>
-<span><span class="co">#&gt; 1  IGL01    0 5.486808    1 5.7544e-04 1.047129e-02</span></span>
-<span><span class="co">#&gt; 2  IGL02    1 1.279405    1 1.1000e-08 1.290000e-08</span></span>
-<span><span class="co">#&gt; 3  IGL03    0 7.810826    0 3.5500e-07 4.470000e-05</span></span>
-<span><span class="co">#&gt; 4  IGL04    1 9.848377    1 1.5100e-06 1.950000e-09</span></span>
-<span><span class="co">#&gt; 5  IGL05    1 6.640077    0 2.4000e-08 6.456542e-02</span></span></code></pre></div>
+<span><span class="co">#&gt;   region temp_mean  rainfall vector_i nhp_i landuse_i</span></span>
+<span><span class="co">#&gt; 1  IGL01  23.04530  845.9884        7     3         6</span></span>
+<span><span class="co">#&gt; 2  IGL02  23.23389 1317.4198        3     2         5</span></span>
+<span><span class="co">#&gt; 3  IGL03  20.96704 1605.9723        7     4         4</span></span>
+<span><span class="co">#&gt; 4  IGL04  22.32759 1087.6587        8     5         3</span></span>
+<span><span class="co">#&gt; 5  IGL05  21.36903 1323.8002        2     1         4</span></span></code></pre></div>
 <p>Logarithmic values of the coefficients of the environmental
 covariates are stored as a data frame with the headings in the format
 FOI_(variable name) and R0_(variable name). In the example below, only
@@ -116,10 +116,10 @@ below.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">enviro_coeffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_coeffs_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">enviro_coeffs</span></span>
-<span><span class="co">#&gt;      FOI_Var1    FOI_Var2   FOI_Var3    FOI_Var4    FOI_Var5   R0_Var1</span></span>
-<span><span class="co">#&gt; 1 3.05902e-07 1.12535e-07 1.6919e-10 1.02619e-10 3.77513e-11 0.1495686</span></span>
-<span><span class="co">#&gt;     R0_Var2    R0_Var3   R0_Var4   R0_Var5</span></span>
-<span><span class="co">#&gt; 1 0.2231302 0.09071795 0.2231302 0.1224564</span></span></code></pre></div>
+<span><span class="co">#&gt;   FOI_temp_mean FOI_rainfall FOI_vector_i FOI_nhp_i FOI_landuse_i R0_temp_mean</span></span>
+<span><span class="co">#&gt; 1      1.85e-08     7.66e-10     6.04e-08  3.89e-06       2.2e-07      0.00903</span></span>
+<span><span class="co">#&gt;   R0_rainfall R0_vector_i R0_nhp_i R0_landuse_i</span></span>
+<span><span class="co">#&gt; 1    0.000269      0.0315    0.163        0.023</span></span></code></pre></div>
 <p>Covariate and coefficient values can be combined to produce values of
 the spillover force of infection and basic reproduction number using the
 param_calc_enviro() function.</p>
@@ -133,11 +133,11 @@ param_calc_enviro() function.</p>
 <span><span class="op">}</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">epi_data</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   region          FOI        R0</span></span>
-<span><span class="co">#&gt; 1  IGL01 6.176275e-07 1.3164009</span></span>
-<span><span class="co">#&gt; 2  IGL02 4.500490e-07 0.5257604</span></span>
-<span><span class="co">#&gt; 3  IGL03 8.789913e-07 1.7428364</span></span>
-<span><span class="co">#&gt; 4  IGL04 1.414358e-06 2.4377568</span></span>
-<span><span class="co">#&gt; 5  IGL05 1.053146e-06 1.6390766</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  IGL01 1.448717e-05 1.2831700</span></span>
+<span><span class="co">#&gt; 2  IGL02 1.050017e-05 1.0996880</span></span>
+<span><span class="co">#&gt; 3  IGL03 1.848087e-05 1.5858389</span></span>
+<span><span class="co">#&gt; 4  IGL04 2.183941e-05 1.6301983</span></span>
+<span><span class="co">#&gt; 5  IGL05 6.300158e-06 0.8670647</span></span></code></pre></div>
 <p>Spillover FOI and R0 data obtained in this way can be plotted on a
 map of the regions under consideration using the create_map function(),
 as can other regional data such as the values of the environmental
@@ -147,29 +147,32 @@ map_shapes_load() function</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">regions</span><span class="op">=</span><span class="va">epi_data</span><span class="op">$</span><span class="va">region</span></span>
 <span><span class="va">shape_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/map_shapes_load.html">map_shapes_load</a></span><span class="op">(</span><span class="va">regions</span>, shapefiles<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/shapefile_example.shp"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span>, region_label_type<span class="op">=</span><span class="st">"GID_1"</span><span class="op">)</span></span>
-<span><span class="va">colour_scheme</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"exdata/colour_scheme_example.Rds"</span>, sep<span class="op">=</span><span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">colour_scheme</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/colour_scheme_example.Rds"</span>, sep<span class="op">=</span><span class="st">"/"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">colour_scale</span><span class="op">=</span><span class="va">colour_scheme</span><span class="op">$</span><span class="va">colour_scale</span></span>
-<span><span class="va">null1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>, <span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span>, scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span>, <span class="fl">8</span><span class="op">)</span>, <span class="va">colour_scale</span>, pixels_max<span class="op">=</span><span class="fl">720</span>, text_size<span class="op">=</span><span class="fl">1</span>, map_title<span class="op">=</span><span class="st">""</span>, legend_title<span class="op">=</span><span class="st">"FOI"</span>, legend_position<span class="op">=</span><span class="st">"topleft"</span>, legend_format<span class="op">=</span><span class="st">"e"</span>, legend_dp<span class="op">=</span><span class="fl">1</span>, output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span>
-<span><span class="va">null2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>, <span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>, scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>, <span class="fl">8</span><span class="op">)</span>, <span class="va">colour_scale</span>, pixels_max<span class="op">=</span><span class="fl">720</span>, text_size<span class="op">=</span><span class="fl">1</span>, map_title<span class="op">=</span><span class="st">""</span>, legend_title<span class="op">=</span><span class="st">"R0"</span>, legend_position<span class="op">=</span><span class="st">"topleft"</span>, legend_format<span class="op">=</span><span class="st">"f"</span>, legend_dp<span class="op">=</span><span class="fl">1</span>, output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">null1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>, <span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span>, scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">FOI</span>, <span class="fl">8</span><span class="op">)</span>, <span class="va">colour_scale</span>, pixels_max<span class="op">=</span><span class="fl">720</span>, text_size<span class="op">=</span><span class="fl">0.75</span>, map_title<span class="op">=</span><span class="st">""</span>, legend_title<span class="op">=</span><span class="st">"FOI"</span>, legend_position<span class="op">=</span><span class="st">"topleft"</span>, legend_format<span class="op">=</span><span class="st">"e"</span>, legend_dp<span class="op">=</span><span class="fl">1</span>, output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<p><img src="CGuideBParametersEnvironment_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">null2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create_map.html">create_map</a></span><span class="op">(</span><span class="va">shape_data</span>, <span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>, scale<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/pretty.html" class="external-link">pretty</a></span><span class="op">(</span><span class="va">epi_data</span><span class="op">$</span><span class="va">R0</span>, <span class="fl">8</span><span class="op">)</span>, <span class="va">colour_scale</span>, pixels_max<span class="op">=</span><span class="fl">720</span>, text_size<span class="op">=</span><span class="fl">0.75</span>, map_title<span class="op">=</span><span class="st">""</span>, legend_title<span class="op">=</span><span class="st">"R0"</span>, legend_position<span class="op">=</span><span class="st">"topleft"</span>, legend_format<span class="op">=</span><span class="st">"f"</span>, legend_dp<span class="op">=</span><span class="fl">1</span>, output_file<span class="op">=</span><span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<p><img src="CGuideBParametersEnvironment_files/figure-html/unnamed-chunk-5-2.png" width="700"></p>
 <p>To generate a distribution of spillover FOI and R0 values for each
 region, a distribution of environmental coefficient values can be
 used:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">enviro_coeffs2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_coeffs_example_multi.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">enviro_coeffs2</span>, <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      FOI_Var1    FOI_Var2    FOI_Var3    FOI_Var4    FOI_Var5   R0_Var1</span></span>
-<span><span class="co">#&gt; 1 3.05902e-07 1.12535e-07 1.69190e-10 1.02619e-10 3.77513e-11 0.1495686</span></span>
-<span><span class="co">#&gt; 2 2.90983e-07 1.02849e-07 1.57752e-10 9.66427e-11 3.66356e-11 0.1495686</span></span>
-<span><span class="co">#&gt; 3 2.85221e-07 1.10307e-07 1.62556e-10 9.47291e-11 3.59102e-11 0.1480804</span></span>
-<span><span class="co">#&gt; 4 3.02859e-07 1.01826e-07 1.67506e-10 1.02619e-10 3.70038e-11 0.1366954</span></span>
-<span><span class="co">#&gt; 5 3.02859e-07 1.05982e-07 1.57752e-10 1.02619e-10 3.51991e-11 0.1437039</span></span>
-<span><span class="co">#&gt;     R0_Var2    R0_Var3   R0_Var4   R0_Var5</span></span>
-<span><span class="co">#&gt; 1 0.2231302 0.09071795 0.2231302 0.1224564</span></span>
-<span><span class="co">#&gt; 2 0.2143811 0.08290997 0.2101361 0.1176548</span></span>
-<span><span class="co">#&gt; 3 0.2080452 0.08543495 0.2080452 0.1176548</span></span>
-<span><span class="co">#&gt; 4 0.2187119 0.08981530 0.2187119 0.1119167</span></span>
-<span><span class="co">#&gt; 5 0.2165357 0.08629359 0.2039256 0.1130415</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<span><span class="co">#&gt;   FOI_temp_mean FOI_rainfall FOI_vector_i FOI_nhp_i FOI_landuse_i R0_temp_mean</span></span>
+<span><span class="co">#&gt; 1      1.85e-08     7.66e-10     6.04e-08  3.89e-06      2.20e-07      0.00903</span></span>
+<span><span class="co">#&gt; 2      1.34e-08     7.26e-10     5.09e-08  4.97e-06      2.40e-07      0.01160</span></span>
+<span><span class="co">#&gt; 3      2.05e-08     9.15e-10     4.76e-08  4.07e-06      2.16e-07      0.00760</span></span>
+<span><span class="co">#&gt; 4      2.29e-08     6.42e-10     6.98e-08  2.88e-06      1.54e-07      0.00892</span></span>
+<span><span class="co">#&gt; 5      1.40e-08     8.24e-10     6.14e-08  3.67e-06      1.70e-07      0.00991</span></span>
+<span><span class="co">#&gt;   R0_rainfall R0_vector_i R0_nhp_i R0_landuse_i</span></span>
+<span><span class="co">#&gt; 1    0.000269      0.0315    0.163       0.0230</span></span>
+<span><span class="co">#&gt; 2    0.000190      0.0353    0.161       0.0169</span></span>
+<span><span class="co">#&gt; 3    0.000275      0.0313    0.176       0.0290</span></span>
+<span><span class="co">#&gt; 4    0.000190      0.0275    0.205       0.0204</span></span>
+<span><span class="co">#&gt; 5    0.000336      0.0369    0.146       0.0235</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">n_values</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">enviro_coeffs2</span><span class="op">)</span></span>
 <span><span class="va">epi_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>FOI <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_values</span>,<span class="va">n_regions</span><span class="op">)</span><span class="op">)</span>, R0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/array.html" class="external-link">array</a></span><span class="op">(</span><span class="cn">NA</span>, dim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">n_values</span>,<span class="va">n_regions</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">n_value</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">n_values</span><span class="op">)</span><span class="op">{</span></span>
