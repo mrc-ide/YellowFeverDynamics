@@ -12,8 +12,8 @@
 #' @export
 #'
 get_mcmc_params <- function(chain=list()){
-  assert_that(is.data.frame(chain))
 
+  assert_that(is.data.frame(chain))
   column_names=colnames(chain)
   assert_that("posterior_current" %in% column_names)
   assert_that("flag_accept" %in% column_names)
@@ -40,7 +40,8 @@ get_mcmc_params <- function(chain=list()){
 #' @export
 #'
 get_mcmc_data <- function(input_folder="",plot_graph=TRUE){
-  assert_that(file.exists(input_folder))
+
+  assert_that(file.exists(input_folder),msg="Valid input folder must be specified")
 
   file_list=list.files(path=input_folder,pattern="*.csv")
   input_frame=data.frame()
@@ -118,7 +119,8 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
 
   if(type %in% c("FOI enviro","FOI+R0 enviro")){
     assert_that(is.data.frame((enviro_data)))
-    assert_that(all(enviro_data$region==sort(enviro_data$region)))
+    assert_that(all(enviro_data$region==sort(enviro_data$region)),
+                msg="Regions in environmental data must be in alphabetical order")
     n_env_vars=ncol(enviro_data)-1
     env_vars=colnames(enviro_data)[c(2:(n_env_vars+1))]
     regions=enviro_data$region
@@ -177,7 +179,8 @@ get_mcmc_enviro_coeff_data <- function(input_frame=list(),type="FOI+R0",enviro_d
   assert_that(type %in% c("FOI enviro","FOI+R0 enviro"))
   if(type %in% c("FOI enviro","FOI+R0 enviro")){
     assert_that(is.data.frame((enviro_data)))
-    assert_that(all(enviro_data$region==sort(enviro_data$region)))
+    assert_that(all(enviro_data$region==sort(enviro_data$region)),
+                msg="Regions in environmental data must be in alphabetical order")
   }
 
   if("flag_accept" %in% colnames(input_frame)){param_names=get_mcmc_params(input_frame)} else {
@@ -231,6 +234,7 @@ plot_mcmc_FOI_R0_data <- function(data_frame=list(),regions=c(),plot_type="box",
     assert_that(plot_type %in% c("box","violin","error_bars","scatter"))
   }
 
+  #TODO - Sort out region selection/labelling
   n_regions=length(regions)
   assert_that(n_regions==length(names(table(data_frame$n_region))))
   output_labels=rep(NA,n_regions)
@@ -348,6 +352,7 @@ plot_mcmc_enviro_coeff_data <- function(data_frame=list(),env_vars=c(),plot_type
   assert_that(plot_type %in% c("box","violin"))
   assert_that(is.numeric(text_size1))
 
+  #TODO - Sort out environmental covariate numbers/labelling
   n_env_vars=length(env_vars)
   assert_that(n_env_vars==length(names(table(data_frame$n_env_var))))
 
@@ -416,6 +421,7 @@ plot_mcmc_prob_data <- function(input_frame=list(),plot_type="box",values=c("vac
   assert_that(is.character(values))
   assert_that(is.numeric(text_size1))
 
+  #TODO - Sort out variable naming/numbers
   n_values=length(values)
   for(i in 1:n_values){assert_that(values[i] %in% colnames(input_frame))}
 

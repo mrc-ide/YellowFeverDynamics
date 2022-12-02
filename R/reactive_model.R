@@ -1,4 +1,3 @@
-library(assertthat)
 #-------------------------------------------------------------------------------
 #' @title Reactive_Model_Run
 #'
@@ -37,10 +36,9 @@ Reactive_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vacc_d
                            vaccine_efficacy=1.0,start_SEIRV=list(),dt=1.0,p_rep=c(1.0e-6,1.0e-6),outbreak_threshold1=1,
                            cluster_threshold1=1.0) {
 
-  assert_that(n_particles>0)
-  assert_that(n_particles<=20)
-  assert_that(n_threads<=n_particles)
-  assert_that(n_threads>0)
+  assert_that(n_particles %in% c(1:20),msg="Number of particles must be an integer between 1 and 20")
+  assert_that(n_threads<=n_particles,msg="Number of threads must be equal to or less than number of particles")
+  assert_that(n_threads>0,msg="Number of threads must be between 1 and number of particles")
 
   x <- ReactiveModelOD$new(pars=parameter_setup_react(FOI_spillover,R0,vacc_data1,vacc_data2,pop_data,year0,mode_start,
                                             year_end,year_data_begin,vaccine_efficacy,start_SEIRV,dt,p_rep,
@@ -109,22 +107,23 @@ parameter_setup_react <- function(FOI_spillover=0.0,R0=1.0,vacc_data1=list(),vac
                                   start_SEIRV=list(),dt=1.0,p_rep=c(1.0e-6,1.0e-6),outbreak_threshold1=1,
                                   cluster_threshold1=1.0){
 
-  assert_that(length(pop_data[,1])>1)
-  assert_that(length(pop_data[1,])>1)
+  assert_that(length(pop_data[,1])>1) #TODO - msg
+  assert_that(length(pop_data[1,])>1) #TODO - msg
   n_years=length(pop_data[,1])-1
   N_age=length(pop_data[1,])
-  assert_that(length(vacc_data1[,1])==n_years+1)
-  assert_that(length(vacc_data1[1,])==N_age)
-  assert_that(length(vacc_data2[,1])==n_years+1)
-  assert_that(length(vacc_data2[1,])==N_age)
-  assert_that(mode_start %in% c(0,1,2))
-  if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE)}
-  assert_that(year_data_begin>=year0)
-  assert_that(year_data_begin<year_end)
-  assert_that(year_end-year0<=n_years)
+  assert_that(length(vacc_data1[,1])==n_years+1,msg="Population and vaccination data 1 must be for same time periods")
+  assert_that(length(vacc_data1[1,])==N_age,msg="Number of age groups in population and vaccination data 1 must match")
+  assert_that(length(vacc_data2[,1])==n_years+1,msg="Population and vaccination data 2 must be for same time periods")
+  assert_that(length(vacc_data2[1,])==N_age,msg="Number of age groups in population and vaccination data 2 must match")
+  assert_that(mode_start %in% c(0,1,2),msg="mode_start must have value 0, 1 or 2")
+  assert_that(vaccine_efficacy<=1.0 && vaccine_efficacy>=0.0,msg="Vaccine efficacy must be between 0 and 1")
+  if(mode_start==2){assert_that(is.null(start_SEIRV$S)==FALSE,msg="When mode_start=2, start_SEIRV data is required")}
+  assert_that(year_data_begin>=year0,msg="year_data_begin must be greater than or equal to year0")
+  assert_that(year_data_begin<year_end,msg="year_data_begin must be less than year_end")
+  assert_that(year_end-year0<=n_years,msg="Period year0->year_end must lie within population data")
   vacc_initial=vacc_data1[1,]
-  assert_that(dt %in% c(1,5))
-  assert_that(length(p_rep)==2)
+  assert_that(dt %in% c(1,5),msg="dt must have value 1 or 5 days")
+  assert_that(length(p_rep)==2,msg="2 reporting probability values required")
   inv_365=1.0/365.0
 
   P0=Cas0=Sus0=Exp0=Inf0=Rec0=Vac0=rep(0,N_age)

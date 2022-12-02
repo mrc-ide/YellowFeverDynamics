@@ -25,6 +25,7 @@ The yellow fever virus is transmitted by multiple mosquito species (TBA) and in 
 
 An estimated 12\% of infections lead to severe symptoms (including jaundice, bleeding and liver failure), with around 40-50\% of severe cases leading to death [REF] for an overall infection fatality rate of around 5-6\% This is much higher than many common infectious diseases such as malaria, influenza or measles, resulting in a high yellow fever death toll
 
-There are currently an estimated [TBA] cases with severe symptoms and [TBA] deaths annually [REF]. Historically, some large outbreaks in cities such as Manaus (Brazil) and New Orleans (USA) caused thousands of deaths.
+There are currently an estimated [TBA] cases with severe symptoms and [TBA] deaths annually [REF]. Historically, some large outbreaks in cities such as Manaus (Brazil) and New Orleans (USA) caused thousands of deaths [REF].
 
 References:
+* 

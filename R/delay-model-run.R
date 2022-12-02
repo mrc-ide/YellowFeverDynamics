@@ -2,10 +2,10 @@ Full_Model_Run_Delay2 <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_
                            n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
                            start_SEIRV=list(),dt=1.0) {
 
-  assert_that(n_particles>0)
-  assert_that(n_particles<=20)
-  assert_that(n_threads<=n_particles)
-  assert_that(n_threads>0)
+
+  assert_that(n_particles %in% c(1:20),msg="Number of particles must be an integer between 1 and 20")
+  assert_that(n_threads<=n_particles,msg="Number of threads must be equal to or less than number of particles")
+  assert_that(n_threads>0,msg="Number of threads must be between 1 and number of particles")
 
   N_age=length(pop_data[1,]) #Number of age groups
   pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,year_end,
@@ -48,7 +48,7 @@ case_data_generate_delay2 <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),
                                mode_start=0,n_reps=1,year_end=2000,year_data_begin=1999,
                                vaccine_efficacy=vaccine_efficacy,start_SEIRV=list(),dt=1.0) {
 
-  assert_that(n_reps>0)
+  assert_that(n_reps>0,msg="Number of runs must be positive")
 
   division=10
   n_particles0=min(division,n_reps)
