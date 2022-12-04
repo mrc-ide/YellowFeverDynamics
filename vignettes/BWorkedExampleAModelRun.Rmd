@@ -33,10 +33,13 @@ We set the other input parameters to the functions which run the model as follow
 FOI_spillover <- 1.0e-8             # Force of infection due to spillover from sylvatic reservoir
 R0 <- 1.5                           # Basic reproduction number for urban spread of infection
 year0 <- input_data$years_labels[1] # First year in population/vaccination data (here taken from the input data set; if the population and vaccination data is set manually, this similarly needs to be set manually)
-mode_start <- 1                     # Flag indicating how to set initial population immunity level in addition to vaccination
+mode_start <- 1                     # Flag indicating how to set initial population immunity level in addition to
+                                    # vaccination
                                     # If mode_start = 0, only vaccinated individuals are immune (R = 0)
-                                    # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (R = 1 - 1/R0)
-                                    # If mode_start = 2, use SEIRV input in list from previous run(s), set using start_SEIRV variable
+                                    # If mode_start = 1, shift some non-vaccinated individuals into recovered to give
+                                    # herd immunity (R = 1 - 1/R0)
+                                    # If mode_start = 2, use SEIRV input in list from previous run(s), set using
+                                    # start_SEIRV variable
 n_particles <- 10                   # Number of particles to run (maximum allowed value = 20)
 n_threads <- 1                      # Number of threads to run (equal to or less than n_particles)
 year_end <- 2001                    # Year at which to stop generating data (year after last year where data is desired)
@@ -49,7 +52,7 @@ dt <- 1.0                           # Time increment in days to use in model (sh
 We use the Full_Model_Run() function to run the model for the inputs above:
 
 ```{r}
-test1 <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_particles, n_threads, year_end, 
+test1 <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_particles, n_threads, year_end,
                         year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```
 
@@ -63,8 +66,8 @@ print(plot)
 For some applications, we can use the Basic_Model_Run() function instead. This is largely identical to Full_Model_Run() but does not output the total force of infection at each time point or the number of new infections at each time point. This reduces the amount of data output by each run of the function, reducing computational requirements. For example, we use Basic_Model_Run when the intention is only to calculate seroprevalence, which is derived (as described in [Guide 4 - Processing Model Results](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideDModelResultsProcess.html)) from SEIRV values, with the rate of newly infectious individuals being irrelevant.
 
 ```{r,eval = FALSE}
-test2 <- Basic_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_particles, n_threads, year_end, 
-                     year_data_begin, vaccine_efficacy, start_SEIRV, dt)
+test2 <- Basic_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_particles, n_threads, year_end,
+                         year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```
 
 For applications where only the number of new infectious people at each time point is desired, we use the case_data_generate() function instead. This functions similarly to Basic_Model_Run() and Full_Model_Run() but only outputs data on the total number (across all age groups) of newly infectious people at each time point. It is also designed to run large numbers of repetitions, automatically sequentially running smaller groups of particles and threads to avoid causing errors or freezing the computer while running (Basic_Model_Run() and Full_Model_Run() are limited to 20 particles/threads for this reason). The ability to run a large number of repetitions is valuable when modelling annual case rates and/or outbreak risk/occurrence (see [Guide 3 - Processing Model Results](https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideCModelResultsProcess.html)) in situations where the overall force of infection is low and therefore new infections are rare. Here we run case_data_generate() for 1000 repetitions with a low spillover FOI and no human-to-human transmission, which gives a very low daily infection rate.
@@ -73,5 +76,6 @@ For applications where only the number of new infectious people at each time poi
 n_reps <- 1000
 FOI_spillover <- 1.0e-10
 R0 <- 0.0
-test3 <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_reps, year_end, year_data_begin, vaccine_efficacy, start_SEIRV, dt)
+test3 <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_reps, year_end,
+                            year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```

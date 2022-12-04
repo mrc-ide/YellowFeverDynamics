@@ -48,6 +48,7 @@
     <a class="dropdown-item" href="../articles/BWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
     <a class="dropdown-item" href="../articles/BWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
     <a class="dropdown-item" href="../articles/BWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleFPolicyQuestionCaseStudy.html">Worked Example 6 - Policy Question Case Study</a>
     <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
     <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
     <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
@@ -117,10 +118,13 @@ to the limitations of the computer being used).</p>
 <code class="sourceCode R"><span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-8</span>             <span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
 <span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">1.5</span>                           <span class="co"># Basic reproduction number for urban spread of infection</span></span>
 <span><span class="va">year0</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="co"># First year in population/vaccination data (here taken from the input data set; if the population and vaccination data is set manually, this similarly needs to be set manually)</span></span>
-<span><span class="va">mode_start</span> <span class="op">&lt;-</span> <span class="fl">1</span>                     <span class="co"># Flag indicating how to set initial population immunity level in addition to vaccination</span></span>
+<span><span class="va">mode_start</span> <span class="op">&lt;-</span> <span class="fl">1</span>                     <span class="co"># Flag indicating how to set initial population immunity level in addition to</span></span>
+<span>                                    <span class="co"># vaccination</span></span>
 <span>                                    <span class="co"># If mode_start = 0, only vaccinated individuals are immune (R = 0)</span></span>
-<span>                                    <span class="co"># If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (R = 1 - 1/R0)</span></span>
-<span>                                    <span class="co"># If mode_start = 2, use SEIRV input in list from previous run(s), set using start_SEIRV variable</span></span>
+<span>                                    <span class="co"># If mode_start = 1, shift some non-vaccinated individuals into recovered to give</span></span>
+<span>                                    <span class="co"># herd immunity (R = 1 - 1/R0)</span></span>
+<span>                                    <span class="co"># If mode_start = 2, use SEIRV input in list from previous run(s), set using</span></span>
+<span>                                    <span class="co"># start_SEIRV variable</span></span>
 <span><span class="va">n_particles</span> <span class="op">&lt;-</span> <span class="fl">10</span>                   <span class="co"># Number of particles to run (maximum allowed value = 20)</span></span>
 <span><span class="va">n_threads</span> <span class="op">&lt;-</span> <span class="fl">1</span>                      <span class="co"># Number of threads to run (equal to or less than n_particles)</span></span>
 <span><span class="va">year_end</span> <span class="op">&lt;-</span> <span class="fl">2001</span>                    <span class="co"># Year at which to stop generating data (year after last year where data is desired)</span></span>
@@ -131,7 +135,7 @@ to the limitations of the computer being used).</p>
 <p>We use the Full_Model_Run() function to run the model for the inputs
 above:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Full_Model_Run.html">Full_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">year_end</span>, </span>
+<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Full_Model_Run.html">Full_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">year_end</span>,</span>
 <span>                        <span class="va">year_data_begin</span>, <span class="va">vaccine_efficacy</span>, <span class="va">start_SEIRV</span>, <span class="va">dt</span><span class="op">)</span></span></code></pre></div>
 <p>The output of Full_Model_Run() includes, for each particle, date
 information, the total force of infection FOI_total at each data point,
@@ -155,8 +159,8 @@ calculate seroprevalence, which is derived (as described in <a href="https://mrc
 4 - Processing Model Results</a>) from SEIRV values, with the rate of
 newly infectious individuals being irrelevant.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Basic_Model_Run.html">Basic_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">year_end</span>, </span>
-<span>                     <span class="va">year_data_begin</span>, <span class="va">vaccine_efficacy</span>, <span class="va">start_SEIRV</span>, <span class="va">dt</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Basic_Model_Run.html">Basic_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">year_end</span>,</span>
+<span>                         <span class="va">year_data_begin</span>, <span class="va">vaccine_efficacy</span>, <span class="va">start_SEIRV</span>, <span class="va">dt</span><span class="op">)</span></span></code></pre></div>
 <p>For applications where only the number of new infectious people at
 each time point is desired, we use the case_data_generate() function
 instead. This functions similarly to Basic_Model_Run() and
@@ -177,7 +181,8 @@ rate.</p>
 <code class="sourceCode R"><span><span class="va">n_reps</span> <span class="op">&lt;-</span> <span class="fl">1000</span></span>
 <span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-10</span></span>
 <span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">0.0</span></span>
-<span><span class="va">test3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_data_generate.html">case_data_generate</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">n_reps</span>, <span class="va">year_end</span>, <span class="va">year_data_begin</span>, <span class="va">vaccine_efficacy</span>, <span class="va">start_SEIRV</span>, <span class="va">dt</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">test3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_data_generate.html">case_data_generate</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">n_reps</span>, <span class="va">year_end</span>,</span>
+<span>                            <span class="va">year_data_begin</span>, <span class="va">vaccine_efficacy</span>, <span class="va">start_SEIRV</span>, <span class="va">dt</span><span class="op">)</span></span></code></pre></div>
   </main>
 </div>
 

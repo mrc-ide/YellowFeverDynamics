@@ -40,7 +40,8 @@ year_data_begin <- 1990
 vaccine_efficacy <- 1.0             
 start_SEIRV <- NULL
 dt <- 1.0
-model_data <- Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,year_data_begin,vaccine_efficacy,start_SEIRV,dt)
+model_data <- Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
+                             year_data_begin,vaccine_efficacy,start_SEIRV,dt)
 ```
 
 The seroprevalence in a given age range in one or more years for one particle may be calculated from model data using the sero_calculate() function as shown below (in this case, for 0-15 year olds from 1990-2000). Seroprevalence for a given year calculated in this way is a year-round average. The variable vc_factor is used when creating modelled seroprevalence data to compare with real-world surveys, to account for the fact that in real-world seroprevalence surveys, while normally only unvaccinated individuals are tested, some surveyed individuals' vaccination status may be unknown. If vc_factor = 0 (i.e. all individuals tested are confirmed unvaccinated), seroprevalence is calculated only for the unvaccinated population. If vc_factor > 0, seroprevalence is calculated for an appropriate mixture of the unvaccinated population (where seroprevalence = R/(S+E+I+R)) and the overall population (where seroprevalence = (R+V)/(S+E+I+R+V)).

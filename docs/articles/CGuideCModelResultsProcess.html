@@ -48,6 +48,7 @@
     <a class="dropdown-item" href="../articles/BWorkedExampleCDataGenerate.html">Worked Example 3 - Generating Epidemiological Data Sets</a>
     <a class="dropdown-item" href="../articles/BWorkedExampleDBurden.html">Worked Example 4 - Yellow Fever Burden Calculation</a>
     <a class="dropdown-item" href="../articles/BWorkedExampleEMCMC.html">Worked Example 5 - Parameter Estimation Using Markov Chain Monte Carlo Functions</a>
+    <a class="dropdown-item" href="../articles/BWorkedExampleFPolicyQuestionCaseStudy.html">Worked Example 6 - Policy Question Case Study</a>
     <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
     <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
     <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
@@ -123,7 +124,8 @@ three epidemiological data types.</p>
 <span><span class="va">vaccine_efficacy</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>             </span>
 <span><span class="va">start_SEIRV</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
-<span><span class="va">model_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Full_Model_Run.html">Full_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>,<span class="va">R0</span>,<span class="va">vacc_data</span>,<span class="va">pop_data</span>,<span class="va">year0</span>,<span class="va">mode_start</span>,<span class="va">n_particles</span>,<span class="va">n_threads</span>,<span class="va">year_end</span>,<span class="va">year_data_begin</span>,<span class="va">vaccine_efficacy</span>,<span class="va">start_SEIRV</span>,<span class="va">dt</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">model_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Full_Model_Run.html">Full_Model_Run</a></span><span class="op">(</span><span class="va">FOI_spillover</span>,<span class="va">R0</span>,<span class="va">vacc_data</span>,<span class="va">pop_data</span>,<span class="va">year0</span>,<span class="va">mode_start</span>,<span class="va">n_particles</span>,<span class="va">n_threads</span>,<span class="va">year_end</span>,</span>
+<span>                             <span class="va">year_data_begin</span>,<span class="va">vaccine_efficacy</span>,<span class="va">start_SEIRV</span>,<span class="va">dt</span><span class="op">)</span></span></code></pre></div>
 <p>The seroprevalence in a given age range in one or more years for one
 particle may be calculated from model data using the sero_calculate()
 function as shown below (in this case, for 0-15 year olds from

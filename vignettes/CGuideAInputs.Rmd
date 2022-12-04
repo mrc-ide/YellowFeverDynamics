@@ -74,7 +74,8 @@ A dataset in the appropriate format can be created from vaccination coverage and
 pv_example <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/pop_vacc_data_example.Rds", sep = ""))
 vacc_data <- pv_example$vacc_data
 pop_data <- pv_example$pop_data
-input_data2 <- create_input_data(vacc_data, pop_data, regions = names(table(vacc_data$region)), years = as.numeric(names(table(vacc_data$year))))
+input_data2 <- create_input_data(vacc_data, pop_data, regions = names(table(vacc_data$region)), 
+                                 years = as.numeric(names(table(vacc_data$year))))
 ```
 
 [TBA - Sources for age-stratified population and vaccination data]

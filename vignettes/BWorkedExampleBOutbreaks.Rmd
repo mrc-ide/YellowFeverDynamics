@@ -28,7 +28,9 @@ vacc_data <- input_data$vacc_data[1, , ]
 pop_data <- input_data$pop_data[1, , ]  
 FOI_spillover <- 5.0e-7             # Force of infection due to spillover from sylvatic reservoir
 R0 <- 0.0                           # Basic reproduction number for urban spread of infection
-model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_reps = 1, year_end = 2001, year_data_begin = 1999, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
+model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1],
+                                    mode_start = 1, n_reps = 1, year_end = 2001, year_data_begin = 1999,
+                                    vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
 ```
 
 We process results using the get_outbreak_data() function to produce information on all outbreaks and reported cases during the modelled time period.
@@ -58,6 +60,8 @@ FOI_spillover=1.0e-8 # Here a lower value of FOI_spillover is used, so that the 
 R0=0.0
 year_data_begin = 1999
 year_end = 2010
-outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1], mode_start = 1, n_sets=1, n_reps = 1000, year_end, year_data_begin, vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0, p_rep_severe, p_rep_death)
+outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1],
+                                        mode_start = 1, n_sets=1, n_reps = 1000, year_end, year_data_begin,
+                                        vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0, p_rep_severe, p_rep_death)
 matplot(x=c(year_data_begin:(year_end-1)),y=outbreak_risk[1,],type="l",xlab="Year",ylab="Outbreak risk")
 ```

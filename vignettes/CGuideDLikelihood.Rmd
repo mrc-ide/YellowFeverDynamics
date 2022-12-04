@@ -21,43 +21,58 @@ Data is loaded in the same manner as in [Worked Example 2 - Generating Epidemiol
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep = ""))
-enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_data_example.csv",sep = ""),header = TRUE)
-enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example.csv",sep = ""),header = TRUE)
-obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/obs_sero_data_example_single.csv",sep=""),header = TRUE)    
-                      # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
-obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/obs_case_data_example_single.csv",sep = ""),header = TRUE)    
-                      # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
-obs_outbreak_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/obs_outbreak_data_example_single.csv",sep = ""),header = TRUE)    
-                      # Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s)
+enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_data_example.csv",
+                                     sep = ""),header = TRUE)
+enviro_coeffs <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/enviro_coeffs_example.csv",
+                                       sep = ""),header = TRUE)
+obs_sero_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/obs_sero_data_example_single.csv",
+                                       sep=""),header = TRUE)    
+              # Seroprevalence data for comparison, by region, year & age group, in format no. samples/no. positives
+obs_case_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),"/exdata/obs_case_data_example_single.csv",
+                                       sep = ""),header = TRUE)    
+              # Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths
+obs_outbreak_data <- read.csv(file = paste(path.package("YellowFeverDynamics"),
+                                           "/exdata/obs_outbreak_data_example_single.csv",sep = ""),header = TRUE)    
+              # Outbreak Y/N data for comparison, by region + year, format 0 = no outbreaks, 1 = 1 or more outbreak(s)
 ```
 
 Modelled data to use for the likelihood calculation is created using data_match_single() as in Worked Example 2:
 
 ```{r,eval=FALSE}
 params <- as.numeric(enviro_coeffs)
-                      # Parameters input to produce model parameters, potentially including spillover FOI and R0 by region, severe and fatal case reporting probability
-const_list <- list(type = "FOI+R0 enviro",n_reps = 1,mode_start = 1,dt = 1.0,enviro_data = enviro_data,R0_fixed_values = NULL,vaccine_efficacy = 1.0,p_rep_severe = 0.05,p_rep_death = 0.1)
-                      # List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here calculated from environmental covariates), number of repetitions for which to run model and obtain average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables set via param_prop
+       # Parameters input to produce model parameters, potentially including spillover FOI and R0 by region, severe and
+       # fatal case reporting probability
+const_list <- list(type = "FOI+R0 enviro",n_reps = 1,mode_start = 1,dt = 1.0,enviro_data = enviro_data,
+                   R0_fixed_values = NULL,vaccine_efficacy = 1.0,p_rep_severe = 0.05,p_rep_death = 0.1)
+           # List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here
+           # calculated from environmental covariates), number of repetitions for which to run model and obtain average
+           # outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and values
+           # of vaccine efficacy and severe and fatal case reporting probability used when these are not variables se
+           # via param_prop
 model_data <- data_match_single(params,input_data,obs_sero_data,obs_case_data,obs_outbreak_data,const_list)
 ```
 
 The likelihood of the observed serological data based on the epidemiological parameters is calculated using a gamma distribution, with (for each line of data) the modelled seroprevalence as the probability of "success", the number of samples for the specified region, age range and year as the number of "observations", and the number of positive tests as the number of "successes".
 
 ```{r,eval=FALSE}
-sero_like <- sum(lgamma(obs_sero_data$samples+1) - lgamma(obs_sero_data$positives+1) - lgamma(obs_sero_data$samples - obs_sero_data$positives + 1) +
-                      obs_sero_data$positives*log(model_data$model_sero_values) +
-                      (obs_sero_data$samples - obs_sero_data$positives)*log(1.0 - model_data$model_sero_values))
+sero_like <- sum(lgamma(obs_sero_data$samples+1) - lgamma(obs_sero_data$positives+1) - 
+                   lgamma(obs_sero_data$samples - obs_sero_data$positives + 1) + 
+                   obs_sero_data$positives*log(model_data$model_sero_values) + 
+                   (obs_sero_data$samples - obs_sero_data$positives)*log(1.0 - model_data$model_sero_values))
 ```
 
 The likelihood of the observed annual case and death data based on the epidemiological parameters is calculated using a negative binomial distribution, with (for each line of data) the modelled number of cases or deaths as the mean and the observed number of cases or deaths as the number of "successes".
 
 ```{r,eval=FALSE}
-cases_like <- sum(dnbinom(x = obs_case_data$cases,mu = model_data$model_case_values,size = rep(1,length(obs_case_data$cases)),log = TRUE))
-deaths_like <- sum(dnbinom(x = obs_case_data$deaths,mu = model_data$model_death_values,size = rep(1,length(obs_case_data$deaths)),log = TRUE))
+cases_like <- sum(dnbinom(x = obs_case_data$cases,mu = model_data$model_case_values,
+                          size = rep(1,length(obs_case_data$cases)),log = TRUE))
+deaths_like <- sum(dnbinom(x = obs_case_data$deaths,mu = model_data$model_death_values,
+                           size = rep(1,length(obs_case_data$deaths)),log = TRUE))
 ```
 
 [TBA or possible removal]
 
 ```{r,eval=FALSE}
-outbreak_like_values <- outbreak_risk_compare(model_outbreak_risk = model_data$model_outbreak_risk_values,obs_data = obs_outbreak_data$outbreak_yn)
+outbreak_like_values <- outbreak_risk_compare(model_outbreak_risk = model_data$model_outbreak_risk_values,
+                                              obs_data = obs_outbreak_data$outbreak_yn)
 ```
