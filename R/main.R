@@ -16,7 +16,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' @import grDevices
 #' @import maptree
 #' @import mvtnorm
-#' @import qpdf
+# @import qpdf
 #' @import Rmisc
 #' @import sf
 #' @import stats

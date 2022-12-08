@@ -21,13 +21,13 @@ Imports:
     grDevices,
     maptree,
     mvtnorm,
-    qpdf,
     Rmisc,
     sf,
     stats,
     testthat,
     tgp,
-    truncdist
+    truncdist,
+    utils
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,

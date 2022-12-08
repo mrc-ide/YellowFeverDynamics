@@ -44,7 +44,8 @@ n_particles <- 10                   # Number of particles to run (maximum allowe
 n_threads <- 1                      # Number of threads to run (equal to or less than n_particles)
 year_end <- 2001                    # Year at which to stop generating data (year after last year where data is desired)
 year_data_begin <- 1999             # Year to begin saving data
-vaccine_efficacy <- 1.0             # Proportional vaccine efficacy (from 0 to 1)
+vaccine_efficacy <- 1.0             # Proportional vaccine efficacy (from 0 to 1); probability of vaccination successfully
+                                    # providing immunity (i.e. moving vaccinated individual to group V)
 start_SEIRV <- NULL                 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not used here and hence set to NULL)
 dt <- 1.0                           # Time increment in days to use in model (should be either 1.0 or 5.0 days)
 ```

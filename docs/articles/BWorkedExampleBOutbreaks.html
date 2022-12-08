@@ -81,12 +81,17 @@
 
     
     
-<p>This worked example demonstrates several ways the package can be used
-to model the occurrence and risk of yellow fever outbreaks. An
-“outbreak” is defined as taking place whenever a case of yellow fever is
-reported, and lasts as long as the time interval between new cases
-remains less than 10 days (the sum of the incubation and infectious
-periods used by the package).</p>
+<p>This worked example demonstrates how the package can be used to model
+the occurrence and risk of yellow fever outbreaks.</p>
+<p>An “outbreak” is defined as taking place whenever a case of yellow
+fever is reported, and lasts as long as the time interval between new
+cases remains less than 10 days (the sum of the incubation and
+infectious periods used by the package). Note that for a high yellow
+fever burden and/or reporting rate, modelled cases may appear
+continuously rather than being divided into discrete outbreaks; the
+methods described here are aimed primarily at modelling situations where
+reported cases are relatively rare and can be divided into discrete
+outbreaks.</p>
 <p>The reporting of yellow fever cases is governed by the probability of
 an infection which causes severe but non-fatal symptoms being reported
 (p_rep_severe) and the probability of a fatal infection being reported

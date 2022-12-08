@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-This worked example demonstrates several ways the package can be used to model the occurrence and risk of yellow fever outbreaks. An "outbreak" is defined as taking place whenever a case of yellow fever is reported, and lasts as long as the time interval between new cases remains less than 10 days (the sum of the incubation and infectious periods used by the package).
+This worked example demonstrates how the package can be used to model the occurrence and risk of yellow fever outbreaks. 
+
+An "outbreak" is defined as taking place whenever a case of yellow fever is reported, and lasts as long as the time interval between new cases remains less than 10 days (the sum of the incubation and infectious periods used by the package). Note that for a high yellow fever burden and/or reporting rate, modelled cases may appear continuously rather than being divided into discrete outbreaks; the methods described here are aimed primarily at modelling situations where reported cases are relatively rare and can be divided into discrete outbreaks.
 
 The reporting of yellow fever cases is governed by the probability of an infection which causes severe but non-fatal symptoms being reported (p_rep_severe) and the probability of a fatal infection being reported (p_rep_death). It is assumed that infections not leading to severe or fatal symptoms are not reported. The proportion of infections which cause severe symptoms is given by the quantity p_severe_inf, and the proportion of severe infections which lead to death is given by the quantity p_death_severe_inf. These have values of 0.12 and 0.39 respectively within the package, based on [Servadio et al](https://doi.org/10.1186/s12879-021-06535-4).
 

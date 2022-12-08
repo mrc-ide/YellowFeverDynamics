@@ -129,7 +129,8 @@ to the limitations of the computer being used).</p>
 <span><span class="va">n_threads</span> <span class="op">&lt;-</span> <span class="fl">1</span>                      <span class="co"># Number of threads to run (equal to or less than n_particles)</span></span>
 <span><span class="va">year_end</span> <span class="op">&lt;-</span> <span class="fl">2001</span>                    <span class="co"># Year at which to stop generating data (year after last year where data is desired)</span></span>
 <span><span class="va">year_data_begin</span> <span class="op">&lt;-</span> <span class="fl">1999</span>             <span class="co"># Year to begin saving data</span></span>
-<span><span class="va">vaccine_efficacy</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>             <span class="co"># Proportional vaccine efficacy (from 0 to 1)</span></span>
+<span><span class="va">vaccine_efficacy</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>             <span class="co"># Proportional vaccine efficacy (from 0 to 1); probability of vaccination successfully</span></span>
+<span>                                    <span class="co"># providing immunity (i.e. moving vaccinated individual to group V)</span></span>
 <span><span class="va">start_SEIRV</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>                 <span class="co"># SEIRV data from end of a previous run to use as input (if mode_start = 2; not used here and hence set to NULL)</span></span>
 <span><span class="va">dt</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>                           <span class="co"># Time increment in days to use in model (should be either 1.0 or 5.0 days)</span></span></code></pre></div>
 <p>We use the Full_Model_Run() function to run the model for the inputs
