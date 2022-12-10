@@ -40,7 +40,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' values, infection numbers and total force of infection values.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
-#' @param R0 Reproduction number for urban spread of infection
+#' @param R0 Basic reproduction number for urban spread of infection
 #' @param vacc_data Vaccination coverage in each age group by year
 #' @param pop_data Population in each age group by year
 #' @param year0 First year in population/vaccination data

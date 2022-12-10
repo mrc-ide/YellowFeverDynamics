@@ -22,7 +22,7 @@ case_data_generate(
 \arguments{
 \item{FOI_spillover}{= Force of infection due to spillover from sylvatic reservoir}
 
-\item{R0}{= Reproduction number for urban spread of infection}
+\item{R0}{= Basic reproduction number for urban spread of infection}
 
 \item{vacc_data}{Vaccination coverage in each age group by year}
 
