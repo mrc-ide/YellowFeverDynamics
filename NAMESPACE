@@ -3,6 +3,7 @@
 export(Basic_Model_Run)
 export(Full_Model_Run)
 export(Full_Model_Run_Deterministic)
+export(Full_Model_Run_VarFR)
 export(Generate_Dataset)
 export(Infection_Split_Model_Run)
 export(MCMC)

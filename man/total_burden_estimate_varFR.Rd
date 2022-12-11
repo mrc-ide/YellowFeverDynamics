@@ -11,6 +11,7 @@ total_burden_estimate_varFR(
   start_SEIRV = NULL,
   years_data = c(),
   n_reps = 1,
+  mode_start = 1,
   flag_reporting = FALSE,
   dt = 5,
   vaccine_efficacy = NULL,
@@ -30,6 +31,11 @@ total_burden_estimate_varFR(
 \item{years_data}{Vector of years for which to output data}
 
 \item{n_reps}{Number of repeats over which to average results}
+
+\item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination
+If mode_start=0, only vaccinated individuals
+If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+If mode_start=2, use SEIRV input in list from previous run(s)}
 
 \item{flag_reporting}{Flag indicating whether to output number of reported severe and fatal cases}
 
