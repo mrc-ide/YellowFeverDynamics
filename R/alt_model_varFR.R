@@ -26,7 +26,7 @@
 #' '
 #' @export
 #'
-Full_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
+Full_Model_Run_VarFR <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=list(),year0=1940,mode_start=0,
                            n_particles=1,n_threads=1,year_end=2000,year_data_begin=1999,vaccine_efficacy=1.0,
                            start_SEIRV=list(),dt=1.0) {
 
@@ -249,6 +249,10 @@ parameter_setup_varFR <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_
 #' @param start_SEIRV SEIRV data to use as input
 #' @param years_data Vector of years for which to output data
 #' @param n_reps Number of repeats over which to average results
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param flag_reporting Flag indicating whether to output number of reported severe and fatal cases
 #' @param dt Time increment in days to use in model (should be either 1.0 or 5.0 days)
 #' @param vaccine_efficacy Vaccine efficacy (set to NULL if being varied as a parameter)
@@ -258,7 +262,7 @@ parameter_setup_varFR <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_
 #' @export
 #'
 total_burden_estimate_varFR <- function(FOI_spillover_values=list(),R0_values=list(),input_data=list(),
-                                        start_SEIRV=NULL,years_data=c(),n_reps=1,flag_reporting=FALSE,
+                                        start_SEIRV=NULL,years_data=c(),n_reps=1,mode_start=1,flag_reporting=FALSE,
                                         dt=5.0,vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL){
 
   #TODO - Add additional assert_that checks
@@ -284,7 +288,7 @@ total_burden_estimate_varFR <- function(FOI_spillover_values=list(),R0_values=li
     case_data <- case_data_generate_varFR(FOI_spillover_values[n_region,],R0_values[n_region,],
                                           vacc_data=input_data$vacc_data[n_region,,],
                                           pop_data=input_data$pop_data[n_region,,],year0=input_data$years_labels[1],
-                                          mode_start=2,n_reps,year_end,year_data_begin,vaccine_efficacy,
+                                          mode_start,n_reps,year_end,year_data_begin,vaccine_efficacy,
                                           start_SEIRV_region,dt)
     for(n_year in 1:n_years){
       for(rep in 1:n_reps){
