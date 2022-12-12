@@ -20,9 +20,10 @@ total_burden_estimate_varFR(
 )
 }
 \arguments{
-\item{FOI_spillover_values}{#Array of values of spillover force of infection by region (dim1) and year (dim2)}
+\item{FOI_spillover_values}{#Array of values of spillover force of infection by parameter set (dim1), region (dim2) and year
+(dim3)}
 
-\item{R0_values}{# #Array of values of R0 by region (dim1) and year (dim2)}
+\item{R0_values}{# #Array of values of R0 by parameter set (dim1), region (dim2) and year (dim3)}
 
 \item{input_data}{List of population and vaccination data for multiple regions}
 
@@ -53,5 +54,7 @@ Function to calculate annual yellow fever burden across multiple regions based o
 }
 \details{
 Function to take in parameter sets derived from MCMC fitting and use to calculate annual total and reported
-case and death numbers for multiple regions to compare with external data
+case and death numbers for multiple regions to compare with external data. This is a variation of the total_burden_estimate
+function where FOI_spillover and R0 vary annually. Unlike total_burden_estimate, it must be supplied with separately
+calculated or set values of FOI_spillover and R0.
 }

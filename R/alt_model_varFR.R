@@ -241,10 +241,13 @@ parameter_setup_varFR <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_
 #'   (variation for annually varying FOI_spillover and R0)
 #'
 #' @details Function to take in parameter sets derived from MCMC fitting and use to calculate annual total and reported
-#' case and death numbers for multiple regions to compare with external data
+#' case and death numbers for multiple regions to compare with external data. This is a variation of the total_burden_estimate
+#' function where FOI_spillover and R0 vary annually. Unlike total_burden_estimate, it must be supplied with separately
+#' calculated or set values of FOI_spillover and R0.
 #'
-#' @param FOI_spillover_values #Array of values of spillover force of infection by region (dim1) and year (dim2)
-#' @param R0_values # #Array of values of R0 by region (dim1) and year (dim2)
+#' @param FOI_spillover_values #Array of values of spillover force of infection by parameter set (dim1), region (dim2) and year
+#'   (dim3)
+#' @param R0_values # #Array of values of R0 by parameter set (dim1), region (dim2) and year (dim3)
 #' @param input_data List of population and vaccination data for multiple regions
 #' @param start_SEIRV SEIRV data to use as input
 #' @param years_data Vector of years for which to output data
@@ -270,78 +273,92 @@ total_burden_estimate_varFR <- function(FOI_spillover_values=list(),R0_values=li
               msg="Input data must be in standard format (see https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html )")
   assert_that(min(years_data)>=input_data$years_labels[1]) #TODO - msg
   assert_that(is.logical(flag_reporting))
+  assert_that(length(dim(FOI_spillover_values))==3 && length(dim(R0_values))==3) #TODO - msg
+  assert_that(all(dim(FOI_spillover_values)==dim(R0_values)))
 
+  n_param_sets=dim(FOI_spillover_values)[1]
   n_years=length(years_data)
   year_data_begin=years_data[1]
   year_end=max(years_data)+1
   regions=input_data$region_labels
   n_regions=length(regions)
-  case_ar1=death_ar1=array(NA,dim=c(n_years,n_regions,n_reps))
-  case_ar2=death_ar2=array(NA,dim=c(n_years,n_regions))
-  case_ar3=death_ar3=array(NA,dim=c(n_years))
+  assert_that(n_regions==dim(FOI_spillover_values)[2])
+  case_ar1=death_ar1=array(NA,dim=c(n_years,n_regions,n_param_sets,n_reps))
+  case_ar2=death_ar2=array(NA,dim=c(n_years,n_regions,n_param_sets))
+  case_ar3=death_ar3=array(NA,dim=c(n_years,n_param_sets))
 
-  for(n_region in 1:n_regions){
+  cat("\nSets:\n")
+  for(n_param_set in 1:n_param_sets){
+    cat(" ",n_param_set,sep="")
+    if(n_param_set %% 10 == 0){cat("\n")}
+    for(n_region in 1:n_regions){
 
-    start_SEIRV_region=list(S=start_SEIRV$S[,n_region,1],
-                            E=start_SEIRV$E[,n_region,1],I=start_SEIRV$I[,n_region,1],
-                            R=start_SEIRV$R[,n_region,1],V=start_SEIRV$V[,n_region,1])
-    case_data <- case_data_generate_varFR(FOI_spillover_values[n_region,],R0_values[n_region,],
-                                          vacc_data=input_data$vacc_data[n_region,,],
-                                          pop_data=input_data$pop_data[n_region,,],year0=input_data$years_labels[1],
-                                          mode_start,n_reps,year_end,year_data_begin,vaccine_efficacy,
-                                          start_SEIRV_region,dt)
-    for(n_year in 1:n_years){
-      for(rep in 1:n_reps){
-        infs=floor(sum(case_data$C[rep,case_data$year==years_data[n_year]]))
-        severe_infs=rbinom(1,infs,p_severe_inf)
-        deaths=rbinom(1,severe_infs,p_death_severe_inf)
-        case_ar1[n_year,n_region,rep]=severe_infs
-        death_ar1[n_year,n_region,rep]=deaths
+      if(mode_start==2){
+        start_SEIRV_region=list(S=start_SEIRV$S[,n_region,1],
+                                E=start_SEIRV$E[,n_region,1],I=start_SEIRV$I[,n_region,1],
+                                R=start_SEIRV$R[,n_region,1],V=start_SEIRV$V[,n_region,1])
       }
-      case_ar2[n_year,n_region]=sum(case_ar1[n_year,n_region,])/n_reps
-      death_ar2[n_year,n_region]=sum(death_ar1[n_year,n_region,])/n_reps
+      case_data <- case_data_generate_varFR(FOI_spillover_values[n_param_set,n_region,],R0_values[n_param_set,n_region,],
+                                            vacc_data=input_data$vacc_data[n_region,,],
+                                            pop_data=input_data$pop_data[n_region,,],year0=input_data$years_labels[1],
+                                            mode_start,n_reps,year_end,year_data_begin,vaccine_efficacy,
+                                            start_SEIRV_region,dt)
+      for(n_year in 1:n_years){
+        for(rep in 1:n_reps){
+          infs=floor(sum(case_data$C[rep,case_data$year==years_data[n_year]]))
+          severe_infs=rbinom(1,infs,p_severe_inf)
+          deaths=rbinom(1,severe_infs,p_death_severe_inf)
+          case_ar1[n_year,n_region,n_param_set,rep]=severe_infs
+          death_ar1[n_year,n_region,n_param_set,rep]=deaths
+        }
+        case_ar2[n_year,n_region,n_param_set]=sum(case_ar1[n_year,n_region,n_param_set,])/n_reps
+        death_ar2[n_year,n_region,n_param_set]=sum(death_ar1[n_year,n_region,n_param_set,])/n_reps
+      }
     }
-  }
 
-  for(n_year in 1:n_years){
-    case_ar3[n_year]=sum(case_ar2[n_year,])
-    death_ar3[n_year]=sum(death_ar2[n_year,])
+    for(n_year in 1:n_years){
+      case_ar3[n_year,n_param_set]=sum(case_ar2[n_year,,n_param_set])
+      death_ar3[n_year,n_param_set]=sum(death_ar2[n_year,,n_param_set])
+    }
   }
 
   if(flag_reporting){
-    obs_case_ar2=obs_death_ar2=array(NA,dim=c(n_years,n_regions))
-    obs_case_ar3=obs_death_ar3=array(NA,dim=c(n_years))
+    obs_case_ar2=obs_death_ar2=array(NA,dim=c(n_years,n_regions,n_param_sets))
+    obs_case_ar3=obs_death_ar3=array(NA,dim=c(n_years,n_param_sets))
 
-    for(n_region in 1:n_regions){
+    for(n_param_set in 1:n_param_sets){
+      for(n_region in 1:n_regions){
+        for(n_year in 1:n_years){
+          cases=case_ar2[n_year,n_region,n_param_set]
+          deaths=death_ar2[n_year,n_region,n_param_set]
+          obs_deaths=rbinom(1,floor(deaths),p_rep_death)
+          obs_cases=obs_deaths+rbinom(1,floor(cases-deaths),p_rep_severe)
+          obs_case_ar2[n_year,n_region,n_param_set]=obs_cases
+          obs_death_ar2[n_year,n_region,n_param_set]=obs_deaths
+        }
+      }
       for(n_year in 1:n_years){
-        cases=case_ar2[n_year,n_region]
-        deaths=death_ar2[n_year,n_region]
-        obs_deaths=rbinom(1,floor(deaths),p_rep_death)
-        obs_cases=obs_deaths+rbinom(1,floor(cases-deaths),p_rep_severe)
-        obs_case_ar2[n_year,n_region]=obs_cases
-        obs_death_ar2[n_year,n_region]=obs_deaths
+        obs_case_ar3[n_year,n_param_set]=sum(obs_case_ar2[n_year,,n_param_set])
+        obs_death_ar3[n_year,n_param_set]=sum(obs_death_ar2[n_year,,n_param_set])
       }
     }
-    for(n_year in 1:n_years){
-      obs_case_ar3[n_year]=sum(obs_case_ar2[n_year,])
-      obs_death_ar3[n_year]=sum(obs_death_ar2[n_year,])
-    }
-    plot_frame1=data.frame(year=rep(years_data,n_regions),
-                           region=rep(sort(rep(regions,n_years))),
+    plot_frame1=data.frame(year=rep(years_data,n_regions*n_param_sets),
+                           region=rep(sort(rep(regions,n_years)),n_param_sets),
+                           set=sort(rep(c(1:n_param_sets),n_years*n_regions)),
                            cases=as.vector(case_ar2),deaths=as.vector(death_ar2),
                            obs_cases=as.vector(obs_case_ar2),obs_deaths=as.vector(obs_death_ar2))
-    plot_frame2=data.frame(year=rep(years_data),
+    plot_frame2=data.frame(year=rep(years_data,n_param_sets),set=sort(rep(c(1:n_param_sets),n_years)),
                            cases=as.vector(case_ar3),deaths=as.vector(death_ar3),
                            obs_cases=as.vector(obs_case_ar3),obs_deaths=as.vector(obs_death_ar3))
 
   } else {
-    plot_frame1=data.frame(year=rep(years_data,n_regions),
-                           region=rep(sort(rep(regions,n_years))),
+    plot_frame1=data.frame(year=rep(years_data,n_regions*n_param_sets),
+                           region=rep(sort(rep(regions,n_years)),n_param_sets),
+                           set=sort(rep(c(1:n_param_sets),n_years*n_regions)),
                            cases=as.vector(case_ar2),deaths=as.vector(death_ar2))
-    plot_frame2=data.frame(year=rep(years_data),
+    plot_frame2=data.frame(year=rep(years_data,n_param_sets),set=sort(rep(c(1:n_param_sets),n_years)),
                            cases=as.vector(case_ar3),deaths=as.vector(death_ar3))
   }
-
 
   return(list(by_region=plot_frame1,all=plot_frame2))
 }
