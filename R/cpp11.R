@@ -8,8 +8,8 @@ dust_BasicModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_BasicModelOD_gpu_info`)
 }
 
-dust_cpu_BasicModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_BasicModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_BasicModelOD_run <- function(ptr, time_end) {
@@ -72,6 +72,14 @@ dust_cpu_BasicModelOD_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_n_state`, ptr)
 }
 
+dust_cpu_BasicModelOD_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_BasicModelOD_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_BasicModelOD_ode_statistics`, ptr))
+}
+
 dust_FullModelOD_capabilities <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelOD_capabilities`)
 }
@@ -80,8 +88,8 @@ dust_FullModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelOD_gpu_info`)
 }
 
-dust_cpu_FullModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_FullModelOD_run <- function(ptr, time_end) {
@@ -144,6 +152,14 @@ dust_cpu_FullModelOD_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_n_state`, ptr)
 }
 
+dust_cpu_FullModelOD_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_FullModelOD_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelOD_ode_statistics`, ptr))
+}
+
 dust_FullModelODDelay_capabilities <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDelay_capabilities`)
 }
@@ -152,8 +168,8 @@ dust_FullModelODDelay_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDelay_gpu_info`)
 }
 
-dust_cpu_FullModelODDelay_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelODDelay_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_FullModelODDelay_run <- function(ptr, time_end) {
@@ -216,6 +232,14 @@ dust_cpu_FullModelODDelay_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_n_state`, ptr)
 }
 
+dust_cpu_FullModelODDelay_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_FullModelODDelay_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelODDelay_ode_statistics`, ptr))
+}
+
 dust_FullModelODDeterministic_capabilities <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDeterministic_capabilities`)
 }
@@ -224,8 +248,8 @@ dust_FullModelODDeterministic_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODDeterministic_gpu_info`)
 }
 
-dust_cpu_FullModelODDeterministic_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelODDeterministic_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_FullModelODDeterministic_run <- function(ptr, time_end) {
@@ -288,6 +312,14 @@ dust_cpu_FullModelODDeterministic_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_n_state`, ptr)
 }
 
+dust_cpu_FullModelODDeterministic_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_FullModelODDeterministic_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_ode_statistics`, ptr))
+}
+
 dust_FullModelODVarFR_capabilities <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODVarFR_capabilities`)
 }
@@ -296,8 +328,8 @@ dust_FullModelODVarFR_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_FullModelODVarFR_gpu_info`)
 }
 
-dust_cpu_FullModelODVarFR_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_FullModelODVarFR_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_FullModelODVarFR_run <- function(ptr, time_end) {
@@ -360,6 +392,14 @@ dust_cpu_FullModelODVarFR_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_FullModelODVarFR_n_state`, ptr)
 }
 
+dust_cpu_FullModelODVarFR_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelODVarFR_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_FullModelODVarFR_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_FullModelODVarFR_ode_statistics`, ptr))
+}
+
 dust_InfectionSplitModelOD_capabilities <- function() {
   .Call(`_YellowFeverDynamics_dust_InfectionSplitModelOD_capabilities`)
 }
@@ -368,8 +408,8 @@ dust_InfectionSplitModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_InfectionSplitModelOD_gpu_info`)
 }
 
-dust_cpu_InfectionSplitModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_InfectionSplitModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_InfectionSplitModelOD_run <- function(ptr, time_end) {
@@ -432,6 +472,14 @@ dust_cpu_InfectionSplitModelOD_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_n_state`, ptr)
 }
 
+dust_cpu_InfectionSplitModelOD_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_InfectionSplitModelOD_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_ode_statistics`, ptr))
+}
+
 dust_ReactiveModelOD_capabilities <- function() {
   .Call(`_YellowFeverDynamics_dust_ReactiveModelOD_capabilities`)
 }
@@ -440,8 +488,8 @@ dust_ReactiveModelOD_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_ReactiveModelOD_gpu_info`)
 }
 
-dust_cpu_ReactiveModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config) {
-  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config)
+dust_cpu_ReactiveModelOD_alloc <- function(r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc`, r_pars, pars_multi, time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
 }
 
 dust_cpu_ReactiveModelOD_run <- function(ptr, time_end) {
@@ -502,4 +550,12 @@ dust_cpu_ReactiveModelOD_set_n_threads <- function(ptr, n_threads) {
 
 dust_cpu_ReactiveModelOD_n_state <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_n_state`, ptr)
+}
+
+dust_cpu_ReactiveModelOD_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_ReactiveModelOD_ode_statistics <- function(ptr) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_ReactiveModelOD_ode_statistics`, ptr))
 }
