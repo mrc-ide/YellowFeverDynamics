@@ -26,7 +26,8 @@ Data is generated as described in Worked Example 1, in this case using the Full_
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
-input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),"/exdata/input_data_example.Rds",sep=""))
+input_data <- readRDS(file=paste(path.package("YellowFeverDynamics"),
+                                 "/exdata/input_data_example.Rds",sep=""))
 vacc_data <- input_data$vacc_data[1,,]
 pop_data <- input_data$pop_data[1,,]  
 FOI_spillover <- 1.0e-8             
@@ -40,19 +41,26 @@ year_data_begin <- 1990
 vaccine_efficacy <- 1.0             
 start_SEIRV <- NULL
 dt <- 1.0
-model_data <- Full_Model_Run(FOI_spillover,R0,vacc_data,pop_data,year0,mode_start,n_particles,n_threads,year_end,
-                             year_data_begin,vaccine_efficacy,start_SEIRV,dt)
+model_data <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, 
+                             mode_start, n_particles, n_threads, year_end,
+                             year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```
 
 The seroprevalence in a given age range in one or more years for one particle may be calculated from model data using the sero_calculate() function as shown below (in this case, for 0-15 year olds from 1990-2000). Seroprevalence for a given year calculated in this way is a year-round average. The variable vc_factor is used when creating modelled seroprevalence data to compare with real-world surveys, to account for the fact that in real-world seroprevalence surveys, while normally only unvaccinated individuals are tested, some surveyed individuals' vaccination status may be unknown. If vc_factor = 0 (i.e. all individuals tested are confirmed unvaccinated), seroprevalence is calculated only for the unvaccinated population. If vc_factor > 0, seroprevalence is calculated for an appropriate mixture of the unvaccinated population (where seroprevalence = R/(S+E+I+R)) and the overall population (where seroprevalence = (R+V)/(S+E+I+R+V)).
 
 ```{r,eval=FALSE}
-age_min <- 0      # Minimum age in age range to survey
-age_max <- 15     # Maximum age in age range to survey
-years <- c(1990:2000)  # Year(s) for which to calculate seroprevalence
-vc_factor <- 0    # Fraction of the population (from 0 to 1) for whom vaccination status is unknown
-n_particle <- 1   # Particle to select from model_data
-seroprevalence <- sero_calculate(age_min,age_max,years,vc_factor,model_data,n_particle)
+# Minimum age in age range to survey
+age_min <- 0      
+# Maximum age in age range to survey
+age_max <- 15     
+# Year(s) for which to calculate seroprevalence
+years <- c(1990:2000)  
+# Fraction of the population (from 0 to 1) for whom vaccination status is unknown
+vc_factor <- 0    
+# Particle to select from model_data
+n_particle <- 1   
+seroprevalence <- sero_calculate(age_min, age_max, years, vc_factor, model_data, 
+                                 n_particle)
 matplot(x=years,y=seroprevalence,type="b",pch=1,xlab="Year",ylab="Seroprevalence")
 ```
 
@@ -70,11 +78,13 @@ for(n_year in 1:n_years){
   severe_infs=rbinom(1,floor(infs),p_severe_inf)
   deaths=rbinom(1,severe_infs,p_death_severe_inf)
   annual_data$rep_deaths[n_year]=rbinom(1,deaths,p_rep_death)
-  annual_data$rep_cases[n_year]=annual_data$rep_deaths[n_year]+rbinom(1,severe_infs-deaths,p_rep_severe)
+  annual_data$rep_cases[n_year]=annual_data$rep_deaths[n_year]
+                              + rbinom(1,severe_infs-deaths,p_rep_severe)
 }
 matplot(x=years,y=annual_data$rep_cases,type="b",pch=1,xlab="Year",ylab="Individuals")
 matplot(x=years,y=annual_data$rep_deaths,type="b",pch=1,col=2,add=TRUE)
-legend("topright",legend=c("Reported cases","Reported deaths"),lty=c(1,1),pch=c(1,1),col=c(1,2))
+legend("topright",legend=c("Reported cases","Reported deaths"),lty=c(1,1),
+       pch=c(1,1),col=c(1,2))
 ```
 
 Outbreak occurrence data can be calculated from annual reported case data; if the case count for a given year is greater than zero, it is flagged as a year in which one or more outbreaks will be reported and the outbreak occurrence value is set to 1; otherwise, it is 0.
