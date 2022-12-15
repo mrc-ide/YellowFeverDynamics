@@ -25,24 +25,32 @@ As described in [Worked Example 1 - Single Model Run](https://mrc-ide.github.io/
 ```{r}
 set.seed(1)
 library(YellowFeverDynamics)
-input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
+                                   "/exdata/input_data_example.Rds", sep = ""))
 vacc_data <- input_data$vacc_data[1, , ]
 pop_data <- input_data$pop_data[1, , ]  
-FOI_spillover <- 5.0e-7             # Force of infection due to spillover from sylvatic reservoir
-R0 <- 0.0                           # Basic reproduction number for urban spread of infection
-model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1],
-                                    mode_start = 1, n_reps = 1, year_end = 2001, year_data_begin = 1999,
-                                    vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0)
+FOI_spillover <- 5.0e-7
+R0 <- 0.0
+model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, 
+                                    year0 = input_data$years_labels[1],
+                                    mode_start = 1, n_reps = 1, year_end = 2001,
+                                    year_data_begin = 1999,
+                                    vaccine_efficacy = 1.0, start_SEIRV = NULL, 
+                                    dt = 1.0)
 ```
 
 We process results using the get_outbreak_data() function to produce information on all outbreaks and reported cases during the modelled time period.
 
 ```{r}
-case_data = model_results$C[1,] # Vector of data points showing number of new cases at each time point [TBC]
-year_data = model_results$year # Matching vector indicating the year for each time point [TBC]
-p_rep_severe = 0.1 # The probability of a case with severe but non-fatal symptoms being reported
-p_rep_death = 0.2 # The probability of a fatal case being reported
-outbreak_data <- get_outbreak_data(case_data, year_data, p_rep_severe, p_rep_death)
+# Vector of data points showing number of new cases at each time point
+case_data = model_results$C[1,]
+# Matching vector indicating the year for each time point
+year_data = model_results$year
+# Probability of a case with severe but non-fatal symptoms being reported
+p_rep_severe = 0.1 
+# Probability of a fatal case being reported
+p_rep_death = 0.2 
+outbreak_data <- get_outbreak_data(case_data,year_data,p_rep_severe,p_rep_death)
 ```
 
 get_outbreak_data() produces a list containing the number of outbreaks (n_outbreaks), data on each individual outbreak (outbreak_list - number of reported cases, start and end days and years), a time series showing the number of reported cases and deaths at each time point (rep_pts), and a time series showing the number of reported cases and deaths in each year (rep_annual).
@@ -58,12 +66,18 @@ outbreak_data$rep_annual
 As noted in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html), we can estimate the outbreak risk (the probability of one or more outbreaks, i.e. one or more reported cases) in a given time period by running the model a large number of times and calculating the proportion of repetitions in which one or more cases are reported. This is automated by using the outbreak_risk_generate() function. This function runs the time before the period of interest n_sets times, then models the period of interest n_reps times for each set, giving n_sets sets of values of annual outbreak risk:
 
 ```{r}
-FOI_spillover=1.0e-8 # Here a lower value of FOI_spillover is used, so that the annual outbreak risk is well below 1, requiring a large number of repetitions to evaluate it
+# Here a lower value of FOI_spillover is used, so that the annual outbreak risk 
+# is well below 1, requiring a large number of repetitions to evaluate it
+FOI_spillover=1.0e-8 
 R0=0.0
 year_data_begin = 1999
 year_end = 2010
-outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, year0 = input_data$years_labels[1],
-                                        mode_start = 1, n_sets=1, n_reps = 1000, year_end, year_data_begin,
-                                        vaccine_efficacy = 1.0, start_SEIRV = NULL, dt = 1.0, p_rep_severe, p_rep_death)
-matplot(x=c(year_data_begin:(year_end-1)),y=outbreak_risk[1,],type="l",xlab="Year",ylab="Outbreak risk")
+outbreak_risk <- outbreak_risk_generate(FOI_spillover, R0, vacc_data, pop_data, 
+                                        year0 = input_data$years_labels[1],
+                                        mode_start = 1, n_sets=1, n_reps = 1000, 
+                                        year_end, year_data_begin,
+                                        vaccine_efficacy=1.0,start_SEIRV=NULL, 
+                                        dt = 1.0, p_rep_severe, p_rep_death)
+matplot(x=c(year_data_begin:(year_end-1)),y=outbreak_risk[1,],type="l",
+        xlab="Year",ylab="Outbreak risk")
 ```

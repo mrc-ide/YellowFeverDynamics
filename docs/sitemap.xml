@@ -70,7 +70,16 @@
     <loc>/reference/case_data_generate_deterministic.html</loc>
   </url>
   <url>
+    <loc>/reference/case_data_generate_varFR.html</loc>
+  </url>
+  <url>
     <loc>/reference/case_match_graphs.html</loc>
+  </url>
+  <url>
+    <loc>/reference/convert_model_output_combine_by_age.html</loc>
+  </url>
+  <url>
+    <loc>/reference/convert_model_output_tidy.html</loc>
   </url>
   <url>
     <loc>/reference/create_input_data.html</loc>
@@ -101,6 +110,9 @@
   </url>
   <url>
     <loc>/reference/Full_Model_Run_Deterministic.html</loc>
+  </url>
+  <url>
+    <loc>/reference/Full_Model_Run_VarFR.html</loc>
   </url>
   <url>
     <loc>/reference/Generate_Dataset.html</loc>
@@ -181,6 +193,9 @@
     <loc>/reference/parameter_setup_react.html</loc>
   </url>
   <url>
+    <loc>/reference/parameter_setup_varFR.html</loc>
+  </url>
+  <url>
     <loc>/reference/param_calc_enviro.html</loc>
   </url>
   <url>
@@ -221,6 +236,9 @@
   </url>
   <url>
     <loc>/reference/total_burden_estimate.html</loc>
+  </url>
+  <url>
+    <loc>/reference/total_burden_estimate_varFR.html</loc>
   </url>
   <url>
     <loc>/reference/truncate_mcmc_data.html</loc>

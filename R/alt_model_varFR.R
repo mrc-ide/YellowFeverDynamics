@@ -179,7 +179,7 @@ parameter_setup_varFR <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_
   assert_that(year_data_begin<year_end,msg="year_data_begin must be less than year_end")
   assert_that(year_end-year0<=n_years,msg="Period year0->year_end must lie within population data")
   vacc_initial=vacc_data[1,]
-  assert_that(dt %in% c(1,5),msg="dt must have value 1 or 5 days")
+  assert_that(dt %in% c(1,2.5,5),msg="dt must have value 1, 2.5 or 5 days (must have integer number of points/year")
   inv_365=1.0/365.0
 
   P0=Cas0=Sus0=Exp0=Inf0=Rec0=Vac0=rep(0,N_age)

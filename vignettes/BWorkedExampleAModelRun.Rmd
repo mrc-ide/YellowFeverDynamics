@@ -22,7 +22,8 @@ Population and vaccination data is stored in a list object as described in [Guid
 
 ```{r}
 library(YellowFeverDynamics)
-input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = ""))
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
+                                   "/exdata/input_data_example.Rds", sep = ""))
 vacc_data <- input_data$vacc_data[1, , ]
 pop_data <- input_data$pop_data[1, , ]  
 ```
@@ -30,30 +31,45 @@ pop_data <- input_data$pop_data[1, , ]
 We set the other input parameters to the functions which run the model as follows. Here we set the spillover FOI and basic reproduction number directly; they may alternatively be calculated from environmental covariates as described in [Guide 2 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideBParametersEnvironment.html). The mode_start variable is used to set the initial conditions in one of 3 ways. The n_particles variable is used to run the model multiple times for the same inputs; the results can be compared and/or combined to test and/or average out the effects of the stochasticity of the model. The n_threads variable is used to set the number of particles run in parallel (subject to the limitations of the computer being used).
 
 ```{r}
-FOI_spillover <- 1.0e-8             # Force of infection due to spillover from sylvatic reservoir
-R0 <- 1.5                           # Basic reproduction number for urban spread of infection
-year0 <- input_data$years_labels[1] # First year in population/vaccination data (here taken from the input data set; if the population and vaccination data is set manually, this similarly needs to be set manually)
-mode_start <- 1                     # Flag indicating how to set initial population immunity level in addition to
-                                    # vaccination
-                                    # If mode_start = 0, only vaccinated individuals are immune (R = 0)
-                                    # If mode_start = 1, shift some non-vaccinated individuals into recovered to give
-                                    # herd immunity (R = 1 - 1/R0)
-                                    # If mode_start = 2, use SEIRV input in list from previous run(s), set using
-                                    # start_SEIRV variable
-n_particles <- 10                   # Number of particles to run (maximum allowed value = 20)
-n_threads <- 1                      # Number of threads to run (equal to or less than n_particles)
-year_end <- 2001                    # Year at which to stop generating data (year after last year where data is desired)
-year_data_begin <- 1999             # Year to begin saving data
-vaccine_efficacy <- 1.0             # Proportional vaccine efficacy (from 0 to 1); probability of vaccination successfully
-                                    # providing immunity (i.e. moving vaccinated individual to group V)
-start_SEIRV <- NULL                 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not used here and hence set to NULL)
-dt <- 1.0                           # Time increment in days to use in model (should be either 1.0 or 5.0 days)
+# Force of infection due to spillover from sylvatic reservoir
+FOI_spillover <- 1.0e-8             
+# Basic reproduction number for urban spread of infection
+R0 <- 1.5                           
+# First year in population/vaccination data (here taken from the input data set; 
+# if the population and vaccination data is set manually, this similarly needs 
+# to be set manually)
+year0 <- input_data$years_labels[1] 
+# Flag indicating how to set initial population immunity level in addition to
+# vaccination
+# If mode_start = 0, only vaccinated individuals are immune (R = 0)
+# If mode_start = 1, shift some non-vaccinated individuals into recovered to 
+# give herd immunity (R = 1 - 1/R0)
+# If mode_start = 2, use SEIRV input in list from previous run(s), set using
+# start_SEIRV variable
+mode_start <- 1       
+# Number of particles to run (maximum allowed value = 20)
+n_particles <- 10     
+# Number of threads to run (equal to or less than n_particles)
+n_threads <- 1   
+# Year at which to stop generating data (year after last year where data is desired)
+year_end <- 2001     
+# Year to begin saving data
+year_data_begin <- 1999  
+# Proportional vaccine efficacy (from 0 to 1); probability of vaccination 
+# successfully providing immunity (i.e. moving vaccinated individual to group V)
+vaccine_efficacy <- 1.0    
+# SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
+# used here and hence set to NULL)
+start_SEIRV <- NULL  
+# Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+dt <- 1.0                           
 ```
 
 We use the Full_Model_Run() function to run the model for the inputs above:
 
 ```{r}
-test1 <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_particles, n_threads, year_end,
+test1 <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, 
+                        mode_start, n_particles, n_threads, year_end,
                         year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```
 
@@ -67,7 +83,8 @@ print(plot)
 For some applications, we can use the Basic_Model_Run() function instead. This is largely identical to Full_Model_Run() but does not output the total force of infection at each time point or the number of new infections at each time point. This reduces the amount of data output by each run of the function, reducing computational requirements. For example, we use Basic_Model_Run when the intention is only to calculate seroprevalence, which is derived (as described in [Guide 4 - Processing Model Results](https://mrc-ide.github.io/YellowFeverDynamics/articles/BGuideDModelResultsProcess.html)) from SEIRV values, with the rate of newly infectious individuals being irrelevant.
 
 ```{r,eval = FALSE}
-test2 <- Basic_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_particles, n_threads, year_end,
+test2 <- Basic_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, 
+                         mode_start, n_particles, n_threads, year_end,
                          year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```
 
@@ -77,6 +94,7 @@ For applications where only the number of new infectious people at each time poi
 n_reps <- 1000
 FOI_spillover <- 1.0e-10
 R0 <- 0.0
-test3 <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0, mode_start, n_reps, year_end,
+test3 <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data, year0, 
+                            mode_start, n_reps, year_end,
                             year_data_begin, vaccine_efficacy, start_SEIRV, dt)
 ```

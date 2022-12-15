@@ -16,53 +16,76 @@ knitr::opts_chunk$set(
 
 This worked example demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. We use the total_burden_estimate() function for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCDataGenerate.html):
 
-```{r}
+```{r,eval=FALSE}
 library(YellowFeverDynamics)
-type="FOI+R0 enviro" # Type of parameter set used to calculate spillover FOI and R0 (here both calculated from environmental covariates)
-param_dist <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_coeffs_example_multi.csv", 
-                                    sep = ""), header = TRUE)  # Data frame of one or more sets of parameter values
-input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), "/exdata/input_data_example.Rds", sep = "")) 
-           # Population and vaccination data in standard format (see Guide 2)
-enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), "/exdata/enviro_data_example.csv", sep = ""),
-                        header = TRUE) # Environmental data
-years_data <- c(2000) # Years for which to calculate burden data
-n_reps <- 5 # Number of repetitions for which to run model and obtain average outputs
-mode_start <- 1 # Flag indicating how to set initial population immunity level in addition to vaccination
-                # If mode_start = 0, only vaccinated individuals
-                # If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity
-                # If mode_start = 2, use SEIRV input in list from previous run(s), set using start_SEIRV variable
-dt <- 5.0 # Time increment in days
-R0_fixed_values <- NULL # Fixed R0 values, vaccine efficacy and severe and fatal case reporting probabilities; here set 
-                        # to NULL because R0, vaccine efficacy and reporting probabilities are variable parameters being
-                        # estimated
-vaccine_efficacy <- 1.0 # Vaccine efficacy
-p_rep_severe <- 0.1 # Probability of reporting of individuals with severe symptoms
-p_rep_death <- 0.2 # Probability of reporting of fatal infections
-flag_reporting=FALSE # Flag indicating whether to calculate numbers of reported cases and deaths (using p_rep_severe0 
-                     # and p_rep_death0) in addition to actual numbers
-results<-total_burden_estimate(type,param_dist,input_data,start_SEIRV=NULL,years_data,n_reps,mode_start,flag_reporting,
-                               dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
+# Type of parameter set used to calculate spillover FOI and R0 (here both
+# calculated from environmental covariates)
+type="FOI+R0 enviro" 
+# Data frame of one or more sets of parameter values
+param_dist <- read.csv(file = paste(path.package("YellowFeverDynamics"), 
+                                    "/exdata/enviro_coeffs_example_multi.csv", 
+                                    sep = ""), header = TRUE)  
+# Population and vaccination data in standard format (see Guide 2)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
+                                   "/exdata/input_data_example.Rds", sep = "")) 
+# Environmental covariate values
+enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), 
+                                     "/exdata/enviro_data_example.csv", sep=""),
+                        header = TRUE)
+# Years for which to calculate burden data
+years_data <- c(2000) 
+# Number of repetitions for which to run model and obtain average outputs
+n_reps <- 5 
+# Flag indicating how to set initial population immunity level
+# If mode_start = 0, only vaccinated individuals
+# If mode_start = 1, shift some non-vaccinated individuals into recovered to 
+# give herd immunity
+# If mode_start = 2, use SEIRV input in list from previous run(s), set using 
+# start_SEIRV variable
+mode_start <- 1 
+# Time increment in days
+dt <- 5.0
+# Fixed R0 values; here set to NULL because R0 calculated from environmental covariates
+R0_fixed_values <- NULL 
+# Vaccine efficacy
+vaccine_efficacy <- 1.0 
+# Probability of reporting of individuals with severe symptoms
+p_rep_severe <- 0.1 
+# Probability of reporting of fatal infections
+p_rep_death <- 0.2 
+# Flag indicating whether to calculate numbers of reported cases and deaths 
+# (using p_rep_severe and p_rep_death) in addition to actual numbers
+flag_reporting=FALSE 
+set.seed(1)
+results<-total_burden_estimate(type,param_dist,input_data,start_SEIRV=NULL,
+                               years_data,n_reps,mode_start,flag_reporting,
+                               dt,enviro_data,R0_fixed_values,vaccine_efficacy,
+                               p_rep_severe,p_rep_death)
 ```
 
 The output of total_burden_estimate() consists of two data frames in a list, one (by_region) giving the number of cases, deaths and (if flag_reporting is set to TRUE) observed cases and deaths for each year, region and parameter set. The second (all) gives the totals combined across all regions for each year and parameter set.
 
-```{r}
+```{r,eval=FALSE}
 head(results$by_region,5)
 ```
 
-```{r}
+```{r,eval=FALSE}
 head(results$all,5)
 ```
 
 We can use the output of total_burden_estimate() to, for example, model vaccine impact by examining the difference in burden between a no-vaccination scenario and a scenario featuring a specified vaccination program.
 
-```{r}
-input_data_novacc <- input_data # Input data for no-vaccination scenario
+```{r,eval=FALSE}
+# Amend input data to remove all vaccination in or after the first year of the 
+# period considered
+input_data_novacc <- input_data
 input_data_novacc$vacc_data[,input_data_novacc$years_labels>=years_data[1],] <- 
   input_data_novacc$vacc_data[,input_data_novacc$years_labels>=years_data[1],]*0 
-  # Amend input data to remove all vaccination in or after the first year of the period considered
-results_novacc<-total_burden_estimate(type,param_dist,input_data_novacc,start_SEIRV=NULL,years_data,n_reps,mode_start,
-                              flag_reporting,dt,enviro_data,R0_fixed_values,vaccine_efficacy,p_rep_severe,p_rep_death)
-deaths_prevented_by_region=results_novacc$by_region$deaths-results$by_region$deaths #
-deaths_prevented_all=results_novacc$all$deaths-results$all$deaths # 
+  
+results_novacc<-total_burden_estimate(type, param_dist, input_data_novacc, 
+                                start_SEIRV=NULL, years_data, n_reps, mode_start, 
+                                flag_reporting, dt, enviro_data, R0_fixed_values, 
+                                vaccine_efficacy, p_rep_severe, p_rep_death)
+deaths_prevented_by_region = results_novacc$by_region$deaths-results$by_region$deaths
+deaths_prevented_all = results_novacc$all$deaths-results$all$deaths 
 ```

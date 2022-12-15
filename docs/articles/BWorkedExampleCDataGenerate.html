@@ -11,7 +11,7 @@
 <link href="../deps/bootstrap-5.1.3/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.1.3/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Worked Example 3 - Generating Epidemiological Data Sets">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Worked Example 3 - Generating Epidemiological Data Sets">
 <meta property="og:description" content="YellowFeverDynamics">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -84,41 +84,59 @@
 <p>This worked example demonstrates how to use the package to generate a
 set of epidemiological data (serological, annual reported severe/fatal
 cases and/or annual outbreak occurrence) for specified years and regions
-(and age ranges, in the case of serological data). This can either be
-set up to match a set of observed data or to create a hypothetical set
-of data with no existing counterpart (by matching to “dummy” data).</p>
+(and age ranges, in the case of serological data).</p>
+<p>This can be set up to either:</p>
+<ul>
+<li>Match a set of observed data supplied in appropriate formats</li>
+<li>Create a hypothetical set of data with no existing counterpart by
+matching to “dummy” data which presents dates, regions and/or age ranges
+in the appropriate formats</li>
+</ul>
 <p>We first load the input data set, regional environmental covariate
 values, coefficients of environmental covariate values used to calculate
 spillover FOI and R0 values, and observed serological and annual case
 data (here generated by the model itself):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
-<span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">enviro_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_data_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
+<span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
+<span>                                  <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">enviro_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
+<span>                                  <span class="st">"/exdata/enviro_data_example.csv"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>,</span>
 <span>                        header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">enviro_coeffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_coeffs_example.csv"</span>,</span>
+<span><span class="va">enviro_coeffs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
+<span>                                       <span class="st">"/exdata/enviro_coeffs_example.csv"</span>,</span>
 <span>                                       sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">obs_sero_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/obs_sero_data_example_single.csv"</span>,</span>
-<span>                                       sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>    </span>
-<span>              <span class="co"># Seroprevalence data for comparison, by region, year &amp; age group, in format no. samples/no. positives</span></span>
-<span><span class="va">obs_case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/obs_case_data_example_single.csv"</span>,</span>
-<span>                                       sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>    </span>
-<span>              <span class="co"># Annual reported case/death data for comparison, by region and year, in format no. cases/no. deaths</span></span>
+<span><span class="co"># Seroprevalence data for comparison, by region, year &amp; age group, in format </span></span>
+<span><span class="co"># no. samples/no. positives</span></span>
+<span><span class="va">obs_sero_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
+<span>                                    <span class="st">"/exdata/obs_sero_data_example_single.csv"</span>,</span>
+<span>                                       sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  </span>
+<span><span class="co"># Annual reported case/death data for comparison, by region and year, in format </span></span>
+<span><span class="co"># no. cases/no. deaths  </span></span>
+<span><span class="va">obs_case_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
+<span>                                    <span class="st">"/exdata/obs_case_data_example_single.csv"</span>,</span>
+<span>                                       sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>   </span>
+<span><span class="co"># Outbreak Y/N data for comparison, by region and year, in format </span></span>
+<span><span class="co"># 0 = no outbreaks, 1 = 1 or more outbreak(s) (here simply set to NULL) </span></span>
 <span><span class="va">obs_outbreak_data</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
-<span>              <span class="co"># Outbreak Y/N data for comparison, by region and year, in format 0 = no outbreaks, 1 = 1 or more outbreak(s) (here simply set to NULL)</span></span></code></pre></div>
+<span>              </span></code></pre></div>
 <p>We set additional inputs for the data_match_single() function, which
 is used to generate model data to match observed or dummy data, as
 follows:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">enviro_coeffs</span><span class="op">)</span> <span class="co"># Parameter values input to produce model parameters, potentially including</span></span>
-<span>                                    <span class="co"># spillover FOI and R0 by region, severe and fatal case reporting probability</span></span>
-<span><span class="va">const_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"FOI+R0 enviro"</span>, n_reps <span class="op">=</span> <span class="fl">1</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, dt <span class="op">=</span> <span class="fl">1.0</span>, enviro_data <span class="op">=</span> <span class="va">enviro_data</span>,</span>
-<span>                   R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>, vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, p_rep_severe <span class="op">=</span> <span class="fl">0.1</span>, p_rep_death <span class="op">=</span> <span class="fl">0.2</span>, </span>
-<span>                   m_FOI_Brazil <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span> </span>
-<span>          <span class="co"># List containing additional parameters: type of parameter set used to calculate spillover FOI and R0 (here </span></span>
-<span>          <span class="co"># both calculated from environmental covariates), number of repetitions for which to run model and obtain               # average outputs, environmental covariate data, fixed R0 values by region used when R0 is not a variable, and</span></span>
-<span>          <span class="co"># values of vaccine efficacy and severe and fatal case reporting probability used when these are not variables</span></span>
-<span>          <span class="co"># set via param_prop</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Parameter values input to produce model parameters, potentially including</span></span>
+<span><span class="co"># spillover FOI and R0 by region, severe and fatal case reporting probability</span></span>
+<span><span class="va">params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">enviro_coeffs</span><span class="op">)</span> </span>
+<span><span class="co"># List containing additional parameters: type of parameter set used to calculate </span></span>
+<span><span class="co"># spillover FOI and R0 (here both calculated from environmental covariates), </span></span>
+<span><span class="co"># number of repetitions for which to run model and obtain average outputs, </span></span>
+<span><span class="co"># environmental covariate data, fixed R0 values by region used when R0 is not a </span></span>
+<span><span class="co"># variable, and values of vaccine efficacy and severe and fatal case reporting </span></span>
+<span><span class="co"># probability used when these are not variables set via param_prop</span></span>
+<span><span class="va">const_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"FOI+R0 enviro"</span>, n_reps <span class="op">=</span> <span class="fl">1</span>, mode_start <span class="op">=</span> <span class="fl">1</span>, dt <span class="op">=</span> <span class="fl">1.0</span>, </span>
+<span>                   enviro_data <span class="op">=</span> <span class="va">enviro_data</span>, R0_fixed_values <span class="op">=</span> <span class="cn">NULL</span>, </span>
+<span>                   vaccine_efficacy <span class="op">=</span> <span class="fl">1.0</span>, p_rep_severe <span class="op">=</span> <span class="fl">0.1</span>, p_rep_death <span class="op">=</span> <span class="fl">0.2</span>, </span>
+<span>                   m_FOI_Brazil <span class="op">=</span> <span class="fl">1.0</span><span class="op">)</span>             </span></code></pre></div>
 <p>We run the data_match_single() function to produce a set of modelled
 data matching the observed data, i.e.:</p>
 <ul>
@@ -131,17 +149,20 @@ year(s)<br>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">data1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_single.html">data_match_single</a></span><span class="op">(</span><span class="va">params</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, </span>
+<span>                           <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span></code></pre></div>
 <p>We use the data_match_multi() function to run data_match_single() for
 a series of sets of values of the input parameters. The inputs are the
 same except that the parameter values are input as a data frame
 containing one set of parameter values per line.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">param_sets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, <span class="st">"/exdata/enviro_coeffs_example_multi.csv"</span>, </span>
+<code class="sourceCode R"><span><span class="co"># Data frame containing one set of parameter values per line</span></span>
+<span><span class="va">param_sets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
+<span>                                    <span class="st">"/exdata/enviro_coeffs_example_multi.csv"</span>, </span>
 <span>                                    sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span>, header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> </span>
-<span>           <span class="co"># Data frame containing one set of parameter values per line</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_multi.html">data_match_multi</a></span><span class="op">(</span><span class="va">param_sets</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span>
+<span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/data_match_multi.html">data_match_multi</a></span><span class="op">(</span><span class="va">param_sets</span>, <span class="va">input_data</span>, <span class="va">obs_sero_data</span>, <span class="va">obs_case_data</span>, </span>
+<span>                          <span class="va">obs_outbreak_data</span>, <span class="va">const_list</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Set:</span></span>
 <span><span class="co">#&gt;   1   2   3   4   5   6   7   8   9   10</span></span></code></pre></div>
@@ -159,14 +180,20 @@ confidence intervals (in blue and green respectively). If plot_type is
 set to “all”, the 95% and 50% of values closest to the median are shown
 in blue and green respectively.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sero_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sero_match_graphs.html">sero_match_graphs</a></span><span class="op">(</span><span class="va">data2</span>, <span class="va">obs_sero_data</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, text_size <span class="op">=</span> <span class="fl">10</span>, hide_observed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sero_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sero_match_graphs.html">sero_match_graphs</a></span><span class="op">(</span><span class="va">data2</span>, <span class="va">obs_sero_data</span>, plot_type <span class="op">=</span> <span class="st">"all"</span>, </span>
+<span>                                text_size <span class="op">=</span> <span class="fl">10</span>, hide_observed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">sero_graph</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BWorkedExampleCDataGenerate_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">case_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_match_graphs.html">case_match_graphs</a></span><span class="op">(</span><span class="va">data2</span>, <span class="va">obs_case_data</span>, <span class="va">input_data</span>, plot_type <span class="op">=</span> <span class="st">"mean"</span>, text_size <span class="op">=</span> <span class="fl">10</span>, </span>
+<code class="sourceCode R"><span><span class="va">case_graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/case_match_graphs.html">case_match_graphs</a></span><span class="op">(</span><span class="va">data2</span>, <span class="va">obs_case_data</span>, <span class="va">input_data</span>, </span>
+<span>                                plot_type <span class="op">=</span> <span class="st">"mean"</span>, text_size <span class="op">=</span> <span class="fl">10</span>, </span>
 <span>                                hide_observed <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="fu">Rmisc</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Rmisc/man/multiplot.html" class="external-link">multiplot</a></span><span class="op">(</span><span class="va">case_graph</span><span class="op">$</span><span class="va">cases_graphs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">case_graph</span><span class="op">$</span><span class="va">deaths_graphs</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="BWorkedExampleCDataGenerate_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<p>Below is an example of generating hypothetical data by matching to
+“dummy” data:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#[TBA]</span></span></code></pre></div>
   </main>
 </div>
 
@@ -179,7 +206,7 @@ in blue and green respectively.</p>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
     </footer>
