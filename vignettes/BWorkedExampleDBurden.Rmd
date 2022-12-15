@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This worked example demonstrates how to use the package to calculate annual yellow fever burden () for multiple regions. We use the total_burden_estimate() function for this, using similar inputs to the data_match_single() and data_match_multi() functions described in [Worked Example 3 - Generating Epidemiological Data Sets](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCDataGenerate.html):
 
-```{r,eval=FALSE}
+```{r}
 library(YellowFeverDynamics)
 # Type of parameter set used to calculate spillover FOI and R0 (here both
 # calculated from environmental covariates)
@@ -44,7 +44,7 @@ n_reps <- 5
 # start_SEIRV variable
 mode_start <- 1 
 # Time increment in days
-dt <- 5.0
+dt <- 1.0
 # Fixed R0 values; here set to NULL because R0 calculated from environmental covariates
 R0_fixed_values <- NULL 
 # Vaccine efficacy
@@ -65,23 +65,24 @@ results<-total_burden_estimate(type,param_dist,input_data,start_SEIRV=NULL,
 
 The output of total_burden_estimate() consists of two data frames in a list, one (by_region) giving the number of cases, deaths and (if flag_reporting is set to TRUE) observed cases and deaths for each year, region and parameter set. The second (all) gives the totals combined across all regions for each year and parameter set.
 
-```{r,eval=FALSE}
+```{r}
 head(results$by_region,5)
 ```
 
-```{r,eval=FALSE}
+```{r}
 head(results$all,5)
 ```
 
 We can use the output of total_burden_estimate() to, for example, model vaccine impact by examining the difference in burden between a no-vaccination scenario and a scenario featuring a specified vaccination program.
 
-```{r,eval=FALSE}
+```{r}
 # Amend input data to remove all vaccination in or after the first year of the 
 # period considered
 input_data_novacc <- input_data
 input_data_novacc$vacc_data[,input_data_novacc$years_labels>=years_data[1],] <- 
   input_data_novacc$vacc_data[,input_data_novacc$years_labels>=years_data[1],]*0 
   
+set.seed(1)
 results_novacc<-total_burden_estimate(type, param_dist, input_data_novacc, 
                                 start_SEIRV=NULL, years_data, n_reps, mode_start, 
                                 flag_reporting, dt, enviro_data, R0_fixed_values, 
