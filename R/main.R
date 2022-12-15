@@ -354,7 +354,7 @@ parameter_setup <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
   assert_that(year_data_begin<year_end,msg="year_data_begin must be less than year_end")
   assert_that(year_end-year0<=n_years,msg="Period year0->year_end must lie within population data")
   vacc_initial=vacc_data[1,]
-  assert_that(dt %in% c(1,5),msg="dt must have value 1 or 5 days")
+  assert_that(dt %in% c(1,2.5,5),msg="dt must have value 1, 2.5 or 5 days (must have integer number of points/year")
   inv_365=1.0/365.0
 
   P0=Cas0=Sus0=Exp0=Inf0=Rec0=Vac0=rep(0,N_age)
@@ -433,80 +433,6 @@ param_calc_enviro <- function(enviro_coeffs=c(),enviro_covar_values=c()){
   if(length(enviro_coeffs)==2*n_env_vars){output$R0=sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_covar_values)}
 
   return(output)
-}
-#-------------------------------------------------------------------------------
-#' @title plot_model_output
-#'
-#' @description Plot output of Full_Model_Run() or Basic_Model_Run() functions
-#'
-#' @details Takes in the output of the Full_Model_Run() or Basic_Model_Run() functions and outputs a ggplot graph of
-#'   S, R and V summed over all age groups, with error bars showing the spread of values from multiple repetitions
-#'
-#' @param model_output List of output data produced via Full_Model_Run() or Basic_Model_Run() functions
-#' '
-#' @export
-#'
-plot_model_output <- function(model_output=list()){
-
-  assert_that(is.list(model_output)) #TODO - msg
-  assert_that(is.null(model_output$day)==FALSE) #TODO - msg
-
-  values=label=values_mean=values_low=values_high=NULL
-  N_age=dim(model_output$S)[1]
-  n_particles=dim(model_output$S)[2]
-  t_pts=dim(model_output$S)[3]
-  date_values=model_output$year[1,1]+((model_output$day[1,]-model_output$day[1,1]+1)/365.0)
-  blank=array(0,dim=c(n_particles,t_pts))
-  S_sum=E_sum=I_sum=R_sum=V_sum=blank
-  for(i in 1:N_age){
-    S_sum=S_sum+model_output$S[i,,]
-    E_sum=E_sum+model_output$E[i,,]
-    I_sum=I_sum+model_output$I[i,,]
-    R_sum=R_sum+model_output$R[i,,]
-    V_sum=V_sum+model_output$V[i,,]
-  }
-  xlabels=c(model_output$year[1,1]:(model_output$year[1,t_pts]+1))
-  ylabels=10^c(-1:10)
-
-  if(n_particles==1){
-    data_combined=data.frame(date_values=rep(date_values,5),
-                             label=c(rep("S",t_pts),rep("E",t_pts),rep("I",t_pts),rep("R",t_pts),rep("V",t_pts)),
-                             values=c(S_sum[1,],E_sum[1,],I_sum[1,],R_sum[1,],V_sum[1,]))
-    data_combined$values[data_combined$values<0.1]=0
-    plot1 <- ggplot(data=data_combined,aes(x=date_values,y=log(values),group=label))+theme_bw()
-    plot1 <- plot1 + geom_line(aes(colour=label),size=1) + theme(legend.title=element_blank())
-    plot1 <- plot1 + scale_x_continuous(name="",breaks=xlabels,labels=xlabels)
-    plot1 <- plot1 + scale_y_continuous(name="",breaks=log(ylabels),labels=ylabels)
-  } else {
-    data_combined=data.frame(date_values=rep(date_values,3),label=c(rep("S",t_pts),rep("R",t_pts),rep("V",t_pts)),
-                             values_mean=rep(NA,t_pts*3),values_low=rep(NA,t_pts*3),values_high=rep(NA,t_pts*3))
-    for(i in 1:t_pts){
-      S_CI=CI(S_sum[,i])
-      R_CI=CI(R_sum[,i])
-      V_CI=CI(V_sum[,i])
-      data_combined$values_mean[i]=as.numeric(S_CI[2])
-      data_combined$values_mean[i+t_pts]=as.numeric(R_CI[2])
-      data_combined$values_mean[i+(2*t_pts)]=as.numeric(V_CI[2])
-      data_combined$values_low[i]=as.numeric(S_CI[3])
-      data_combined$values_low[i+t_pts]=as.numeric(R_CI[3])
-      data_combined$values_low[i+(2*t_pts)]=as.numeric(V_CI[3])
-      data_combined$values_high[i]=as.numeric(S_CI[1])
-      data_combined$values_high[i+t_pts]=as.numeric(R_CI[1])
-      data_combined$values_high[i+(2*t_pts)]=as.numeric(V_CI[1])
-    }
-    data_combined$values_low=log(data_combined$values_low)
-    data_combined$values_low[is.infinite(data_combined$values_low)]=NA
-    data_combined$values_high=log(data_combined$values_high)
-    data_combined$values_high[is.infinite(data_combined$values_high)]=NA
-    plot1 <- ggplot(data=data_combined,aes(x=date_values,y=log(values_mean),group=label))+theme_bw()
-    plot1 <- plot1 + geom_line(aes(colour=label),size=1) + theme(legend.title=element_blank())
-    plot1 <- plot1 + geom_errorbar(data=data_combined,aes(ymin=values_low,ymax=values_high,colour=label),
-                                   width=(model_output$day[1,2]-model_output$day[1,1])/365.0)
-    plot1 <- plot1 + scale_x_continuous(name="",breaks=xlabels,labels=xlabels)
-    plot1 <- plot1 + scale_y_continuous(name="",breaks=log(ylabels),labels=ylabels)
-  }
-
-  return(plot1)
 }
 #-------------------------------------------------------------------------------
 #' @title create_param_labels
