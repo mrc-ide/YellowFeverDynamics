@@ -20,17 +20,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_BasicModelOD_gpu_info() {
   END_CPP11
 }
 // BasicModelOD.cpp
-SEXP dust_cpu_BasicModelOD_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_BasicModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_BasicModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_BasicModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // BasicModelOD.cpp
-SEXP dust_cpu_BasicModelOD_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_BasicModelOD_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_BasicModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_BasicModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // BasicModelOD.cpp
@@ -62,7 +62,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_state(SEXP ptr, SEXP 
   END_CPP11
 }
 // BasicModelOD.cpp
-size_t dust_cpu_BasicModelOD_time(SEXP ptr);
+SEXP dust_cpu_BasicModelOD_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_BasicModelOD_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -164,17 +164,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_FullModelOD_gpu_info() {
   END_CPP11
 }
 // FullModelOD.cpp
-SEXP dust_cpu_FullModelOD_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_FullModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_FullModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // FullModelOD.cpp
-SEXP dust_cpu_FullModelOD_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_FullModelOD_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_FullModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // FullModelOD.cpp
@@ -206,7 +206,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_state(SEXP ptr, SEXP r
   END_CPP11
 }
 // FullModelOD.cpp
-size_t dust_cpu_FullModelOD_time(SEXP ptr);
+SEXP dust_cpu_FullModelOD_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelOD_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -308,17 +308,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_FullModelODDelay_gpu_info() {
   END_CPP11
 }
 // FullModelODDelay.cpp
-SEXP dust_cpu_FullModelODDelay_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_FullModelODDelay_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelODDelay_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_FullModelODDelay_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // FullModelODDelay.cpp
-SEXP dust_cpu_FullModelODDelay_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_FullModelODDelay_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelODDelay_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_FullModelODDelay_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // FullModelODDelay.cpp
@@ -350,7 +350,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_state(SEXP ptr, S
   END_CPP11
 }
 // FullModelODDelay.cpp
-size_t dust_cpu_FullModelODDelay_time(SEXP ptr);
+SEXP dust_cpu_FullModelODDelay_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelODDelay_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -452,17 +452,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_FullModelODDeterministic_gpu_info() {
   END_CPP11
 }
 // FullModelODDeterministic.cpp
-SEXP dust_cpu_FullModelODDeterministic_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_FullModelODDeterministic_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // FullModelODDeterministic.cpp
-SEXP dust_cpu_FullModelODDeterministic_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_FullModelODDeterministic_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // FullModelODDeterministic.cpp
@@ -494,7 +494,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_state(SEX
   END_CPP11
 }
 // FullModelODDeterministic.cpp
-size_t dust_cpu_FullModelODDeterministic_time(SEXP ptr);
+SEXP dust_cpu_FullModelODDeterministic_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -596,17 +596,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_FullModelODVarFR_gpu_info() {
   END_CPP11
 }
 // FullModelODVarFR.cpp
-SEXP dust_cpu_FullModelODVarFR_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_FullModelODVarFR_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelODVarFR_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_FullModelODVarFR_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // FullModelODVarFR.cpp
-SEXP dust_cpu_FullModelODVarFR_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_FullModelODVarFR_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_FullModelODVarFR_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_FullModelODVarFR_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // FullModelODVarFR.cpp
@@ -638,7 +638,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_state(SEXP ptr, S
   END_CPP11
 }
 // FullModelODVarFR.cpp
-size_t dust_cpu_FullModelODVarFR_time(SEXP ptr);
+SEXP dust_cpu_FullModelODVarFR_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelODVarFR_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -740,17 +740,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_InfectionSplitModelOD_gpu_info() {
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
-SEXP dust_cpu_InfectionSplitModelOD_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_InfectionSplitModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
-SEXP dust_cpu_InfectionSplitModelOD_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_InfectionSplitModelOD_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
@@ -782,7 +782,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_state(SEXP p
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
-size_t dust_cpu_InfectionSplitModelOD_time(SEXP ptr);
+SEXP dust_cpu_InfectionSplitModelOD_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
@@ -884,17 +884,17 @@ extern "C" SEXP _YellowFeverDynamics_dust_ReactiveModelOD_gpu_info() {
   END_CPP11
 }
 // ReactiveModelOD.cpp
-SEXP dust_cpu_ReactiveModelOD_alloc(cpp11::list r_pars, bool pars_multi, size_t time, cpp11::sexp r_n_particles, size_t n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
+SEXP dust_cpu_ReactiveModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp r_time, cpp11::sexp r_n_particles, int n_threads, cpp11::sexp r_seed, bool deterministic, cpp11::sexp gpu_config, cpp11::sexp ode_control);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_ReactiveModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<size_t>>(time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<size_t>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+    return cpp11::as_sexp(dust_cpu_ReactiveModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
   END_CPP11
 }
 // ReactiveModelOD.cpp
-SEXP dust_cpu_ReactiveModelOD_run(SEXP ptr, size_t time_end);
-extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_run(SEXP ptr, SEXP time_end) {
+SEXP dust_cpu_ReactiveModelOD_run(SEXP ptr, cpp11::sexp r_time_end);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_run(SEXP ptr, SEXP r_time_end) {
   BEGIN_CPP11
-    return cpp11::as_sexp(dust_cpu_ReactiveModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<size_t>>(time_end)));
+    return cpp11::as_sexp(dust_cpu_ReactiveModelOD_run(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time_end)));
   END_CPP11
 }
 // ReactiveModelOD.cpp
@@ -926,7 +926,7 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_state(SEXP ptr, SE
   END_CPP11
 }
 // ReactiveModelOD.cpp
-size_t dust_cpu_ReactiveModelOD_time(SEXP ptr);
+SEXP dust_cpu_ReactiveModelOD_time(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_time(SEXP ptr) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_ReactiveModelOD_time(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
