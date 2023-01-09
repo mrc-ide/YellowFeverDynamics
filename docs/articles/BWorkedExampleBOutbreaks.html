@@ -52,7 +52,7 @@
     <a class="dropdown-item" href="../articles/CGuideAInputs.html">Guide 1 - Inputs</a>
     <a class="dropdown-item" href="../articles/CGuideBParametersEnvironment.html">Guide 2 - Calculating Parameters From Environmental Data</a>
     <a class="dropdown-item" href="../articles/CGuideCModelResultsProcess.html">Guide 3 - Processing Model Results</a>
-    <a class="dropdown-item" href="../articles/CGuideDLikelihood.html">Guide 5 - Calculating Likelihood Of Observed Data</a>
+    <a class="dropdown-item" href="../articles/CGuideDLikelihood.html">Guide 4 - Calculating Likelihood Of Observed Data</a>
   </div>
 </li>
       </ul>
@@ -141,27 +141,9 @@ showing the number of reported cases and deaths at each time point
 (rep_pts), and a time series showing the number of reported cases and
 deaths in each year (rep_annual).</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">outbreak_list</span></span>
-<span><span class="co">#&gt;    size start_day end_day start_year end_year</span></span>
-<span><span class="co">#&gt; 1     1        89      99       1999     1999</span></span>
-<span><span class="co">#&gt; 2     1       194     204       1999     1999</span></span>
-<span><span class="co">#&gt; 3     1       249     259       1999     1999</span></span>
-<span><span class="co">#&gt; 4     1       307     317       1999     1999</span></span>
-<span><span class="co">#&gt; 5     1       322     332       1999     1999</span></span>
-<span><span class="co">#&gt; 6     1       392     402       2000     2000</span></span>
-<span><span class="co">#&gt; 7     2       435     454       2000     2000</span></span>
-<span><span class="co">#&gt; 8     2       471     484       2000     2000</span></span>
-<span><span class="co">#&gt; 9     1       515     525       2000     2000</span></span>
-<span><span class="co">#&gt; 10    1       579     589       2000     2000</span></span>
-<span><span class="co">#&gt; 11    2       618     638       2000     2000</span></span>
-<span><span class="co">#&gt; 12    1       651     661       2000     2000</span></span>
-<span><span class="co">#&gt; 13    1       686     696       2000     2000</span></span>
-<span><span class="co">#&gt; 14    1       719     729       2000     2000</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">outbreak_list</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">rep_annual</span></span>
-<span><span class="co">#&gt;   year rep_cases rep_deaths</span></span>
-<span><span class="co">#&gt; 1 1999         5          4</span></span>
-<span><span class="co">#&gt; 2 2000        12          3</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">outbreak_data</span><span class="op">$</span><span class="va">rep_annual</span></span></code></pre></div>
 <p>As noted in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html" class="external-link">Worked
 Example 1</a>, we can estimate the outbreak risk (the probability of one
 or more outbreaks, i.e. one or more reported cases) in a given time
@@ -186,7 +168,6 @@ sets of values of annual outbreak risk:</p>
 <span>                                        dt <span class="op">=</span> <span class="fl">1.0</span>, <span class="va">p_rep_severe</span>, <span class="va">p_rep_death</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">year_data_begin</span><span class="op">:</span><span class="op">(</span><span class="va">year_end</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span>,y<span class="op">=</span><span class="va">outbreak_risk</span><span class="op">[</span><span class="fl">1</span>,<span class="op">]</span>,type<span class="op">=</span><span class="st">"l"</span>,</span>
 <span>        xlab<span class="op">=</span><span class="st">"Year"</span>,ylab<span class="op">=</span><span class="st">"Outbreak risk"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="BWorkedExampleBOutbreaks_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
   </main>
 </div>
 

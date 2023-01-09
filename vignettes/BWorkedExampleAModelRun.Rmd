@@ -20,7 +20,7 @@ The model of yellow fever used in YellowFeverDynamics is an age-stratified, stoc
 
 Population and vaccination data is stored in a list object as described in [Guide 1 - Inputs](https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html). Here we load an example data set for multiple regions and extract the vaccination and population data for the first included region:
 
-```{r}
+```{r,eval=FALSE}
 library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
                                    "/exdata/input_data_example.Rds", sep = ""))
@@ -30,7 +30,7 @@ pop_data <- input_data$pop_data[1, , ]
 
 We set the other input parameters to the functions which run the model as follows. Here we set the spillover FOI and basic reproduction number directly; they may alternatively be calculated from environmental covariates as described in [Guide 2 - Calculating Parameters From Environmental Data](https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideBParametersEnvironment.html). The mode_start variable is used to set the initial conditions in one of 3 ways. The n_particles variable is used to run the model multiple times for the same inputs; the results can be compared and/or combined to test and/or average out the effects of the stochasticity of the model. The n_threads variable is used to set the number of particles run in parallel (subject to the limitations of the computer being used).
 
-```{r}
+```{r,eval=FALSE}
 # Force of infection due to spillover from sylvatic reservoir
 FOI_spillover <- 1.0e-8             
 # Basic reproduction number for urban spread of infection
@@ -67,7 +67,7 @@ dt <- 1.0
 
 We use the Full_Model_Run() function to run the model for the inputs above:
 
-```{r}
+```{r,eval=FALSE}
 test1 <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0, 
                         mode_start, n_particles, n_threads, year_end,
                         year_data_begin, vaccine_efficacy, start_SEIRV, dt)
@@ -75,7 +75,7 @@ test1 <- Full_Model_Run(FOI_spillover, R0, vacc_data, pop_data, year0,
 
 The output of Full_Model_Run() includes, for each particle, date information, the total force of infection FOI_total at each data point, the numbers of people in groups S, E, I, R and V at each time point organized by age group, and the number of newly infectious people (C) at each time point organized by age group. We use the plot_model function to display values of S, R and V (added together across all age groups) over time, with error bars to show the variation between particles caused by stochasticity.
 
-```{r}
+```{r,eval=FALSE}
 plot<-plot_model_output(test1)
 print(plot)
 ```

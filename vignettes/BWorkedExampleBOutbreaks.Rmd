@@ -22,7 +22,7 @@ The reporting of yellow fever cases is governed by the probability of an infecti
 
 As described in [Worked Example 1 - Single Model Run](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html), we obtain data on the number of new infectious individuals at each time point during a modelled period from the case_data_generate() function:
 
-```{r}
+```{r,eval=FALSE}
 set.seed(1)
 library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
@@ -41,7 +41,7 @@ model_results <- case_data_generate(FOI_spillover, R0, vacc_data, pop_data,
 
 We process results using the get_outbreak_data() function to produce information on all outbreaks and reported cases during the modelled time period.
 
-```{r}
+```{r,eval=FALSE}
 # Vector of data points showing number of new cases at each time point
 case_data = model_results$C[1,]
 # Matching vector indicating the year for each time point
@@ -55,17 +55,17 @@ outbreak_data <- get_outbreak_data(case_data,year_data,p_rep_severe,p_rep_death)
 
 get_outbreak_data() produces a list containing the number of outbreaks (n_outbreaks), data on each individual outbreak (outbreak_list - number of reported cases, start and end days and years), a time series showing the number of reported cases and deaths at each time point (rep_pts), and a time series showing the number of reported cases and deaths in each year (rep_annual).
 
-```{r}
+```{r,eval=FALSE}
 outbreak_data$outbreak_list
 ```
 
-```{r}
+```{r,eval=FALSE}
 outbreak_data$rep_annual
 ```
 
 As noted in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRun.html), we can estimate the outbreak risk (the probability of one or more outbreaks, i.e. one or more reported cases) in a given time period by running the model a large number of times and calculating the proportion of repetitions in which one or more cases are reported. This is automated by using the outbreak_risk_generate() function. This function runs the time before the period of interest n_sets times, then models the period of interest n_reps times for each set, giving n_sets sets of values of annual outbreak risk:
 
-```{r}
+```{r,eval=FALSE}
 # Here a lower value of FOI_spillover is used, so that the annual outbreak risk 
 # is well below 1, requiring a large number of repetitions to evaluate it
 FOI_spillover=1.0e-8 
