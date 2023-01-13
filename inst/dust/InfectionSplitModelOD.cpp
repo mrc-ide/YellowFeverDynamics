@@ -502,11 +502,11 @@ dust::pars_type<InfectionSplitModelOD> dust_pars<InfectionSplitModelOD>(cpp11::l
   using real_type = typename InfectionSplitModelOD::real_type;
   auto shared = std::make_shared<InfectionSplitModelOD::shared_type>();
   InfectionSplitModelOD::internal_type internal;
-  shared->FOI_max = static_cast<real_type>(0.5);
+  shared->FOI_max = 1;
   shared->initial_day = 0;
   shared->initial_FOI_urb = 0;
   shared->initial_time = 0;
-  shared->Pmin = 0;
+  shared->Pmin = static_cast<real_type>(0.10000000000000001);
   shared->t_incubation = 5;
   shared->t_infectious = 5;
   shared->t_latent = 5;

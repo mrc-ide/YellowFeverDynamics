@@ -465,7 +465,7 @@ dust::pars_type<FullModelODVarFR> dust_pars<FullModelODVarFR>(cpp11::list user) 
   shared->FOI_max = 1;
   shared->initial_day = 0;
   shared->initial_time = 0;
-  shared->Pmin = 0;
+  shared->Pmin = static_cast<real_type>(0.10000000000000001);
   shared->t_incubation = 5;
   shared->t_infectious = 5;
   shared->t_latent = 5;
