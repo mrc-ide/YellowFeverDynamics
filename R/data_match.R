@@ -105,6 +105,7 @@ data_match_single <- function(params=c(),input_data=list(),obs_sero_data=NULL,ob
   }
   if(const_list$type %in% c("FOI+R0","FOI")){
     FOI_values=params[c(1:n_regions)]
+    for(i in 1:n_regions){if(substr(regions[i],1,3)=="BRA"){FOI_values[i]=FOI_values[i]*m_FOI_Brazil}}
 
     if(const_list$type=="FOI+R0"){R0_values=params[c((n_regions+1):(2*n_regions))]
     } else {R0_values=const_list$R0_fixed_values}
