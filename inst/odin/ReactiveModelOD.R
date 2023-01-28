@@ -27,7 +27,7 @@ n_years <- user() #Number of years for which model to be run
 
 zero <- 0 #Minimum population setting to avoid negative numbers
 one <- 1
-Pmin <- 0.1 #Minimum population setting to avoid negative numbers
+Pmin <- 0 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 t_incubation <- 5 #Time for cases to incubate in mosquito
 t_latent <- 5 #Latent period before cases become infectious

@@ -183,7 +183,7 @@ Basic_Model_Run <- function(FOI_spillover=0.0,R0=1.0,vacc_data=list(),pop_data=l
 #'
 Generate_Dataset <- function(input_data=list(),FOI_values=c(),R0_values=c(),
                              obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=NULL,
-                             vaccine_efficacy=1.0,p_rep_severe=1.0,p_rep_death=1.0,mode_start=1,n_reps=1,dt=1.0){
+                             vaccine_efficacy=NULL,p_rep_severe=NULL,p_rep_death=NULL,mode_start=1,n_reps=1,dt=1.0){
 
   assert_that(input_data_check(input_data),
     msg="Input data must be in standard format (see https://mrc-ide.github.io/YellowFeverDynamics/articles/CGuideAInputs.html )")

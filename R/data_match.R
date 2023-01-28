@@ -12,7 +12,7 @@
 #'   observed dataset - individual data values will be produced for the same years and regions (or combinations of
 #'   regions), seroprevalence data will be produced for the same age groups, etc.
 #'
-#' @param params Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients,
+#' @param params Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients, [etc.]
 #' @param input_data List of population and vaccination data for multiple regions, with tables to cross-reference
 #' with observed data, added using input_data_process
 #' @param obs_sero_data Seroprevalence data for comparison, by region, year & age group, in format no. samples/no.
