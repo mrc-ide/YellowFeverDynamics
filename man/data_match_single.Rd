@@ -14,7 +14,7 @@ data_match_single(
 )
 }
 \arguments{
-\item{params}{Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients,}
+\item{params}{Values of input parameters in order FOI/FOI coefficients, R0/R0 coefficients, [etc.]}
 
 \item{input_data}{List of population and vaccination data for multiple regions, with tables to cross-reference
 with observed data, added using input_data_process}

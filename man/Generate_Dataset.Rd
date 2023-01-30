@@ -11,9 +11,9 @@ Generate_Dataset(
   obs_sero_data = NULL,
   obs_case_data = NULL,
   obs_outbreak_data = NULL,
-  vaccine_efficacy = 1,
-  p_rep_severe = 1,
-  p_rep_death = 1,
+  vaccine_efficacy = NULL,
+  p_rep_severe = NULL,
+  p_rep_death = NULL,
   mode_start = 1,
   n_reps = 1,
   dt = 1
