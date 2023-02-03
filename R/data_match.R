@@ -470,10 +470,10 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
 
     cases_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,5))
     cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low95,
-                                                                   ymax=case_model_high95),fill="blue",alpha=0.5)
+                                                                   ymax=case_model_high95),fill="red",alpha=0.5)
     if(data_type=="multi"){
       cases_graphs[[i]] <- cases_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=case_model_low50,
-                                                                     ymax=case_model_high50),fill="green",alpha=0.5)
+                                                                     ymax=case_model_high50),fill="orange",alpha=0.5)
     }
     if(hide_observed==FALSE){
       cases_graphs[[i]] <- cases_graphs[[i]]+geom_point(data=df,aes(x=years,y=case_obs))
@@ -490,10 +490,10 @@ case_match_graphs <- function(model_data=list(),obs_case_data=list(),input_data=
 
     deaths_graphs[[i]] <- ggplot(data=df) + theme_bw()+labs(title=substr(region,1,5))
     deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low95,
-                                                                     ymax=death_model_high95),fill="blue",alpha=0.5)
+                                                                     ymax=death_model_high95),fill="red",alpha=0.5)
     if(data_type=="multi"){
       deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_ribbon(data=df,aes(x=years,ymin=death_model_low50,
-                                                                       ymax=death_model_high50),fill="green",alpha=0.5)
+                                                                       ymax=death_model_high50),fill="orange",alpha=0.5)
     }
     if(hide_observed==FALSE){
       deaths_graphs[[i]] <- deaths_graphs[[i]]+geom_point(data=df,aes(x=years,y=death_obs))

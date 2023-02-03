@@ -1,6 +1,6 @@
 # Functions relating to processing of Markov Chain Monte Carlo output data
 #-------------------------------------------------------------------------------
-#' @title get_mcmc_data
+#' @title get_mcmc_params
 #'
 #' @description Identify columns in MCMC output data containing fitted parameter values and get parameter names
 #'
