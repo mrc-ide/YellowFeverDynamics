@@ -554,7 +554,7 @@ dust::pars_type<ReactiveModelOD> dust_pars<ReactiveModelOD>(cpp11::list user) {
   shared->initial_time = 0;
   shared->initial_VR_check = 0;
   shared->one = 1;
-  shared->Pmin = 0;
+  shared->Pmin = static_cast<real_type>(1e-99);
   shared->surv_delay = 60;
   shared->t_incubation = 5;
   shared->t_infectious = 5;
