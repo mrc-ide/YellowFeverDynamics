@@ -6,13 +6,6 @@
 #include <R_ext/Visibility.h>
 
 // BasicModelOD.cpp
-cpp11::sexp dust_BasicModelOD_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_BasicModelOD_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_BasicModelOD_capabilities());
-  END_CPP11
-}
-// BasicModelOD.cpp
 cpp11::sexp dust_BasicModelOD_gpu_info();
 extern "C" SEXP _YellowFeverDynamics_dust_BasicModelOD_gpu_info() {
   BEGIN_CPP11
@@ -24,6 +17,13 @@ SEXP dust_cpu_BasicModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sex
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_BasicModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// BasicModelOD.cpp
+cpp11::sexp dust_cpu_BasicModelOD_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_BasicModelOD_capabilities());
   END_CPP11
 }
 // BasicModelOD.cpp
@@ -142,18 +142,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_set_stochastic_schedu
   END_CPP11
 }
 // BasicModelOD.cpp
-void dust_cpu_BasicModelOD_ode_statistics(SEXP ptr);
+SEXP dust_cpu_BasicModelOD_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_BasicModelOD_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_BasicModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
-  END_CPP11
-}
-// FullModelOD.cpp
-cpp11::sexp dust_FullModelOD_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_FullModelOD_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_FullModelOD_capabilities());
+    return cpp11::as_sexp(dust_cpu_BasicModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // FullModelOD.cpp
@@ -168,6 +160,13 @@ SEXP dust_cpu_FullModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::sexp
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// FullModelOD.cpp
+cpp11::sexp dust_cpu_FullModelOD_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_FullModelOD_capabilities());
   END_CPP11
 }
 // FullModelOD.cpp
@@ -286,18 +285,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_set_stochastic_schedul
   END_CPP11
 }
 // FullModelOD.cpp
-void dust_cpu_FullModelOD_ode_statistics(SEXP ptr);
+SEXP dust_cpu_FullModelOD_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelOD_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_FullModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
-  END_CPP11
-}
-// FullModelODDelay.cpp
-cpp11::sexp dust_FullModelODDelay_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_FullModelODDelay_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_FullModelODDelay_capabilities());
+    return cpp11::as_sexp(dust_cpu_FullModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // FullModelODDelay.cpp
@@ -312,6 +303,13 @@ SEXP dust_cpu_FullModelODDelay_alloc(cpp11::list r_pars, bool pars_multi, cpp11:
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelODDelay_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// FullModelODDelay.cpp
+cpp11::sexp dust_cpu_FullModelODDelay_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_FullModelODDelay_capabilities());
   END_CPP11
 }
 // FullModelODDelay.cpp
@@ -430,18 +428,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_set_stochastic_sc
   END_CPP11
 }
 // FullModelODDelay.cpp
-void dust_cpu_FullModelODDelay_ode_statistics(SEXP ptr);
+SEXP dust_cpu_FullModelODDelay_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDelay_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_FullModelODDelay_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
-  END_CPP11
-}
-// FullModelODDeterministic.cpp
-cpp11::sexp dust_FullModelODDeterministic_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_FullModelODDeterministic_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_FullModelODDeterministic_capabilities());
+    return cpp11::as_sexp(dust_cpu_FullModelODDelay_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // FullModelODDeterministic.cpp
@@ -456,6 +446,13 @@ SEXP dust_cpu_FullModelODDeterministic_alloc(cpp11::list r_pars, bool pars_multi
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// FullModelODDeterministic.cpp
+cpp11::sexp dust_cpu_FullModelODDeterministic_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_capabilities());
   END_CPP11
 }
 // FullModelODDeterministic.cpp
@@ -574,18 +571,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_set_stoch
   END_CPP11
 }
 // FullModelODDeterministic.cpp
-void dust_cpu_FullModelODDeterministic_ode_statistics(SEXP ptr);
+SEXP dust_cpu_FullModelODDeterministic_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODDeterministic_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_FullModelODDeterministic_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
-  END_CPP11
-}
-// FullModelODVarFR.cpp
-cpp11::sexp dust_FullModelODVarFR_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_FullModelODVarFR_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_FullModelODVarFR_capabilities());
+    return cpp11::as_sexp(dust_cpu_FullModelODDeterministic_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // FullModelODVarFR.cpp
@@ -600,6 +589,13 @@ SEXP dust_cpu_FullModelODVarFR_alloc(cpp11::list r_pars, bool pars_multi, cpp11:
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_FullModelODVarFR_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// FullModelODVarFR.cpp
+cpp11::sexp dust_cpu_FullModelODVarFR_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_FullModelODVarFR_capabilities());
   END_CPP11
 }
 // FullModelODVarFR.cpp
@@ -718,18 +714,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_set_stochastic_sc
   END_CPP11
 }
 // FullModelODVarFR.cpp
-void dust_cpu_FullModelODVarFR_ode_statistics(SEXP ptr);
+SEXP dust_cpu_FullModelODVarFR_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_FullModelODVarFR_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_FullModelODVarFR_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
-  END_CPP11
-}
-// InfectionSplitModelOD.cpp
-cpp11::sexp dust_InfectionSplitModelOD_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_InfectionSplitModelOD_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_InfectionSplitModelOD_capabilities());
+    return cpp11::as_sexp(dust_cpu_FullModelODVarFR_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
@@ -744,6 +732,13 @@ SEXP dust_cpu_InfectionSplitModelOD_alloc(cpp11::list r_pars, bool pars_multi, c
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// InfectionSplitModelOD.cpp
+cpp11::sexp dust_cpu_InfectionSplitModelOD_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_capabilities());
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
@@ -862,18 +857,10 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_set_stochast
   END_CPP11
 }
 // InfectionSplitModelOD.cpp
-void dust_cpu_InfectionSplitModelOD_ode_statistics(SEXP ptr);
+SEXP dust_cpu_InfectionSplitModelOD_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_InfectionSplitModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
-  END_CPP11
-}
-// ReactiveModelOD.cpp
-cpp11::sexp dust_ReactiveModelOD_capabilities();
-extern "C" SEXP _YellowFeverDynamics_dust_ReactiveModelOD_capabilities() {
-  BEGIN_CPP11
-    return cpp11::as_sexp(dust_ReactiveModelOD_capabilities());
+    return cpp11::as_sexp(dust_cpu_InfectionSplitModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // ReactiveModelOD.cpp
@@ -888,6 +875,13 @@ SEXP dust_cpu_ReactiveModelOD_alloc(cpp11::list r_pars, bool pars_multi, cpp11::
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc(SEXP r_pars, SEXP pars_multi, SEXP r_time, SEXP r_n_particles, SEXP n_threads, SEXP r_seed, SEXP deterministic, SEXP gpu_config, SEXP ode_control) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_ReactiveModelOD_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<bool>>(pars_multi), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<int>>(n_threads), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<bool>>(deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(gpu_config), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ode_control)));
+  END_CPP11
+}
+// ReactiveModelOD.cpp
+cpp11::sexp dust_cpu_ReactiveModelOD_capabilities();
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_capabilities() {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_ReactiveModelOD_capabilities());
   END_CPP11
 }
 // ReactiveModelOD.cpp
@@ -1006,31 +1000,24 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_set_stochastic_sch
   END_CPP11
 }
 // ReactiveModelOD.cpp
-void dust_cpu_ReactiveModelOD_ode_statistics(SEXP ptr);
+SEXP dust_cpu_ReactiveModelOD_ode_statistics(SEXP ptr);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_ReactiveModelOD_ode_statistics(SEXP ptr) {
   BEGIN_CPP11
-    dust_cpu_ReactiveModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr));
-    return R_NilValue;
+    return cpp11::as_sexp(dust_cpu_ReactiveModelOD_ode_statistics(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
-    {"_YellowFeverDynamics_dust_BasicModelOD_capabilities",                            (DL_FUNC) &_YellowFeverDynamics_dust_BasicModelOD_capabilities,                            0},
     {"_YellowFeverDynamics_dust_BasicModelOD_gpu_info",                                (DL_FUNC) &_YellowFeverDynamics_dust_BasicModelOD_gpu_info,                                0},
-    {"_YellowFeverDynamics_dust_FullModelODDelay_capabilities",                        (DL_FUNC) &_YellowFeverDynamics_dust_FullModelODDelay_capabilities,                        0},
     {"_YellowFeverDynamics_dust_FullModelODDelay_gpu_info",                            (DL_FUNC) &_YellowFeverDynamics_dust_FullModelODDelay_gpu_info,                            0},
-    {"_YellowFeverDynamics_dust_FullModelODDeterministic_capabilities",                (DL_FUNC) &_YellowFeverDynamics_dust_FullModelODDeterministic_capabilities,                0},
     {"_YellowFeverDynamics_dust_FullModelODDeterministic_gpu_info",                    (DL_FUNC) &_YellowFeverDynamics_dust_FullModelODDeterministic_gpu_info,                    0},
-    {"_YellowFeverDynamics_dust_FullModelODVarFR_capabilities",                        (DL_FUNC) &_YellowFeverDynamics_dust_FullModelODVarFR_capabilities,                        0},
     {"_YellowFeverDynamics_dust_FullModelODVarFR_gpu_info",                            (DL_FUNC) &_YellowFeverDynamics_dust_FullModelODVarFR_gpu_info,                            0},
-    {"_YellowFeverDynamics_dust_FullModelOD_capabilities",                             (DL_FUNC) &_YellowFeverDynamics_dust_FullModelOD_capabilities,                             0},
     {"_YellowFeverDynamics_dust_FullModelOD_gpu_info",                                 (DL_FUNC) &_YellowFeverDynamics_dust_FullModelOD_gpu_info,                                 0},
-    {"_YellowFeverDynamics_dust_InfectionSplitModelOD_capabilities",                   (DL_FUNC) &_YellowFeverDynamics_dust_InfectionSplitModelOD_capabilities,                   0},
     {"_YellowFeverDynamics_dust_InfectionSplitModelOD_gpu_info",                       (DL_FUNC) &_YellowFeverDynamics_dust_InfectionSplitModelOD_gpu_info,                       0},
-    {"_YellowFeverDynamics_dust_ReactiveModelOD_capabilities",                         (DL_FUNC) &_YellowFeverDynamics_dust_ReactiveModelOD_capabilities,                         0},
     {"_YellowFeverDynamics_dust_ReactiveModelOD_gpu_info",                             (DL_FUNC) &_YellowFeverDynamics_dust_ReactiveModelOD_gpu_info,                             0},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_alloc",                               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_alloc,                               9},
+    {"_YellowFeverDynamics_dust_cpu_BasicModelOD_capabilities",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_capabilities,                        0},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_compare_data",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_compare_data,                        1},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_filter",                              (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_filter,                              5},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_n_state",                             (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_n_state,                             1},
@@ -1049,6 +1036,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_time",                                (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_time,                                1},
     {"_YellowFeverDynamics_dust_cpu_BasicModelOD_update_state",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_BasicModelOD_update_state,                        7},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc",                           (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_alloc,                           9},
+    {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_capabilities",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_capabilities,                    0},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_compare_data",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_compare_data,                    1},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_filter",                          (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_filter,                          5},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_n_state",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_n_state,                         1},
@@ -1067,6 +1055,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_time",                            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_time,                            1},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDelay_update_state",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDelay_update_state,                    7},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc",                   (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_alloc,                   9},
+    {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_capabilities",            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_capabilities,            0},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_compare_data",            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_compare_data,            1},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_filter",                  (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_filter,                  5},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_n_state",                 (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_n_state,                 1},
@@ -1085,6 +1074,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_time",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_time,                    1},
     {"_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_update_state",            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODDeterministic_update_state,            7},
     {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc",                           (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_alloc,                           9},
+    {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_capabilities",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_capabilities,                    0},
     {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_compare_data",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_compare_data,                    1},
     {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_filter",                          (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_filter,                          5},
     {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_n_state",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_n_state,                         1},
@@ -1103,6 +1093,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_time",                            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_time,                            1},
     {"_YellowFeverDynamics_dust_cpu_FullModelODVarFR_update_state",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelODVarFR_update_state,                    7},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_alloc",                                (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_alloc,                                9},
+    {"_YellowFeverDynamics_dust_cpu_FullModelOD_capabilities",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_capabilities,                         0},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_compare_data",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_compare_data,                         1},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_filter",                               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_filter,                               5},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_n_state",                              (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_n_state,                              1},
@@ -1121,6 +1112,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_time",                                 (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_time,                                 1},
     {"_YellowFeverDynamics_dust_cpu_FullModelOD_update_state",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_FullModelOD_update_state,                         7},
     {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc",                      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_alloc,                      9},
+    {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_capabilities",               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_capabilities,               0},
     {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_compare_data",               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_compare_data,               1},
     {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_filter",                     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_filter,                     5},
     {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_n_state",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_n_state,                    1},
@@ -1139,6 +1131,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_time",                       (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_time,                       1},
     {"_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_update_state",               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_InfectionSplitModelOD_update_state,               7},
     {"_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc",                            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_ReactiveModelOD_alloc,                            9},
+    {"_YellowFeverDynamics_dust_cpu_ReactiveModelOD_capabilities",                     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_ReactiveModelOD_capabilities,                     0},
     {"_YellowFeverDynamics_dust_cpu_ReactiveModelOD_compare_data",                     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_ReactiveModelOD_compare_data,                     1},
     {"_YellowFeverDynamics_dust_cpu_ReactiveModelOD_filter",                           (DL_FUNC) &_YellowFeverDynamics_dust_cpu_ReactiveModelOD_filter,                           5},
     {"_YellowFeverDynamics_dust_cpu_ReactiveModelOD_n_state",                          (DL_FUNC) &_YellowFeverDynamics_dust_cpu_ReactiveModelOD_n_state,                          1},

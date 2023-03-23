@@ -25,8 +25,8 @@ sero_calculate <- function(age_min=0,age_max=101,years=NULL,vc_factor=0,data=lis
   assert_that(is.null(years)==FALSE,msg="Years in which to calculate seroprevalence must be specified")
   assert_that(vc_factor>=0 && vc_factor<=1,msg="vc_factor must be between 0 and 1")
   assert_that(is.null(data$S)==FALSE) #TODO - Improve check on SEIRV data
-  assert_that(n_p>0 && is.integer(n_p),msg="Selected particle number must be a positive integer")
-  assert_that(n_p<=dim(data$S)[2],msg="Specified particle number is unavailable")
+  assert_that(n_p %in% c(1:dim(data$S)[2]),
+              msg="Selected particle number must be a positive integer equal to or less than number of particles")
 
   ages=c((age_min+1):age_max)
   sero_values=rep(0,length(years))

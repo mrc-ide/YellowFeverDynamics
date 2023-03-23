@@ -2,7 +2,7 @@
 % Please edit documentation in R/mcmc_results_process.R
 \name{get_mcmc_params}
 \alias{get_mcmc_params}
-\title{get_mcmc_data}
+\title{get_mcmc_params}
 \usage{
 get_mcmc_params(chain = list())
 }
