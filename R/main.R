@@ -10,19 +10,18 @@ t_infectious <- 5 #Time cases remain infectious
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @import assertthat
-#' @import coda
+#' @importFrom coda gelman.diag gelman.plot mcmc mcmc.list
 #' @import ggplot2
-#' @import graphics
+#' @importFrom graphics axis legend matplot par title
 #' @import grDevices
 #' @import maptree
-#' @import mvtnorm
-# @import qpdf
+#' @importFrom mvtnorm rmvnorm
 #' @import Rmisc
 #' @import sf
-#' @import stats
+#' @importFrom stats cov dexp dnbinom dnorm prop.test rbinom runif
 #' @import testthat
-#' @import tgp
-#' @import truncdist
+#' @importFrom tgp lhs
+#' @importFrom truncdist dtrunc
 #' @import utils
 #------------------------------------------------
 # unload DLL when package is unloaded

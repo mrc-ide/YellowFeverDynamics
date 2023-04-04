@@ -61,6 +61,11 @@ map_shapes_load <- function(regions=c(),shapefiles=c(),region_label_type=""){
 #' @param colour_scale Vector of colours with size greater than or equal to scale - used to convert scale to colours
 #' @param pixels_max Number of pixels to use for largest dimension of map
 #' @param text_size Size of text to appear in legend and titles
+#' @param lat_max Maximum latitude (set to NULL to default to maximum latitude from shape_data)
+#' @param lat_min Minimum latitude (set to NULL to default to minimum latitude from shape_data)
+#' @param long_max Minimum longitude (set to NULL to default to minimum longitude from shape_data)
+#' @param long_min Minimum longitude (set to NULL to default to minimum longitude from shape_data)
+#' @param display_axes TRUE/FALSE flag indicating whether to frame map and display latitude/longitude axes
 #' @param map_title Title to show above map
 #' @param legend_title Title to show above legend
 #' @param legend_position Position to place map legend (select from"bottomright", "bottom", "bottomleft", "left",
@@ -69,17 +74,20 @@ map_shapes_load <- function(regions=c(),shapefiles=c(),region_label_type=""){
 #'   notation) or "pc" (percentage)
 #' @param legend_dp Number of decimal places to use in scale values in legend (e.g. if legend_format is "f" and
 #'   legend_dp is 1, numbers will appear as e.g. 10.0)
+#' @param legend_columns Number of columns in which to display legend values
 #' @param output_file Name of file to which to output map; if set to NULL, map is displayed without being saved to file
 #' '
 #' @export
 #'
 create_map <- function(shape_data=list(),param_values=c(),scale=c(),colour_scale=c(),pixels_max=720,text_size=1,
-                       map_title="",legend_title="",legend_position="topleft",legend_format="f",legend_dp=1,
+                       lat_max=NULL,lat_min=NULL,long_max=NULL,long_min=NULL,display_axes=FALSE,map_title="",
+                       legend_title="",legend_position="topleft",legend_format="f",legend_dp=1,legend_columns=1,
                        output_file=NULL){
 
   assert_that(is.list(shape_data))
   assert_that(is.numeric(param_values))
   assert_that(is.numeric(scale))
+  assert_that(is.logical(display_axes))
   assert_that(legend_position %in% c("bottomright","bottom","bottomleft","left",
                                      "topleft","top","topright","right","center"))
   assert_that(legend_format %in% c("f","e","dp"))
@@ -87,8 +95,12 @@ create_map <- function(shape_data=list(),param_values=c(),scale=c(),colour_scale
   assert_that(n_regions==length(shape_data$shapes))
 
   #Set map dimensions
-  height_ll=shape_data$lat_max-shape_data$lat_min
-  width_ll=shape_data$long_max-shape_data$long_min
+  if(is.null(lat_max)){lat_max=shape_data$lat_max}
+  if(is.null(lat_min)){lat_min=shape_data$lat_min}
+  if(is.null(long_max)){long_max=shape_data$long_max}
+  if(is.null(long_min)){long_min=shape_data$long_min}
+  height_ll=lat_max-lat_min
+  width_ll=long_max-long_min
   pixel_scale=pixels_max/max(height_ll,width_ll)
   width_px=width_ll*pixel_scale
   height_px=height_ll*pixel_scale
@@ -129,11 +141,11 @@ create_map <- function(shape_data=list(),param_values=c(),scale=c(),colour_scale
   if(is.null(output_file)==FALSE){png(filename=output_file,width=width_px,height=height_px)}
   {
     matplot(x=c(shape_data$long_min,shape_data$long_max),y=c(shape_data$lat_min,shape_data$lat_max),
-            col=0,xlab="",ylab="",axes=FALSE,frame.plot=FALSE)
+            col=0,xlab="",ylab="",axes=display_axes,frame.plot=display_axes)
     for(n_region in 1:n_regions){
       plot(st_geometry(shape_data$shapes[[n_region]]),col=colour_scale[scale_values[n_region]],border="grey",add=TRUE)
     }
-    legend(legend_position,legend=legend_labels,fill=colour_scale,cex=text_size,title=legend_title)
+    legend(legend_position,legend=legend_labels,fill=colour_scale,cex=text_size,title=legend_title,ncol=legend_columns)
     title(main=map_title,cex=text_size)
   }
   if(is.null(output_file)==FALSE){dev.off()}

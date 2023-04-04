@@ -154,6 +154,15 @@ get_mcmc_FOI_R0_data <- function(input_frame=list(),type="FOI+R0",enviro_data=li
     if(type=="FOI+R0"){output_frame$R0=as.vector(t(as.matrix(input_frame[,columns[c(1:n_regions)+n_regions]])))}
   }
 
+  if("m_FOI_Brazil" %in% colnames(input_frame)){
+    for(i in 1:n_regions){
+      if(substr(regions[i],1,3)=="BRA"){
+        lines=i+(n_regions*c(0:(n_lines-1)))
+        output_frame$FOI[lines]=output_frame$FOI[lines]*input_frame$m_FOI_Brazil
+      }
+    }
+  }
+
   return(output_frame)
 }
 #-------------------------------------------------------------------------------
