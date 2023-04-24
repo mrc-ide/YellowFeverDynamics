@@ -19,7 +19,6 @@ Imports:
     ggplot2,
     graphics,
     grDevices,
-    maptree,
     mvtnorm,
     Rmisc,
     sf,
