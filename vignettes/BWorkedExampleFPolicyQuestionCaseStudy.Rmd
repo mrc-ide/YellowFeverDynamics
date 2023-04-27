@@ -27,6 +27,7 @@ The code below loads and plots maps of the environmental covariate values for th
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
+library(YFDAux) #Auxiliary functions for plotting
 enviro_data <- read.csv(file = paste(path.package("YellowFeverDynamics"), 
                                      "/exdata/enviro_data_example.csv", sep = ""),
                         header = TRUE) # Environmental data

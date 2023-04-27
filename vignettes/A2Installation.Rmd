@@ -31,3 +31,5 @@ To check that the package loads, run:
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
 ```
+
+TODO - Installation of YFDAux

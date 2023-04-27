@@ -15,20 +15,16 @@ LinkingTo:
     dust
 Imports:
     assertthat,
-    coda,
     dde,
-    ggplot2,
     mvtnorm,
     Rmisc,
-    sf,
+    stats,
     tgp,
-    truncdist
+    truncdist,
+    utils
 Suggests: 
-    graphics,
-    grDevices,
     knitr,
     rmarkdown,
-    stats
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,

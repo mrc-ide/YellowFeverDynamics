@@ -418,7 +418,7 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
   xlabels=param_names
   for(i in 1:n_params){xlabels[i]=substr(xlabels[i],1,15)}
   ylabels=10^c(-8,-6,-4,-3,-2,-1,0,1)
-  par(mar=c(6,2,1,1))
+  #par(mar=c(6,2,1,1))
   ylim=c(min(log_params_min),max(log_params_max))
 
   for(iteration in 1:n_iterations){
@@ -449,14 +449,14 @@ mcmc_prelim_fit <- function(n_iterations=1,n_param_sets=1,n_bounds=1,
     }
     names(log_params_min_new)=names(log_params_max_new)=param_names
 
-    matplot(x=c(1:n_params),y=log(t(results[c(1:n_bounds),c(1:n_params)+1])),type="p",pch=16,col=1,
-            xaxt="n",yaxt="n",xlab="",ylab="",ylim=ylim)
-    axis(side=1,at=c(1:n_params),labels=xlabels,las=2,cex.axis=0.7)
-    axis(side=2,at=log(ylabels),labels=ylabels)
-    matplot(x=c(1:n_params),y=log_params_min,type="l",col=1,lty=2,add=TRUE)
-    matplot(x=c(1:n_params),y=log_params_max,type="l",col=1,lty=2,add=TRUE)
-    matplot(x=c(1:n_params),y=log_params_min_new,type="l",col=2,add=TRUE)
-    matplot(x=c(1:n_params),y=log_params_max_new,type="l",col=2,add=TRUE)
+    # matplot(x=c(1:n_params),y=log(t(results[c(1:n_bounds),c(1:n_params)+1])),type="p",pch=16,col=1,
+    #         xaxt="n",yaxt="n",xlab="",ylab="",ylim=ylim)
+    # axis(side=1,at=c(1:n_params),labels=xlabels,las=2,cex.axis=0.7)
+    # axis(side=2,at=log(ylabels),labels=ylabels)
+    # matplot(x=c(1:n_params),y=log_params_min,type="l",col=1,lty=2,add=TRUE)
+    # matplot(x=c(1:n_params),y=log_params_max,type="l",col=1,lty=2,add=TRUE)
+    # matplot(x=c(1:n_params),y=log_params_min_new,type="l",col=2,add=TRUE)
+    # matplot(x=c(1:n_params),y=log_params_max_new,type="l",col=2,add=TRUE)
 
     log_params_min=log_params_min_new
     log_params_max=log_params_max_new
