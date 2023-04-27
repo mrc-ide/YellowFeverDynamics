@@ -17,22 +17,20 @@ Imports:
     assertthat,
     coda,
     ggplot2,
-    graphics,
-    grDevices,
     mvtnorm,
     Rmisc,
     sf,
-    stats,
-    testthat,
     tgp,
-    truncdist,
-    utils
+    truncdist
+Suggests: 
+    graphics,
+    grDevices,
+    knitr,
+    rmarkdown,
+    stats
 SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
     mrc-ide/odin,
     mrc-ide/odin.dust
-Suggests: 
-    knitr,
-    rmarkdown
 VignetteBuilder: knitr
