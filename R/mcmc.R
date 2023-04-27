@@ -329,8 +329,10 @@ single_like_calc <- function(log_params_prop=c(),input_data=list(),obs_sero_data
       }
       cases_like_values=dnbinom(x=obs_case_data$cases,mu=model_case_values,
                                 size=rep(1,length(obs_case_data$cases)),log=TRUE)
-      deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_death_values,
-                                 size=rep(1,length(obs_case_data$deaths)),log=TRUE)
+      if(is.null(case_data$deaths)==FALSE){
+        deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_death_values,
+                                   size=rep(1,length(obs_case_data$deaths)),log=TRUE)
+      }
     }
     #Likelihood of observing annual outbreak Y/N data
     if(is.null(obs_outbreak_data)==FALSE){
@@ -733,8 +735,10 @@ calc_like0 <- function(obs_sero_data=NULL,obs_case_data=NULL,obs_outbreak_data=N
     }
     cases_like_values=dnbinom(x=obs_case_data$cases,mu=model_case_values,
                               size=rep(1,length(obs_case_data$cases)),log=TRUE)
-    deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_death_values,
-                               size=rep(1,length(obs_case_data$deaths)),log=TRUE)
+    if(is.null(case_data$deaths)==FALSE){
+      deaths_like_values=dnbinom(x=obs_case_data$deaths,mu=model_death_values,
+                                 size=rep(1,length(obs_case_data$deaths)),log=TRUE)
+    }
   }
   #Likelihood of observing annual outbreak Y/N data
   if(is.null(obs_outbreak_data)==FALSE){
