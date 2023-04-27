@@ -11,6 +11,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @importFrom assertthat assert_that
 #' @importFrom coda gelman.diag gelman.plot mcmc mcmc.list
+#' @import dde
 #' @importFrom ggplot2 aes element_blank element_text geom_boxplot geom_errorbar geom_line geom_point geom_ribbon geom_violin ggplot labs
 #' @importFrom ggplot2 scale_x_continuous scale_x_discrete scale_y_continuous theme theme_bw
 #' @importFrom graphics axis legend matplot par title

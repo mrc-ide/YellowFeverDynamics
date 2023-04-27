@@ -16,6 +16,7 @@ LinkingTo:
 Imports:
     assertthat,
     coda,
+    dde,
     ggplot2,
     mvtnorm,
     Rmisc,
