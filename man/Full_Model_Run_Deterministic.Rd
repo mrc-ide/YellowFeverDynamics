@@ -11,8 +11,6 @@ Full_Model_Run_Deterministic(
   pop_data = list(),
   year0 = 1940,
   mode_start = 0,
-  n_particles = 1,
-  n_threads = 1,
   year_end = 2000,
   year_data_begin = 1999,
   vaccine_efficacy = 1,
@@ -35,10 +33,6 @@ Full_Model_Run_Deterministic(
 If mode_start=0, only vaccinated individuals
 If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
 If mode_start=2, use SEIRVC input in list from previous run(s)}
-
-\item{n_particles}{number of particles to use}
-
-\item{n_threads}{number of threads to use}
 
 \item{year_end}{year to run up to}
 

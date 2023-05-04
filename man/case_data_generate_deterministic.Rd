@@ -11,7 +11,6 @@ case_data_generate_deterministic(
   pop_data = list(),
   year0 = 1940,
   mode_start = 0,
-  n_reps = 1,
   year_end = 2000,
   year_data_begin = 1999,
   vaccine_efficacy = vaccine_efficacy,
@@ -34,8 +33,6 @@ case_data_generate_deterministic(
 If mode_start=0, only vaccinated individuals
 If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
 If mode_start=2, use SEIRV input in list from previous run(s)}
-
-\item{n_reps}{Number of runs}
 
 \item{year_end}{year to run up to}
 
