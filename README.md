@@ -1,7 +1,7 @@
 # YellowFeverDynamics
- A package for running a dynamic, stochastic SEIRV model of yellow fever, creating input data and processing output data.
+A package for running dynamic SEIRV models of yellow fever, auxiliary to the YEP (Yellow Fever Epidemic Prevention) package (https://github.com/mrc-ide/YEP).
 
-The package can also be used to fit values of epidemiological parameters of the model to different types of data on yellow fever burden in one or more regions.
+(Note: both packages are currently being overhauled.)
 
 Website: https://mrc-ide.github.io/YellowFeverDynamics/
 
