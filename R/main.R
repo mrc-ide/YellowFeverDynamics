@@ -25,6 +25,277 @@ t_infectious <- 5 #Time cases remain infectious
   library.dynam.unload("YellowFeverDynamics", libpath)
 }
 #-------------------------------------------------------------------------------
+#' @title Model_Run_Delay
+#'
+#' @description Run SEIRV model version using time delay instead of rate to move individuals from E-I and I-R
+#'
+#' @details Accepts epidemiological + population parameters and model settings; runs SEIRV delay model
+#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+#' values, infection numbers and total force of infection values.
+#'
+#' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
+#' @param R0 Basic reproduction number for urban spread of infection
+#' @param vacc_data Vaccination coverage in each age group by year
+#' @param pop_data Population in each age group by year
+#' @param years_data Incremental vector of years denoting years for which to save data
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param year0 First year in population/vaccination data
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param n_particles number of particles to use
+#' @param n_threads number of threads to use
+#' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' '
+#' @export
+#'
+Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
+                      start_SEIRV = list(), year0 = 1940, mode_start = 0,
+                      vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
+
+  #TODO Add assert_that functions
+
+  n_nv=3 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
+  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
+  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
+  t_pts_out=step_end-step_begin+1 #Number of time points in final output data
+
+  x <- SEIRVModelDelay$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
+                                                 vaccine_efficacy,start_SEIRV,dt),
+                            time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
+
+  x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
+  for(step in step_begin:step_end){
+    x_res[,,step-step_begin+1] <- x$run(step)
+  }
+  if(step_begin==0){x_res[2,,1]=rep(year0,n_particles)}
+
+  dimensions=c(N_age,n_particles,t_pts_out)
+  output_data=list(day=x_res[1,1,],year=x_res[2,1,])
+  output_data$FOI_total=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out))
+  output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
+  output_data$E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
+  output_data$I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dimensions)
+  output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dimensions)
+  output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dimensions)
+  output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dimensions)
+
+  return(output_data)
+}
+#-------------------------------------------------------------------------------
+#' @title Model_Run_Delay
+#'
+#' @description Runs reactive version of SEIRV model
+#'
+#' @details Accepts epidemiological + population parameters and model settings; runs SEIRV model
+#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+#' values, infection numbers and total force of infection values. Alternate version incorporating case reporting
+#' and reactive surveillance/control measures based on case numbers
+#'
+#' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
+#' @param R0 Basic reproduction number for urban spread of infection
+#' @param vacc_data Vaccination coverage in each age group by year
+#' @param pop_data Population in each age group by year
+#' @param years_data Incremental vector of years denoting years for which to save data
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param year0 First year in population/vaccination data
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param n_particles number of particles to use
+#' @param n_threads number of threads to use
+#' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' @param p_rep Probabilities of an infection being reported as a case under different conditions (TBA)
+#' @param outbreak_threshold1 Threshold total no. reported cases to trigger outbreak flag 1
+#' @param cluster_threshold1 Threshold current infectious fraction to trigger cluster flag 1
+#' '
+#' @export
+#'
+Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
+                            start_SEIRV = list(), year0 = 1940, mode_start = 0,vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1,
+                            n_threads = 1, deterministic = FALSE, p_rep = 1.0, outbreak_threshold1 = 1, cluster_threshold1 = 1.0) {
+
+  #TODO Add assert_that functions
+
+  n_nv=11 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  n_data_pts=(7*N_age)+n_nv #Number of data values per time point in output
+  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
+  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
+  t_pts_out=step_end-step_begin+1 #Number of time points in final output data
+
+  pars1=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
+                       vaccine_efficacy,start_SEIRV,dt)
+  pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_annual=pars1$vacc_rates,
+             Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
+             dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
+             dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,
+             p_rep=p_rep,outbreak_threshold1=outbreak_threshold1,cluster_threshold1=cluster_threshold1)
+
+  x <- SEIRVModelReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
+
+  x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
+  for(step in step_begin:step_end){
+    x_res[,,step-step_begin+1] <- x$run(step)
+  }
+  if(step_begin==0){x_res[2,,1]=rep(year0,n_particles)}
+
+  dims1=c(n_particles,t_pts_out)
+  dims2=c(N_age,n_particles,t_pts_out)
+  output_data=list(day=x_res[1,1,],year=x_res[2,1,],FOI_total=array(x_res[3,,]/dt,dim=dims1),C_rep_total=array(x_res[4,,],dim=dims1),
+                   flag1a=array(x_res[5,,],dim=dims1),flag1b=array(x_res[6,,],dim=dims1),
+                   flag2a=array(x_res[7,,],dim=dims1),flag2b=array(x_res[8,,],dim=dims1),
+                   flag3=array(x_res[9,,],dim=dims1),report_rate=array(x_res[10,,],dim=dims1),
+                   VR_check=array(x_res[11,,],dim=dims1))
+  output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dims2)
+  output_data$E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dims2)
+  output_data$I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dims2)
+  output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dims2)
+  output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dims2)
+  output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dims2)
+  output_data$C_rep=array(x_res[c(((6*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dims2)
+
+  return(output_data)
+}
+#-------------------------------------------------------------------------------
+#' @title Model_Run_Split
+#'
+#' @description Run full version of SEIRV model with daily infection output split into sylvatic and urban
+#'
+#' @details Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+#' values, infection numbers and total force of infection values. Daily infection output split into sylvatic and urban.
+#'
+#' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
+#' @param R0 Basic reproduction number for urban spread of infection
+#' @param vacc_data Vaccination coverage in each age group by year
+#' @param pop_data Population in each age group by year
+#' @param years_data Incremental vector of years denoting years for which to save data
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param year0 First year in population/vaccination data
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param n_particles number of particles to use
+#' @param n_threads number of threads to use
+#' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' '
+#' @export
+#'
+Model_Run_Split <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
+                            start_SEIRV = list(), year0 = 1940, mode_start = 0,
+                            vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
+
+  #TODO Add assert_that functions
+
+  n_nv=4 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  n_data_pts=(9*N_age)+n_nv #Number of data values per time point in output
+  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
+  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
+  t_pts_out=step_end-step_begin+1 #Number of time points in final output data
+
+  x <- SEIRVModelSplitInfection$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
+                                                 vaccine_efficacy,start_SEIRV,dt),
+                            time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
+
+  x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
+  for(step in step_begin:step_end){
+    x_res[,,step-step_begin+1] <- x$run(step)
+  }
+  if(step_begin==0){x_res[2,,1]=rep(year0,n_particles)}
+
+  dimensions=c(N_age,n_particles,t_pts_out)
+  output_data=list(day=x_res[1,1,],year=x_res[2,1,],FOI_sylvatic=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out)),
+                   FOI_urban=array(x_res[4,,]/dt,dim=c(n_particles,t_pts_out)))
+  output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
+  output_data$E_sylvatic=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
+  output_data$E_urban = array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dimensions)
+  output_data$I_sylvatic=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dimensions)
+  output_data$I_urban = array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dimensions)
+  output_data$R=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dimensions)
+  output_data$V=array(x_res[c(((6*N_age)+1+n_nv):((7*N_age)+n_nv)),,],dim=dimensions)
+  output_data$C_sylvatic=array(x_res[c(((7*N_age)+1+n_nv):((8*N_age)+n_nv)),,],dim=dimensions)
+  output_data$C_urban = array(x_res[c(((8*N_age)+1+n_nv):((9*N_age)+n_nv)),,],dim=dimensions)
+
+  return(output_data)
+}
+
+#-------------------------------------------------------------------------------
+#' @title Model_Run_VarFR
+#'
+#' @description Run alternate version of SEIRV model with annually varying FOI_spillover and R0
+#'
+#' @details Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+#' values, infection numbers and total force of infection values.
+#'
+#' @param FOI_spillover Vector of annual values of force of infection due to spillover from sylvatic reservoir
+#' @param R0 Vector of annual values of basic reproduction number for urban spread of infection
+#' @param vacc_data Vaccination coverage in each age group by year
+#' @param pop_data Population in each age group by year
+#' @param years_data Incremental vector of years denoting years for which to save data
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param year0 First year in population/vaccination data
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param n_particles number of particles to use
+#' @param n_threads number of threads to use
+#' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' '
+#' @export
+#'
+Model_Run_VarFR <- function(FOI_spillover = c(),R0 = c(),vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
+                            start_SEIRV = list(), year0 = 1940, mode_start = 0,
+                            vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
+
+  #TODO Add assert_that functions
+
+  n_nv=3 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
+  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
+  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
+  t_pts_out=step_end-step_begin+1 #Number of time points in final output data
+
+  x <- SEIRVModelVarFR$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
+                                                vaccine_efficacy,start_SEIRV,dt),
+                           time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
+
+  x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
+  for(step in step_begin:step_end){
+    x_res[,,step-step_begin+1] <- x$run(step)
+  }
+  if(step_begin==0){x_res[2,,1]=rep(year0,n_particles)}
+
+  dimensions=c(N_age,n_particles,t_pts_out)
+  output_data=list(day=x_res[1,1,],year=x_res[2,1,])
+  output_data$FOI_total=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out))
+  output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
+  output_data$E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
+  output_data$I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dimensions)
+  output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dimensions)
+  output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dimensions)
+  output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dimensions)
+
+  return(output_data)
+}
+#-------------------------------------------------------------------------------
 #' @title total_burden_estimate
 #'
 #' @description Function to calculate annual yellow fever burden across multiple regions based on derived parameters
@@ -109,7 +380,7 @@ total_burden_estimate <- function(type="FOI+R0 enviro",param_dist=list(),input_d
 
     for(n_region in 1:n_regions){
 
-      if(mode_start==2){
+      if(mode_start==2){ #TODO - Edit
         start_SEIRV_set=list(S=start_SEIRV$S[,n_region,n_param_set],
                          E=start_SEIRV$E[,n_region,n_param_set],I=start_SEIRV$I[,n_region,n_param_set],
                          R=start_SEIRV$R[,n_region,n_param_set],V=start_SEIRV$V[,n_region,n_param_set])

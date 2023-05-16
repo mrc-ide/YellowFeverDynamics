@@ -21,7 +21,8 @@ Imports:
     stats,
     tgp,
     truncdist,
-    utils
+    utils,
+    YEP
 Suggests: 
     knitr,
     rmarkdown,
@@ -30,4 +31,5 @@ Remotes:
     mrc-ide/dust,
     mrc-ide/odin,
     mrc-ide/odin.dust
+    mrc-ide/YEP
 VignetteBuilder: knitr
