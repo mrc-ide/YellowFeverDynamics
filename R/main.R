@@ -60,7 +60,10 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
-  n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
+  nd1 <- (t_incubation+t_latent)/dt
+  nd2 <- t_infectious/dt
+  nd=nd1+nd2
+  n_data_pts=((6+nd1+nd2)*N_age)+n_nv #Number of data values per time point in output
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
@@ -80,15 +83,17 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
   output_data$FOI_total=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out))
   output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
   output_data$E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
-  output_data$I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dimensions)
-  output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dimensions)
-  output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dimensions)
-  output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dimensions)
+  output_data$E_delay=array(x_res[c(((2*N_age)+1+n_nv):(((2+nd1)*N_age)+n_nv)),,],dim=c(N_age,nd1,n_particles,t_pts_out))
+  output_data$I=array(x_res[c((((2+nd1)*N_age)+1+n_nv):(((3+nd1)*N_age)+n_nv)),,],dim=dimensions)
+  output_data$I_delay=array(x_res[c((((2+nd1)*N_age)+1+n_nv):(((2+nd)*N_age)+n_nv)),,],dim=c(N_age,nd2,n_particles,t_pts_out))
+  output_data$R=array(x_res[c((((3+nd)*N_age)+1+n_nv):(((4+nd)*N_age)+n_nv)),,],dim=dimensions)
+  output_data$V=array(x_res[c((((4+nd)*N_age)+1+n_nv):(((5+nd)*N_age)+n_nv)),,],dim=dimensions)
+  output_data$C=array(x_res[c((((5+nd)*N_age)+1+n_nv):(((6+nd)*N_age)+n_nv)),,],dim=dimensions)
 
   return(output_data)
 }
 #-------------------------------------------------------------------------------
-#' @title Model_Run_Delay
+#' @title Model_Run_Reactive
 #'
 #' @description Runs reactive version of SEIRV model
 #'
@@ -99,7 +104,8 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
-#' @param vacc_data Vaccination coverage in each age group by year
+#' @param vacc_data1 [TBA]
+#' @param vacc_data2 [TBA]
 #' @param pop_data Population in each age group by year
 #' @param years_data Incremental vector of years denoting years for which to save data
 #' @param start_SEIRV SEIRV data from end of a previous run to use as input
@@ -119,9 +125,10 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #' '
 #' @export
 #'
-Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
-                            start_SEIRV = list(), year0 = 1940, mode_start = 0,vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1,
-                            n_threads = 1, deterministic = FALSE, p_rep = 1.0, outbreak_threshold1 = 1, cluster_threshold1 = 1.0) {
+Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data1 = list(), vacc_data2 = list(),pop_data = list(),
+                               years_data = c(1940:1941), start_SEIRV = list(), year0 = 1940, mode_start = 0,vaccine_efficacy = 1.0,
+                               dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE, p_rep = 1.0, outbreak_threshold1 = 1,
+                               cluster_threshold1 = 1.0) {
 
   #TODO Add assert_that functions
 
@@ -132,9 +139,22 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),p
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
-  pars1=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
+  pars1=parameter_setup(FOI_spillover,R0,vacc_data1,pop_data,year0,years_data,mode_start,
                        vaccine_efficacy,start_SEIRV,dt)
-  pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_annual=pars1$vacc_rates,
+  n_years=length(pop_data[,1])-1
+  inv_365=1.0/365.0
+  vacc_rate_annual2=array(NA,dim=c(N_age,n_years,2))
+  vacc_rate_annual2[,,1]=pars1$vacc_rate_annual
+  for(n_year in 1:n_years){
+    for(i in 1:N_age){
+      if(i==1){
+        vacc_rate_annual2[i,n_year,2]=vacc_data2[n_year+1,i]*inv_365
+      } else {
+        vacc_rate_annual2[i,n_year,2]=max(0.0,vacc_data2[n_year+1,i]-vacc_data2[n_year,i-1])*inv_365
+      }
+    }
+  }
+  pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_annual=vacc_rate_annual2,
              Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,

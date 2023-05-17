@@ -2,12 +2,13 @@
 % Please edit documentation in R/main.R
 \name{Model_Run_Reactive}
 \alias{Model_Run_Reactive}
-\title{Model_Run_Delay}
+\title{Model_Run_Reactive}
 \usage{
 Model_Run_Reactive(
   FOI_spillover = 0,
   R0 = 1,
-  vacc_data = list(),
+  vacc_data1 = list(),
+  vacc_data2 = list(),
   pop_data = list(),
   years_data = c(1940:1941),
   start_SEIRV = list(),
@@ -28,7 +29,9 @@ Model_Run_Reactive(
 
 \item{R0}{Basic reproduction number for urban spread of infection}
 
-\item{vacc_data}{Vaccination coverage in each age group by year}
+\item{vacc_data1}{[TBA]}
+
+\item{vacc_data2}{[TBA]}
 
 \item{pop_data}{Population in each age group by year}
 

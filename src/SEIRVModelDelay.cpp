@@ -183,9 +183,9 @@ public:
     std::vector<real_type> initial_V;
     real_type initial_year;
     int N_age;
-    int n_delay_steps1;
-    int n_delay_steps2;
     int n_years;
+    int np_E_delay;
+    int np_I_delay;
     int offset_variable_C;
     int offset_variable_E;
     int offset_variable_E_delay;
@@ -239,6 +239,7 @@ public:
     return state;
   }
   void update(size_t step, const real_type * state, rng_state_type& rng_state, real_type * state_next) {
+    const real_type time = state[0];
     const real_type * S = state + 3;
     const real_type * E = state + shared->offset_variable_E;
     const real_type * E_delay = state + shared->offset_variable_E_delay;
@@ -246,8 +247,8 @@ public:
     const real_type * I_delay = state + shared->offset_variable_I_delay;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
-    state_next[0] = (step + 1) * shared->dt;
-    real_type year_i = dust::math::floor((step * shared->dt) / (real_type) 365) + 1;
+    state_next[0] = time + shared->dt;
+    real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
     state_next[1] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.I_new[i - 1] = E_delay[static_cast<int>(i + shared->di1) - 1];
@@ -276,11 +277,11 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_I + i - 1] = dust::math::max(shared->Pmin, I[i - 1] + internal.I_new[i - 1] - internal.R_new[i - 1]);
     }
+    for (int i = (shared->N_age + 1); i <= shared->np_I_delay; ++i) {
+      state_next[shared->offset_variable_I_delay + i - 1] = I_delay[i - shared->N_age - 1];
+    }
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_I_delay + i - 1] = internal.I_new[i - 1];
-    }
-    for (int i = (shared->N_age + 1); i <= shared->n_delay_steps2; ++i) {
-      state_next[shared->offset_variable_I_delay + i - 1] = I_delay[i - shared->N_age - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
@@ -311,11 +312,11 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_E + i - 1] = dust::math::max(shared->Pmin, E[i - 1] + internal.E_new[i - 1] - internal.I_new[i - 1]);
     }
+    for (int i = (shared->N_age + 1); i <= shared->np_E_delay; ++i) {
+      state_next[shared->offset_variable_E_delay + i - 1] = E_delay[i - shared->N_age - 1];
+    }
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_E_delay + i - 1] = internal.E_new[i - 1];
-    }
-    for (int i = (shared->N_age + 1); i <= shared->n_delay_steps1; ++i) {
-      state_next[shared->offset_variable_E_delay + i - 1] = E_delay[i - shared->N_age - 1];
     }
     {
        int i = 1;
@@ -614,8 +615,8 @@ dust::pars_type<SEIRVModelDelay> dust_pars<SEIRVModelDelay>(cpp11::list user) {
   shared->dim_vacc_rate_annual_2 = shared->n_years;
   shared->initial_FOI_total = shared->FOI_spillover;
   shared->initial_year = shared->year0 - 1;
-  shared->n_delay_steps1 = (shared->t_incubation + shared->t_latent) / (real_type) shared->dt;
-  shared->n_delay_steps2 = shared->t_infectious / (real_type) shared->dt;
+  shared->np_E_delay = ((shared->t_incubation + shared->t_latent) / (real_type) shared->dt) * shared->N_age;
+  shared->np_I_delay = (shared->t_infectious / (real_type) shared->dt) * shared->N_age;
   internal.dP1 = std::vector<real_type>(shared->dim_dP1);
   internal.dP2 = std::vector<real_type>(shared->dim_dP2);
   internal.E_new = std::vector<real_type>(shared->dim_E_new);
@@ -633,12 +634,12 @@ dust::pars_type<SEIRVModelDelay> dust_pars<SEIRVModelDelay>(cpp11::list user) {
   internal.R_new = std::vector<real_type>(shared->dim_R_new);
   internal.vacc_rate = std::vector<real_type>(shared->dim_vacc_rate);
   shared->Cas0 = user_get_array_fixed<real_type, 1>(user, "Cas0", shared->Cas0, {shared->dim_Cas0}, NA_REAL, NA_REAL);
-  shared->di1 = shared->n_delay_steps1 - shared->N_age;
-  shared->di2 = shared->n_delay_steps2 - shared->N_age;
+  shared->di1 = shared->np_E_delay - shared->N_age;
+  shared->di2 = shared->np_I_delay - shared->N_age;
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
-  shared->dim_E_delay = shared->n_delay_steps1;
-  shared->dim_I_delay = shared->n_delay_steps2;
+  shared->dim_E_delay = shared->np_E_delay;
+  shared->dim_I_delay = shared->np_I_delay;
   shared->dim_vacc_rate_annual = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2;
   shared->Exp0 = user_get_array_fixed<real_type, 1>(user, "Exp0", shared->Exp0, {shared->dim_Exp0}, NA_REAL, NA_REAL);
   shared->Inf0 = user_get_array_fixed<real_type, 1>(user, "Inf0", shared->Inf0, {shared->dim_Inf0}, NA_REAL, NA_REAL);
@@ -657,13 +658,13 @@ dust::pars_type<SEIRVModelDelay> dust_pars<SEIRVModelDelay>(cpp11::list user) {
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_E[i - 1] = shared->Exp0[i - 1];
   }
-  for (int i = 1; i <= shared->n_delay_steps1; ++i) {
+  for (int i = 1; i <= shared->np_E_delay; ++i) {
     shared->initial_E_delay[i - 1] = 0;
   }
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_I[i - 1] = shared->Inf0[i - 1];
   }
-  for (int i = 1; i <= shared->n_delay_steps2; ++i) {
+  for (int i = 1; i <= shared->np_I_delay; ++i) {
     shared->initial_I_delay[i - 1] = 0;
   }
   for (int i = 1; i <= shared->N_age; ++i) {
