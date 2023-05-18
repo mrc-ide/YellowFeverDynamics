@@ -8,7 +8,7 @@ dt <- user() #Time increment in days
 initial(time) <- 0 #Initial value of time in days
 update(time) <- (step + 1) * dt
 
-#Parameters
+#Parameters---------------------------------------------------------------------
 t_incubation <- user() #TBA
 t_latent <- user() #TBA
 t_infectious <- user() #TBA
@@ -18,7 +18,10 @@ N_age <- user() #Number of age categories
 vacc_rate_annual[,] <- user() #Daily rate of vaccination by age and year
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
 
-#Initial conditions
+
+
+
+#Initial conditions-------------------------------------------------------------
 year0 <- user()  #Starting year
 Sus0[] <- user() #Susceptible population by age group at start
 Exp0[] <- user() #Exposed population by age group at start
@@ -30,14 +33,18 @@ dP1_all[,] <- user() #Daily increase in number of people by age group (people ar
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
 
+
+
 Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 rate1 <- dt/(t_incubation+t_latent)
 rate2 <- dt/t_infectious
+
+
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sylvatic <- min(FOI_max,FOI_spillover*dt)
 FOI_urban <- min(FOI_max,beta*((sum(I_sylvatic)+sum(I_urban))/P_tot))
-year_i <- floor((step*dt)/365) + 1 #Number of years since start, as integer
+year_i <- floor(((step+1)*dt)/365) + 1 #Number of years since start, as integer
 dP1[1:N_age] <- dP1_all[i, as.integer(year_i)]*dt #Increase in population by age group over 1 time increment
 dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age group over 1 time increment
 
@@ -49,12 +56,19 @@ R_new_sylvatic[1:N_age] <- I_sylvatic[i]*rate2     #New recovered individuals by
 R_new_urban[1:N_age] <- I_urban[i]*rate2     #New recovered individuals by age group (urban)
 P_nV[1:N_age] <- S[i] + R[i] #Total vaccine-targetable population by age group
 inv_P_nV[1:N_age] <- 1.0/P_nV[i]
-P[1:N_age] <- S[i] + E_sylvatic[i] + E_urban[i] + I_sylvatic[i] + I_urban[i] + R[i] + V[i]#Total population by age group
-P_tot <- sum(P) #Total overall population
+P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
+P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
 vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
 
-#Updates to output values at each time increment
+
+
+
+
+
+
+
+#Updates to output values at each time increment--------------------------------
 update(year) <- year_i + year0 - 1
 update(FOI_sylv) <- FOI_sylvatic
 update(FOI_urb) <- FOI_urban
@@ -71,7 +85,12 @@ update(V[2:N_age]) <- max(Pmin,V[i] + vacc_rate[i] + (dP1[i]*V[i-1]*inv_P[i-1]) 
 update(C_sylvatic[1:N_age]) <- I_new_sylvatic[i]
 update(C_urban[1:N_age]) <- I_new_urban[i]
 
-#Initial values
+
+
+
+
+
+#Initial values-----------------------------------------------------------------
 initial(year) <- year0-1
 initial(FOI_sylv) <- FOI_spillover
 initial(FOI_urb) <- 0
@@ -85,7 +104,12 @@ initial(V[1:N_age]) <- Vac0[i]
 initial(C_sylvatic[1:N_age]) <- Cas0[i]
 initial(C_urban[1:N_age]) <- 0
 
-#Dimensions
+
+
+
+
+
+#Dimensions---------------------------------------------------------------------
 dim(S) <- N_age
 dim(E_sylvatic) <- N_age
 dim(E_urban) <- N_age
@@ -95,7 +119,6 @@ dim(R) <- N_age
 dim(V) <- N_age
 dim(C_sylvatic) <- N_age
 dim(C_urban) <- N_age
-
 dim(dP1)<-N_age
 dim(dP2)<-N_age
 dim(E_new_sylvatic) <- N_age
@@ -109,7 +132,6 @@ dim(inv_P_nV) <- N_age
 dim(P) <- N_age
 dim(inv_P) <- N_age
 dim(vacc_rate) <- N_age
-
 dim(Sus0) <- N_age
 dim(Exp0) <- N_age
 dim(Inf0) <- N_age
@@ -119,3 +141,5 @@ dim(Cas0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_annual) <- c(N_age, n_years)
+
+

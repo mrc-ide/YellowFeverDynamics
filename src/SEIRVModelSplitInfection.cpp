@@ -258,7 +258,7 @@ public:
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
     state_next[0] = (step + 1) * shared->dt;
-    real_type year_i = dust::math::floor((step * shared->dt) / (real_type) 365) + 1;
+    real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
     state_next[2] = shared->FOI_sylvatic;
     state_next[1] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
@@ -269,9 +269,6 @@ public:
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.I_new_urban[i - 1] = E_urban[i - 1] * shared->rate1;
-    }
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.P[i - 1] = S[i - 1] + E_sylvatic[i - 1] + E_urban[i - 1] + I_sylvatic[i - 1] + I_urban[i - 1] + R[i - 1] + V[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.P_nV[i - 1] = S[i - 1] + R[i - 1];
@@ -289,12 +286,11 @@ public:
       internal.dP2[i - 1] = shared->dP2_all[shared->dim_dP2_all_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->dt;
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
-    }
-    for (int i = 1; i <= shared->N_age; ++i) {
       internal.inv_P_nV[i - 1] = 1 / (real_type) internal.P_nV[i - 1];
     }
-    real_type P_tot = odin_sum1<real_type>(internal.P.data(), 0, shared->dim_P);
+    for (int i = 1; i <= shared->N_age; ++i) {
+      internal.P[i - 1] = internal.P_nV[i - 1] + V[i - 1];
+    }
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_C_sylvatic + i - 1] = internal.I_new_sylvatic[i - 1];
     }
@@ -310,6 +306,10 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_I_urban + i - 1] = dust::math::max(shared->Pmin, I_urban[i - 1] + internal.I_new_urban[i - 1] - internal.R_new_urban[i - 1]);
     }
+    for (int i = 1; i <= shared->N_age; ++i) {
+      internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
+    }
+    real_type P_tot = odin_sum1<real_type>(internal.P.data(), 0, shared->dim_P);
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
     }

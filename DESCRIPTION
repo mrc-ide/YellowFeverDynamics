@@ -30,6 +30,6 @@ SystemRequirements: C++11
 Remotes:
     mrc-ide/dust,
     mrc-ide/odin,
-    mrc-ide/odin.dust
+    mrc-ide/odin.dust,
     mrc-ide/YEP
 VignetteBuilder: knitr

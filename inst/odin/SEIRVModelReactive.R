@@ -6,9 +6,9 @@
 
 dt <- user() #Time increment in days
 initial(time) <- 0 #Initial value of time in days
-update(time) <- (step + 1) * dt
+update(time) <- time + dt
 
-#Parameters
+#Parameters---------------------------------------------------------------------
 t_incubation <- user() #TBA
 t_latent <- user() #TBA
 t_infectious <- user() #TBA
@@ -21,7 +21,7 @@ p_rep[] <- user() #Proportion of infections reported (2 values depending on outb
 outbreak_threshold1 <- user() #Threshold total no. reported cases to trigger outbreak flag 1
 cluster_threshold1 <- user()  #Threshold current infectious fraction to trigger cluster flag 1
 
-#initial conditions
+#Initial conditions-------------------------------------------------------------
 year0 <- user()  #Starting year
 Sus0[] <- user() #Susceptible population by age group at start
 Exp0[] <- user() #Exposed population by age group at start
@@ -43,17 +43,21 @@ surv_delay <- 60 #Average time delay between symptom onset and case confirmation
 rate3 <- dt/surv_delay
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
-year_i <- floor((step*dt)/365) + 1 #Number of years since start, as integer
+year_i <- floor(((step+1)*dt)/365) + 1 #Number of years since start, as integer
+
 dP1[1:N_age] <- dP1_all[i, as.integer(year_i)]*dt #Increase in population by age group over 1 time increment
 dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age group over 1 time increment
 
 E_new[1:N_age] <- rbinom(as.integer(S[i]), FOI_sum) #New exposed individuals by age group
+
 I_new[1:N_age] <- E[i]*rate1     #New infectious individuals by age group
+
 R_new[1:N_age] <- I[i]*rate2     #New recovered individuals by age group
+
 P_nV[1:N_age] <- S[i] + R[i] #Total vaccine-targetable population by age group
 inv_P_nV[1:N_age] <- 1.0/P_nV[i]
-P[1:N_age] <- S[i] + E[i] + I[i] + R[i] + V[i] #Total population by age group
-P_tot <- sum(P) #Total overall population
+P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
+P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
 vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i),as.integer(flag3+1)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
 VR_check1 <- 1
@@ -64,7 +68,7 @@ F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of 
 cluster_flag1 <- as.integer(max(flag2a,min(one,F_I_total/cluster_threshold1))) #TODO - Change to use if/else
 flag_emergency <- max(flag1b,flag2b)
 
-#Updates to output values at each time increment
+#Updates to output values at each time increment--------------------------------
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
 update(C_rep_total) <- C_rep_total + sum(C_rep_new) #Running total reported cases across all ages
@@ -86,7 +90,7 @@ update(V[2:N_age]) <- max(Pmin,V[i] + vacc_rate[i] + (dP1[i]*V[i-1]*inv_P[i-1]) 
 update(C[1:N_age]) <- I_new[i]
 update(C_rep[1:N_age]) <- C_rep_new[i]
 
-#Initial values
+#Initial values-----------------------------------------------------------------
 initial(year) <- year0-1
 initial(FOI_total) <- FOI_spillover
 initial(C_rep_total) <- 0
@@ -105,7 +109,7 @@ initial(V[1:N_age]) <- Vac0[i]
 initial(C[1:N_age]) <- Cas0[i]
 initial(C_rep[1:N_age]) <- 0
 
-#Dimensions
+#Dimensions---------------------------------------------------------------------
 dim(S) <- N_age
 dim(E) <- N_age
 dim(I) <- N_age
@@ -113,6 +117,7 @@ dim(R) <- N_age
 dim(V) <- N_age
 dim(C) <- N_age
 dim(C_rep) <- N_age
+
 
 dim(dP1)<-N_age
 dim(dP2)<-N_age
@@ -125,7 +130,6 @@ dim(P) <- N_age
 dim(inv_P) <- N_age
 dim(vacc_rate) <- N_age
 dim(C_rep_new) <- N_age
-
 dim(Sus0) <- N_age
 dim(Exp0) <- N_age
 dim(Inf0) <- N_age
@@ -136,3 +140,6 @@ dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_annual) <- c(N_age, n_years, 2)
 dim(p_rep) <- 2
+
+
+

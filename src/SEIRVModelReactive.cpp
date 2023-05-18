@@ -267,6 +267,7 @@ public:
     return state;
   }
   void update(size_t step, const real_type * state, rng_state_type& rng_state, real_type * state_next) {
+    const real_type time = state[0];
     const real_type C_rep_total = state[3];
     const real_type flag1b = state[5];
     const real_type flag2a = state[6];
@@ -279,9 +280,9 @@ public:
     const real_type * V = state + shared->offset_variable_V;
     real_type flag_emergency = dust::math::max(flag1b, flag2b);
     real_type outbreak_flag1 = dust::math::min(shared->one, dust::math::max(shared->zero, 1 + C_rep_total - shared->outbreak_threshold1));
-    state_next[0] = (step + 1) * shared->dt;
+    state_next[0] = time + shared->dt;
     state_next[10] = shared->VR_check1;
-    real_type year_i = dust::math::floor((step * shared->dt) / (real_type) 365) + 1;
+    real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
     real_type p_rep_cur = shared->p_rep[static_cast<int>(flag3 + 1) - 1];
     state_next[4] = outbreak_flag1;
     state_next[5] = dust::math::min(shared->one, flag1b + (outbreak_flag1 * shared->rate3));
@@ -289,9 +290,6 @@ public:
     state_next[1] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.I_new[i - 1] = E[i - 1] * shared->rate1;
-    }
-    for (int i = 1; i <= shared->N_age; ++i) {
-      internal.P[i - 1] = S[i - 1] + E[i - 1] + I[i - 1] + R[i - 1] + V[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.P_nV[i - 1] = S[i - 1] + R[i - 1];
@@ -310,12 +308,11 @@ public:
       internal.dP2[i - 1] = shared->dP2_all[shared->dim_dP2_all_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->dt;
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
-    }
-    for (int i = 1; i <= shared->N_age; ++i) {
       internal.inv_P_nV[i - 1] = 1 / (real_type) internal.P_nV[i - 1];
     }
-    real_type P_tot = odin_sum1<real_type>(internal.P.data(), 0, shared->dim_P);
+    for (int i = 1; i <= shared->N_age; ++i) {
+      internal.P[i - 1] = internal.P_nV[i - 1] + V[i - 1];
+    }
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_C + i - 1] = internal.I_new[i - 1];
     }
@@ -323,14 +320,18 @@ public:
       state_next[shared->offset_variable_I + i - 1] = dust::math::max(shared->Pmin, I[i - 1] + internal.I_new[i - 1] - internal.R_new[i - 1]);
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_12 * (static_cast<int>(flag3 + 1) - 1) + shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
+      internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
     }
-    real_type F_I_total = odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot;
-    real_type FOI_sum = dust::math::min(shared->FOI_max, shared->beta * (odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot) + (shared->FOI_spillover * shared->dt));
+    real_type P_tot = odin_sum1<real_type>(internal.P.data(), 0, shared->dim_P);
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_C_rep + i - 1] = internal.C_rep_new[i - 1];
     }
     state_next[3] = C_rep_total + odin_sum1<real_type>(internal.C_rep_new.data(), 0, shared->dim_C_rep_new);
+    for (int i = 1; i <= shared->N_age; ++i) {
+      internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_12 * (static_cast<int>(flag3 + 1) - 1) + shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
+    }
+    real_type F_I_total = odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot;
+    real_type FOI_sum = dust::math::min(shared->FOI_max, shared->beta * (odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot) + (shared->FOI_spillover * shared->dt));
     {
        int i = 1;
        state_next[shared->offset_variable_R + i - 1] = dust::math::max(shared->Pmin, R[0] + internal.R_new[0] - internal.vacc_rate[0] * R[0] * internal.inv_P_nV[0] - (internal.dP2[0] * R[0] * internal.inv_P[0]));

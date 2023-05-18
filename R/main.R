@@ -293,9 +293,14 @@ Model_Run_VarFR <- function(FOI_spillover = c(),R0 = c(),vacc_data = list(),pop_
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
-  x <- SEIRVModelVarFR$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
-                                                vaccine_efficacy,start_SEIRV,dt),
-                           time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
+  pars1=parameter_setup(FOI_spillover[1],R0[1],vacc_data,pop_data,year0,years_data,mode_start,
+                        vaccine_efficacy,start_SEIRV,dt)
+  pars2=list(FOI_spillover=FOI_spillover,R0=R0,vacc_rate_annual=pars1$vacc_rate_annual,
+             Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
+             dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
+             dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious)
+
+  x <- SEIRVModelVarFR$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
   x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
   for(step in step_begin:step_end){
