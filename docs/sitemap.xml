@@ -10,34 +10,16 @@
     <loc>/articles/A2Installation.html</loc>
   </url>
   <url>
-    <loc>/articles/BWorkedExampleAModelRun.html</loc>
+    <loc>/articles/BWorkedExampleAModelRunDelay.html</loc>
   </url>
   <url>
-    <loc>/articles/BWorkedExampleBOutbreaks.html</loc>
+    <loc>/articles/BWorkedExampleBModelRunReactive.html</loc>
   </url>
   <url>
-    <loc>/articles/BWorkedExampleCDataGenerate.html</loc>
+    <loc>/articles/BWorkedExampleCModelRunSplitInfection.html</loc>
   </url>
   <url>
-    <loc>/articles/BWorkedExampleDBurden.html</loc>
-  </url>
-  <url>
-    <loc>/articles/BWorkedExampleEMCMC.html</loc>
-  </url>
-  <url>
-    <loc>/articles/BWorkedExampleFPolicyQuestionCaseStudy.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CGuideAInputs.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CGuideBParametersEnvironment.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CGuideCModelResultsProcess.html</loc>
-  </url>
-  <url>
-    <loc>/articles/CGuideDLikelihood.html</loc>
+    <loc>/articles/BWorkedExampleDModelRunVarFR.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>

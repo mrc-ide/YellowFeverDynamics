@@ -1,0 +1,77 @@
+---
+title: "Worked Example 1 - Running Time Delay Model"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Worked Example 1 - Running Time Delay Model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This worked example demonstrates how to set up and run the time delay version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The time delay version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in using a fixed time delay to govern the movement of infected people from group E (exposed) to group I (infectious) and from group I to group R (recovered). In the standard model, this movement is governed by a rate given by the inverse of the time delay values (the sum of [TBA] in the case of E-I and the infectious period in the case of I-R). The [TBA] are all set to 5 days within the package code. [TBA - how to alter them]
+
+Using a fixed delay period increases the complexity of the model (due to the properties of the architecture created using the [odin.dust package](https://mrc-ide.github.io/odin.dust/index.html)) but is potentially more accurate when modelling yellow fever transmission over short timescales.
+
+The inputs for the Model_Run_Delay() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that there is no variable output type - the function always outputs detailed SEIRV data for every time point and age group (equivalent to setting output_type="full" in Model_Run()).
+
+```{r,eval=FALSE}
+library(YellowFeverDynamics)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
+                                   "/exdata/input_data_example.Rds", sep = ""))
+vacc_data <- input_data$vacc_data[1, , ]
+pop_data <- input_data$pop_data[1, , ]  
+# Force of infection due to spillover from sylvatic reservoir
+FOI_spillover <- 1.0e-8             
+# Basic reproduction number for urban spread of infection
+R0 <- 1.5             
+# Year(s) for which data is to be output
+years_data <- c(2000)
+# SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
+# used here and hence set to NULL)
+start_SEIRV <- NULL           
+# First year in population/vaccination data (here taken from the input data set; 
+# if the population and vaccination data is set manually, this similarly needs 
+# to be set manually)
+year0 <- input_data$years_labels[1]
+# Flag indicating how to set initial population immunity level in addition to
+# vaccination
+# If mode_start = 0, only vaccinated individuals are immune (R = 0)
+# If mode_start = 1, shift some non-vaccinated individuals into recovered to 
+# give herd immunity (R = 1 - 1/R0)
+# If mode_start = 2, use SEIRV input in list from previous run(s), set using
+# start_SEIRV variable
+mode_start <- 1  
+# Proportional vaccine efficacy (from 0 to 1); probability of vaccination 
+# successfully providing immunity (i.e. moving vaccinated individual to group V)
+vaccine_efficacy <- 1.0       
+# Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+dt <- 1.0            
+# Number of particles to run
+n_particles <- 10     
+# Number of threads to run
+n_threads <- 1   
+# TBA
+deterministic <- FALSE
+```
+
+We run Model_Run_Delay() as shown:
+
+```{r,eval=FALSE}
+test1 <- Model_Run_Delay(FOI_spillover, R0, vacc_data, pop_data, years_data,
+                   start_SEIRV, year0, mode_start, vaccine_efficacy, 
+                   dt, n_particles, n_threads, deterministic)
+```
+
+As with YEP::Model_Run(), we can plot the output:
+
+```{r,eval=FALSE}
+library(YFDaux)
+plot <- plot_model_output(test1)
+print(plot)
+```

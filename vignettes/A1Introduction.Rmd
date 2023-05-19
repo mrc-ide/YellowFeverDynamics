@@ -14,18 +14,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-The YellowFeverDynamics package is designed to aid infectious disease researchers in simulating yellow fever transmission both in regions where it is currently endemic and in regions where it may potentially be introduced in the future due to human movement and climate change. Potential applications include:
+The YellowFeverDynamics package is a supplement to the [YEP package](https://mrc-ide.github.io/YEP/index.html), used for running alternate versions of the standard SEIRV yellow fever transmission model contained in that package, and [TBA].
 
-* Projection of yellow fever burden (numbers of cases and deaths, absolute and/or reported) in a region based on epidemiological parameters
-* Estimation of the risk of an outbreak above a certain size (of absolute or reported cases) in a region
-* Simulation of the effect on epidemiological outcomes of planned or hypothetical vaccination campaigns and/or ongoing routine programs
-* Estimation of epidemiological parameters based on available data of particular types (e.g. serological survey results and reported case numbers)
+Please see the documentation for YEP for details of the standard model and functions contained in that package.
 
-The yellow fever virus is transmitted by multiple mosquito species (TBA) and in addition to humans, affects non-human primates (NHPs) including both Old World and New World monkeys. It originates in Africa but was transmitted to the Americas by the Atlantic slave trade [REF]. The existence of a sylvatic reservoir in wild NHPs makes eradicating the virus worldwide effectively impossible. There are no specific treatments for yellow fever; the main control methods are suppression of mosquito vectors in inhabited areas and a vaccine which has been available since 1938 and remained effective. Further complicating efforts to control yellow fever is the lack of rapid diagnostic tests or systematic testing programs; most yellow fever cases, especially those with no or mild symptoms, go undiagnosed.
-
-An estimated 12\% of infections lead to severe symptoms (including jaundice, bleeding and liver failure), with around 40-50\% of severe cases leading to death [REF] for an overall infection fatality rate of around 5-6\% This is much higher than many common infectious diseases such as malaria, influenza or measles, resulting in a high yellow fever death toll
-
-There are currently an estimated [TBA] cases with severe symptoms and [TBA] deaths annually [REF]. Historically, some large outbreaks in cities such as Manaus (Brazil) and New Orleans (USA) caused thousands of deaths [REF].
-
-References:
-* 
+[TBC]

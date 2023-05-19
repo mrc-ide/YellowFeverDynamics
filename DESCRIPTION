@@ -16,12 +16,7 @@ LinkingTo:
 Imports:
     assertthat,
     dde,
-    mvtnorm,
-    Rmisc,
     stats,
-    tgp,
-    truncdist,
-    utils,
     YEP
 Suggests: 
     knitr,

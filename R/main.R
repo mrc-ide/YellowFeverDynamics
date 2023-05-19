@@ -11,12 +11,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @importFrom assertthat assert_that
 #' @import dde
-#' @importFrom mvtnorm rmvnorm
-#' @importFrom Rmisc CI
-#' @importFrom stats cov dexp dnbinom dnorm prop.test rbinom runif
-#' @importFrom tgp lhs
-#' @importFrom truncdist dtrunc
-#' @importFrom utils write.csv
+#' @importFrom stats cov dexp dnbinom prop.test rbinom runif
 #' @import YEP
 #------------------------------------------------
 # unload DLL when package is unloaded
