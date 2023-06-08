@@ -52,10 +52,12 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 '}
 }
 \description{
-Run full version of SEIRV model with daily infection output split into sylvatic and urban
+Run full SEIRV model with daily infection output split into sylvatic and urban
 }
 \details{
-Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+Accepts epidemiological + population parameters and model settings; runs split-infection SEIRV model
 for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-values, infection numbers and total force of infection values. Daily infection output split into sylvatic and urban.
+values, infection numbers and total force of infection values. This version of the model differs from the standard
+one in that infections are split into sylvatic and urban, allowing the relative importance of sylvatic and urban
+infections to be assessed.
 }

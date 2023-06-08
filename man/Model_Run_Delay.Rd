@@ -55,7 +55,8 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 Run SEIRV model version using time delay instead of rate to move individuals from E-I and I-R
 }
 \details{
-Accepts epidemiological + population parameters and model settings; runs SEIRV delay model
-for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-values, infection numbers and total force of infection values.
+Accepts epidemiological + population parameters and model settings; runs version of SEIRV model which
+uses a fixed time delay instead of a rate to move individuals from exposed (E) to infectious (I) and from
+infectious to recovered (R). The model is run for one region over a specified time period for a number of
+particles/threads and outputs time-dependent SEIRV values, infection numbers and total force of infection values.
 }

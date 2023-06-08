@@ -67,8 +67,10 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 Runs reactive version of SEIRV model
 }
 \details{
-Accepts epidemiological + population parameters and model settings; runs SEIRV model
+Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model
 for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-values, infection numbers and total force of infection values. Alternate version incorporating case reporting
-and reactive surveillance/control measures based on case numbers
+values, infection numbers and total force of infection values. This version of the model differs from the standard
+one in taking two sets of input vaccination data, one the default one and one applied after one or more cases have
+been reported. Case reporting is governed by an additional parameter p_rep which can also change after one or more
+cases have been reported in order to reflect changes in surveillance.
 }

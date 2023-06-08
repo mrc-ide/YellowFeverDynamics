@@ -24,9 +24,10 @@ t_infectious <- 5 #Time cases remain infectious
 #'
 #' @description Run SEIRV model version using time delay instead of rate to move individuals from E-I and I-R
 #'
-#' @details Accepts epidemiological + population parameters and model settings; runs SEIRV delay model
-#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-#' values, infection numbers and total force of infection values.
+#' @details Accepts epidemiological + population parameters and model settings; runs version of SEIRV model which
+#' uses a fixed time delay instead of a rate to move individuals from exposed (E) to infectious (I) and from
+#' infectious to recovered (R). The model is run for one region over a specified time period for a number of
+#' particles/threads and outputs time-dependent SEIRV values, infection numbers and total force of infection values.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
@@ -92,10 +93,12 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #'
 #' @description Runs reactive version of SEIRV model
 #'
-#' @details Accepts epidemiological + population parameters and model settings; runs SEIRV model
+#' @details Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model
 #' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-#' values, infection numbers and total force of infection values. Alternate version incorporating case reporting
-#' and reactive surveillance/control measures based on case numbers
+#' values, infection numbers and total force of infection values. This version of the model differs from the standard
+#' one in taking two sets of input vaccination data, one the default one and one applied after one or more cases have
+#' been reported. Case reporting is governed by an additional parameter p_rep which can also change after one or more
+#' cases have been reported in order to reflect changes in surveillance.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
@@ -183,11 +186,13 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data1 = list(),
 #-------------------------------------------------------------------------------
 #' @title Model_Run_Split
 #'
-#' @description Run full version of SEIRV model with daily infection output split into sylvatic and urban
+#' @description Run full SEIRV model with daily infection output split into sylvatic and urban
 #'
-#' @details Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
+#' @details Accepts epidemiological + population parameters and model settings; runs split-infection SEIRV model
 #' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-#' values, infection numbers and total force of infection values. Daily infection output split into sylvatic and urban.
+#' values, infection numbers and total force of infection values. This version of the model differs from the standard
+#' one in that infections are split into sylvatic and urban, allowing the relative importance of sylvatic and urban
+#' infections to be assessed.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
@@ -252,9 +257,9 @@ Model_Run_Split <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #'
 #' @description Run alternate version of SEIRV model with annually varying FOI_spillover and R0
 #'
-#' @details Accepts epidemiological + population parameters and model settings; runs full version of SEIRV model
-#' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
-#' values, infection numbers and total force of infection values.
+#' @details Accepts epidemiological + population parameters and model settings; runs version of SEIRV model with
+#' annually varying FOI_spillover and R0 values for one region over a specified time period for a number of
+#' particles/threads and outputs time-dependent SEIRV values, infection numbers and total force of infection values.
 #'
 #' @param FOI_spillover Vector of annual values of force of infection due to spillover from sylvatic reservoir
 #' @param R0 Vector of annual values of basic reproduction number for urban spread of infection
