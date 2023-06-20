@@ -12,15 +12,19 @@
 #'
 #' @param case_data Vector of cases by time point summed over age
 #' @param year_data Vector of year values corresponding to case data
+#' @param p_severe_inf Probability of an infection being severe
+#' @param p_death_severe_inf Probability of a severe infection resulting in death
 #' @param p_rep_severe probability of a severe infection being reported
 #' @param p_rep_death probability of a death being reported
 #' '
 #' @export
 #'
-get_outbreak_data <- function(case_data=c(),year_data=c(),p_rep_severe=1.0,p_rep_death=1.0){
+get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0){
   assert_that(is.numeric(case_data)) #TODO - Improve case_data checking
   assert_that(is.numeric(year_data)) #TODO - Improve year_data checking
   assert_that(length(case_data)==length(year_data),msg="Number of entries in case data must match number of years")
+  assert_that(p_severe_inf>=0.0 && p_severe_inf<=1.0,msg="Severe infection rate must be between 0-1")
+  assert_that(p_death_severe_inf>=0.0 && p_death_severe_inf<=1.0,msg="Fatality rate of severe infections must be between 0-1")
   assert_that(p_rep_severe>=0 && p_rep_severe<=1.0,msg="Severe infection reporting probability must be between 0 and 1")
   assert_that(p_rep_death>=0 && p_rep_death<=1.0,msg="Fatal infection reporting probability must be between 0 and 1")
 

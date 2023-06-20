@@ -7,6 +7,8 @@
 get_outbreak_data(
   case_data = c(),
   year_data = c(),
+  p_severe_inf = 0.12,
+  p_death_severe_inf = 0.39,
   p_rep_severe = 1,
   p_rep_death = 1
 )
@@ -15,6 +17,10 @@ get_outbreak_data(
 \item{case_data}{Vector of cases by time point summed over age}
 
 \item{year_data}{Vector of year values corresponding to case data}
+
+\item{p_severe_inf}{Probability of an infection being severe}
+
+\item{p_death_severe_inf}{Probability of a severe infection resulting in death}
 
 \item{p_rep_severe}{probability of a severe infection being reported}
 
