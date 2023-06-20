@@ -28,3 +28,4 @@ Remotes:
     mrc-ide/odin.dust,
     mrc-ide/YEP
 VignetteBuilder: knitr
+URL: https://mrc-ide.github.io/YellowFeverDynamics/
