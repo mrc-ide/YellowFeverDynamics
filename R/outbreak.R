@@ -1,5 +1,4 @@
-# R file for functions relating to outbreak data in YellowFeverDynamics package, including annual outbreak risk and
-# binary occurrence data used for MCMC parameter estimation
+# R file for functions relating to outbreak data in YellowFeverDynamics package
 #-------------------------------------------------------------------------------
 #' @title get_outbreak_data
 #'
@@ -32,8 +31,12 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
   t_pts=length(year_data)
   n_years=length(table(year_data))
   dt=(n_years*365.0)/t_pts
+
   pt_severe_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
-  annual_rep_cases=annual_rep_deaths=rep(0,n_years)
+  annual_rep_cases=annual_rep_deaths=annual_outbreaks=annual_occurrence=rep(0,n_years)
+  sizes=start_days=end_days=c()
+  flag_outbreak=caseless_days=n_outbreaks=0
+
   for(i in 1:t_pts){
     n_year=year_data[i]-year0+1
     pt_severe_infs[i]=rbinom(1,floor(case_data[i]),p_severe_inf)
@@ -42,13 +45,6 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
     pt_rep_cases[i]=rbinom(1,pt_severe_infs[i]-pt_rep_deaths[i],p_rep_severe)+pt_rep_deaths[i]
     annual_rep_cases[n_year]=annual_rep_cases[n_year]+pt_rep_cases[i]
     annual_rep_deaths[n_year]=annual_rep_deaths[n_year]+pt_rep_deaths[i]
-  }
-
-  n_outbreaks=0
-  sizes=start_days=end_days=c()
-  flag_outbreak=0
-  caseless_days=0
-  for(i in 1:t_pts){
     if(flag_outbreak==0){
       if(pt_rep_cases[i]>0){
         flag_outbreak=1
@@ -60,7 +56,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
     } else {
       if(pt_rep_cases[i]==0){
         caseless_days=caseless_days+dt
-        if(caseless_days==10){
+        if(caseless_days>=10){
           flag_outbreak=0
           end_days=append(end_days,i*dt,after=length(end_days))
         }
@@ -75,10 +71,15 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
   start_years=((start_days-(start_days %% 365))/365)+year0
   end_years=((end_days-(end_days %% 365))/365)+year0
 
-  outbreak_data=list(n_outbreaks=n_outbreaks,
+  for(n_year in 1:n_years){
+    annual_outbreaks[n_year]=length(c(1:n_outbreaks)[start_years==years_data[n_year]])
+    if(annual_outbreaks[n_year]>0){annual_occurrence[n_year]=1}
+  }
+
+  outbreak_data=list(annual_outbreaks=annual_outbreaks,annual_occurrence=annual_occurrence,
                      outbreak_list=data.frame(size=sizes,start_day=start_days,end_day=end_days,start_year=start_years,
                                               end_year=end_years),
-                     rep_pts=data.frame(pt=c(1:length(pt_rep_cases)),rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths),
+                     rep_pts=data.frame(day=c(1:t_pts)*dt,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths),
                      rep_annual=data.frame(year=as.numeric(names(table(year_data))),rep_cases=annual_rep_cases,
                                            rep_deaths=annual_rep_deaths))
 
