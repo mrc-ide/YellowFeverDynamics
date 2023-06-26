@@ -37,7 +37,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
 
   pt_severe_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
   annual_rep_cases=annual_rep_deaths=annual_outbreaks=annual_occurrence=rep(0,n_years)
-  sizes=start_days=end_days=c()
+  obs_cases=obs_deaths=severe_infs=deaths=start_days=end_days=c()
   flag_outbreak=caseless_days=n_outbreaks=0
 
   for(i in 1:t_pts){
@@ -52,11 +52,16 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
       if(pt_rep_cases[i]>0){
         flag_outbreak=1
         n_outbreaks=n_outbreaks+1
-        sizes=append(sizes,pt_rep_cases[i],after=length(sizes))
+        obs_cases=append(obs_cases,pt_rep_cases[i],after=length(obs_cases))
+        obs_deaths=append(obs_deaths,pt_rep_deaths[i],after=length(obs_deaths))
+        severe_infs=append(severe_infs,pt_severe_infs[i],after=length(severe_infs))
+        deaths=append(deaths,pt_deaths[i],after=length(deaths))
         start_days=append(start_days,i*dt,after=length(start_days))
         caseless_days=0
       }
     } else {
+      severe_infs[n_outbreaks]=severe_infs[n_outbreaks]+pt_severe_infs[i]
+      deaths[n_outbreaks]=deaths[n_outbreaks]+pt_deaths[i]
       if(pt_rep_cases[i]==0){
         caseless_days=caseless_days+dt
         if(caseless_days>max_case_interval){
@@ -65,7 +70,8 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
         }
       } else {
         caseless_days=0
-        sizes[n_outbreaks]=sizes[n_outbreaks]+pt_rep_cases[i]
+        obs_cases[n_outbreaks]=obs_cases[n_outbreaks]+pt_rep_cases[i]
+        obs_deaths[n_outbreaks]=obs_deaths[n_outbreaks]+pt_rep_deaths[i]
       }
     }
   }
@@ -80,8 +86,8 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
   }
 
   outbreak_data=list(annual_outbreaks=annual_outbreaks,annual_occurrence=annual_occurrence,
-                     outbreak_list=data.frame(size=sizes,start_day=start_days,end_day=end_days,start_year=start_years,
-                                              end_year=end_years),
+                     outbreak_list=data.frame(obs_cases=obs_cases,obs_deaths=obs_deaths,severe_infs=severe_infs,deaths=deaths,start_day=start_days,
+                                              end_day=end_days,start_year=start_years,end_year=end_years),
                      rep_pts=data.frame(day=c(1:t_pts)*dt,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths),
                      rep_annual=data.frame(year=as.numeric(names(table(year_data))),rep_cases=annual_rep_cases,
                                            rep_deaths=annual_rep_deaths))
