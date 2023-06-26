@@ -13,12 +13,14 @@
 #' @param year_data Vector of year values corresponding to case data
 #' @param p_severe_inf Probability of an infection being severe
 #' @param p_death_severe_inf Probability of a severe infection resulting in death
-#' @param p_rep_severe probability of a severe infection being reported
-#' @param p_rep_death probability of a death being reported
-#' '
+#' @param p_rep_severe Probability of a severe infection being reported
+#' @param p_rep_death Probability of a death being reported
+#' @param max_case_interval Maximum number of days between reported cases before outbreak is declared over
+#'
 #' @export
 #'
-get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0){
+get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
+                              max_case_interval=10){
   assert_that(is.numeric(case_data)) #TODO - Improve case_data checking
   assert_that(is.numeric(year_data)) #TODO - Improve year_data checking
   assert_that(length(case_data)==length(year_data),msg="Number of entries in case data must match number of years")
@@ -26,6 +28,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
   assert_that(p_death_severe_inf>=0.0 && p_death_severe_inf<=1.0,msg="Fatality rate of severe infections must be between 0-1")
   assert_that(p_rep_severe>=0 && p_rep_severe<=1.0,msg="Severe infection reporting probability must be between 0 and 1")
   assert_that(p_rep_death>=0 && p_rep_death<=1.0,msg="Fatal infection reporting probability must be between 0 and 1")
+  assert_that(is.numeric(max_case_interval))
 
   year0=min(year_data)
   t_pts=length(year_data)
@@ -56,7 +59,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
     } else {
       if(pt_rep_cases[i]==0){
         caseless_days=caseless_days+dt
-        if(caseless_days>=10){
+        if(caseless_days>max_case_interval){
           flag_outbreak=0
           end_days=append(end_days,i*dt,after=length(end_days))
         }
