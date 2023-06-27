@@ -10,7 +10,7 @@
 #' no new cases have been reported for 10 days.
 #'
 #' @param case_data Vector of cases by time point summed over age
-#' @param year_data Vector of year values corresponding to case data
+#' @param years_data Vector of year values corresponding to case data
 #' @param p_severe_inf Probability of an infection being severe
 #' @param p_death_severe_inf Probability of a severe infection resulting in death
 #' @param p_rep_severe Probability of a severe infection being reported
@@ -19,20 +19,20 @@
 #'
 #' @export
 #'
-get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
+get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
                               max_case_interval=10){
   assert_that(is.numeric(case_data)) #TODO - Improve case_data checking
-  assert_that(is.numeric(year_data)) #TODO - Improve year_data checking
-  assert_that(length(case_data)==length(year_data),msg="Number of entries in case data must match number of years")
+  assert_that(is.numeric(years_data)) #TODO - Improve years_data checking
+  assert_that(length(case_data)==length(years_data),msg="Number of entries in case data must match number of years")
   assert_that(p_severe_inf>=0.0 && p_severe_inf<=1.0,msg="Severe infection rate must be between 0-1")
   assert_that(p_death_severe_inf>=0.0 && p_death_severe_inf<=1.0,msg="Fatality rate of severe infections must be between 0-1")
   assert_that(p_rep_severe>=0 && p_rep_severe<=1.0,msg="Severe infection reporting probability must be between 0 and 1")
   assert_that(p_rep_death>=0 && p_rep_death<=1.0,msg="Fatal infection reporting probability must be between 0 and 1")
   assert_that(is.numeric(max_case_interval))
 
-  year0=min(year_data)
-  t_pts=length(year_data)
-  n_years=length(table(year_data))
+  year0=min(years_data)
+  t_pts=length(years_data)
+  n_years=length(table(years_data))
   dt=(n_years*365.0)/t_pts
 
   pt_severe_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
@@ -41,7 +41,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
   flag_outbreak=caseless_days=n_outbreaks=0
 
   for(i in 1:t_pts){
-    n_year=year_data[i]-year0+1
+    n_year=years_data[i]-year0+1
     pt_severe_infs[i]=rbinom(1,floor(case_data[i]),p_severe_inf)
     pt_deaths[i]=rbinom(1,pt_severe_infs[i],p_death_severe_inf)
     pt_rep_deaths[i]=rbinom(1,pt_deaths[i],p_rep_death)
@@ -89,7 +89,7 @@ get_outbreak_data <- function(case_data=c(),year_data=c(),p_severe_inf = 0.12, p
                      outbreak_list=data.frame(obs_cases=obs_cases,obs_deaths=obs_deaths,severe_infs=severe_infs,deaths=deaths,start_day=start_days,
                                               end_day=end_days,start_year=start_years,end_year=end_years),
                      rep_pts=data.frame(day=c(1:t_pts)*dt,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths),
-                     rep_annual=data.frame(year=as.numeric(names(table(year_data))),rep_cases=annual_rep_cases,
+                     rep_annual=data.frame(year=as.numeric(names(table(years_data))),rep_cases=annual_rep_cases,
                                            rep_deaths=annual_rep_deaths))
 
   return(outbreak_data)
