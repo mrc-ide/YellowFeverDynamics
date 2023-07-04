@@ -80,6 +80,86 @@ dust_cpu_SEIRVModelDelay_ode_statistics <- function(ptr) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_ode_statistics`, ptr)
 }
 
+dust_SEIRVModelDelayReactive_gpu_info <- function() {
+  .Call(`_YellowFeverDynamics_dust_SEIRVModelDelayReactive_gpu_info`)
+}
+
+dust_cpu_SEIRVModelDelayReactive_alloc <- function(r_pars, pars_multi, r_time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_alloc`, r_pars, pars_multi, r_time, r_n_particles, n_threads, r_seed, deterministic, gpu_config, ode_control)
+}
+
+dust_cpu_SEIRVModelDelayReactive_capabilities <- function() {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_capabilities`)
+}
+
+dust_cpu_SEIRVModelDelayReactive_run <- function(ptr, r_time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run`, ptr, r_time_end)
+}
+
+dust_cpu_SEIRVModelDelayReactive_simulate <- function(ptr, time_end) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_simulate`, ptr, time_end)
+}
+
+dust_cpu_SEIRVModelDelayReactive_set_index <- function(ptr, r_index) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_index`, ptr, r_index)
+}
+
+dust_cpu_SEIRVModelDelayReactive_update_state <- function(ptr, r_pars, r_state, r_time, r_set_initial_state, index, reset_step_size) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_update_state`, ptr, r_pars, r_state, r_time, r_set_initial_state, index, reset_step_size)
+}
+
+dust_cpu_SEIRVModelDelayReactive_state <- function(ptr, r_index) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_state`, ptr, r_index)
+}
+
+dust_cpu_SEIRVModelDelayReactive_time <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_time`, ptr)
+}
+
+dust_cpu_SEIRVModelDelayReactive_reorder <- function(ptr, r_index) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_reorder`, ptr, r_index))
+}
+
+dust_cpu_SEIRVModelDelayReactive_resample <- function(ptr, r_weights) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_resample`, ptr, r_weights)
+}
+
+dust_cpu_SEIRVModelDelayReactive_rng_state <- function(ptr, first_only, last_only) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_rng_state`, ptr, first_only, last_only)
+}
+
+dust_cpu_SEIRVModelDelayReactive_set_rng_state <- function(ptr, rng_state) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_rng_state`, ptr, rng_state)
+}
+
+dust_cpu_SEIRVModelDelayReactive_set_data <- function(ptr, data, shared) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_data`, ptr, data, shared)
+}
+
+dust_cpu_SEIRVModelDelayReactive_compare_data <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_compare_data`, ptr)
+}
+
+dust_cpu_SEIRVModelDelayReactive_filter <- function(ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_filter`, ptr, time_end, save_trajectories, time_snapshot, min_log_likelihood)
+}
+
+dust_cpu_SEIRVModelDelayReactive_set_n_threads <- function(ptr, n_threads) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_n_threads`, ptr, n_threads))
+}
+
+dust_cpu_SEIRVModelDelayReactive_n_state <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_n_state`, ptr)
+}
+
+dust_cpu_SEIRVModelDelayReactive_set_stochastic_schedule <- function(ptr, time) {
+  invisible(.Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_stochastic_schedule`, ptr, time))
+}
+
+dust_cpu_SEIRVModelDelayReactive_ode_statistics <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_ode_statistics`, ptr)
+}
+
 dust_SEIRVModelReactive_gpu_info <- function() {
   .Call(`_YellowFeverDynamics_dust_SEIRVModelReactive_gpu_info`)
 }

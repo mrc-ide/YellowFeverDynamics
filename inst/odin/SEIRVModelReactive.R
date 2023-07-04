@@ -17,6 +17,7 @@ R0 <- user() #Basic reproduction number
 N_age <- user() #Number of age categories
 vacc_rate_annual[,,] <- user() #Daily rate of vaccination by age and year (non-emergency and emergency)
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
+response_delay <- user() #Delay time in days between a flag being triggered and emergency conditions coming into effect
 p_rep[] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
 outbreak_threshold1 <- user() #Threshold total no. reported cases to trigger outbreak flag 1
 cluster_threshold1 <- user()  #Threshold current infectious fraction to trigger cluster flag 1
@@ -39,8 +40,7 @@ Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 rate1 <- dt/(t_incubation+t_latent)
 rate2 <- dt/t_infectious
-surv_delay <- 60 #Average time delay between symptom onset and case confirmation
-rate3 <- dt/surv_delay
+rate3 <- dt/response_delay
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
 year_i <- floor(((step+1)*dt)/365) + 1 #Number of years since start, as integer

@@ -33,14 +33,16 @@ dP1_all[,] <- user() #Daily increase in number of people by age group (people ar
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
 
-
-
 Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 np_E_delay <- ((t_incubation+t_latent)/dt)*N_age
 np_I_delay <- (t_infectious/dt)*N_age
 di1 <- np_E_delay-N_age
 di2 <- np_I_delay-N_age
+
+
+
+
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
 year_i <- floor(((step+1)*dt)/365) + 1 #Number of years since start, as integer

@@ -16,11 +16,12 @@
 #' @param p_rep_severe Probability of a severe infection being reported
 #' @param p_rep_death Probability of a death being reported
 #' @param max_case_interval Maximum number of days between reported cases before outbreak is declared over
+#' @param flag_additional_output TRUE/FALSE flag indicating whether to output detailed case data
 #'
 #' @export
 #'
 get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
-                              max_case_interval=10){
+                              max_case_interval=10,flag_additional_output=FALSE){
   assert_that(is.numeric(case_data)) #TODO - Improve case_data checking
   assert_that(is.numeric(years_data)) #TODO - Improve years_data checking
   assert_that(length(case_data)==length(years_data),msg="Number of entries in case data must match number of years")
@@ -76,21 +77,66 @@ get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, 
     }
   }
 
-  if(length(end_days)<length(start_days)){end_days=append(end_days,i,after=length(end_days))}
+  if(length(end_days)<length(start_days)){end_days=append(end_days,NA,after=length(end_days))}
   start_years=((start_days-(start_days %% 365))/365)+year0
   end_years=((end_days-(end_days %% 365))/365)+year0
+  #outbreak_durations=end_days-start_days
 
+  years_table=table(start_years)
+  annual_outbreaks=rep(0,n_years)
   for(n_year in 1:n_years){
-    annual_outbreaks[n_year]=length(c(1:n_outbreaks)[start_years==years_data[n_year]])
+    if(is.na(years_table[n_year][[1]])==FALSE){annual_outbreaks[n_year]=years_table[n_year][[1]]}
     if(annual_outbreaks[n_year]>0){annual_occurrence[n_year]=1}
   }
 
   outbreak_data=list(annual_outbreaks=annual_outbreaks,annual_occurrence=annual_occurrence,
                      outbreak_list=data.frame(obs_cases=obs_cases,obs_deaths=obs_deaths,severe_infs=severe_infs,deaths=deaths,start_day=start_days,
-                                              end_day=end_days,start_year=start_years,end_year=end_years),
-                     rep_pts=data.frame(day=c(1:t_pts)*dt,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths),
-                     rep_annual=data.frame(year=as.numeric(names(table(years_data))),rep_cases=annual_rep_cases,
-                                           rep_deaths=annual_rep_deaths))
+                                              end_day=end_days,start_year=start_years,end_year=end_years))
+
+  if(flag_additional_output){
+    outbreak_data$rep_pts=data.frame(day=c(1:t_pts)*dt,severe_infs=pt_severe_infs,deaths=pt_deaths,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths)
+    outbreak_data$rep_annual=data.frame(year=as.numeric(names(table(years_data))),rep_cases=annual_rep_cases,rep_deaths=annual_rep_deaths)
+  }
 
   return(outbreak_data)
+}
+#-------------------------------------------------------------------------------
+#' @title get_outbreak_data_multi
+#'
+#' @description Generate outbreak data from model output over multiple repetitions
+#'
+#' @details [TBA]
+#'
+#' @param case_data Vector of cases by time point and repetition summed over age
+#' @param years_data Vector of year values corresponding to case data
+#' @param p_severe_inf Probability of an infection being severe
+#' @param p_death_severe_inf Probability of a severe infection resulting in death
+#' @param p_rep_severe Probability of a severe infection being reported
+#' @param p_rep_death Probability of a death being reported
+#' @param max_case_interval Maximum number of days between reported cases before outbreak is declared over
+#'
+#' @export
+#'
+get_outbreak_data_multi <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
+                              max_case_interval=10){
+  assert_that(length(dim(case_data))==2)
+  #TODO - Additional assert_that functions
+
+  n_reps=dim(case_data)[1]
+  n_years=length(unique(years_data))
+  outbreak_list_all=data.frame(rep=0,obs_cases=0,obs_deaths=0,severe_infs=0,deaths=0,start_day=0,end_day=0,start_year=0,end_year=0)
+  annual_outbreaks_all=array(NA,dim=c(n_reps,n_years))
+  annual_outbreak_probs=rep(0,n_years)
+
+  for(rep in 1:n_reps){
+    outbreak_data=get_outbreak_data(case_data=case_data[rep,],years_data,p_severe_inf,p_death_severe_inf,p_rep_severe,p_rep_death,max_case_interval,
+                                    flag_additional_output=FALSE)
+    outbreak_list_all=rbind(outbreak_list_all,cbind(rep=rep(rep,nrow(outbreak_data$outbreak_list)),outbreak_data$outbreak_list))
+    annual_outbreaks_all[rep,]=outbreak_data$annual_outbreaks
+    annual_outbreak_probs=annual_outbreak_probs+outbreak_data$annual_occurrence
+  }
+  annual_outbreak_probs=annual_outbreak_probs/n_reps
+  outbreak_list_all=outbreak_list_all[c(2:nrow(outbreak_list_all)),]
+
+  return(list(outbreak_list_all=outbreak_list_all,annual_outbreaks_all=annual_outbreaks_all,annual_outbreak_probs=annual_outbreak_probs))
 }

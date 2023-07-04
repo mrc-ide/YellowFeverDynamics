@@ -115,6 +115,7 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #' @param n_particles number of particles to use
 #' @param n_threads number of threads to use
 #' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' @param response_delay Delay time in days between a flag being triggered and emergency conditions coming into effect
 #' @param p_rep Probabilities of an infection being reported as a case under different conditions (TBA)
 #' @param outbreak_threshold1 Threshold total no. reported cases to trigger outbreak flag 1
 #' @param cluster_threshold1 Threshold current infectious fraction to trigger cluster flag 1
@@ -123,8 +124,8 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #'
 Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data1 = list(), vacc_data2 = list(),pop_data = list(),
                                years_data = c(1940:1941), start_SEIRV = list(), year0 = 1940, mode_start = 0,vaccine_efficacy = 1.0,
-                               dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE, p_rep = 1.0, outbreak_threshold1 = 1,
-                               cluster_threshold1 = 1.0) {
+                               dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE, response_delay = 56.0, p_rep = c(0.0,0.0),
+                               outbreak_threshold1 = Inf, cluster_threshold1 = Inf) {
 
   #TODO Add assert_that functions
 
@@ -153,7 +154,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data1 = list(),
   pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_annual=vacc_rate_annual2,
              Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
-             dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,
+             dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
              p_rep=p_rep,outbreak_threshold1=outbreak_threshold1,cluster_threshold1=cluster_threshold1)
 
   x <- SEIRVModelReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)

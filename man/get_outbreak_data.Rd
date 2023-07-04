@@ -11,7 +11,8 @@ get_outbreak_data(
   p_death_severe_inf = 0.39,
   p_rep_severe = 1,
   p_rep_death = 1,
-  max_case_interval = 10
+  max_case_interval = 10,
+  flag_additional_output = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ get_outbreak_data(
 \item{p_rep_death}{Probability of a death being reported}
 
 \item{max_case_interval}{Maximum number of days between reported cases before outbreak is declared over}
+
+\item{flag_additional_output}{TRUE/FALSE flag indicating whether to output detailed case data}
 }
 \description{
 Generate outbreak data from model output

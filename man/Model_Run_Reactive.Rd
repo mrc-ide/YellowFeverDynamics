@@ -19,9 +19,10 @@ Model_Run_Reactive(
   n_particles = 1,
   n_threads = 1,
   deterministic = FALSE,
-  p_rep = 1,
-  outbreak_threshold1 = 1,
-  cluster_threshold1 = 1
+  response_delay = 56,
+  p_rep = c(0, 0),
+  outbreak_threshold1 = Inf,
+  cluster_threshold1 = Inf
 )
 }
 \arguments{
@@ -55,6 +56,8 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 \item{n_threads}{number of threads to use}
 
 \item{deterministic}{TRUE/FALSE - set model to run in deterministic mode if TRUE}
+
+\item{response_delay}{Delay time in days between a flag being triggered and emergency conditions coming into effect}
 
 \item{p_rep}{Probabilities of an infection being reported as a case under different conditions (TBA)}
 
