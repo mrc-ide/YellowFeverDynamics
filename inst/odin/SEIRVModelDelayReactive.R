@@ -15,7 +15,7 @@ t_infectious <- user() #TBA
 FOI_spillover <- user() #Spillover force of infection
 R0 <- user() #Basic reproduction number
 N_age <- user() #Number of age categories
-vacc_rate_annual[,,] <- user() #Daily rate of vaccination by age and year (non-emergency and emergency)
+vacc_rate_daily[,,] <- user() #Daily rate of vaccination by age and year (non-emergency and emergency)
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
 response_delay <- user() #Delay time in days between a flag being triggered and emergency conditions coming into effect
 p_rep[] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
@@ -61,7 +61,7 @@ inv_P_nV[1:N_age] <- 1.0/P_nV[i]
 P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
-vacc_rate[1:N_age] <- vacc_rate_annual[i,as.integer(year_i),as.integer(flag3+1)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
+vacc_rate[1:N_age] <- vacc_rate_daily[i,as.integer(year_i),as.integer(flag3+1)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
 VR_check1 <- 1
 outbreak_flag1 <- min(one,max(zero,1+C_rep_total-outbreak_threshold1)) #TODO - Change to use if/else
 p_rep_cur <- p_rep[as.integer(flag3+1)]
@@ -148,7 +148,7 @@ dim(Vac0) <- N_age
 dim(Cas0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
-dim(vacc_rate_annual) <- c(N_age, n_years, 2)
+dim(vacc_rate_daily) <- c(N_age, n_years, 2)
 dim(p_rep) <- 2
 
 

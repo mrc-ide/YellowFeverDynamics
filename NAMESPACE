@@ -2,6 +2,7 @@
 
 export(Delay_Model_Run_Many_Reps)
 export(Model_Run_Delay)
+export(Model_Run_Delay_Reactive)
 export(Model_Run_Reactive)
 export(Model_Run_Split)
 export(Model_Run_VarFR)
