@@ -118,7 +118,7 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(t_infectious, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_latent, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Vac0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vacc_rate_annual, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vacc_rate_daily, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_efficacy, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(year0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class SEIRVModelVarFR {
@@ -158,9 +158,9 @@ public:
     int dim_V;
     int dim_Vac0;
     int dim_vacc_rate;
-    int dim_vacc_rate_annual;
-    int dim_vacc_rate_annual_1;
-    int dim_vacc_rate_annual_2;
+    int dim_vacc_rate_daily;
+    int dim_vacc_rate_daily_1;
+    int dim_vacc_rate_daily_2;
     std::vector<real_type> dP1_all;
     std::vector<real_type> dP2_all;
     real_type dt;
@@ -194,7 +194,7 @@ public:
     real_type t_infectious;
     real_type t_latent;
     std::vector<real_type> Vac0;
-    std::vector<real_type> vacc_rate_annual;
+    std::vector<real_type> vacc_rate_daily;
     real_type vaccine_efficacy;
     real_type year0;
   };
@@ -271,7 +271,7 @@ public:
     }
     real_type P_tot = odin_sum1<real_type>(internal.P.data(), 0, shared->dim_P);
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
+      internal.vacc_rate[i - 1] = shared->vacc_rate_daily[shared->dim_vacc_rate_daily_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
     }
     real_type FOI_sum = dust::math::min(shared->FOI_max, beta * (odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot) + (shared->FOI_spillover[static_cast<int>(year_i) - 1] * shared->dt));
     {
@@ -585,8 +585,8 @@ dust::pars_type<SEIRVModelVarFR> dust_pars<SEIRVModelVarFR>(cpp11::list user) {
   shared->dim_V = shared->N_age;
   shared->dim_Vac0 = shared->N_age;
   shared->dim_vacc_rate = shared->N_age;
-  shared->dim_vacc_rate_annual_1 = shared->N_age;
-  shared->dim_vacc_rate_annual_2 = shared->n_years;
+  shared->dim_vacc_rate_daily_1 = shared->N_age;
+  shared->dim_vacc_rate_daily_2 = shared->n_years;
   shared->initial_year = shared->year0 - 1;
   shared->rate1 = shared->dt / (real_type) (shared->t_incubation + shared->t_latent);
   shared->rate2 = shared->dt / (real_type) shared->t_infectious;
@@ -609,7 +609,7 @@ dust::pars_type<SEIRVModelVarFR> dust_pars<SEIRVModelVarFR>(cpp11::list user) {
   shared->Cas0 = user_get_array_fixed<real_type, 1>(user, "Cas0", shared->Cas0, {shared->dim_Cas0}, NA_REAL, NA_REAL);
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
-  shared->dim_vacc_rate_annual = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2;
+  shared->dim_vacc_rate_daily = shared->dim_vacc_rate_daily_1 * shared->dim_vacc_rate_daily_2;
   shared->Exp0 = user_get_array_fixed<real_type, 1>(user, "Exp0", shared->Exp0, {shared->dim_Exp0}, NA_REAL, NA_REAL);
   shared->FOI_spillover = user_get_array_fixed<real_type, 1>(user, "FOI_spillover", shared->FOI_spillover, {shared->dim_FOI_spillover}, NA_REAL, NA_REAL);
   shared->Inf0 = user_get_array_fixed<real_type, 1>(user, "Inf0", shared->Inf0, {shared->dim_Inf0}, NA_REAL, NA_REAL);
@@ -643,7 +643,7 @@ dust::pars_type<SEIRVModelVarFR> dust_pars<SEIRVModelVarFR>(cpp11::list user) {
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_V[i - 1] = shared->Vac0[i - 1];
   }
-  shared->vacc_rate_annual = user_get_array_fixed<real_type, 2>(user, "vacc_rate_annual", shared->vacc_rate_annual, {shared->dim_vacc_rate_annual_1, shared->dim_vacc_rate_annual_2}, NA_REAL, NA_REAL);
+  shared->vacc_rate_daily = user_get_array_fixed<real_type, 2>(user, "vacc_rate_daily", shared->vacc_rate_daily, {shared->dim_vacc_rate_daily_1, shared->dim_vacc_rate_daily_2}, NA_REAL, NA_REAL);
   return dust::pars_type<SEIRVModelVarFR>(shared, internal);
 }
 template <>

@@ -7,8 +7,9 @@
 Model_Run_Delay_Reactive(
   FOI_spillover = 0,
   R0 = 1,
-  vacc_data1 = list(),
-  vacc_data2 = list(),
+  vacc_data = list(),
+  vacc_rate_emergency_campaign = c(),
+  emergency_campaign_duration = 0,
   pop_data = list(),
   years_data = c(1940:1941),
   start_SEIRV = list(),
@@ -30,9 +31,11 @@ Model_Run_Delay_Reactive(
 
 \item{R0}{Basic reproduction number for urban spread of infection}
 
-\item{vacc_data1}{[TBA]}
+\item{vacc_data}{[TBA]}
 
-\item{vacc_data2}{[TBA]}
+\item{vacc_rate_emergency_campaign}{[TBA]}
+
+\item{emergency_campaign_duration}{[TBA]}
 
 \item{pop_data}{Population in each age group by year}
 

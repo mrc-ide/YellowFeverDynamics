@@ -47,7 +47,7 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(t_infectious, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_latent, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Vac0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vacc_rate_annual, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vacc_rate_daily, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_efficacy, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(year0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class SEIRVModelSplitInfection {
@@ -58,8 +58,8 @@ public:
   struct shared_type {
     real_type beta;
     std::vector<real_type> Cas0;
-    int dim_C_sylvatic;
-    int dim_C_urban;
+    int dim_C_sylv;
+    int dim_C_urb;
     int dim_Cas0;
     int dim_dP1;
     int dim_dP1_all;
@@ -69,48 +69,48 @@ public:
     int dim_dP2_all;
     int dim_dP2_all_1;
     int dim_dP2_all_2;
-    int dim_E_new_sylvatic;
-    int dim_E_new_urban;
-    int dim_E_sylvatic;
-    int dim_E_urban;
+    int dim_E_new_sylv;
+    int dim_E_new_urb;
+    int dim_E_sylv;
+    int dim_E_urb;
     int dim_Exp0;
-    int dim_I_new_sylvatic;
-    int dim_I_new_urban;
-    int dim_I_sylvatic;
-    int dim_I_urban;
+    int dim_I_new_sylv;
+    int dim_I_new_urb;
+    int dim_I_sylv;
+    int dim_I_urb;
     int dim_Inf0;
     int dim_inv_P;
     int dim_inv_P_nV;
     int dim_P;
     int dim_P_nV;
     int dim_R;
-    int dim_R_new_sylvatic;
-    int dim_R_new_urban;
+    int dim_R_new_sylv;
+    int dim_R_new_urb;
     int dim_Rec0;
     int dim_S;
     int dim_Sus0;
     int dim_V;
     int dim_Vac0;
     int dim_vacc_rate;
-    int dim_vacc_rate_annual;
-    int dim_vacc_rate_annual_1;
-    int dim_vacc_rate_annual_2;
+    int dim_vacc_rate_daily;
+    int dim_vacc_rate_daily_1;
+    int dim_vacc_rate_daily_2;
     std::vector<real_type> dP1_all;
     std::vector<real_type> dP2_all;
     real_type dt;
     std::vector<real_type> Exp0;
     real_type FOI_max;
     real_type FOI_spillover;
-    real_type FOI_sylvatic;
+    real_type FOI_sylv_cur;
     std::vector<real_type> Inf0;
-    std::vector<real_type> initial_C_sylvatic;
-    std::vector<real_type> initial_C_urban;
-    std::vector<real_type> initial_E_sylvatic;
-    std::vector<real_type> initial_E_urban;
+    std::vector<real_type> initial_C_sylv;
+    std::vector<real_type> initial_C_urb;
+    std::vector<real_type> initial_E_sylv;
+    std::vector<real_type> initial_E_urb;
     real_type initial_FOI_sylv;
     real_type initial_FOI_urb;
-    std::vector<real_type> initial_I_sylvatic;
-    std::vector<real_type> initial_I_urban;
+    std::vector<real_type> initial_I_sylv;
+    std::vector<real_type> initial_I_urb;
     std::vector<real_type> initial_R;
     std::vector<real_type> initial_S;
     real_type initial_time;
@@ -118,12 +118,12 @@ public:
     real_type initial_year;
     int N_age;
     int n_years;
-    int offset_variable_C_sylvatic;
-    int offset_variable_C_urban;
-    int offset_variable_E_sylvatic;
-    int offset_variable_E_urban;
-    int offset_variable_I_sylvatic;
-    int offset_variable_I_urban;
+    int offset_variable_C_sylv;
+    int offset_variable_C_urb;
+    int offset_variable_E_sylv;
+    int offset_variable_E_urb;
+    int offset_variable_I_sylv;
+    int offset_variable_I_urb;
     int offset_variable_R;
     int offset_variable_V;
     real_type Pmin;
@@ -136,77 +136,77 @@ public:
     real_type t_infectious;
     real_type t_latent;
     std::vector<real_type> Vac0;
-    std::vector<real_type> vacc_rate_annual;
+    std::vector<real_type> vacc_rate_daily;
     real_type vaccine_efficacy;
     real_type year0;
   };
   struct internal_type {
     std::vector<real_type> dP1;
     std::vector<real_type> dP2;
-    std::vector<real_type> E_new_sylvatic;
-    std::vector<real_type> E_new_urban;
-    std::vector<real_type> I_new_sylvatic;
-    std::vector<real_type> I_new_urban;
+    std::vector<real_type> E_new_sylv;
+    std::vector<real_type> E_new_urb;
+    std::vector<real_type> I_new_sylv;
+    std::vector<real_type> I_new_urb;
     std::vector<real_type> inv_P;
     std::vector<real_type> inv_P_nV;
     std::vector<real_type> P;
     std::vector<real_type> P_nV;
-    std::vector<real_type> R_new_sylvatic;
-    std::vector<real_type> R_new_urban;
+    std::vector<real_type> R_new_sylv;
+    std::vector<real_type> R_new_urb;
     std::vector<real_type> vacc_rate;
   };
   SEIRVModelSplitInfection(const dust::pars_type<SEIRVModelSplitInfection>& pars) :
     shared(pars.shared), internal(pars.internal) {
   }
   size_t size() const {
-    return shared->dim_C_sylvatic + shared->dim_C_urban + shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_I_urban + shared->dim_R + shared->dim_S + shared->dim_V + 4;
+    return shared->dim_C_sylv + shared->dim_C_urb + shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_R + shared->dim_S + shared->dim_V + 4;
   }
   std::vector<real_type> initial(size_t step, rng_state_type& rng_state) {
-    std::vector<real_type> state(shared->dim_C_sylvatic + shared->dim_C_urban + shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_I_urban + shared->dim_R + shared->dim_S + shared->dim_V + 4);
+    std::vector<real_type> state(shared->dim_C_sylv + shared->dim_C_urb + shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_R + shared->dim_S + shared->dim_V + 4);
     state[0] = shared->initial_time;
     state[1] = shared->initial_year;
     state[2] = shared->initial_FOI_sylv;
     state[3] = shared->initial_FOI_urb;
     std::copy(shared->initial_S.begin(), shared->initial_S.end(), state.begin() + 4);
-    std::copy(shared->initial_E_sylvatic.begin(), shared->initial_E_sylvatic.end(), state.begin() + shared->offset_variable_E_sylvatic);
-    std::copy(shared->initial_E_urban.begin(), shared->initial_E_urban.end(), state.begin() + shared->offset_variable_E_urban);
-    std::copy(shared->initial_I_sylvatic.begin(), shared->initial_I_sylvatic.end(), state.begin() + shared->offset_variable_I_sylvatic);
-    std::copy(shared->initial_I_urban.begin(), shared->initial_I_urban.end(), state.begin() + shared->offset_variable_I_urban);
+    std::copy(shared->initial_E_sylv.begin(), shared->initial_E_sylv.end(), state.begin() + shared->offset_variable_E_sylv);
+    std::copy(shared->initial_E_urb.begin(), shared->initial_E_urb.end(), state.begin() + shared->offset_variable_E_urb);
+    std::copy(shared->initial_I_sylv.begin(), shared->initial_I_sylv.end(), state.begin() + shared->offset_variable_I_sylv);
+    std::copy(shared->initial_I_urb.begin(), shared->initial_I_urb.end(), state.begin() + shared->offset_variable_I_urb);
     std::copy(shared->initial_R.begin(), shared->initial_R.end(), state.begin() + shared->offset_variable_R);
     std::copy(shared->initial_V.begin(), shared->initial_V.end(), state.begin() + shared->offset_variable_V);
-    std::copy(shared->initial_C_sylvatic.begin(), shared->initial_C_sylvatic.end(), state.begin() + shared->offset_variable_C_sylvatic);
-    std::copy(shared->initial_C_urban.begin(), shared->initial_C_urban.end(), state.begin() + shared->offset_variable_C_urban);
+    std::copy(shared->initial_C_sylv.begin(), shared->initial_C_sylv.end(), state.begin() + shared->offset_variable_C_sylv);
+    std::copy(shared->initial_C_urb.begin(), shared->initial_C_urb.end(), state.begin() + shared->offset_variable_C_urb);
     return state;
   }
   void update(size_t step, const real_type * state, rng_state_type& rng_state, real_type * state_next) {
     const real_type * S = state + 4;
-    const real_type * E_sylvatic = state + shared->offset_variable_E_sylvatic;
-    const real_type * E_urban = state + shared->offset_variable_E_urban;
-    const real_type * I_sylvatic = state + shared->offset_variable_I_sylvatic;
-    const real_type * I_urban = state + shared->offset_variable_I_urban;
+    const real_type * E_sylv = state + shared->offset_variable_E_sylv;
+    const real_type * E_urb = state + shared->offset_variable_E_urb;
+    const real_type * I_sylv = state + shared->offset_variable_I_sylv;
+    const real_type * I_urb = state + shared->offset_variable_I_urb;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
     state_next[0] = (step + 1) * shared->dt;
     real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
-    state_next[2] = shared->FOI_sylvatic;
+    state_next[2] = shared->FOI_sylv_cur;
     state_next[1] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.E_new_sylvatic[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), shared->FOI_sylvatic);
+      internal.E_new_sylv[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), shared->FOI_sylv_cur);
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.I_new_sylvatic[i - 1] = E_sylvatic[i - 1] * shared->rate1;
+      internal.I_new_sylv[i - 1] = E_sylv[i - 1] * shared->rate1;
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.I_new_urban[i - 1] = E_urban[i - 1] * shared->rate1;
+      internal.I_new_urb[i - 1] = E_urb[i - 1] * shared->rate1;
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.P_nV[i - 1] = S[i - 1] + R[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.R_new_sylvatic[i - 1] = I_sylvatic[i - 1] * shared->rate2;
+      internal.R_new_sylv[i - 1] = I_sylv[i - 1] * shared->rate2;
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.R_new_urban[i - 1] = I_urban[i - 1] * shared->rate2;
+      internal.R_new_urb[i - 1] = I_urb[i - 1] * shared->rate2;
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.dP1[i - 1] = shared->dP1_all[shared->dim_dP1_all_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->dt;
@@ -221,34 +221,34 @@ public:
       internal.P[i - 1] = internal.P_nV[i - 1] + V[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_C_sylvatic + i - 1] = internal.I_new_sylvatic[i - 1];
+      state_next[shared->offset_variable_C_sylv + i - 1] = internal.I_new_sylv[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_C_urban + i - 1] = internal.I_new_urban[i - 1];
+      state_next[shared->offset_variable_C_urb + i - 1] = internal.I_new_urb[i - 1];
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_E_sylvatic + i - 1] = dust::math::max(shared->Pmin, E_sylvatic[i - 1] + internal.E_new_sylvatic[i - 1] - internal.I_new_sylvatic[i - 1]);
+      state_next[shared->offset_variable_E_sylv + i - 1] = dust::math::max(shared->Pmin, E_sylv[i - 1] + internal.E_new_sylv[i - 1] - internal.I_new_sylv[i - 1]);
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_I_sylvatic + i - 1] = dust::math::max(shared->Pmin, I_sylvatic[i - 1] + internal.I_new_sylvatic[i - 1] - internal.R_new_sylvatic[i - 1]);
+      state_next[shared->offset_variable_I_sylv + i - 1] = dust::math::max(shared->Pmin, I_sylv[i - 1] + internal.I_new_sylv[i - 1] - internal.R_new_sylv[i - 1]);
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_I_urban + i - 1] = dust::math::max(shared->Pmin, I_urban[i - 1] + internal.I_new_urban[i - 1] - internal.R_new_urban[i - 1]);
+      state_next[shared->offset_variable_I_urb + i - 1] = dust::math::max(shared->Pmin, I_urb[i - 1] + internal.I_new_urb[i - 1] - internal.R_new_urb[i - 1]);
     }
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.inv_P[i - 1] = 1 / (real_type) internal.P[i - 1];
     }
     real_type P_tot = odin_sum1<real_type>(internal.P.data(), 0, shared->dim_P);
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.vacc_rate[i - 1] = shared->vacc_rate_annual[shared->dim_vacc_rate_annual_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
+      internal.vacc_rate[i - 1] = shared->vacc_rate_daily[shared->dim_vacc_rate_daily_1 * (static_cast<int>(year_i) - 1) + i - 1] * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
     }
-    real_type FOI_urban = dust::math::min(shared->FOI_max, shared->beta * ((odin_sum1<real_type>(I_sylvatic, 0, shared->dim_I_sylvatic) + odin_sum1<real_type>(I_urban, 0, shared->dim_I_urban)) / (real_type) P_tot));
+    real_type FOI_urb_cur = dust::math::min(shared->FOI_max, shared->beta * ((odin_sum1<real_type>(I_sylv, 0, shared->dim_I_sylv) + odin_sum1<real_type>(I_urb, 0, shared->dim_I_urb)) / (real_type) P_tot));
     {
        int i = 1;
-       state_next[shared->offset_variable_R + i - 1] = dust::math::max(shared->Pmin, R[0] + internal.R_new_sylvatic[0] + internal.R_new_urban[0] - internal.vacc_rate[0] * R[0] * internal.inv_P_nV[0] - (internal.dP2[0] * R[0] * internal.inv_P[0]));
+       state_next[shared->offset_variable_R + i - 1] = dust::math::max(shared->Pmin, R[0] + internal.R_new_sylv[0] + internal.R_new_urb[0] - internal.vacc_rate[0] * R[0] * internal.inv_P_nV[0] - (internal.dP2[0] * R[0] * internal.inv_P[0]));
     }
     for (int i = 2; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_R + i - 1] = dust::math::max(shared->Pmin, R[i - 1] + internal.R_new_sylvatic[i - 1] + internal.R_new_urban[i - 1] - internal.vacc_rate[i - 1] * R[i - 1] * internal.inv_P_nV[i - 1] + (internal.dP1[i - 1] * R[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * R[i - 1] * internal.inv_P[i - 1]));
+      state_next[shared->offset_variable_R + i - 1] = dust::math::max(shared->Pmin, R[i - 1] + internal.R_new_sylv[i - 1] + internal.R_new_urb[i - 1] - internal.vacc_rate[i - 1] * R[i - 1] * internal.inv_P_nV[i - 1] + (internal.dP1[i - 1] * R[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * R[i - 1] * internal.inv_P[i - 1]));
     }
     {
        int i = 1;
@@ -258,18 +258,18 @@ public:
       state_next[shared->offset_variable_V + i - 1] = dust::math::max(shared->Pmin, V[i - 1] + internal.vacc_rate[i - 1] + (internal.dP1[i - 1] * V[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * V[i - 1] * internal.inv_P[i - 1]));
     }
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.E_new_urban[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), FOI_urban);
+      internal.E_new_urb[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), FOI_urb_cur);
     }
-    state_next[3] = FOI_urban;
+    state_next[3] = FOI_urb_cur;
     for (int i = 1; i <= shared->N_age; ++i) {
-      state_next[shared->offset_variable_E_urban + i - 1] = dust::math::max(shared->Pmin, E_urban[i - 1] + internal.E_new_urban[i - 1] - internal.I_new_urban[i - 1]);
+      state_next[shared->offset_variable_E_urb + i - 1] = dust::math::max(shared->Pmin, E_urb[i - 1] + internal.E_new_urb[i - 1] - internal.I_new_urb[i - 1]);
     }
     {
        int i = 1;
-       state_next[4 + i - 1] = dust::math::max(shared->Pmin, S[0] - internal.E_new_sylvatic[0] - internal.E_new_urban[0] - internal.vacc_rate[0] * S[0] * internal.inv_P_nV[0] + internal.dP1[0] - (internal.dP2[0] * S[0] * internal.inv_P[0]));
+       state_next[4 + i - 1] = dust::math::max(shared->Pmin, S[0] - internal.E_new_sylv[0] - internal.E_new_urb[0] - internal.vacc_rate[0] * S[0] * internal.inv_P_nV[0] + internal.dP1[0] - (internal.dP2[0] * S[0] * internal.inv_P[0]));
     }
     for (int i = 2; i <= shared->N_age; ++i) {
-      state_next[4 + i - 1] = dust::math::max(shared->Pmin, S[i - 1] - internal.E_new_sylvatic[i - 1] - internal.E_new_urban[i - 1] - internal.vacc_rate[i - 1] * S[i - 1] * internal.inv_P_nV[i - 1] + (internal.dP1[i - 1] * S[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * S[i - 1] * internal.inv_P[i - 1]));
+      state_next[4 + i - 1] = dust::math::max(shared->Pmin, S[i - 1] - internal.E_new_sylv[i - 1] - internal.E_new_urb[i - 1] - internal.vacc_rate[i - 1] * S[i - 1] * internal.inv_P_nV[i - 1] + (internal.dP1[i - 1] * S[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * S[i - 1] * internal.inv_P[i - 1]));
     }
   }
 private:
@@ -532,8 +532,8 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   shared->vaccine_efficacy = user_get_scalar<real_type>(user, "vaccine_efficacy", shared->vaccine_efficacy, NA_REAL, NA_REAL);
   shared->year0 = user_get_scalar<real_type>(user, "year0", shared->year0, NA_REAL, NA_REAL);
   shared->beta = (shared->R0 * shared->dt) / (real_type) shared->t_infectious;
-  shared->dim_C_sylvatic = shared->N_age;
-  shared->dim_C_urban = shared->N_age;
+  shared->dim_C_sylv = shared->N_age;
+  shared->dim_C_urb = shared->N_age;
   shared->dim_Cas0 = shared->N_age;
   shared->dim_dP1 = shared->N_age;
   shared->dim_dP1_all_1 = shared->N_age;
@@ -541,48 +541,48 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   shared->dim_dP2 = shared->N_age;
   shared->dim_dP2_all_1 = shared->N_age;
   shared->dim_dP2_all_2 = shared->n_years;
-  shared->dim_E_new_sylvatic = shared->N_age;
-  shared->dim_E_new_urban = shared->N_age;
-  shared->dim_E_sylvatic = shared->N_age;
-  shared->dim_E_urban = shared->N_age;
+  shared->dim_E_new_sylv = shared->N_age;
+  shared->dim_E_new_urb = shared->N_age;
+  shared->dim_E_sylv = shared->N_age;
+  shared->dim_E_urb = shared->N_age;
   shared->dim_Exp0 = shared->N_age;
-  shared->dim_I_new_sylvatic = shared->N_age;
-  shared->dim_I_new_urban = shared->N_age;
-  shared->dim_I_sylvatic = shared->N_age;
-  shared->dim_I_urban = shared->N_age;
+  shared->dim_I_new_sylv = shared->N_age;
+  shared->dim_I_new_urb = shared->N_age;
+  shared->dim_I_sylv = shared->N_age;
+  shared->dim_I_urb = shared->N_age;
   shared->dim_Inf0 = shared->N_age;
   shared->dim_inv_P = shared->N_age;
   shared->dim_inv_P_nV = shared->N_age;
   shared->dim_P = shared->N_age;
   shared->dim_P_nV = shared->N_age;
   shared->dim_R = shared->N_age;
-  shared->dim_R_new_sylvatic = shared->N_age;
-  shared->dim_R_new_urban = shared->N_age;
+  shared->dim_R_new_sylv = shared->N_age;
+  shared->dim_R_new_urb = shared->N_age;
   shared->dim_Rec0 = shared->N_age;
   shared->dim_S = shared->N_age;
   shared->dim_Sus0 = shared->N_age;
   shared->dim_V = shared->N_age;
   shared->dim_Vac0 = shared->N_age;
   shared->dim_vacc_rate = shared->N_age;
-  shared->dim_vacc_rate_annual_1 = shared->N_age;
-  shared->dim_vacc_rate_annual_2 = shared->n_years;
-  shared->FOI_sylvatic = dust::math::min(shared->FOI_max, shared->FOI_spillover * shared->dt);
+  shared->dim_vacc_rate_daily_1 = shared->N_age;
+  shared->dim_vacc_rate_daily_2 = shared->n_years;
+  shared->FOI_sylv_cur = dust::math::min(shared->FOI_max, shared->FOI_spillover * shared->dt);
   shared->initial_FOI_sylv = shared->FOI_spillover;
   shared->initial_year = shared->year0 - 1;
   shared->rate1 = shared->dt / (real_type) (shared->t_incubation + shared->t_latent);
   shared->rate2 = shared->dt / (real_type) shared->t_infectious;
   internal.dP1 = std::vector<real_type>(shared->dim_dP1);
   internal.dP2 = std::vector<real_type>(shared->dim_dP2);
-  internal.E_new_sylvatic = std::vector<real_type>(shared->dim_E_new_sylvatic);
-  internal.E_new_urban = std::vector<real_type>(shared->dim_E_new_urban);
-  internal.I_new_sylvatic = std::vector<real_type>(shared->dim_I_new_sylvatic);
-  internal.I_new_urban = std::vector<real_type>(shared->dim_I_new_urban);
-  shared->initial_C_sylvatic = std::vector<real_type>(shared->dim_C_sylvatic);
-  shared->initial_C_urban = std::vector<real_type>(shared->dim_C_urban);
-  shared->initial_E_sylvatic = std::vector<real_type>(shared->dim_E_sylvatic);
-  shared->initial_E_urban = std::vector<real_type>(shared->dim_E_urban);
-  shared->initial_I_sylvatic = std::vector<real_type>(shared->dim_I_sylvatic);
-  shared->initial_I_urban = std::vector<real_type>(shared->dim_I_urban);
+  internal.E_new_sylv = std::vector<real_type>(shared->dim_E_new_sylv);
+  internal.E_new_urb = std::vector<real_type>(shared->dim_E_new_urb);
+  internal.I_new_sylv = std::vector<real_type>(shared->dim_I_new_sylv);
+  internal.I_new_urb = std::vector<real_type>(shared->dim_I_new_urb);
+  shared->initial_C_sylv = std::vector<real_type>(shared->dim_C_sylv);
+  shared->initial_C_urb = std::vector<real_type>(shared->dim_C_urb);
+  shared->initial_E_sylv = std::vector<real_type>(shared->dim_E_sylv);
+  shared->initial_E_urb = std::vector<real_type>(shared->dim_E_urb);
+  shared->initial_I_sylv = std::vector<real_type>(shared->dim_I_sylv);
+  shared->initial_I_urb = std::vector<real_type>(shared->dim_I_urb);
   shared->initial_R = std::vector<real_type>(shared->dim_R);
   shared->initial_S = std::vector<real_type>(shared->dim_S);
   shared->initial_V = std::vector<real_type>(shared->dim_V);
@@ -590,45 +590,45 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   internal.inv_P_nV = std::vector<real_type>(shared->dim_inv_P_nV);
   internal.P = std::vector<real_type>(shared->dim_P);
   internal.P_nV = std::vector<real_type>(shared->dim_P_nV);
-  internal.R_new_sylvatic = std::vector<real_type>(shared->dim_R_new_sylvatic);
-  internal.R_new_urban = std::vector<real_type>(shared->dim_R_new_urban);
+  internal.R_new_sylv = std::vector<real_type>(shared->dim_R_new_sylv);
+  internal.R_new_urb = std::vector<real_type>(shared->dim_R_new_urb);
   internal.vacc_rate = std::vector<real_type>(shared->dim_vacc_rate);
   shared->Cas0 = user_get_array_fixed<real_type, 1>(user, "Cas0", shared->Cas0, {shared->dim_Cas0}, NA_REAL, NA_REAL);
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
-  shared->dim_vacc_rate_annual = shared->dim_vacc_rate_annual_1 * shared->dim_vacc_rate_annual_2;
+  shared->dim_vacc_rate_daily = shared->dim_vacc_rate_daily_1 * shared->dim_vacc_rate_daily_2;
   shared->Exp0 = user_get_array_fixed<real_type, 1>(user, "Exp0", shared->Exp0, {shared->dim_Exp0}, NA_REAL, NA_REAL);
   shared->Inf0 = user_get_array_fixed<real_type, 1>(user, "Inf0", shared->Inf0, {shared->dim_Inf0}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_C_urban[i - 1] = 0;
+    shared->initial_C_urb[i - 1] = 0;
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_E_urban[i - 1] = 0;
+    shared->initial_E_urb[i - 1] = 0;
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_I_urban[i - 1] = 0;
+    shared->initial_I_urb[i - 1] = 0;
   }
-  shared->offset_variable_C_sylvatic = shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_I_urban + shared->dim_R + shared->dim_S + shared->dim_V + 4;
-  shared->offset_variable_C_urban = shared->dim_C_sylvatic + shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_I_urban + shared->dim_R + shared->dim_S + shared->dim_V + 4;
-  shared->offset_variable_E_sylvatic = shared->dim_S + 4;
-  shared->offset_variable_E_urban = shared->dim_E_sylvatic + shared->dim_S + 4;
-  shared->offset_variable_I_sylvatic = shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_S + 4;
-  shared->offset_variable_I_urban = shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_S + 4;
-  shared->offset_variable_R = shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_I_urban + shared->dim_S + 4;
-  shared->offset_variable_V = shared->dim_E_sylvatic + shared->dim_E_urban + shared->dim_I_sylvatic + shared->dim_I_urban + shared->dim_R + shared->dim_S + 4;
+  shared->offset_variable_C_sylv = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_R + shared->dim_S + shared->dim_V + 4;
+  shared->offset_variable_C_urb = shared->dim_C_sylv + shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_R + shared->dim_S + shared->dim_V + 4;
+  shared->offset_variable_E_sylv = shared->dim_S + 4;
+  shared->offset_variable_E_urb = shared->dim_E_sylv + shared->dim_S + 4;
+  shared->offset_variable_I_sylv = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_S + 4;
+  shared->offset_variable_I_urb = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_S + 4;
+  shared->offset_variable_R = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_S + 4;
+  shared->offset_variable_V = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_R + shared->dim_S + 4;
   shared->Rec0 = user_get_array_fixed<real_type, 1>(user, "Rec0", shared->Rec0, {shared->dim_Rec0}, NA_REAL, NA_REAL);
   shared->Sus0 = user_get_array_fixed<real_type, 1>(user, "Sus0", shared->Sus0, {shared->dim_Sus0}, NA_REAL, NA_REAL);
   shared->Vac0 = user_get_array_fixed<real_type, 1>(user, "Vac0", shared->Vac0, {shared->dim_Vac0}, NA_REAL, NA_REAL);
   shared->dP1_all = user_get_array_fixed<real_type, 2>(user, "dP1_all", shared->dP1_all, {shared->dim_dP1_all_1, shared->dim_dP1_all_2}, NA_REAL, NA_REAL);
   shared->dP2_all = user_get_array_fixed<real_type, 2>(user, "dP2_all", shared->dP2_all, {shared->dim_dP2_all_1, shared->dim_dP2_all_2}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_C_sylvatic[i - 1] = shared->Cas0[i - 1];
+    shared->initial_C_sylv[i - 1] = shared->Cas0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_E_sylvatic[i - 1] = shared->Exp0[i - 1];
+    shared->initial_E_sylv[i - 1] = shared->Exp0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_I_sylvatic[i - 1] = shared->Inf0[i - 1];
+    shared->initial_I_sylv[i - 1] = shared->Inf0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_R[i - 1] = shared->Rec0[i - 1];
@@ -639,27 +639,27 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_V[i - 1] = shared->Vac0[i - 1];
   }
-  shared->vacc_rate_annual = user_get_array_fixed<real_type, 2>(user, "vacc_rate_annual", shared->vacc_rate_annual, {shared->dim_vacc_rate_annual_1, shared->dim_vacc_rate_annual_2}, NA_REAL, NA_REAL);
+  shared->vacc_rate_daily = user_get_array_fixed<real_type, 2>(user, "vacc_rate_daily", shared->vacc_rate_daily, {shared->dim_vacc_rate_daily_1, shared->dim_vacc_rate_daily_2}, NA_REAL, NA_REAL);
   return dust::pars_type<SEIRVModelSplitInfection>(shared, internal);
 }
 template <>
 cpp11::sexp dust_info<SEIRVModelSplitInfection>(const dust::pars_type<SEIRVModelSplitInfection>& pars) {
   const std::shared_ptr<const SEIRVModelSplitInfection::shared_type> shared = pars.shared;
-  cpp11::writable::strings nms({"time", "year", "FOI_sylv", "FOI_urb", "S", "E_sylvatic", "E_urban", "I_sylvatic", "I_urban", "R", "V", "C_sylvatic", "C_urban"});
+  cpp11::writable::strings nms({"time", "year", "FOI_sylv", "FOI_urb", "S", "E_sylv", "E_urb", "I_sylv", "I_urb", "R", "V", "C_sylv", "C_urb"});
   cpp11::writable::list dim(13);
   dim[0] = cpp11::writable::integers({1});
   dim[1] = cpp11::writable::integers({1});
   dim[2] = cpp11::writable::integers({1});
   dim[3] = cpp11::writable::integers({1});
   dim[4] = cpp11::writable::integers({shared->dim_S});
-  dim[5] = cpp11::writable::integers({shared->dim_E_sylvatic});
-  dim[6] = cpp11::writable::integers({shared->dim_E_urban});
-  dim[7] = cpp11::writable::integers({shared->dim_I_sylvatic});
-  dim[8] = cpp11::writable::integers({shared->dim_I_urban});
+  dim[5] = cpp11::writable::integers({shared->dim_E_sylv});
+  dim[6] = cpp11::writable::integers({shared->dim_E_urb});
+  dim[7] = cpp11::writable::integers({shared->dim_I_sylv});
+  dim[8] = cpp11::writable::integers({shared->dim_I_urb});
   dim[9] = cpp11::writable::integers({shared->dim_R});
   dim[10] = cpp11::writable::integers({shared->dim_V});
-  dim[11] = cpp11::writable::integers({shared->dim_C_sylvatic});
-  dim[12] = cpp11::writable::integers({shared->dim_C_urban});
+  dim[11] = cpp11::writable::integers({shared->dim_C_sylv});
+  dim[12] = cpp11::writable::integers({shared->dim_C_urb});
   dim.names() = nms;
   cpp11::writable::list index(13);
   index[0] = cpp11::writable::integers({1});
@@ -667,16 +667,16 @@ cpp11::sexp dust_info<SEIRVModelSplitInfection>(const dust::pars_type<SEIRVModel
   index[2] = cpp11::writable::integers({3});
   index[3] = cpp11::writable::integers({4});
   index[4] = integer_sequence(5, shared->dim_S);
-  index[5] = integer_sequence(shared->offset_variable_E_sylvatic + 1, shared->dim_E_sylvatic);
-  index[6] = integer_sequence(shared->offset_variable_E_urban + 1, shared->dim_E_urban);
-  index[7] = integer_sequence(shared->offset_variable_I_sylvatic + 1, shared->dim_I_sylvatic);
-  index[8] = integer_sequence(shared->offset_variable_I_urban + 1, shared->dim_I_urban);
+  index[5] = integer_sequence(shared->offset_variable_E_sylv + 1, shared->dim_E_sylv);
+  index[6] = integer_sequence(shared->offset_variable_E_urb + 1, shared->dim_E_urb);
+  index[7] = integer_sequence(shared->offset_variable_I_sylv + 1, shared->dim_I_sylv);
+  index[8] = integer_sequence(shared->offset_variable_I_urb + 1, shared->dim_I_urb);
   index[9] = integer_sequence(shared->offset_variable_R + 1, shared->dim_R);
   index[10] = integer_sequence(shared->offset_variable_V + 1, shared->dim_V);
-  index[11] = integer_sequence(shared->offset_variable_C_sylvatic + 1, shared->dim_C_sylvatic);
-  index[12] = integer_sequence(shared->offset_variable_C_urban + 1, shared->dim_C_urban);
+  index[11] = integer_sequence(shared->offset_variable_C_sylv + 1, shared->dim_C_sylv);
+  index[12] = integer_sequence(shared->offset_variable_C_urb + 1, shared->dim_C_urb);
   index.names() = nms;
-  size_t len = shared->offset_variable_C_urban + shared->dim_C_urban;
+  size_t len = shared->offset_variable_C_urb + shared->dim_C_urb;
   using namespace cpp11::literals;
   return cpp11::writable::list({
            "dim"_nm = dim,
