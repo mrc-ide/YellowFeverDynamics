@@ -6,17 +6,19 @@
 
 dt <- user() #Time increment in days
 initial(time) <- 0 #Initial value of time in days
-update(time) <- (step + 1) * dt
+update(time) <- time + dt
 
 #Parameters---------------------------------------------------------------------
 t_incubation <- user() #TBA
 t_latent <- user() #TBA
 t_infectious <- user() #TBA
-FOI_spillover <- user() #Spillover force of infection
+FOI_spillover <- user() #Spillover force of infection (per day)
 R0 <- user() #Basic reproduction number
 N_age <- user() #Number of age categories
 vacc_rate_daily[,] <- user() #Daily rate of vaccination by age and year
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
+
+
 
 
 
@@ -65,7 +67,6 @@ P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
 vacc_rate[1:N_age] <- vacc_rate_daily[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
-
 
 
 

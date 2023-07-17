@@ -1,4 +1,4 @@
-# SEIRV model with reactive functionality (TBA)
+# SEIRV model with reactive functionality using delay approach (TBA)
 
 
 
@@ -21,8 +21,8 @@ response_delay <- user() #Delay time in days between a flag being triggered and 
 p_rep[] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
 outbreak_threshold1 <- user() #Threshold total no. reported cases to trigger outbreak flag 1
 cluster_threshold1 <- user()  #Threshold current infectious fraction to trigger cluster flag 1
-vacc_rate_emergency_campaign[] <- user() #TBA
-emergency_campaign_duration <- user() #TBA
+vacc_rate_cam[] <- user() #TBA
+t_cam <- user() #TBA
 
 #Initial conditions-------------------------------------------------------------
 year0 <- user()  #Starting year
@@ -44,10 +44,9 @@ np_E_delay <- ((t_incubation+t_latent)/dt)*N_age
 np_I_delay <- (t_infectious/dt)*N_age
 di1 <- np_E_delay-N_age
 di2 <- np_I_delay-N_age
-#zero <- 0
 one <- 1
 rate3 <- dt/response_delay
-rate4 <- dt/emergency_campaign_duration
+rate4 <- dt/t_cam
 beta <- (R0*dt)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover*dt)) #Total force of infection
 
@@ -67,14 +66,13 @@ inv_P_nV[1:N_age] <- 1.0/P_nV[i]
 P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
-vacc_rate[1:N_age] <- (vacc_rate_daily[i,as.integer(year_i)] + (if(flag3==0) 0 else vacc_rate_emergency_campaign[i]*ceiling(1-flag4)))*vaccine_efficacy*dt*P[i]
+vacc_rate[1:N_age] <- (vacc_rate_daily[i,as.integer(year_i)] + (if(flag3==0) 0 else vacc_rate_cam[i]*ceiling(1-flag4)))*vaccine_efficacy*dt*P[i]
 
 outbreak_flag1 <- if(C_rep_total >= outbreak_threshold1) 1 else 0
 p_rep_cur <- if(flag3==1) p_rep[2] else p_rep[1]
 C_rep_new[1:N_age] <- rbinom(as.integer(I_new[i]),p_rep_cur) #Daily new reported cases by age group
 F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of population - check for cluster flag
 cluster_flag1 <- if(F_I_total>=cluster_threshold1) 1 else 0
-flag_emergency <- floor(max(flag1,flag2))
 
 #Updates to output values at each time increment--------------------------------
 update(year) <- year_i + year0 - 1
@@ -82,11 +80,9 @@ update(FOI_total) <- FOI_sum
 update(C_rep_total) <- C_rep_total + sum(C_rep_new) #Running total reported cases across all ages
 
 update(flag1) <- min(one,flag1 + (outbreak_flag1*rate3)) #flag1 with delay (converted to integer on use)
-
-update(flag2) <- min(one,flag2 + (cluster_flag1*rate3)) #flag1 with delay (converted to integer on use)
-update(flag3) <- flag_emergency #0 = No emergency (flags 1+2 not tripped); 1 = emergency (flag 1 and/or 2 tripped)
+update(flag2) <- min(one,flag2 + (cluster_flag1*rate3)) #flag2 with delay (converted to integer on use)
+update(flag3) <- if(flag1==1) 1 else (if(flag2==1) 1 else 0) #0 = No emergency (flags 1+2 not tripped); 1 = emergency (flag 1 and/or 2 tripped)
 update(flag4) <- if(flag3==0) 0 else min(one,flag4+rate4)
-
 update(report_rate) <- p_rep_cur
 
 update(S[1]) <- max(Pmin,S[1] - E_new[1] - vacc_rate[1]*S[1]*inv_P_nV[1] + dP1[1] - (dP2[1]*S[1]*inv_P[1]))
@@ -110,11 +106,11 @@ initial(FOI_total) <- FOI_spillover
 initial(C_rep_total) <- 0
 
 initial(flag1) <- 0
-
 initial(flag2) <- 0
 initial(flag3) <- 0
 initial(flag4) <- 0
 initial(report_rate) <- p_rep[1]
+
 initial(S[1:N_age]) <- Sus0[i]
 initial(E[1:N_age]) <- Exp0[i]
 initial(E_delay[1:np_E_delay]) <- 0
@@ -159,4 +155,4 @@ dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)
 dim(p_rep) <- 2
-dim(vacc_rate_emergency_campaign) <- N_age
+dim(vacc_rate_cam) <- N_age

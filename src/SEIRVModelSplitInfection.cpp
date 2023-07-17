@@ -250,6 +250,7 @@ public:
     return state;
   }
   void update(size_t step, const real_type * state, rng_state_type& rng_state, real_type * state_next) {
+    const real_type time = state[0];
     const real_type * S = state + 4;
     const real_type * E_sylv = state + shared->offset_variable_E_sylv;
     const real_type * E_urb = state + shared->offset_variable_E_urb;
@@ -257,7 +258,7 @@ public:
     const real_type * I_urb = state + shared->offset_variable_I_urb;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
-    state_next[0] = (step + 1) * shared->dt;
+    state_next[0] = time + shared->dt;
     real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
     state_next[2] = shared->FOI_sylv_cur;
     state_next[1] = year_i + shared->year0 - 1;

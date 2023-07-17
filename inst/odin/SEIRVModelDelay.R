@@ -22,6 +22,8 @@ vaccine_efficacy <- user() #Proportion of vaccinations which successfully protec
 
 
 
+
+
 #Initial conditions-------------------------------------------------------------
 year0 <- user()  #Starting year
 Sus0[] <- user() #Susceptible population by age group at start
@@ -65,7 +67,6 @@ P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
 vacc_rate[1:N_age] <- vacc_rate_daily[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
-
 
 
 

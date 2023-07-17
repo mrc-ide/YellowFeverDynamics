@@ -36,7 +36,6 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(dP1_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dP2_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(emergency_campaign_duration, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Exp0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(FOI_spillover, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Inf0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -48,12 +47,13 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(Rec0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(response_delay, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Sus0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(t_cam, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_incubation, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_infectious, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_latent, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(Vac0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(vacc_rate_cam, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_rate_daily, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(vacc_rate_emergency_campaign, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_efficacy, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(year0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 class SEIRVModelDelayReactive {
@@ -100,14 +100,13 @@ public:
     int dim_V;
     int dim_Vac0;
     int dim_vacc_rate;
+    int dim_vacc_rate_cam;
     int dim_vacc_rate_daily;
     int dim_vacc_rate_daily_1;
     int dim_vacc_rate_daily_2;
-    int dim_vacc_rate_emergency_campaign;
     std::vector<real_type> dP1_all;
     std::vector<real_type> dP2_all;
     real_type dt;
-    real_type emergency_campaign_duration;
     std::vector<real_type> Exp0;
     real_type FOI_max;
     real_type FOI_spillover;
@@ -152,12 +151,13 @@ public:
     std::vector<real_type> Rec0;
     real_type response_delay;
     std::vector<real_type> Sus0;
+    real_type t_cam;
     real_type t_incubation;
     real_type t_infectious;
     real_type t_latent;
     std::vector<real_type> Vac0;
+    std::vector<real_type> vacc_rate_cam;
     std::vector<real_type> vacc_rate_daily;
-    std::vector<real_type> vacc_rate_emergency_campaign;
     real_type vaccine_efficacy;
     real_type year0;
   };
@@ -216,13 +216,12 @@ public:
     const real_type * I_delay = state + shared->offset_variable_I_delay;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
-    real_type flag_emergency = dust::math::floor(dust::math::max(flag1, flag2));
     real_type outbreak_flag1 = (C_rep_total >= shared->outbreak_threshold1 ? 1 : 0);
+    state_next[6] = (flag1 == 1 ? 1 : ((flag2 == 1 ? 1 : 0)));
     state_next[0] = time + shared->dt;
     real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
     real_type p_rep_cur = (flag3 == 1 ? shared->p_rep[1] : shared->p_rep[0]);
     state_next[4] = dust::math::min(shared->one, flag1 + (outbreak_flag1 * shared->rate3));
-    state_next[6] = flag_emergency;
     state_next[7] = (flag3 == 0 ? 0 : dust::math::min(shared->one, flag4 + shared->rate4));
     state_next[1] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
@@ -271,7 +270,7 @@ public:
     }
     state_next[3] = C_rep_total + odin_sum1<real_type>(internal.C_rep_new.data(), 0, shared->dim_C_rep_new);
     for (int i = 1; i <= shared->N_age; ++i) {
-      internal.vacc_rate[i - 1] = (shared->vacc_rate_daily[shared->dim_vacc_rate_daily_1 * (static_cast<int>(year_i) - 1) + i - 1] + ((flag3 == 0 ? 0 : shared->vacc_rate_emergency_campaign[i - 1] * dust::math::ceil(1 - flag4)))) * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
+      internal.vacc_rate[i - 1] = (shared->vacc_rate_daily[shared->dim_vacc_rate_daily_1 * (static_cast<int>(year_i) - 1) + i - 1] + ((flag3 == 0 ? 0 : shared->vacc_rate_cam[i - 1] * dust::math::ceil(1 - flag4)))) * shared->vaccine_efficacy * shared->dt * internal.P[i - 1];
     }
     real_type F_I_total = odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot;
     real_type FOI_sum = dust::math::min(shared->FOI_max, shared->beta * (odin_sum1<real_type>(I, 0, shared->dim_I) / (real_type) P_tot) + (shared->FOI_spillover * shared->dt));
@@ -556,16 +555,16 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->initial_flag4 = 0;
   shared->initial_time = 0;
   shared->one = 1;
-  shared->Pmin = static_cast<real_type>(1e-99);
+  shared->Pmin = 0;
   shared->cluster_threshold1 = NA_REAL;
   shared->dt = NA_REAL;
-  shared->emergency_campaign_duration = NA_REAL;
   shared->FOI_spillover = NA_REAL;
   shared->N_age = NA_INTEGER;
   shared->n_years = NA_INTEGER;
   shared->outbreak_threshold1 = NA_REAL;
   shared->R0 = NA_REAL;
   shared->response_delay = NA_REAL;
+  shared->t_cam = NA_REAL;
   shared->t_incubation = NA_REAL;
   shared->t_infectious = NA_REAL;
   shared->t_latent = NA_REAL;
@@ -573,13 +572,13 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->year0 = NA_REAL;
   shared->cluster_threshold1 = user_get_scalar<real_type>(user, "cluster_threshold1", shared->cluster_threshold1, NA_REAL, NA_REAL);
   shared->dt = user_get_scalar<real_type>(user, "dt", shared->dt, NA_REAL, NA_REAL);
-  shared->emergency_campaign_duration = user_get_scalar<real_type>(user, "emergency_campaign_duration", shared->emergency_campaign_duration, NA_REAL, NA_REAL);
   shared->FOI_spillover = user_get_scalar<real_type>(user, "FOI_spillover", shared->FOI_spillover, NA_REAL, NA_REAL);
   shared->N_age = user_get_scalar<int>(user, "N_age", shared->N_age, NA_INTEGER, NA_INTEGER);
   shared->n_years = user_get_scalar<int>(user, "n_years", shared->n_years, NA_INTEGER, NA_INTEGER);
   shared->outbreak_threshold1 = user_get_scalar<real_type>(user, "outbreak_threshold1", shared->outbreak_threshold1, NA_REAL, NA_REAL);
   shared->R0 = user_get_scalar<real_type>(user, "R0", shared->R0, NA_REAL, NA_REAL);
   shared->response_delay = user_get_scalar<real_type>(user, "response_delay", shared->response_delay, NA_REAL, NA_REAL);
+  shared->t_cam = user_get_scalar<real_type>(user, "t_cam", shared->t_cam, NA_REAL, NA_REAL);
   shared->t_incubation = user_get_scalar<real_type>(user, "t_incubation", shared->t_incubation, NA_REAL, NA_REAL);
   shared->t_infectious = user_get_scalar<real_type>(user, "t_infectious", shared->t_infectious, NA_REAL, NA_REAL);
   shared->t_latent = user_get_scalar<real_type>(user, "t_latent", shared->t_latent, NA_REAL, NA_REAL);
@@ -614,16 +613,16 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->dim_V = shared->N_age;
   shared->dim_Vac0 = shared->N_age;
   shared->dim_vacc_rate = shared->N_age;
+  shared->dim_vacc_rate_cam = shared->N_age;
   shared->dim_vacc_rate_daily_1 = shared->N_age;
   shared->dim_vacc_rate_daily_2 = shared->n_years;
-  shared->dim_vacc_rate_emergency_campaign = shared->N_age;
   shared->initial_FOI_total = shared->FOI_spillover;
   shared->initial_year = shared->year0 - 1;
   shared->np_E_delay = ((shared->t_incubation + shared->t_latent) / (real_type) shared->dt) * shared->N_age;
   shared->np_I_delay = (shared->t_infectious / (real_type) shared->dt) * shared->N_age;
   shared->p_rep = user_get_array_fixed<real_type, 1>(user, "p_rep", shared->p_rep, {shared->dim_p_rep}, NA_REAL, NA_REAL);
   shared->rate3 = shared->dt / (real_type) shared->response_delay;
-  shared->rate4 = shared->dt / (real_type) shared->emergency_campaign_duration;
+  shared->rate4 = shared->dt / (real_type) shared->t_cam;
   internal.C_rep_new = std::vector<real_type>(shared->dim_C_rep_new);
   internal.dP1 = std::vector<real_type>(shared->dim_dP1);
   internal.dP2 = std::vector<real_type>(shared->dim_dP2);
@@ -661,7 +660,7 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->Rec0 = user_get_array_fixed<real_type, 1>(user, "Rec0", shared->Rec0, {shared->dim_Rec0}, NA_REAL, NA_REAL);
   shared->Sus0 = user_get_array_fixed<real_type, 1>(user, "Sus0", shared->Sus0, {shared->dim_Sus0}, NA_REAL, NA_REAL);
   shared->Vac0 = user_get_array_fixed<real_type, 1>(user, "Vac0", shared->Vac0, {shared->dim_Vac0}, NA_REAL, NA_REAL);
-  shared->vacc_rate_emergency_campaign = user_get_array_fixed<real_type, 1>(user, "vacc_rate_emergency_campaign", shared->vacc_rate_emergency_campaign, {shared->dim_vacc_rate_emergency_campaign}, NA_REAL, NA_REAL);
+  shared->vacc_rate_cam = user_get_array_fixed<real_type, 1>(user, "vacc_rate_cam", shared->vacc_rate_cam, {shared->dim_vacc_rate_cam}, NA_REAL, NA_REAL);
   shared->initial_E_delay = std::vector<real_type>(shared->dim_E_delay);
   shared->initial_I_delay = std::vector<real_type>(shared->dim_I_delay);
   shared->dP1_all = user_get_array_fixed<real_type, 2>(user, "dP1_all", shared->dP1_all, {shared->dim_dP1_all_1, shared->dim_dP1_all_2}, NA_REAL, NA_REAL);
