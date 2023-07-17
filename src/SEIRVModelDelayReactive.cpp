@@ -626,7 +626,7 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->initial_flag4 = 0;
   shared->initial_time = 0;
   shared->one = 1;
-  shared->Pmin = 0;
+  shared->Pmin = static_cast<real_type>(1e-99);
   shared->cluster_threshold1 = NA_REAL;
   shared->dt = NA_REAL;
   shared->FOI_spillover = NA_REAL;
