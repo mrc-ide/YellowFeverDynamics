@@ -26,12 +26,11 @@ t_cam <- user() #TBA
 
 #Initial conditions-------------------------------------------------------------
 year0 <- user()  #Starting year
-Sus0[] <- user() #Susceptible population by age group at start
-Exp0[] <- user() #Exposed population by age group at start
-Inf0[] <- user() #Infectious population by age group at start
-Rec0[] <- user() #Recovered population by age group at start
-Vac0[] <- user() #Vaccinated population by age group at start
-Cas0[] <- user() #Daily cases population by age group at start
+S_0[] <- user() #Susceptible population by age group at start
+E_0[] <- user() #Exposed population by age group at start
+I_0[] <- user() #Infectious population by age group at start
+R_0[] <- user() #Recovered population by age group at start
+V_0[] <- user() #Vaccinated population by age group at start
 dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
@@ -70,14 +69,14 @@ vacc_rate[1:N_age] <- (vacc_rate_daily[i,as.integer(year_i)] + (if(flag3==0) 0 e
 
 outbreak_flag1 <- if(C_rep_total >= outbreak_threshold1) 1 else 0
 p_rep_cur <- if(flag3==1) p_rep[2] else p_rep[1]
-C_rep_new[1:N_age] <- rbinom(as.integer(I_new[i]),p_rep_cur) #Daily new reported cases by age group
+C_rep_new <- rbinom(as.integer(sum(I_new)),p_rep_cur) #Daily new reported cases across all ages
 F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of population - check for cluster flag
 cluster_flag1 <- if(F_I_total>=cluster_threshold1) 1 else 0
 
 #Updates to output values at each time increment--------------------------------
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
-update(C_rep_total) <- C_rep_total + sum(C_rep_new) #Running total reported cases across all ages
+update(C_rep_total) <- C_rep_total + C_rep_new #Running total reported cases across all ages
 
 update(flag1) <- min(one,flag1 + (outbreak_flag1*rate3)) #flag1 with delay (converted to integer on use)
 update(flag2) <- min(one,flag2 + (cluster_flag1*rate3)) #flag2 with delay (converted to integer on use)
@@ -98,7 +97,7 @@ update(R[2:N_age]) <- max(Pmin,R[i] + R_new[i] - vacc_rate[i]*R[i]*inv_P_nV[i] +
 update(V[1]) <- max(Pmin,V[1] + vacc_rate[1] - (dP2[1]*V[1]*inv_P[1]))
 update(V[2:N_age]) <- max(Pmin,V[i] + vacc_rate[i] + (dP1[i]*V[i-1]*inv_P[i-1]) - (dP2[i]*V[i]*inv_P[i]))
 update(C[1:N_age]) <- I_new[i]
-update(C_rep[1:N_age]) <- C_rep_new[i]
+#update(C_rep[1:N_age]) <- C_rep_new[i]
 
 #Initial values-----------------------------------------------------------------
 initial(year) <- year0-1
@@ -111,15 +110,15 @@ initial(flag3) <- 0
 initial(flag4) <- 0
 initial(report_rate) <- p_rep[1]
 
-initial(S[1:N_age]) <- Sus0[i]
-initial(E[1:N_age]) <- Exp0[i]
+initial(S[1:N_age]) <- S_0[i]
+initial(E[1:N_age]) <- E_0[i]
 
-initial(I[1:N_age]) <- Inf0[i]
+initial(I[1:N_age]) <- I_0[i]
 
-initial(R[1:N_age]) <- Rec0[i]
-initial(V[1:N_age]) <- Vac0[i]
-initial(C[1:N_age]) <- Cas0[i]
-initial(C_rep[1:N_age]) <- 0
+initial(R[1:N_age]) <- R_0[i]
+initial(V[1:N_age]) <- V_0[i]
+initial(C[1:N_age]) <- 0
+#initial(C_rep[1:N_age]) <- 0
 
 #Dimensions---------------------------------------------------------------------
 dim(S) <- N_age
@@ -130,7 +129,7 @@ dim(I) <- N_age
 dim(R) <- N_age
 dim(V) <- N_age
 dim(C) <- N_age
-dim(C_rep) <- N_age
+#dim(C_rep) <- N_age
 dim(dP1)<-N_age
 dim(dP2)<-N_age
 dim(E_new) <- N_age
@@ -144,13 +143,12 @@ dim(inv_P_nV) <- N_age
 dim(P) <- N_age
 dim(inv_P) <- N_age
 dim(vacc_rate) <- N_age
-dim(C_rep_new) <- N_age
-dim(Sus0) <- N_age
-dim(Exp0) <- N_age
-dim(Inf0) <- N_age
-dim(Rec0) <- N_age
-dim(Vac0) <- N_age
-dim(Cas0) <- N_age
+#dim(C_rep_new) <- N_age
+dim(S_0) <- N_age
+dim(E_0) <- N_age
+dim(I_0) <- N_age
+dim(R_0) <- N_age
+dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)

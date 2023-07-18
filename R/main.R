@@ -51,6 +51,7 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
                       vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
   #TODO Add assert_that functions
+  assert_that(mode_start %in% c(0,1)) #TODO - Amend parameter inputs so E_delay and I_delay can be carried over
 
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
@@ -63,7 +64,7 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
   x <- SEIRVModelDelay$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
-                                                 vaccine_efficacy,start_SEIRV,dt),
+                                                vaccine_efficacy,start_SEIRV,dt),
                             time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
   x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
@@ -125,6 +126,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
                                cluster_threshold1 = Inf) {
 
   #TODO Add assert_that functions
+  assert_that(mode_start %in% c(0,1)) #TODO - Amend parameter inputs so E_delay and I_delay can be carried over
 
   n_nv=9 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
@@ -132,7 +134,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
   nd1 <- (t_incubation+t_latent)/dt
   nd2 <- t_infectious/dt
   nd <- nd1 + nd2
-  n_data_pts=((7+nd1+nd2)*N_age)+n_nv #Number of data values per time point in output
+  n_data_pts=((6+nd1+nd2)*N_age)+n_nv #Number of data values per time point in output
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
@@ -142,8 +144,8 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
   n_years=length(pop_data[,1])-1
   inv_365=1.0/365.0
   pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_daily=pars1$vacc_rate_daily,
-             vacc_rate_cam=vacc_rate_cam, t_cam=t_cam,
-             Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
+             vacc_rate_cam=vacc_rate_cam, t_cam=t_cam,N_age=pars1$N_age,
+             S_0=pars1$S_0,E_0=pars1$E_0,I_0=pars1$I_0,R_0=pars1$R_0,V_0=pars1$V_0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
              p_rep=p_rep,outbreak_threshold1=outbreak_threshold1,cluster_threshold1=cluster_threshold1)
@@ -170,7 +172,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
   output_data$R=array(x_res[c((((3+nd)*N_age)+1+n_nv):(((4+nd)*N_age)+n_nv)),,],dim=dims2)
   output_data$V=array(x_res[c((((4+nd)*N_age)+1+n_nv):(((5+nd)*N_age)+n_nv)),,],dim=dims2)
   output_data$C=array(x_res[c((((5+nd)*N_age)+1+n_nv):(((6+nd)*N_age)+n_nv)),,],dim=dims2)
-  output_data$C_rep=array(x_res[c((((6+nd)*N_age)+1+n_nv):(((7+nd)*N_age)+n_nv)),,],dim=dims2)
+  #output_data$C_rep=array(x_res[c((((6+nd)*N_age)+1+n_nv):(((7+nd)*N_age)+n_nv)),,],dim=dims2)
 
   return(output_data)
 }
@@ -220,7 +222,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
 
   n_nv=9 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
-  n_data_pts=(7*N_age)+n_nv #Number of data values per time point in output
+  n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
@@ -230,8 +232,8 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
   n_years=length(pop_data[,1])-1
   inv_365=1.0/365.0
   pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_daily=pars1$vacc_rate_daily,
-             vacc_rate_cam=vacc_rate_cam, t_cam=t_cam,
-             Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
+             vacc_rate_cam=vacc_rate_cam, t_cam=t_cam,N_age=pars1$N_age,
+             S_0=pars1$S_0,E_0=pars1$E_0,I_0=pars1$I_0,R_0=pars1$R_0,V_0=pars1$V_0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
              p_rep=p_rep,outbreak_threshold1=outbreak_threshold1,cluster_threshold1=cluster_threshold1)
@@ -256,7 +258,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
   output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dims2)
   output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dims2)
   output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dims2)
-  output_data$C_rep=array(x_res[c(((6*N_age)+1+n_nv):((7*N_age)+n_nv)),,],dim=dims2)
+  #output_data$C_rep=array(x_res[c(((6*N_age)+1+n_nv):((7*N_age)+n_nv)),,],dim=dims2)
 
   return(output_data)
 }
@@ -372,8 +374,8 @@ Model_Run_VarFR <- function(FOI_spillover = c(),R0 = c(),vacc_data = list(),pop_
 
   pars1=parameter_setup(FOI_spillover[1],R0[1],vacc_data,pop_data,year0,years_data,mode_start,
                         vaccine_efficacy,start_SEIRV,dt)
-  pars2=list(FOI_spillover=FOI_spillover,R0=R0,vacc_rate_daily=pars1$vacc_rate_daily,
-             Cas0=pars1$Cas0,Exp0=pars1$Exp0,Inf0=pars1$Inf0,N_age=pars1$N_age,Rec0=pars1$Rec0,Sus0=pars1$Sus0,Vac0=pars1$Vac0,
+  pars2=list(FOI_spillover=FOI_spillover,R0=R0,vacc_rate_daily=pars1$vacc_rate_daily,N_age=pars1$N_age,
+             S_0=pars1$S_0,E_0=pars1$E_0,I_0=pars1$I_0,R_0=pars1$R_0,V_0=pars1$V_0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious)
 

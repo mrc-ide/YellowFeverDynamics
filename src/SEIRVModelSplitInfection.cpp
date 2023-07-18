@@ -102,22 +102,21 @@ __host__ __device__ T odin_sign(T x) {
 }
 // [[dust::class(SEIRVModelSplitInfection)]]
 // [[dust::time_type(discrete)]]
-// [[dust::param(Cas0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dP1_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dP2_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(Exp0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(E_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(FOI_spillover, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(Inf0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(I_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_age, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_years, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(R_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(R0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(Rec0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(Sus0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(S_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_incubation, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_infectious, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(t_latent, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(Vac0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(V_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vacc_rate_daily, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(vaccine_efficacy, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(year0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -128,10 +127,8 @@ public:
   using data_type = dust::no_data;
   struct shared_type {
     real_type beta;
-    std::vector<real_type> Cas0;
     int dim_C_sylv;
     int dim_C_urb;
-    int dim_Cas0;
     int dim_dP1;
     int dim_dP1_all;
     int dim_dP1_all_1;
@@ -140,28 +137,28 @@ public:
     int dim_dP2_all;
     int dim_dP2_all_1;
     int dim_dP2_all_2;
+    int dim_E_0;
     int dim_E_new_sylv;
     int dim_E_new_urb;
     int dim_E_sylv;
     int dim_E_urb;
-    int dim_Exp0;
+    int dim_I_0;
     int dim_I_new_sylv;
     int dim_I_new_urb;
     int dim_I_sylv;
     int dim_I_urb;
-    int dim_Inf0;
     int dim_inv_P;
     int dim_inv_P_nV;
     int dim_P;
     int dim_P_nV;
     int dim_R;
+    int dim_R_0;
     int dim_R_new_sylv;
     int dim_R_new_urb;
-    int dim_Rec0;
     int dim_S;
-    int dim_Sus0;
+    int dim_S_0;
     int dim_V;
-    int dim_Vac0;
+    int dim_V_0;
     int dim_vacc_rate;
     int dim_vacc_rate_daily;
     int dim_vacc_rate_daily_1;
@@ -169,11 +166,11 @@ public:
     std::vector<real_type> dP1_all;
     std::vector<real_type> dP2_all;
     real_type dt;
-    std::vector<real_type> Exp0;
+    std::vector<real_type> E_0;
     real_type FOI_max;
     real_type FOI_spillover;
     real_type FOI_sylv_cur;
-    std::vector<real_type> Inf0;
+    std::vector<real_type> I_0;
     std::vector<real_type> initial_C_sylv;
     std::vector<real_type> initial_C_urb;
     std::vector<real_type> initial_E_sylv;
@@ -198,15 +195,15 @@ public:
     int offset_variable_R;
     int offset_variable_V;
     real_type Pmin;
+    std::vector<real_type> R_0;
     real_type R0;
     real_type rate1;
     real_type rate2;
-    std::vector<real_type> Rec0;
-    std::vector<real_type> Sus0;
+    std::vector<real_type> S_0;
     real_type t_incubation;
     real_type t_infectious;
     real_type t_latent;
-    std::vector<real_type> Vac0;
+    std::vector<real_type> V_0;
     std::vector<real_type> vacc_rate_daily;
     real_type vaccine_efficacy;
     real_type year0;
@@ -606,35 +603,34 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   shared->beta = (shared->R0 * shared->dt) / (real_type) shared->t_infectious;
   shared->dim_C_sylv = shared->N_age;
   shared->dim_C_urb = shared->N_age;
-  shared->dim_Cas0 = shared->N_age;
   shared->dim_dP1 = shared->N_age;
   shared->dim_dP1_all_1 = shared->N_age;
   shared->dim_dP1_all_2 = shared->n_years;
   shared->dim_dP2 = shared->N_age;
   shared->dim_dP2_all_1 = shared->N_age;
   shared->dim_dP2_all_2 = shared->n_years;
+  shared->dim_E_0 = shared->N_age;
   shared->dim_E_new_sylv = shared->N_age;
   shared->dim_E_new_urb = shared->N_age;
   shared->dim_E_sylv = shared->N_age;
   shared->dim_E_urb = shared->N_age;
-  shared->dim_Exp0 = shared->N_age;
+  shared->dim_I_0 = shared->N_age;
   shared->dim_I_new_sylv = shared->N_age;
   shared->dim_I_new_urb = shared->N_age;
   shared->dim_I_sylv = shared->N_age;
   shared->dim_I_urb = shared->N_age;
-  shared->dim_Inf0 = shared->N_age;
   shared->dim_inv_P = shared->N_age;
   shared->dim_inv_P_nV = shared->N_age;
   shared->dim_P = shared->N_age;
   shared->dim_P_nV = shared->N_age;
   shared->dim_R = shared->N_age;
+  shared->dim_R_0 = shared->N_age;
   shared->dim_R_new_sylv = shared->N_age;
   shared->dim_R_new_urb = shared->N_age;
-  shared->dim_Rec0 = shared->N_age;
   shared->dim_S = shared->N_age;
-  shared->dim_Sus0 = shared->N_age;
+  shared->dim_S_0 = shared->N_age;
   shared->dim_V = shared->N_age;
-  shared->dim_Vac0 = shared->N_age;
+  shared->dim_V_0 = shared->N_age;
   shared->dim_vacc_rate = shared->N_age;
   shared->dim_vacc_rate_daily_1 = shared->N_age;
   shared->dim_vacc_rate_daily_2 = shared->n_years;
@@ -665,12 +661,14 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   internal.R_new_sylv = std::vector<real_type>(shared->dim_R_new_sylv);
   internal.R_new_urb = std::vector<real_type>(shared->dim_R_new_urb);
   internal.vacc_rate = std::vector<real_type>(shared->dim_vacc_rate);
-  shared->Cas0 = user_get_array_fixed<real_type, 1>(user, "Cas0", shared->Cas0, {shared->dim_Cas0}, NA_REAL, NA_REAL);
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
   shared->dim_vacc_rate_daily = shared->dim_vacc_rate_daily_1 * shared->dim_vacc_rate_daily_2;
-  shared->Exp0 = user_get_array_fixed<real_type, 1>(user, "Exp0", shared->Exp0, {shared->dim_Exp0}, NA_REAL, NA_REAL);
-  shared->Inf0 = user_get_array_fixed<real_type, 1>(user, "Inf0", shared->Inf0, {shared->dim_Inf0}, NA_REAL, NA_REAL);
+  shared->E_0 = user_get_array_fixed<real_type, 1>(user, "E_0", shared->E_0, {shared->dim_E_0}, NA_REAL, NA_REAL);
+  shared->I_0 = user_get_array_fixed<real_type, 1>(user, "I_0", shared->I_0, {shared->dim_I_0}, NA_REAL, NA_REAL);
+  for (int i = 1; i <= shared->N_age; ++i) {
+    shared->initial_C_sylv[i - 1] = 0;
+  }
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_C_urb[i - 1] = 0;
   }
@@ -688,28 +686,25 @@ dust::pars_type<SEIRVModelSplitInfection> dust_pars<SEIRVModelSplitInfection>(cp
   shared->offset_variable_I_urb = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_S + 4;
   shared->offset_variable_R = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_S + 4;
   shared->offset_variable_V = shared->dim_E_sylv + shared->dim_E_urb + shared->dim_I_sylv + shared->dim_I_urb + shared->dim_R + shared->dim_S + 4;
-  shared->Rec0 = user_get_array_fixed<real_type, 1>(user, "Rec0", shared->Rec0, {shared->dim_Rec0}, NA_REAL, NA_REAL);
-  shared->Sus0 = user_get_array_fixed<real_type, 1>(user, "Sus0", shared->Sus0, {shared->dim_Sus0}, NA_REAL, NA_REAL);
-  shared->Vac0 = user_get_array_fixed<real_type, 1>(user, "Vac0", shared->Vac0, {shared->dim_Vac0}, NA_REAL, NA_REAL);
+  shared->R_0 = user_get_array_fixed<real_type, 1>(user, "R_0", shared->R_0, {shared->dim_R_0}, NA_REAL, NA_REAL);
+  shared->S_0 = user_get_array_fixed<real_type, 1>(user, "S_0", shared->S_0, {shared->dim_S_0}, NA_REAL, NA_REAL);
+  shared->V_0 = user_get_array_fixed<real_type, 1>(user, "V_0", shared->V_0, {shared->dim_V_0}, NA_REAL, NA_REAL);
   shared->dP1_all = user_get_array_fixed<real_type, 2>(user, "dP1_all", shared->dP1_all, {shared->dim_dP1_all_1, shared->dim_dP1_all_2}, NA_REAL, NA_REAL);
   shared->dP2_all = user_get_array_fixed<real_type, 2>(user, "dP2_all", shared->dP2_all, {shared->dim_dP2_all_1, shared->dim_dP2_all_2}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_C_sylv[i - 1] = shared->Cas0[i - 1];
+    shared->initial_E_sylv[i - 1] = shared->E_0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_E_sylv[i - 1] = shared->Exp0[i - 1];
+    shared->initial_I_sylv[i - 1] = shared->I_0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_I_sylv[i - 1] = shared->Inf0[i - 1];
+    shared->initial_R[i - 1] = shared->R_0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_R[i - 1] = shared->Rec0[i - 1];
+    shared->initial_S[i - 1] = shared->S_0[i - 1];
   }
   for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_S[i - 1] = shared->Sus0[i - 1];
-  }
-  for (int i = 1; i <= shared->N_age; ++i) {
-    shared->initial_V[i - 1] = shared->Vac0[i - 1];
+    shared->initial_V[i - 1] = shared->V_0[i - 1];
   }
   shared->vacc_rate_daily = user_get_array_fixed<real_type, 2>(user, "vacc_rate_daily", shared->vacc_rate_daily, {shared->dim_vacc_rate_daily_1, shared->dim_vacc_rate_daily_2}, NA_REAL, NA_REAL);
   return dust::pars_type<SEIRVModelSplitInfection>(shared, internal);

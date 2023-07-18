@@ -26,12 +26,11 @@ vaccine_efficacy <- user() #Proportion of vaccinations which successfully protec
 
 #Initial conditions-------------------------------------------------------------
 year0 <- user()  #Starting year
-Sus0[] <- user() #Susceptible population by age group at start
-Exp0[] <- user() #Exposed population by age group at start
-Inf0[] <- user() #Infectious population by age group at start
-Rec0[] <- user() #Recovered population by age group at start
-Vac0[] <- user() #Vaccinated population by age group at start
-Cas0[] <- user() #Daily cases population by age group at start
+S_0[] <- user() #Susceptible population by age group at start
+E_0[] <- user() #Exposed population by age group at start
+I_0[] <- user() #Infectious population by age group at start
+R_0[] <- user() #Recovered population by age group at start
+V_0[] <- user() #Vaccinated population by age group at start
 dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
@@ -111,14 +110,14 @@ initial(FOI_urb) <- 0
 
 
 
-initial(S[1:N_age]) <- Sus0[i]
-initial(E_sylv[1:N_age]) <- Exp0[i]
+initial(S[1:N_age]) <- S_0[i]
+initial(E_sylv[1:N_age]) <- E_0[i]
 initial(E_urb[1:N_age]) <- 0
-initial(I_sylv[1:N_age]) <- Inf0[i]
+initial(I_sylv[1:N_age]) <- I_0[i]
 initial(I_urb[1:N_age]) <- 0
-initial(R[1:N_age]) <- Rec0[i]
-initial(V[1:N_age]) <- Vac0[i]
-initial(C_sylv[1:N_age]) <- Cas0[i]
+initial(R[1:N_age]) <- R_0[i]
+initial(V[1:N_age]) <- V_0[i]
+initial(C_sylv[1:N_age]) <- 0
 initial(C_urb[1:N_age]) <- 0
 
 #Dimensions---------------------------------------------------------------------
@@ -145,12 +144,11 @@ dim(P) <- N_age
 dim(inv_P) <- N_age
 dim(vacc_rate) <- N_age
 
-dim(Sus0) <- N_age
-dim(Exp0) <- N_age
-dim(Inf0) <- N_age
-dim(Rec0) <- N_age
-dim(Vac0) <- N_age
-dim(Cas0) <- N_age
+dim(S_0) <- N_age
+dim(E_0) <- N_age
+dim(I_0) <- N_age
+dim(R_0) <- N_age
+dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)
