@@ -9,11 +9,11 @@ initial(time) <- 0 #Initial value of time in days
 update(time) <- time + dt
 
 #Parameters---------------------------------------------------------------------
-t_incubation <- user() #TBA
-t_latent <- user() #TBA
-t_infectious <- user() #TBA
+t_incubation <- user() #Length in days of yellow fever incubation period in mosquito vectors
+t_latent <- user() #Length in days of latent period in humans exposed to yellow dever
+t_infectious <- user() #Length of infectious period in humans with yellow fever
 FOI_spillover <- user() #Spillover force of infection (per day)
-R0 <- user() #Basic reproduction number
+R0 <- user() #Basic reproduction number for human-human transmission
 N_age <- user() #Number of age categories
 vacc_rate_daily[,] <- user() #Daily rate of vaccination by age and year
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
@@ -34,8 +34,6 @@ V_0[] <- user() #Vaccinated population by age group at start
 dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
-
-
 
 Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
@@ -72,12 +70,9 @@ vacc_rate[1:N_age] <- vacc_rate_daily[i,as.integer(year_i)]*vaccine_efficacy*dt*
 
 
 
-
 #Updates to output values at each time increment--------------------------------
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
-
-
 
 
 
@@ -102,8 +97,6 @@ update(C[1:N_age]) <- I_new[i]
 #Initial values-----------------------------------------------------------------
 initial(year) <- year0-1
 initial(FOI_total) <- FOI_spillover
-
-
 
 
 

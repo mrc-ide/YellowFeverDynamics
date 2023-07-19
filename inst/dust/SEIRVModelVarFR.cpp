@@ -156,12 +156,13 @@ public:
     return state;
   }
   void update(size_t step, const real_type * state, rng_state_type& rng_state, real_type * state_next) {
+    const real_type time = state[0];
     const real_type * S = state + 3;
     const real_type * E = state + shared->offset_variable_E;
     const real_type * I = state + shared->offset_variable_I;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
-    state_next[0] = (step + 1) * shared->dt;
+    state_next[0] = time + shared->dt;
     real_type year_i = dust::math::floor((step * shared->dt) / (real_type) 365) + 1;
     state_next[1] = year_i + shared->year0 - 1;
     real_type beta = (shared->R0[static_cast<int>(year_i) - 1] * shared->dt) / (real_type) shared->t_infectious;
