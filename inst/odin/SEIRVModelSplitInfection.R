@@ -28,7 +28,9 @@ vaccine_efficacy <- user() #Proportion of vaccinations which successfully protec
 year0 <- user()  #Starting year
 S_0[] <- user() #Susceptible population by age group at start
 E_0[] <- user() #Exposed population by age group at start
+
 I_0[] <- user() #Infectious population by age group at start
+
 R_0[] <- user() #Recovered population by age group at start
 V_0[] <- user() #Vaccinated population by age group at start
 dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
@@ -139,7 +141,9 @@ dim(vacc_rate) <- N_age
 
 dim(S_0) <- N_age
 dim(E_0) <- N_age
+
 dim(I_0) <- N_age
+
 dim(R_0) <- N_age
 dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)

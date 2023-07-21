@@ -51,7 +51,6 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
                       vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
   #TODO Add assert_that functions
-  assert_that(mode_start %in% c(0,1)) #TODO - Amend parameter inputs so E_delay and I_delay can be carried over
 
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
@@ -63,9 +62,16 @@ Model_Run_Delay <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
-  x <- SEIRVModelDelay$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
-                                                vaccine_efficacy,start_SEIRV,dt),
-                            time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
+  pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,vaccine_efficacy,start_SEIRV,dt)
+  if(mode_start==2){
+    pars$E_delay0=start_SEIRV$E_delay
+    pars$I_delay0=start_SEIRV$I_delay
+  } else {
+    pars$E_delay0=rep(0,nd1*N_age)
+    pars$I_delay0=rep(0,nd2*N_age)
+  }
+
+  x <- SEIRVModelDelay$new(pars,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
   x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
   for(step in step_begin:step_end){
@@ -126,7 +132,6 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
                                cluster_threshold1 = Inf) {
 
   #TODO Add assert_that functions
-  assert_that(mode_start %in% c(0,1)) #TODO - Amend parameter inputs so E_delay and I_delay can be carried over
 
   n_nv=9 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
@@ -149,6 +154,13 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
              p_rep=p_rep,outbreak_threshold1=outbreak_threshold1,cluster_threshold1=cluster_threshold1)
+  if(mode_start==2){
+    pars2$E_delay0=start_SEIRV$E_delay
+    pars2$I_delay0=start_SEIRV$I_delay
+  } else {
+    pars2$E_delay0=rep(0,nd1*N_age)
+    pars2$I_delay0=rep(0,nd2*N_age)
+  }
 
   x <- SEIRVModelDelayReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 

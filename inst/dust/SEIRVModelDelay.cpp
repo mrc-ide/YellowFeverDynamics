@@ -35,8 +35,10 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(dP2_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(E_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(E_delay0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(FOI_spillover, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(I_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(I_delay0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_age, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_years, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(R_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
@@ -70,10 +72,12 @@ public:
     int dim_E;
     int dim_E_0;
     int dim_E_delay;
+    int dim_E_delay0;
     int dim_E_new;
     int dim_I;
     int dim_I_0;
     int dim_I_delay;
+    int dim_I_delay0;
     int dim_I_new;
     int dim_inv_P;
     int dim_inv_P_nV;
@@ -94,9 +98,11 @@ public:
     std::vector<real_type> dP2_all;
     real_type dt;
     std::vector<real_type> E_0;
+    std::vector<real_type> E_delay0;
     real_type FOI_max;
     real_type FOI_spillover;
     std::vector<real_type> I_0;
+    std::vector<real_type> I_delay0;
     std::vector<real_type> initial_C;
     std::vector<real_type> initial_E;
     std::vector<real_type> initial_E_delay;
@@ -563,7 +569,9 @@ dust::pars_type<SEIRVModelDelay> dust_pars<SEIRVModelDelay>(cpp11::list user) {
   shared->dim_dP1_all = shared->dim_dP1_all_1 * shared->dim_dP1_all_2;
   shared->dim_dP2_all = shared->dim_dP2_all_1 * shared->dim_dP2_all_2;
   shared->dim_E_delay = shared->np_E_delay;
+  shared->dim_E_delay0 = shared->np_E_delay;
   shared->dim_I_delay = shared->np_I_delay;
+  shared->dim_I_delay0 = shared->np_I_delay;
   shared->dim_vacc_rate_daily = shared->dim_vacc_rate_daily_1 * shared->dim_vacc_rate_daily_2;
   shared->E_0 = user_get_array_fixed<real_type, 1>(user, "E_0", shared->E_0, {shared->dim_E_0}, NA_REAL, NA_REAL);
   shared->I_0 = user_get_array_fixed<real_type, 1>(user, "I_0", shared->I_0, {shared->dim_I_0}, NA_REAL, NA_REAL);
@@ -579,17 +587,13 @@ dust::pars_type<SEIRVModelDelay> dust_pars<SEIRVModelDelay>(cpp11::list user) {
   shared->initial_I_delay = std::vector<real_type>(shared->dim_I_delay);
   shared->dP1_all = user_get_array_fixed<real_type, 2>(user, "dP1_all", shared->dP1_all, {shared->dim_dP1_all_1, shared->dim_dP1_all_2}, NA_REAL, NA_REAL);
   shared->dP2_all = user_get_array_fixed<real_type, 2>(user, "dP2_all", shared->dP2_all, {shared->dim_dP2_all_1, shared->dim_dP2_all_2}, NA_REAL, NA_REAL);
+  shared->E_delay0 = user_get_array_fixed<real_type, 1>(user, "E_delay0", shared->E_delay0, {shared->dim_E_delay0}, NA_REAL, NA_REAL);
+  shared->I_delay0 = user_get_array_fixed<real_type, 1>(user, "I_delay0", shared->I_delay0, {shared->dim_I_delay0}, NA_REAL, NA_REAL);
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_E[i - 1] = shared->E_0[i - 1];
   }
-  for (int i = 1; i <= shared->np_E_delay; ++i) {
-    shared->initial_E_delay[i - 1] = 0;
-  }
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_I[i - 1] = shared->I_0[i - 1];
-  }
-  for (int i = 1; i <= shared->np_I_delay; ++i) {
-    shared->initial_I_delay[i - 1] = 0;
   }
   for (int i = 1; i <= shared->N_age; ++i) {
     shared->initial_R[i - 1] = shared->R_0[i - 1];
@@ -606,6 +610,12 @@ dust::pars_type<SEIRVModelDelay> dust_pars<SEIRVModelDelay>(cpp11::list user) {
   shared->offset_variable_R = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_S + 3;
   shared->offset_variable_V = shared->dim_E + shared->dim_E_delay + shared->dim_I + shared->dim_I_delay + shared->dim_R + shared->dim_S + 3;
   shared->vacc_rate_daily = user_get_array_fixed<real_type, 2>(user, "vacc_rate_daily", shared->vacc_rate_daily, {shared->dim_vacc_rate_daily_1, shared->dim_vacc_rate_daily_2}, NA_REAL, NA_REAL);
+  for (int i = 1; i <= shared->np_E_delay; ++i) {
+    shared->initial_E_delay[i - 1] = shared->E_delay0[i - 1];
+  }
+  for (int i = 1; i <= shared->np_I_delay; ++i) {
+    shared->initial_I_delay[i - 1] = shared->I_delay0[i - 1];
+  }
   return dust::pars_type<SEIRVModelDelay>(shared, internal);
 }
 template <>

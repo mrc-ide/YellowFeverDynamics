@@ -28,7 +28,9 @@ t_cam <- user() #TBA
 year0 <- user()  #Starting year
 S_0[] <- user() #Susceptible population by age group at start
 E_0[] <- user() #Exposed population by age group at start
+E_delay0[] <- user() #TBA
 I_0[] <- user() #Infectious population by age group at start
+I_delay0[] <- user() #TBA
 R_0[] <- user() #Recovered population by age group at start
 V_0[] <- user() #Vaccinated population by age group at start
 dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
@@ -105,9 +107,9 @@ initial(flag4) <- 0
 initial(report_rate) <- p_rep[1]
 initial(S[1:N_age]) <- S_0[i]
 initial(E[1:N_age]) <- E_0[i]
-initial(E_delay[1:np_E_delay]) <- 0 #TODO - Add facility for nonzero inputs
+initial(E_delay[1:np_E_delay]) <- E_delay0[i]
 initial(I[1:N_age]) <- I_0[i]
-initial(I_delay[1:np_I_delay]) <- 0 #TODO - Add facility for nonzero inputs
+initial(I_delay[1:np_I_delay]) <- I_delay0[i]
 initial(R[1:N_age]) <- R_0[i]
 initial(V[1:N_age]) <- V_0[i]
 initial(C[1:N_age]) <- 0
@@ -139,7 +141,9 @@ dim(vacc_rate) <- N_age
 #dim(C_rep_new) <- N_age
 dim(S_0) <- N_age
 dim(E_0) <- N_age
+dim(E_delay0) <- np_E_delay
 dim(I_0) <- N_age
+dim(I_delay0) <- np_I_delay
 dim(R_0) <- N_age
 dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
