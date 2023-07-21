@@ -8,8 +8,6 @@ Model_Run_Reactive(
   FOI_spillover = 0,
   R0 = 1,
   vacc_data = list(),
-  vacc_rate_cam = c(),
-  t_cam = 0,
   pop_data = list(),
   years_data = c(1940:1941),
   start_SEIRV = list(),
@@ -22,8 +20,10 @@ Model_Run_Reactive(
   deterministic = FALSE,
   response_delay = 56,
   p_rep = c(0, 0),
-  outbreak_threshold1 = Inf,
-  cluster_threshold1 = Inf
+  case_threshold = Inf,
+  cluster_threshold = Inf,
+  vacc_rate_cam = c(),
+  t_cam = 0
 )
 }
 \arguments{
@@ -31,13 +31,10 @@ Model_Run_Reactive(
 
 \item{R0}{Basic reproduction number for urban spread of infection}
 
-\item{vacc_data}{[TBA]}
+\item{vacc_data}{Projected vaccination-based immunity (assuming vaccine_efficacy=1 and in absence of emergency campaign)
+by age group and year}
 
-\item{vacc_rate_cam}{[TBA]}
-
-\item{t_cam}{[TBA]}
-
-\item{pop_data}{Population in each age group by year}
+\item{pop_data}{Population by age group and year}
 
 \item{years_data}{Incremental vector of years denoting years for which to save data}
 
@@ -60,13 +57,18 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 
 \item{deterministic}{TRUE/FALSE - set model to run in deterministic mode if TRUE}
 
-\item{response_delay}{Delay time in days between a flag being triggered and emergency conditions coming into effect}
+\item{response_delay}{Delay time in days between a threshold being reached and emergency conditions coming into effect}
 
-\item{p_rep}{Probabilities of an infection being reported as a case under different conditions (TBA)}
+\item{p_rep}{Probabilities of an infection being reported as a case before emergency conditions triggered (1st value) or
+after emergency conditions triggered (2nd value)}
 
-\item{outbreak_threshold1}{Threshold total no. reported cases to trigger outbreak flag 1}
+\item{case_threshold}{Threshold total no. reported cases to trigger emergency conditions}
 
-\item{cluster_threshold1}{Threshold current infectious fraction to trigger cluster flag 1
+\item{cluster_threshold}{Threshold current infectious fraction to trigger emergency conditions}
+
+\item{vacc_rate_cam}{(Reactive versions) Vaccination rate by age group during emergency vaccination campaign}
+
+\item{t_cam}{(Reactive versions) Duration in days of emergency vaccination campaign
 '}
 }
 \description{

@@ -31,7 +31,8 @@ __host__ __device__ T odin_sign(T x) {
 }
 // [[dust::class(SEIRVModelDelayReactive)]]
 // [[dust::time_type(discrete)]]
-// [[dust::param(cluster_threshold1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(case_threshold, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
+// [[dust::param(cluster_threshold, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dP1_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dP2_all, has_default = FALSE, default_value = NULL, rank = 2, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(dt, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -42,7 +43,6 @@ __host__ __device__ T odin_sign(T x) {
 // [[dust::param(I_delay0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(N_age, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(n_years, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
-// [[dust::param(outbreak_threshold1, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(p_rep, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(R_0, has_default = FALSE, default_value = NULL, rank = 1, min = -Inf, max = Inf, integer = FALSE)]]
 // [[dust::param(R0, has_default = FALSE, default_value = NULL, rank = 0, min = -Inf, max = Inf, integer = FALSE)]]
@@ -64,7 +64,8 @@ public:
   using data_type = dust::no_data;
   struct shared_type {
     real_type beta;
-    real_type cluster_threshold1;
+    real_type case_threshold;
+    real_type cluster_threshold;
     real_type di1;
     real_type di2;
     int dim_C;
@@ -141,7 +142,6 @@ public:
     int offset_variable_R;
     int offset_variable_V;
     real_type one;
-    real_type outbreak_threshold1;
     std::vector<real_type> p_rep;
     real_type Pmin;
     std::vector<real_type> R_0;
@@ -213,12 +213,12 @@ public:
     const real_type * I_delay = state + shared->offset_variable_I_delay;
     const real_type * R = state + shared->offset_variable_R;
     const real_type * V = state + shared->offset_variable_V;
-    real_type outbreak_flag1 = (C_rep_total >= shared->outbreak_threshold1 ? 1 : 0);
+    real_type case_flag = (C_rep_total >= shared->case_threshold ? 1 : 0);
     state_next[6] = (flag1 == 1 ? 1 : ((flag2 == 1 ? 1 : 0)));
     state_next[0] = time + shared->dt;
     real_type year_i = dust::math::floor(((step + 1) * shared->dt) / (real_type) 365) + 1;
     real_type p_rep_cur = (flag3 == 1 ? shared->p_rep[1] : shared->p_rep[0]);
-    state_next[4] = dust::math::min(shared->one, flag1 + (outbreak_flag1 * shared->rate3));
+    state_next[4] = dust::math::min(shared->one, flag1 + (case_flag * shared->rate3));
     state_next[7] = (flag3 == 0 ? 0 : dust::math::min(shared->one, flag4 + shared->rate4));
     state_next[1] = year_i + shared->year0 - 1;
     for (int i = 1; i <= shared->N_age; ++i) {
@@ -280,7 +280,7 @@ public:
     for (int i = 2; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_V + i - 1] = dust::math::max(shared->Pmin, V[i - 1] + internal.vacc_rate[i - 1] + (internal.dP1[i - 1] * V[i - 1 - 1] * internal.inv_P[i - 1 - 1]) - (internal.dP2[i - 1] * V[i - 1] * internal.inv_P[i - 1]));
     }
-    real_type cluster_flag1 = (F_I_total >= shared->cluster_threshold1 ? 1 : 0);
+    real_type cluster_flag = (F_I_total >= shared->cluster_threshold ? 1 : 0);
     for (int i = 1; i <= shared->N_age; ++i) {
       internal.E_new[i - 1] = dust::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), FOI_sum);
     }
@@ -294,7 +294,7 @@ public:
     for (int i = 1; i <= shared->N_age; ++i) {
       state_next[shared->offset_variable_E_delay + i - 1] = internal.E_new[i - 1];
     }
-    state_next[5] = dust::math::min(shared->one, flag2 + (cluster_flag1 * shared->rate3));
+    state_next[5] = dust::math::min(shared->one, flag2 + (cluster_flag * shared->rate3));
     {
        int i = 1;
        state_next[9 + i - 1] = dust::math::max(shared->Pmin, S[0] - internal.E_new[0] - internal.vacc_rate[0] * S[0] * internal.inv_P_nV[0] + internal.dP1[0] - (internal.dP2[0] * S[0] * internal.inv_P[0]));
@@ -548,12 +548,12 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->initial_time = 0;
   shared->one = 1;
   shared->Pmin = static_cast<real_type>(1e-99);
-  shared->cluster_threshold1 = NA_REAL;
+  shared->case_threshold = NA_REAL;
+  shared->cluster_threshold = NA_REAL;
   shared->dt = NA_REAL;
   shared->FOI_spillover = NA_REAL;
   shared->N_age = NA_INTEGER;
   shared->n_years = NA_INTEGER;
-  shared->outbreak_threshold1 = NA_REAL;
   shared->R0 = NA_REAL;
   shared->response_delay = NA_REAL;
   shared->t_cam = NA_REAL;
@@ -562,12 +562,12 @@ dust::pars_type<SEIRVModelDelayReactive> dust_pars<SEIRVModelDelayReactive>(cpp1
   shared->t_latent = NA_REAL;
   shared->vaccine_efficacy = NA_REAL;
   shared->year0 = NA_REAL;
-  shared->cluster_threshold1 = user_get_scalar<real_type>(user, "cluster_threshold1", shared->cluster_threshold1, NA_REAL, NA_REAL);
+  shared->case_threshold = user_get_scalar<real_type>(user, "case_threshold", shared->case_threshold, NA_REAL, NA_REAL);
+  shared->cluster_threshold = user_get_scalar<real_type>(user, "cluster_threshold", shared->cluster_threshold, NA_REAL, NA_REAL);
   shared->dt = user_get_scalar<real_type>(user, "dt", shared->dt, NA_REAL, NA_REAL);
   shared->FOI_spillover = user_get_scalar<real_type>(user, "FOI_spillover", shared->FOI_spillover, NA_REAL, NA_REAL);
   shared->N_age = user_get_scalar<int>(user, "N_age", shared->N_age, NA_INTEGER, NA_INTEGER);
   shared->n_years = user_get_scalar<int>(user, "n_years", shared->n_years, NA_INTEGER, NA_INTEGER);
-  shared->outbreak_threshold1 = user_get_scalar<real_type>(user, "outbreak_threshold1", shared->outbreak_threshold1, NA_REAL, NA_REAL);
   shared->R0 = user_get_scalar<real_type>(user, "R0", shared->R0, NA_REAL, NA_REAL);
   shared->response_delay = user_get_scalar<real_type>(user, "response_delay", shared->response_delay, NA_REAL, NA_REAL);
   shared->t_cam = user_get_scalar<real_type>(user, "t_cam", shared->t_cam, NA_REAL, NA_REAL);

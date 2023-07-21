@@ -25,13 +25,13 @@ Delay_Model_Run_Many_Reps(
 
 \item{R0}{Basic reproduction number for urban spread of infection}
 
-\item{vacc_data}{Vaccination coverage in each age group by year}
+\item{vacc_data}{Projected vaccination-based immunity (assuming vaccine_efficacy=1) by age group and year}
 
-\item{pop_data}{Population in each age group by year}
+\item{pop_data}{Population by age group and year}
 
 \item{years_data}{Incremental vector of years denoting years for which to save data}
 
-\item{start_SEIRV}{SEIRV data from end of a previous run to use as input}
+\item{start_SEIRV}{SEIRV data (including E_delay and I_delay) from end of a previous run to use as input}
 
 \item{output_type}{Type of data to output:
 "full" = SEIRVC + FOI for all steps and ages

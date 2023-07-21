@@ -10,10 +10,10 @@
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
-#' @param vacc_data Vaccination coverage in each age group by year
-#' @param pop_data Population in each age group by year
+#' @param vacc_data Projected vaccination-based immunity (assuming vaccine_efficacy=1) by age group and year
+#' @param pop_data Population by age group and year
 #' @param years_data Incremental vector of years denoting years for which to save data
-#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param start_SEIRV SEIRV data (including E_delay and I_delay) from end of a previous run to use as input
 #' @param output_type Type of data to output:
 #'   "full" = SEIRVC + FOI for all steps and ages
 #'   "case" = annual total new infections (C) summed across all ages
@@ -36,7 +36,7 @@
 Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
                                       start_SEIRV = list(), output_type = "full", year0 = 1940, mode_start = 0,
                                       vaccine_efficacy = 1.0, dt = 1.0, n_reps=1, division=10) {
-  
+
   assert_that(division<=20)
   n_particles0=min(division,n_reps)
   n_threads=min(division,n_particles0)
@@ -46,7 +46,7 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
   } else {
     n_particles_list=c(rep(n_particles0,n_divs-1),n_reps-(division*(n_divs-1)))
   }
-  
+
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
   nd1 <- (t_incubation+t_latent)/dt
@@ -56,7 +56,7 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
-  
+
   if(output_type=="full"){
     dimensions=c(N_age,n_reps,t_pts_out)
     output_data=list(day=rep(NA,t_pts_out),year=rep(NA,t_pts_out),FOI_total=array(NA,c(n_reps,t_pts_out)),
@@ -80,21 +80,21 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
       }
     }
   }
-  
+
   for(div in 1:n_divs){
     n_particles=n_particles_list[div]
     if(div==1){n_p0=0}else{n_p0=sum(n_particles_list[c(1:(div-1))])}
-    
+
     x <- SEIRVModelDelay$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
                                                   vaccine_efficacy,start_SEIRV,dt),
                              time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = FALSE)
-    
+
     x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
     for(step in step_begin:step_end){
       x_res[,,step-step_begin+1] <- x$run(step)
     }
     if(step_begin==0){x_res[2,,1]=rep(year0,n_particles)}
-    
+
     if(output_type=="full"){
       n_p_values=c(1:n_particles)+n_p0
       dimensions=c(N_age,n_particles,t_pts_out)
@@ -155,6 +155,65 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
     x_res<-NULL
     gc()
   }
-  
+
   return(output_data)
+}
+#-------------------------------------------------------------------------------
+#' @title Model_Versions_Run
+#'
+#' @description TBA
+#'
+#' @details TBA
+#'
+#' @param version Version of model to use: "Basic", "Delay", "DelayReactive", "Reactive", "Split", "VarFR"
+#' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir (single value unless version = "VarFR")
+#' @param R0 Basic reproduction number for urban spread of infection (single value unless version = "VarFR")
+#' @param vacc_data Projected vaccination-based immunity (assuming vaccine_efficacy=1) by age group and year
+#' @param pop_data Population by age group and year
+#' @param years_data Incremental vector of years denoting years for which to save data
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param year0 First year in population/vaccination data
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
+#'  If mode_start=0, only vaccinated individuals
+#'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
+#'  If mode_start=2, use SEIRV input (including E_delay and I_delay if version = "Delay" or "DelayReactive") in list from
+#'  previous run(s)
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param n_particles number of particles to use
+#' @param n_threads number of threads to use
+#' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' @param response_delay (Reactive versions) Delay time in days between a threshold being reached and emergency conditions
+#'   coming into effect
+#' @param p_rep (Reactive versions) Probabilities of an infection being reported as a case before emergency conditions
+#'   triggered (1st value) or after emergency conditions triggered (2nd value)
+#' @param case_threshold (Reactive versions) Threshold total no. reported cases to trigger emergency conditions
+#' @param cluster_threshold (Reactive versions) Threshold current infectious fraction to trigger emergency conditions
+#' @param vacc_rate_cam (Reactive versions) Vaccination rate by age group during emergency vaccination campaign
+#' @param t_cam (Reactive versions) Duration in days of emergency vaccination campaign
+#' '
+#' @export
+#'
+Model_Versions_Run <- function(version = "Basic", FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),
+                               years_data = c(1940:1941),start_SEIRV = list(), year0 = 1940, mode_start = 0,
+                               vaccine_efficacy = 1.0, dt = 1.0, n_particles=1, n_threads=1, deterministic = FALSE,
+                               response_delay = 56.0, p_rep = c(0.0,0.0), case_threshold = Inf, cluster_threshold = Inf,
+                               vacc_rate_cam=c(),t_cam=0){
+
+  assert_that(version %in% c())
+
+  if(version=="Basic"){
+    output <- YEP::Model_Run(FOI_spillover, R0, vacc_data, pop_data, years_data, start_SEIRV, "full", year0, mode_start,
+                             vaccine_efficacy, dt, n_particles, n_threads, deterministic)
+  }
+  if(version=="Delay"){
+    output <- Model_Run_Delay(FOI_spillover, R0, vacc_data, pop_data, years_data, start_SEIRV, year0, mode_start,
+                              vaccine_efficacy, dt, n_particles, n_threads, deterministic)
+  }
+  if(version=="Reactive"){
+    output <- Model_Run_Reactive(FOI_spillover, R0, vacc_data, vacc_rate_cam, t_cam, pop_data, years_data, start_SEIRV,
+                                 year0, mode_start, vaccine_efficacy, dt, n_particles, n_threads, deterministic, p_rep,
+                                 case_threshold, cluster_threshold)
+  }
+
 }

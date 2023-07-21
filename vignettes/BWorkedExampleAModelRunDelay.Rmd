@@ -56,7 +56,8 @@ dt <- 1.0
 n_particles <- 10     
 # Number of threads to run
 n_threads <- 1   
-# TBA
+# True/false flag indicating whether or not to run model in deterministic mode
+# (so that binomial calculations give average instead of randomized output)
 deterministic <- FALSE
 ```
 

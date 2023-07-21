@@ -57,23 +57,32 @@ dt <- 1.0
 n_particles <- 10     
 # Number of threads to run
 n_threads <- 1   
-# TBA
+# True/false flag indicating whether or not to run model in deterministic mode
+# (so that binomial calculations give average instead of randomized output)
 deterministic <- FALSE
-#[TBA]
+# Delay time between an event which triggers the declaration of an outbreak and
+# the response (emergency vaccination campaign)
+response_delay <- 56
+# Probabilities of an infection being reported as a case before emergency conditions
+# triggered (1st value) or after emergency conditions triggered (2nd value)
 p_rep <- c(1,1)
-#[TBA]
-outbreak_threshold1 <- Inf
-#[TBA]
-cluster_threshold1 <- 1.0
+# Threshold total no. reported cases to trigger emergency conditions
+case_threshold <- Inf
+# Threshold current infectious fraction to trigger emergency conditions
+cluster_threshold <- 1.0
+# Vaccination rate by age group during emergency vaccination campaign
+vacc_rate_cam <- c(0,rep(0.01,60),rep(0,40))
+# Duration in days of emergency vaccination campaign
+t_cam <- 60
 ```
 
 We run Model_Run_Reactive() as shown:
 
 ```{r,eval=FALSE}
-test1 <- Model_Run_Reactive(FOI_spillover, R0, vacc_data1, vacc_data2, pop_data, years_data,
+test1 <- Model_Run_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
                    start_SEIRV, year0, mode_start, vaccine_efficacy, dt, 
-                   n_particles, n_threads, deterministic, p_rep, 
-                   outbreak_threshold1, cluster_threshold1)
+                   n_particles, n_threads, deterministic, response_delay, p_rep, 
+                   case_threshold, cluster_threshold, vacc_rate_cam, t_cam)
 ```
 
 As with YEP::Model_Run(), we can plot the output:

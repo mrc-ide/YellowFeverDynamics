@@ -19,8 +19,8 @@ vacc_rate_daily[,] <- user() #Daily rate of vaccination by age and year (non-eme
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
 response_delay <- user() #Delay time in days between a flag being triggered and emergency conditions coming into effect
 p_rep[] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
-outbreak_threshold1 <- user() #Threshold total no. reported cases to trigger outbreak flag 1
-cluster_threshold1 <- user()  #Threshold current infectious fraction to trigger cluster flag 1
+case_threshold <- user() #Threshold total no. reported cases to trigger outbreak flag 1
+cluster_threshold <- user()  #Threshold current infectious fraction to trigger cluster flag 1
 vacc_rate_cam[] <- user() #TBA
 t_cam <- user() #TBA
 
@@ -66,18 +66,18 @@ P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
 vacc_rate[1:N_age] <- (vacc_rate_daily[i,as.integer(year_i)] + (if(flag3==0) 0 else vacc_rate_cam[i]*ceiling(1-flag4)))*vaccine_efficacy*dt*P[i]
-outbreak_flag1 <- if(C_rep_total >= outbreak_threshold1) 1 else 0
+case_flag <- if(C_rep_total >= case_threshold) 1 else 0
 p_rep_cur <- if(flag3==1) p_rep[2] else p_rep[1]
 C_rep_new <- rbinom(as.integer(sum(I_new)),p_rep_cur) #Daily new reported cases across all ages
 F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of population - check for cluster flag
-cluster_flag1 <- if(F_I_total>=cluster_threshold1) 1 else 0
+cluster_flag <- if(F_I_total>=cluster_threshold) 1 else 0
 
 #Updates to output values at each time increment--------------------------------
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
 update(C_rep_total) <- C_rep_total + C_rep_new #Running total reported cases across all ages
-update(flag1) <- min(one,flag1 + (outbreak_flag1*rate3)) #flag1 with delay (converted to integer on use)
-update(flag2) <- min(one,flag2 + (cluster_flag1*rate3)) #flag2 with delay (converted to integer on use)
+update(flag1) <- min(one,flag1 + (case_flag*rate3)) #flag1 with delay (converted to integer on use)
+update(flag2) <- min(one,flag2 + (cluster_flag*rate3)) #flag2 with delay (converted to integer on use)
 update(flag3) <- if(flag1==1) 1 else (if(flag2==1) 1 else 0) #0 = No emergency (flags 1+2 not tripped); 1 = emergency (flag 1 and/or 2 tripped)
 update(flag4) <- if(flag3==0) 0 else min(one,flag4+rate4)
 update(report_rate) <- p_rep_cur

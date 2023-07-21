@@ -56,8 +56,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">Model_Run_Reactive</span><span class="op">(</span></span>
 <span>  FOI_spillover <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  R0 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  vacc_data1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  vacc_data2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  vacc_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  pop_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  years_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1940</span><span class="op">:</span><span class="fl">1941</span><span class="op">)</span>,</span>
 <span>  start_SEIRV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -68,9 +67,12 @@
 <span>  n_particles <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n_threads <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  deterministic <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  p_rep <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  outbreak_threshold1 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  cluster_threshold1 <span class="op">=</span> <span class="fl">1</span></span>
+<span>  response_delay <span class="op">=</span> <span class="fl">56</span>,</span>
+<span>  p_rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  case_threshold <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  cluster_threshold <span class="op">=</span> <span class="cn">Inf</span>,</span>
+<span>  vacc_rate_cam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  t_cam <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -84,16 +86,13 @@
 <dd><p>Basic reproduction number for urban spread of infection</p></dd>
 
 
-<dt>vacc_data1</dt>
-<dd><p>[TBA]</p></dd>
-
-
-<dt>vacc_data2</dt>
-<dd><p>[TBA]</p></dd>
+<dt>vacc_data</dt>
+<dd><p>Projected vaccination-based immunity (assuming vaccine_efficacy=1 and in absence of emergency campaign)
+by age group and year</p></dd>
 
 
 <dt>pop_data</dt>
-<dd><p>Population in each age group by year</p></dd>
+<dd><p>Population by age group and year</p></dd>
 
 
 <dt>years_data</dt>
@@ -135,16 +134,29 @@ If mode_start=2, use SEIRV input in list from previous run(s)</p></dd>
 <dd><p>TRUE/FALSE - set model to run in deterministic mode if TRUE</p></dd>
 
 
+<dt>response_delay</dt>
+<dd><p>Delay time in days between a threshold being reached and emergency conditions coming into effect</p></dd>
+
+
 <dt>p_rep</dt>
-<dd><p>Probabilities of an infection being reported as a case under different conditions (TBA)</p></dd>
+<dd><p>Probabilities of an infection being reported as a case before emergency conditions triggered (1st value) or
+after emergency conditions triggered (2nd value)</p></dd>
 
 
-<dt>outbreak_threshold1</dt>
-<dd><p>Threshold total no. reported cases to trigger outbreak flag 1</p></dd>
+<dt>case_threshold</dt>
+<dd><p>Threshold total no. reported cases to trigger emergency conditions</p></dd>
 
 
-<dt>cluster_threshold1</dt>
-<dd><p>Threshold current infectious fraction to trigger cluster flag 1
+<dt>cluster_threshold</dt>
+<dd><p>Threshold current infectious fraction to trigger emergency conditions</p></dd>
+
+
+<dt>vacc_rate_cam</dt>
+<dd><p>(Reactive versions) Vaccination rate by age group during emergency vaccination campaign</p></dd>
+
+
+<dt>t_cam</dt>
+<dd><p>(Reactive versions) Duration in days of emergency vaccination campaign
 '</p></dd>
 
 </dl></div>

@@ -88,7 +88,7 @@ detailed SEIRV data for every time point and age group (equivalent to
 setting output_type=“full” in Model_Run()). There are also three
 additional inputs [TBA]</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YellowFeverDynamics</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mrc-ide.github.io/YellowFeverDynamics/">YellowFeverDynamics</a></span><span class="op">)</span></span>
 <span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
 <span>                                   <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#[TBA]</span></span>
@@ -126,24 +126,33 @@ additional inputs [TBA]</p>
 <span><span class="va">n_particles</span> <span class="op">&lt;-</span> <span class="fl">10</span>     </span>
 <span><span class="co"># Number of threads to run</span></span>
 <span><span class="va">n_threads</span> <span class="op">&lt;-</span> <span class="fl">1</span>   </span>
-<span><span class="co"># TBA</span></span>
+<span><span class="co"># True/false flag indicating whether or not to run model in deterministic mode</span></span>
+<span><span class="co"># (so that binomial calculations give average instead of randomized output)</span></span>
 <span><span class="va">deterministic</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span>
-<span><span class="co">#[TBA]</span></span>
+<span><span class="co"># Delay time between an event which triggers the declaration of an outbreak and</span></span>
+<span><span class="co"># the response (emergency vaccination campaign)</span></span>
+<span><span class="va">response_delay</span> <span class="op">&lt;-</span> <span class="fl">56</span></span>
+<span><span class="co"># Probabilities of an infection being reported as a case before emergency conditions</span></span>
+<span><span class="co"># triggered (1st value) or after emergency conditions triggered (2nd value)</span></span>
 <span><span class="va">p_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#[TBA]</span></span>
-<span><span class="va">outbreak_threshold1</span> <span class="op">&lt;-</span> <span class="cn">Inf</span></span>
-<span><span class="co">#[TBA]</span></span>
-<span><span class="va">cluster_threshold1</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span></code></pre></div>
+<span><span class="co"># Threshold total no. reported cases to trigger emergency conditions</span></span>
+<span><span class="va">case_threshold</span> <span class="op">&lt;-</span> <span class="cn">Inf</span></span>
+<span><span class="co"># Threshold current infectious fraction to trigger emergency conditions</span></span>
+<span><span class="va">cluster_threshold</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
+<span><span class="co"># Vaccination rate by age group during emergency vaccination campaign</span></span>
+<span><span class="va">vacc_rate_cam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.01</span>,<span class="fl">60</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Duration in days of emergency vaccination campaign</span></span>
+<span><span class="va">t_cam</span> <span class="op">&lt;-</span> <span class="fl">60</span></span></code></pre></div>
 <p>We run Model_Run_Reactive() as shown:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Reactive.html">Model_Run_Reactive</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data1</span>, <span class="va">vacc_data2</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>,</span>
+<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Reactive.html">Model_Run_Reactive</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>,</span>
 <span>                   <span class="va">start_SEIRV</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">vaccine_efficacy</span>, <span class="va">dt</span>, </span>
-<span>                   <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span>, <span class="va">p_rep</span>, </span>
-<span>                   <span class="va">outbreak_threshold1</span>, <span class="va">cluster_threshold1</span><span class="op">)</span></span></code></pre></div>
+<span>                   <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span>, <span class="va">response_delay</span>, <span class="va">p_rep</span>, </span>
+<span>                   <span class="va">case_threshold</span>, <span class="va">cluster_threshold</span>, <span class="va">vacc_rate_cam</span>, <span class="va">t_cam</span><span class="op">)</span></span></code></pre></div>
 <p>As with YEP::Model_Run(), we can plot the output:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YFDaux</span><span class="op">)</span></span>
-<span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/YFDaux/man/plot_model_output.html" class="external-link">plot_model_output</a></span><span class="op">(</span><span class="va">test1</span><span class="op">)</span></span>
+<span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plot_model_output</span><span class="op">(</span><span class="va">test1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
   </main>
 </div>
