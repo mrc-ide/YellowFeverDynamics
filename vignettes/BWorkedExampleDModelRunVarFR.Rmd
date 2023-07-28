@@ -14,9 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-This worked example demonstrates how to set up and run the variable burden version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The variable burden version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in [TBA]
-
-[TBA]
+This worked example demonstrates how to set up and run the variable burden version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The variable burden version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in that the spillover force of infection and basic reproduction number inputs are not single values, but vectors of annual values. This allows variations in transmission due to (for example) climate change to be incorporated into the model.
 
 The inputs for the Model_Run_VarFR() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that there is no variable output type (as with the other alternate versions) and the spillover force of infection and basic reproduction number are supplied as vectors with length equal to the number of years [TBA].
 
@@ -26,12 +24,14 @@ input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"),
                                    "/exdata/input_data_example.Rds", sep = ""))
 vacc_data <- input_data$vacc_data[1, , ]
 pop_data <- input_data$pop_data[1, , ]  
-# Force of infection due to spillover from sylvatic reservoir
+# Force of infection due to spillover from sylvatic reservoir, by year
+# (vector length equal to number of years to be considered, from year0 to end of year_data)
 FOI_spillover <- rep(1.0e-8, length(input_data$years_labels)-1)
-# Basic reproduction number for urban spread of infection
-R0 <- rep(1.5, length(input_data$years_labels)-1)            
+# Basic reproduction number for urban spread of infection, by year (here set to increase 
+# from 2010 onwards)
+R0 <- rep(1.5, length(input_data$years_labels)-1)
 # Year(s) for which data is to be output
-years_data <- c(2000)
+years_data <- c(2010:2018)
 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
 # used here and hence set to NULL)
 start_SEIRV <- NULL           
@@ -53,7 +53,7 @@ vaccine_efficacy <- 1.0
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 dt <- 1.0            
 # Number of particles to run
-n_particles <- 10     
+n_particles <- 1
 # Number of threads to run
 n_threads <- 1   
 # True/false flag indicating whether or not to run model in deterministic mode
@@ -61,7 +61,7 @@ n_threads <- 1
 deterministic <- FALSE
 ```
 
-We run Model_Run_Split() as shown:
+We run Model_Run_VarFR() as shown:
 
 ```{r,eval=FALSE}
 test1 <- Model_Run_VarFR(FOI_spillover, R0, vacc_data, pop_data, years_data,
@@ -72,7 +72,7 @@ test1 <- Model_Run_VarFR(FOI_spillover, R0, vacc_data, pop_data, years_data,
 As with YEP::Model_Run(), we can plot the output:
 
 ```{r,eval=FALSE}
-library(YFDaux)
+library(YEPaux)
 plot <- plot_model_output(test1)
 print(plot)
 ```

@@ -14,25 +14,22 @@ knitr::opts_chunk$set(
 )
 ```
 
-This worked example demonstrates how to set up and run the reactive version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The reactive version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in [TBA]
+This worked example demonstrates how to set up and run the reactive version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The reactive version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in including provision for an emergency response to reported cases and/or high burden levels. This version of the model can be used, for example, to evaluate the optimum emergency or preventive measures to prevent large outbreaks.
 
-The inputs for the Model_Run_Reactive() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that (as with the other alternate versions in this package) there is no variable output type - the function always outputs detailed SEIRV data for every time point and age group (equivalent to setting output_type="full" in Model_Run()). There are also three additional inputs [TBA]
+The inputs for the Model_Run_Reactive() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that (as with the other alternate versions in this package) there is no variable output type - the function always outputs detailed SEIRV data for every time point and age group (equivalent to setting output_type="full" in Model_Run()). There are also several additional inputs governing the detection of a significant yellow fever outbreak and the resulting response.
 
 ```{r,eval=FALSE}
-library(YellowFeverDynamics)
+#library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
-                                   "/exdata/input_data_example.Rds", sep = ""))
-#[TBA]
-vacc_data1 <- input_data$vacc_data[1, , ]*0
-#[TBA]
-vacc_data2 <- input_data$vacc_data[1, , ]
+                                   "/inst/exdata/input_data_example.Rds", sep = ""))
+vacc_data <- input_data$vacc_data[1, , ]
 pop_data <- input_data$pop_data[1, , ]  
 # Force of infection due to spillover from sylvatic reservoir
-FOI_spillover <- 1.0e-8             
+FOI_spillover <- 1.0e-7 
 # Basic reproduction number for urban spread of infection
-R0 <- 1.5             
+R0 <- 1.0             
 # Year(s) for which data is to be output
-years_data <- c(2000)
+years_data <- c(1940:1945)
 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
 # used here and hence set to NULL)
 start_SEIRV <- NULL           
@@ -54,7 +51,7 @@ vaccine_efficacy <- 1.0
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 dt <- 1.0            
 # Number of particles to run
-n_particles <- 10     
+n_particles <- 1
 # Number of threads to run
 n_threads <- 1   
 # True/false flag indicating whether or not to run model in deterministic mode
@@ -67,9 +64,9 @@ response_delay <- 56
 # triggered (1st value) or after emergency conditions triggered (2nd value)
 p_rep <- c(1,1)
 # Threshold total no. reported cases to trigger emergency conditions
-case_threshold <- Inf
+case_threshold <- 1.0
 # Threshold current infectious fraction to trigger emergency conditions
-cluster_threshold <- 1.0
+cluster_threshold <- Inf
 # Vaccination rate by age group during emergency vaccination campaign
 vacc_rate_cam <- c(0,rep(0.01,60),rep(0,40))
 # Duration in days of emergency vaccination campaign
@@ -85,10 +82,19 @@ test1 <- Model_Run_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
                    case_threshold, cluster_threshold, vacc_rate_cam, t_cam)
 ```
 
-As with YEP::Model_Run(), we can plot the output:
+As with YEP::Model_Run(), we can plot the output, including the application of the emergency vaccination campaign when the first case is reported:
 
 ```{r,eval=FALSE}
-library(YFDaux)
+library(YEPaux)
 plot <- plot_model_output(test1)
 print(plot)
+```
+
+An alternative version of the reactive model exists which combines emergency response with the time delay approach described in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html):
+
+```{r,eval=FALSE}
+test2 <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
+                   start_SEIRV, year0, mode_start, vaccine_efficacy, dt, 
+                   n_particles, n_threads, deterministic, response_delay, p_rep, 
+                   case_threshold, cluster_threshold, vacc_rate_cam, t_cam)
 ```

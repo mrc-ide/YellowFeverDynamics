@@ -72,7 +72,7 @@ test1 <- Model_Run_Delay(FOI_spillover, R0, vacc_data, pop_data, years_data,
 As with YEP::Model_Run(), we can plot the output:
 
 ```{r,eval=FALSE}
-library(YFDaux)
+library(YEPaux)
 plot <- plot_model_output(test1)
 print(plot)
 ```

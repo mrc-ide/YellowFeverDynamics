@@ -8,7 +8,8 @@ articles:
   BWorkedExampleBModelRunReactive: BWorkedExampleBModelRunReactive.html
   BWorkedExampleCModelRunSplitInfection: BWorkedExampleCModelRunSplitInfection.html
   BWorkedExampleDModelRunVarFR: BWorkedExampleDModelRunVarFR.html
-last_built: 2023-07-21T19:44Z
+  BWorkedExampleEOutbreakRiskCalculation: BWorkedExampleEOutbreakRiskCalculation.html
+last_built: 2023-07-28T20:08Z
 urls:
   reference: https://mrc-ide.github.io/YellowFeverDynamics/reference
   article: https://mrc-ide.github.io/YellowFeverDynamics/articles

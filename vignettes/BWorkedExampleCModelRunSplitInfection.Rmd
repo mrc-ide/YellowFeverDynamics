@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-This worked example demonstrates how to set up and run the split infection version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The split infection version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in [TBA]
+This worked example demonstrates how to set up and run the split infection version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The split infection version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in dividing infections into sylvatic and urban.
+
+Sylvatic transmission refers to infection of humans via bites from mosquitoes infected with yellow fever via biting infected non-human primates (NHPs). Urban transmission refers to infection of humans via bites from mosquitoes infected with yellow fever via biting other humans.
 
 The inputs for the Model_Run_Split() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that there is no variable output type - the function always outputs detailed SEIRV data for every time point and age group (equivalent to setting output_type="full" in Model_Run()).
 
@@ -70,7 +72,7 @@ test1 <- Model_Run_Split(FOI_spillover, R0, vacc_data, pop_data, years_data,
 As with YEP::Model_Run(), we can plot the output:
 
 ```{r,eval=FALSE}
-library(YFDaux)
+library(YEPaux)
 plot <- plot_model_output(test1)
 print(plot)
 ```

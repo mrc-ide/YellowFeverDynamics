@@ -139,6 +139,17 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
   assert_that(length(FOI_spillover)==1,msg="Spillover FOI must be singular value")
   assert_that(length(R0)==1,msg="R0 must be singular value")
 
+  n_nv=9 #Number of non-vector outputs
+  N_age=length(pop_data[1,]) #Number of age groups
+  assert_that(length(vacc_rate_cam)==N_age)
+  nd1 <- (t_incubation+t_latent)/dt
+  nd2 <- t_infectious/dt
+  nd <- nd1 + nd2
+  n_data_pts=((6+nd1+nd2)*N_age)+n_nv #Number of data values per time point in output
+  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
+  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
+  t_pts_out=step_end-step_begin+1 #Number of time points in final output data
+
   pars1=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
                         vaccine_efficacy,start_SEIRV,dt)
   n_years=length(pop_data[,1])-1
@@ -156,17 +167,6 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
     pars2$E_delay0=rep(0,nd1*N_age)
     pars2$I_delay0=rep(0,nd2*N_age)
   }
-
-  n_nv=9 #Number of non-vector outputs
-  N_age=length(pop_data[1,]) #Number of age groups
-  assert_that(length(vacc_rate_cam)==N_age)
-  nd1 <- (t_incubation+t_latent)/dt
-  nd2 <- t_infectious/dt
-  nd <- nd1 + nd2
-  n_data_pts=((6+nd1+nd2)*N_age)+n_nv #Number of data values per time point in output
-  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
-  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
-  t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
   x <- SEIRVModelDelayReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
