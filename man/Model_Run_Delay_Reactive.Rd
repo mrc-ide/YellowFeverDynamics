@@ -66,9 +66,9 @@ after emergency conditions triggered (2nd value)}
 
 \item{cluster_threshold}{Threshold current infectious fraction to trigger emergency conditions}
 
-\item{vacc_rate_cam}{(Reactive versions) Vaccination rate by age group during emergency vaccination campaign}
+\item{vacc_rate_cam}{Vaccination rate by age group during emergency vaccination campaign}
 
-\item{t_cam}{(Reactive versions) Duration in days of emergency vaccination campaign
+\item{t_cam}{Duration in days of emergency vaccination campaign
 '}
 }
 \description{

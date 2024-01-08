@@ -54,15 +54,6 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
   assert_that(length(FOI_spillover)==1,msg="Spillover FOI must be singular value")
   assert_that(length(R0)==1,msg="R0 must be singular value")
 
-  pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,vaccine_efficacy,start_SEIRV,dt)
-  if(mode_start==2){
-    pars$E_delay0=start_SEIRV$E_delay
-    pars$I_delay0=start_SEIRV$I_delay
-  } else {
-    pars$E_delay0=rep(0,nd1*N_age)
-    pars$I_delay0=rep(0,nd2*N_age)
-  }
-
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
   nd1 <- (t_incubation+t_latent)/dt
@@ -72,6 +63,15 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
+
+  pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,vaccine_efficacy,start_SEIRV,dt)
+  if(mode_start==2){
+    pars$E_delay0=start_SEIRV$E_delay
+    pars$I_delay0=start_SEIRV$I_delay
+  } else {
+    pars$E_delay0=rep(0,nd1*N_age)
+    pars$I_delay0=rep(0,nd2*N_age)
+  }
 
   x <- SEIRVModelDelay$new(pars,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
@@ -124,8 +124,8 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 #'   after emergency conditions triggered (2nd value)
 #' @param case_threshold Threshold total no. reported cases to trigger emergency conditions
 #' @param cluster_threshold Threshold current infectious fraction to trigger emergency conditions
-#' @param vacc_rate_cam (Reactive versions) Vaccination rate by age group during emergency vaccination campaign
-#' @param t_cam (Reactive versions) Duration in days of emergency vaccination campaign
+#' @param vacc_rate_cam Vaccination rate by age group during emergency vaccination campaign
+#' @param t_cam Duration in days of emergency vaccination campaign
 #' '
 #' @export
 #'
@@ -228,8 +228,8 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
 #'   after emergency conditions triggered (2nd value)
 #' @param case_threshold Threshold total no. reported cases to trigger emergency conditions
 #' @param cluster_threshold Threshold current infectious fraction to trigger emergency conditions
-#' @param vacc_rate_cam (Reactive versions) Vaccination rate by age group during emergency vaccination campaign
-#' @param t_cam (Reactive versions) Duration in days of emergency vaccination campaign
+#' @param vacc_rate_cam Vaccination rate by age group during emergency vaccination campaign
+#' @param t_cam Duration in days of emergency vaccination campaign
 #' '
 #' @export
 #'

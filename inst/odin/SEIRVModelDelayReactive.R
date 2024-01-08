@@ -76,8 +76,8 @@ cluster_flag <- if(F_I_total>=cluster_threshold) 1 else 0
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
 update(C_rep_total) <- C_rep_total + C_rep_new #Running total reported cases across all ages
-update(flag1) <- min(one,flag1 + (case_flag*rate3)) #flag1 with delay (converted to integer on use)
-update(flag2) <- min(one,flag2 + (cluster_flag*rate3)) #flag2 with delay (converted to integer on use)
+update(flag1) <- min(one,flag1 + (case_flag*rate3)) #case flag with delay (converted to integer on use)
+update(flag2) <- min(one,flag2 + (cluster_flag*rate3)) #cluster flag with delay (converted to integer on use)
 update(flag3) <- if(flag1==1) 1 else (if(flag2==1) 1 else 0) #0 = No emergency (flags 1+2 not tripped); 1 = emergency (flag 1 and/or 2 tripped)
 update(flag4) <- if(flag3==0) 0 else min(one,flag4+rate4)
 update(report_rate) <- p_rep_cur
