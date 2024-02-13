@@ -168,6 +168,12 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
     pars2$I_delay0=rep(0,nd2*N_age)
   }
 
+  #Check that there is no overlap between emergency campaign and other vaccination
+  #(Not yet possible to adjust vaccine rates on the fly to deal with overlap)
+  for(i in 1:N_age){
+    if(vacc_rate_cam[i]>0){assert_that(all(pars2$vacc_rate_daily[i,]==0))}
+  }
+
   x <- SEIRVModelDelayReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
   x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
@@ -197,7 +203,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
 #-------------------------------------------------------------------------------
 #' @title Model_Run_Reactive
 #'
-#' @description Runs reactive version of SEIRV model
+#' @description Runs reactive version of SEIRV model (TODO - update in line with delay/reactive model)
 #'
 #' @details Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model
 #' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
