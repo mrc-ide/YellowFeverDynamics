@@ -11,6 +11,7 @@ Model_Run_VarFR(
   pop_data = list(),
   years_data = c(1940:1941),
   start_SEIRV = list(),
+  output_type = "full",
   year0 = 1940,
   mode_start = 0,
   vaccine_efficacy = 1,
@@ -32,6 +33,14 @@ Model_Run_VarFR(
 \item{years_data}{Incremental vector of years denoting years for which to save data}
 
 \item{start_SEIRV}{SEIRV data from end of a previous run to use as input}
+
+\item{output_type}{Type of data to output:
+"full" = SEIRVC + FOI for all steps and ages
+"case" = annual total new infections (C) summed across all ages
+"sero" = annual SEIRV
+"case+sero" = annual SEIRVC, cases summed across all ages
+"case_alt" = annual total new infections not combined by age
+"case_alt2" = total new infections combined by age for all steps}
 
 \item{year0}{First year in population/vaccination data}
 

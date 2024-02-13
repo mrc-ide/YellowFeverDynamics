@@ -256,6 +256,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
 
   n_nv=9 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
+  assert_that(length(vacc_rate_cam)==N_age)
   n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
@@ -371,6 +372,13 @@ Model_Run_Split <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #' @param pop_data Population by age group and year
 #' @param years_data Incremental vector of years denoting years for which to save data
 #' @param start_SEIRV SEIRV data from end of a previous run to use as input
+#' @param output_type Type of data to output:
+#'   "full" = SEIRVC + FOI for all steps and ages
+#'   "case" = annual total new infections (C) summed across all ages
+#'   "sero" = annual SEIRV
+#'   "case+sero" = annual SEIRVC, cases summed across all ages
+#'   "case_alt" = annual total new infections not combined by age
+#'   "case_alt2" = total new infections combined by age for all steps
 #' @param year0 First year in population/vaccination data
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
@@ -385,8 +393,8 @@ Model_Run_Split <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #' @export
 #'
 Model_Run_VarFR <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
-                            start_SEIRV = list(), year0 = 1940, mode_start = 0, vaccine_efficacy = 1.0, dt = 1.0,
-                            n_particles = 1, n_threads = 1, deterministic = FALSE) {
+                            start_SEIRV = list(), output_type = "full", year0 = 1940, mode_start = 0,
+                            vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
   #TODO Add assert_that functions
 
@@ -414,15 +422,61 @@ Model_Run_VarFR <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(),po
   }
   if(step_begin==0){x_res[2,,1]=rep(year0,n_particles)}
 
-  dimensions=c(N_age,n_particles,t_pts_out)
-  output_data=list(day=x_res[1,1,],year=x_res[2,1,])
-  output_data$FOI_total=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out))
-  output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
-  output_data$E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
-  output_data$I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dimensions)
-  output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dimensions)
-  output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dimensions)
-  output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dimensions)
+  if(output_type=="full"){
+    dimensions=c(N_age,n_particles,t_pts_out)
+    output_data=list(day=x_res[1,1,],year=x_res[2,1,])
+    output_data$FOI_total=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out))
+    output_data$S=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
+    output_data$E=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
+    output_data$I=array(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),,],dim=dimensions)
+    output_data$R=array(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),,],dim=dimensions)
+    output_data$V=array(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),,],dim=dimensions)
+    output_data$C=array(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),,],dim=dimensions)
+  } else {
+    if(output_type=="case_alt2"){
+      output_data=list(day=x_res[1,1,],year=x_res[2,1,])
+      output_data$C=array(0,dim=c(n_particles,t_pts_out))
+      for(pt in 1:t_pts_out){
+        for(n_p in 1:n_particles){
+          output_data$C[n_p,pt]=sum(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),n_p,pt])
+        }
+      }
+    }  else {
+      n_years=length(years_data)
+      output_data=list(year=years_data)
+      if(output_type=="case+sero" || output_type=="sero"){
+        output_data$V=output_data$R=output_data$I=output_data$E=output_data$S=array(0,dim=c(N_age,n_particles,n_years))
+        for(n_year in 1:n_years){
+          pts=c(1:t_pts_out)[x_res[2,1,]==years_data[n_year]]
+          for(n_p in 1:n_particles){
+            output_data$S[,n_p,n_year]=rowMeans(x_res[c((1+n_nv):(N_age+n_nv)),n_p,pts])
+            output_data$E[,n_p,n_year]=rowMeans(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),n_p,pts])
+            output_data$I[,n_p,n_year]=rowMeans(x_res[c(((2*N_age)+1+n_nv):((3*N_age)+n_nv)),n_p,pts])
+            output_data$R[,n_p,n_year]=rowMeans(x_res[c(((3*N_age)+1+n_nv):((4*N_age)+n_nv)),n_p,pts])
+            output_data$V[,n_p,n_year]=rowMeans(x_res[c(((4*N_age)+1+n_nv):((5*N_age)+n_nv)),n_p,pts])
+          }
+        }
+      }
+      if(output_type=="case+sero" || output_type=="case"){
+        output_data$C=array(0,dim=c(n_particles,n_years))
+        for(n_year in 1:n_years){
+          pts=c(1:t_pts_out)[x_res[2,1,]==years_data[n_year]]
+          for(n_p in 1:n_particles){
+            output_data$C[n_p,n_year]=sum(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),n_p,pts])
+          }
+        }
+      }
+      if(output_type=="case_alt"){
+        output_data$C=array(0,dim=c(N_age,n_particles,n_years))
+        for(n_year in 1:n_years){
+          pts=c(1:t_pts_out)[x_res[2,1,]==years_data[n_year]]
+          for(n_p in 1:n_particles){
+            output_data$C[,n_p,n_year]=rowSums(x_res[c(((5*N_age)+1+n_nv):((6*N_age)+n_nv)),n_p,pts])
+          }
+        }
+      }
+    }
+  }
 
   return(output_data)
 }
