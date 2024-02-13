@@ -72,7 +72,7 @@ after emergency conditions triggered (2nd value)}
 '}
 }
 \description{
-Runs reactive version of SEIRV model
+Runs reactive version of SEIRV model (TODO - update in line with delay/reactive model)
 }
 \details{
 Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model

@@ -81,8 +81,10 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
   }
 
   inv_reps=1/n_reps
-  assert_that(length(FOI_values)==n_regions,msg="Length of FOI_values must match number of regions to be modelled")
-  assert_that(length(R0_values)==n_regions,msg="Length of R0_values must match number of regions to be modelled")
+  assert_that(length(dim(FOI_values))==2,msg="FOI_values must be 2-D array")
+  assert_that(length(dim(R0_values))==2,msg="R0_values must be 2-D array")
+  assert_that(dim(FOI_values)[1]==n_regions,msg="1st dimension of FOI_values must match number of regions to be modelled")
+  assert_that(dim(R0_values)[1]==n_regions,msg="1st dimension of R0_values must match number of regions to be modelled")
   if(mode_start==2){assert_that(length(start_SEIRV)==n_regions,
                                 msg="Number of start_SEIRV datasets must match number of regions")}
 
@@ -103,7 +105,6 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
     } else {output_types[n_region]="sero"}
   }
 
-  i
   #Save relevant output data from each region
   for(n_region in 1:n_regions){
 
