@@ -75,5 +75,11 @@ after emergency conditions triggered (2nd value)}
 Runs delay+reactive version of SEIRV model
 }
 \details{
-[TBA]
+Accepts epidemiological + population parameters and model settings; runs delay/reactive SEIRV model
+for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
+values, infection numbers and total force of infection values. This version of the model differs from the standard
+one in taking two sets of input vaccination data, one the default one and one applied after one or more cases have
+been reported (as well as using delay instead of rate for incubation, infectious period etc.. Case reporting is governed
+by an additional parameter p_rep which can also change after one or more cases have been reported in order to reflect changes
+in surveillance.
 }

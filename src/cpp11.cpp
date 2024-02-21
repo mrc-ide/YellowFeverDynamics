@@ -41,6 +41,13 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelDelay_simulate(SEXP ptr,
   END_CPP11
 }
 // SEIRVModelDelay.cpp
+SEXP dust_cpu_SEIRVModelDelay_run_adjoint(SEXP ptr);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelDelay_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_SEIRVModelDelay_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+  END_CPP11
+}
+// SEIRVModelDelay.cpp
 SEXP dust_cpu_SEIRVModelDelay_set_index(SEXP ptr, cpp11::sexp r_index);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_index(SEXP ptr, SEXP r_index) {
   BEGIN_CPP11
@@ -181,6 +188,13 @@ SEXP dust_cpu_SEIRVModelDelayReactive_simulate(SEXP ptr, cpp11::sexp time_end);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_simulate(SEXP ptr, SEXP time_end) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_SEIRVModelDelayReactive_simulate(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(time_end)));
+  END_CPP11
+}
+// SEIRVModelDelayReactive.cpp
+SEXP dust_cpu_SEIRVModelDelayReactive_run_adjoint(SEXP ptr);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_SEIRVModelDelayReactive_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // SEIRVModelDelayReactive.cpp
@@ -327,6 +341,13 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelReactive_simulate(SEXP p
   END_CPP11
 }
 // SEIRVModelReactive.cpp
+SEXP dust_cpu_SEIRVModelReactive_run_adjoint(SEXP ptr);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelReactive_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_SEIRVModelReactive_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+  END_CPP11
+}
+// SEIRVModelReactive.cpp
 SEXP dust_cpu_SEIRVModelReactive_set_index(SEXP ptr, cpp11::sexp r_index);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_index(SEXP ptr, SEXP r_index) {
   BEGIN_CPP11
@@ -467,6 +488,13 @@ SEXP dust_cpu_SEIRVModelSplitInfection_simulate(SEXP ptr, cpp11::sexp time_end);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_simulate(SEXP ptr, SEXP time_end) {
   BEGIN_CPP11
     return cpp11::as_sexp(dust_cpu_SEIRVModelSplitInfection_simulate(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(time_end)));
+  END_CPP11
+}
+// SEIRVModelSplitInfection.cpp
+SEXP dust_cpu_SEIRVModelSplitInfection_run_adjoint(SEXP ptr);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_SEIRVModelSplitInfection_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
   END_CPP11
 }
 // SEIRVModelSplitInfection.cpp
@@ -613,6 +641,13 @@ extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_simulate(SEXP ptr,
   END_CPP11
 }
 // SEIRVModelVarFR.cpp
+SEXP dust_cpu_SEIRVModelVarFR_run_adjoint(SEXP ptr);
+extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_run_adjoint(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust_cpu_SEIRVModelVarFR_run_adjoint(cpp11::as_cpp<cpp11::decay_t<SEXP>>(ptr)));
+  END_CPP11
+}
+// SEIRVModelVarFR.cpp
 SEXP dust_cpu_SEIRVModelVarFR_set_index(SEXP ptr, cpp11::sexp r_index);
 extern "C" SEXP _YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_index(SEXP ptr, SEXP r_index) {
   BEGIN_CPP11
@@ -738,6 +773,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_resample",                 (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_resample,                 2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_rng_state",                (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_rng_state,                3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run",                      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run,                      2},
+    {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run_adjoint",              (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run_adjoint,              1},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_data",                 (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_data,                 3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_index",                (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_index,                2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_n_threads",            (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_set_n_threads,            2},
@@ -757,6 +793,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_resample",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_resample,                         2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_rng_state",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_rng_state,                        3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_run",                              (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_run,                              2},
+    {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_run_adjoint",                      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_run_adjoint,                      1},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_data",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_data,                         3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_index",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_index,                        2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_n_threads",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_n_threads,                    2},
@@ -776,6 +813,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_resample",                      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_resample,                      2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_rng_state",                     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_rng_state,                     3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_run",                           (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_run,                           2},
+    {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_run_adjoint",                   (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_run_adjoint,                   1},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_data",                      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_data,                      3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_index",                     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_index,                     2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_n_threads",                 (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_n_threads,                 2},
@@ -795,6 +833,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_resample",                (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_resample,                2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_rng_state",               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_rng_state,               3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_run",                     (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_run,                     2},
+    {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_run_adjoint",             (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_run_adjoint,             1},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_data",                (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_data,                3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_index",               (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_index,               2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_n_threads",           (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_n_threads,           2},
@@ -814,6 +853,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_resample",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_resample,                         2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_rng_state",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_rng_state,                        3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_run",                              (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_run,                              2},
+    {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_run_adjoint",                      (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_run_adjoint,                      1},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_data",                         (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_data,                         3},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_index",                        (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_index,                        2},
     {"_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_n_threads",                    (DL_FUNC) &_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_set_n_threads,                    2},

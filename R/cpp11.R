@@ -20,6 +20,10 @@ dust_cpu_SEIRVModelDelay_simulate <- function(ptr, time_end) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_simulate`, ptr, time_end)
 }
 
+dust_cpu_SEIRVModelDelay_run_adjoint <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_run_adjoint`, ptr)
+}
+
 dust_cpu_SEIRVModelDelay_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelay_set_index`, ptr, r_index)
 }
@@ -98,6 +102,10 @@ dust_cpu_SEIRVModelDelayReactive_run <- function(ptr, r_time_end) {
 
 dust_cpu_SEIRVModelDelayReactive_simulate <- function(ptr, time_end) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_simulate`, ptr, time_end)
+}
+
+dust_cpu_SEIRVModelDelayReactive_run_adjoint <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelDelayReactive_run_adjoint`, ptr)
 }
 
 dust_cpu_SEIRVModelDelayReactive_set_index <- function(ptr, r_index) {
@@ -180,6 +188,10 @@ dust_cpu_SEIRVModelReactive_simulate <- function(ptr, time_end) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_simulate`, ptr, time_end)
 }
 
+dust_cpu_SEIRVModelReactive_run_adjoint <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_run_adjoint`, ptr)
+}
+
 dust_cpu_SEIRVModelReactive_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelReactive_set_index`, ptr, r_index)
 }
@@ -260,6 +272,10 @@ dust_cpu_SEIRVModelSplitInfection_simulate <- function(ptr, time_end) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_simulate`, ptr, time_end)
 }
 
+dust_cpu_SEIRVModelSplitInfection_run_adjoint <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_run_adjoint`, ptr)
+}
+
 dust_cpu_SEIRVModelSplitInfection_set_index <- function(ptr, r_index) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelSplitInfection_set_index`, ptr, r_index)
 }
@@ -338,6 +354,10 @@ dust_cpu_SEIRVModelVarFR_run <- function(ptr, r_time_end) {
 
 dust_cpu_SEIRVModelVarFR_simulate <- function(ptr, time_end) {
   .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_simulate`, ptr, time_end)
+}
+
+dust_cpu_SEIRVModelVarFR_run_adjoint <- function(ptr) {
+  .Call(`_YellowFeverDynamics_dust_cpu_SEIRVModelVarFR_run_adjoint`, ptr)
 }
 
 dust_cpu_SEIRVModelVarFR_set_index <- function(ptr, r_index) {

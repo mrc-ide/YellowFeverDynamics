@@ -10,10 +10,10 @@ update(time) <- time + dt
 
 #Parameters---------------------------------------------------------------------
 t_incubation <- user() #Length in days of yellow fever incubation period in mosquito vectors
-t_latent <- user() #Length in days of latent period in humans exposed to yellow dever
+t_latent <- user() #Length in days of latent period in humans exposed to yellow fever
 t_infectious <- user() #Length of infectious period in humans with yellow fever
-FOI_spillover[] <- user() #Spillover force of infection (per day), variable by year
-R0[] <- user() #Basic reproduction number for human-human transmission, variable by year
+FOI_spillover[] <- user() #Spillover force of infection (per day) at each time point
+R0[] <- user() #Basic reproduction number for human-human transmission at each time point
 N_age <- user() #Number of age categories
 vacc_rate_daily[,] <- user() #Daily rate of vaccination by age and year
 vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
@@ -36,7 +36,7 @@ V_0[] <- user() #Vaccinated population by age group at start
 dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
 dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- user() #Number of years for which model to be run
-
+n_t_pts <- user() #Total number of time points
 Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 rate1 <- dt/(t_incubation+t_latent)
@@ -46,10 +46,10 @@ rate2 <- dt/t_infectious
 
 
 
-beta <- (R0[as.integer(year_i)]*dt)/t_infectious #Daily exposure rate
-FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover[as.integer(year_i)]*dt)) #Total force of infection
+beta <- (R0[step+1]*dt)/t_infectious #Daily exposure rate
+FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover[step+1]*dt)) #Total force of infection
 
-year_i <- floor((step*dt)/365) + 1 #Number of years since start, as integer
+year_i <- floor(((step+1)*dt)/365) + 1 #Number of years since start, as integer
 
 dP1[1:N_age] <- dP1_all[i, as.integer(year_i)]*dt #Increase in population by age group over 1 time increment
 dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age group over 1 time increment
@@ -149,5 +149,5 @@ dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)
-dim(FOI_spillover) <- n_years
-dim(R0) <- n_years
+dim(FOI_spillover) <- n_t_pts
+dim(R0) <- n_t_pts

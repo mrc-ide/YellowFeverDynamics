@@ -38,7 +38,7 @@ by age group and year}
 
 \item{years_data}{Incremental vector of years denoting years for which to save data}
 
-\item{start_SEIRV}{SEIRV data from end of a previous run to use as input}
+\item{start_SEIRV}{SEIRV data (including E_delay and I_delay) from end of a previous run to use as input}
 
 \item{year0}{First year in population/vaccination data}
 
@@ -72,7 +72,7 @@ after emergency conditions triggered (2nd value)}
 '}
 }
 \description{
-Runs reactive version of SEIRV model (TODO - update in line with delay/reactive model)
+Runs reactive version of SEIRV model
 }
 \details{
 Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model
