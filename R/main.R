@@ -414,8 +414,8 @@ Model_Run_Split <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_
 #'  If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
 #'  If mode_time=2, FOI/R0 vary with monthly seasonality without inter-annual variation (number of values = 12)
 #'  If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/dt)
-#'  If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12*number of years to consider) (TBA)
-#'  If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider) (TBA)
+#'  If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12*number of years to consider)
+#'  If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider)
 #' '
 #' @export
 #'
@@ -426,7 +426,7 @@ Model_Run_VarFR <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(),po
   #TODO Add additional assert_that functions (NB - Some checks carried out in parameter_setup)
   assert_that(n_particles<=20,msg="Number of particles must be 20 or less")
   pts_year=365/dt
-  assert_that(mode_time %in% c(0:3))
+  assert_that(mode_time %in% c(0:5))
 
   pars1=parameter_setup(FOI_spillover[1],R0[1],vacc_data,pop_data,year0,years_data,mode_start,
                         vaccine_efficacy,start_SEIRV,dt)
@@ -439,7 +439,7 @@ Model_Run_VarFR <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(),po
     R0_t=rep(R0,pts_total)
   } else {
     FOI_spillover_t=R0_t=rep(NA,pts_total)
-    }
+  }
   if(mode_time==1){
     assert_that(length(FOI_spillover)==pars1$n_years && length(R0)==pars1$n_years,
                 msg="Spillover FOI and R0 must be vectors of length equal to no.years considered if mode_time=1")
@@ -461,17 +461,21 @@ Model_Run_VarFR <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(),po
     FOI_spillover_t=FOI_spillover[date_values]
     R0_t=R0[date_values]
   }
-  # if(mode_time==4){ #NOT YET TESTED
-  #   assert_that(length(FOI_spillover)==pars1$n_years*12 && length(R0)==pars1$n_years*12,
-  #               msg="Spillover FOI and R0 must be vectors of length equal to 12*no.years considered if mode_time=4")
-  #   month_values=1+floor(((12*dt)/365)*c(0:(pts_total-1)))
-  #   FOI_spillover_t=FOI_spillover[month_values]
-  #   R0_t=R0[month_values]
-  # }
-  # if(mode_time==5){
-  #   assert_that(length(FOI_spillover)==pars1$n_years*pts_year && length(R0)==pars1$n_years*pts_year,
-  #               msg="Spillover FOI and R0 must be vectors of length equal to (365/dt)*no.years considered if mode_time=5")
-  # }
+  if(mode_time==4){
+    assert_that(length(FOI_spillover)==pars1$n_years*12 && length(R0)==pars1$n_years*12,
+                msg="Spillover FOI and R0 must be vectors of length equal to 12*no.years considered if mode_time=4")
+    #month_values=1+floor(((12*dt)/365)*c(0:(pts_total-1)))
+    month_values=(1+floor(((12*dt)/365)*c(0:(pts_total-1))) %% 12)
+    date_values=month_values+sort(rep(c(1:pars1$n_years)-1,pts_year))
+    FOI_spillover_t=FOI_spillover[date_values]
+    R0_t=R0[date_values]
+  }
+  if(mode_time==5){
+    assert_that(length(FOI_spillover)==pars1$n_years*pts_year && length(R0)==pars1$n_years*pts_year,
+                msg="Spillover FOI and R0 must be vectors of length equal to (365/dt)*no.years considered if mode_time=5")
+    FOI_spillover_t=FOI_spillover
+    R0_t=R0
+  }
 
   pars2=list(FOI_spillover=FOI_spillover_t,R0=R0_t,vacc_rate_daily=pars1$vacc_rate_daily,N_age=pars1$N_age,
              S_0=pars1$S_0,E_0=pars1$E_0,I_0=pars1$I_0,R_0=pars1$R_0,V_0=pars1$V_0,dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,
