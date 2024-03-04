@@ -66,13 +66,8 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 
   pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,vaccine_efficacy,start_SEIRV,dt)
   #Carrying forward delay seems to result in errors - further investigation may be needed
-  # if(mode_start==2){
-  #   pars2$E_delay0=start_SEIRV$E_delay
-  #   pars2$I_delay0=start_SEIRV$I_delay
-  # } else {
-  pars2$E_delay0=rep(0,nd1*N_age)
-  pars2$I_delay0=rep(0,nd2*N_age)
-  # }
+  pars$E_delay0=rep(0,nd1*N_age)
+  pars$I_delay0=rep(0,nd2*N_age)
 
   x <- SEIRVModelDelay$new(pars,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
 
