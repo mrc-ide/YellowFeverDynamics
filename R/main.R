@@ -37,7 +37,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#'  If mode_start=2, use SEIRV + E_delay input in list from previous run(s) - E_delay set manually, not carried over, to avoid double counting
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 #' @param n_particles number of particles to use
@@ -65,8 +65,9 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
   pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,vaccine_efficacy,start_SEIRV,dt)
-  #Carrying forward delay seems to result in errors - further investigation may be needed
-  pars$E_delay0=rep(0,nd1*N_age)
+
+  #Carrying forward delay from previous run as opposed to setting values manually causes errors (double counting)
+  if(mode_start==2){pars$E_delay0=start_SEIRV$E_delay} else {pars$E_delay0=rep(0,nd1*N_age)}
   pars$I_delay0=rep(0,nd2*N_age)
 
   x <- SEIRVModelDelay$new(pars,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
@@ -115,7 +116,7 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRV input in list from previous run(s)
+#'  If mode_start=2, use SEIRV + E_delay input in list from previous run(s) - E_delay set manually, not carried over, to avoid double counting
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 #' @param n_particles number of particles to use
@@ -162,14 +163,10 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
              p_rep=p_rep,case_threshold=case_threshold,cluster_threshold=cluster_threshold)
-  #Carrying forward delay seems to result in errors - further investigation may be needed
-  # if(mode_start==2){
-  #   pars2$E_delay0=start_SEIRV$E_delay
-  #   pars2$I_delay0=start_SEIRV$I_delay
-  # } else {
-    pars2$E_delay0=rep(0,nd1*N_age)
-    pars2$I_delay0=rep(0,nd2*N_age)
-  # }
+
+  #NB carrying forward delay from previous run as opposed to setting values manually causes errors (double counting)
+  if(mode_start==2){pars2$E_delay0=start_SEIRV$E_delay} else {pars2$E_delay0=rep(0,nd1*N_age)}
+  pars2$I_delay0=rep(0,nd2*N_age)
 
   #Check that there is no overlap between emergency campaign and other vaccination
   #(Not yet possible to adjust vaccine rates on the fly to deal with overlap)
