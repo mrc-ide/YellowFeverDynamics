@@ -22,7 +22,7 @@ Model_Run_Reactive(
   p_rep = c(0, 0),
   case_threshold = Inf,
   cluster_threshold = Inf,
-  vacc_rate_cam = c(),
+  vacc_cov_cam = c(),
   t_cam = 0
 )
 }
@@ -66,7 +66,7 @@ after emergency conditions triggered (2nd value)}
 
 \item{cluster_threshold}{Threshold current infectious fraction to trigger emergency conditions}
 
-\item{vacc_rate_cam}{Vaccination rate by age group during emergency vaccination campaign}
+\item{vacc_cov_cam}{Target vaccination coverage by age group during emergency vaccination campaign}
 
 \item{t_cam}{Duration in days of emergency vaccination campaign
 '}
@@ -78,7 +78,8 @@ Runs reactive version of SEIRV model
 Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model
 for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
 values, infection numbers and total force of infection values. This version of the model differs from the standard
-one in taking two sets of input vaccination data, one the default one and one applied after one or more cases have
-been reported. Case reporting is governed by an additional parameter p_rep which can also change after one or more
-cases have been reported in order to reflect changes in surveillance.
+one in simulating an emergency vaccination campaign applied when an outbreak is declared. Case reporting is
+governed by an additional parameter p_rep which can also change after a reported outbreak is triggered in order
+to reflect changes in surveillance. An outbreak is declared when the number of reported cases or the infected
+fraction of the population exceed supplied thresholds.
 }

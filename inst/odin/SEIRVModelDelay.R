@@ -65,6 +65,7 @@ inv_P_nV[1:N_age] <- 1.0/P_nV[i]
 P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
+
 vacc_rate[1:N_age] <- vacc_rate_daily[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
 
 
@@ -133,6 +134,7 @@ dim(R_new) <- N_age
 
 
 
+
 dim(P_nV) <- N_age
 dim(inv_P_nV) <- N_age
 dim(P) <- N_age
@@ -149,5 +151,6 @@ dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)
+
 
 

@@ -21,7 +21,7 @@ response_delay <- user() #Delay time in days between a flag being triggered and 
 p_rep[] <- user() #Proportion of infections reported (2 values depending on outbreak flag conditions)
 case_threshold <- user() #Threshold total no. reported cases to trigger outbreak flag 1
 cluster_threshold <- user()  #Threshold current infectious fraction to trigger cluster flag 1
-vacc_rate_cam[] <- user() #TBA
+vacc_cov_cam[] <- user() #TBA
 t_cam <- user() #TBA
 
 #Initial conditions-------------------------------------------------------------
@@ -65,6 +65,7 @@ inv_P_nV[1:N_age] <- 1.0/P_nV[i]
 P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
+vacc_rate_cam[1:N_age] <- if(flag3==0) 0 else (vacc_cov_cam[i]*(1.0 - (V[i]*inv_P[i])))/t_cam
 vacc_rate[1:N_age] <- (vacc_rate_daily[i,as.integer(year_i)] + (if(flag3==0) 0 else vacc_rate_cam[i]*ceiling(1-flag4)))*vaccine_efficacy*dt*P[i]
 case_flag <- if(C_rep_total >= case_threshold) 1 else 0
 p_rep_cur <- if(flag3==1) p_rep[2] else p_rep[1]
@@ -150,4 +151,5 @@ dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)
 dim(p_rep) <- 2
+dim(vacc_cov_cam) <- N_age
 dim(vacc_rate_cam) <- N_age

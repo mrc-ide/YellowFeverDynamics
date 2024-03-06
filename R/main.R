@@ -37,7 +37,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRV + E_delay input in list from previous run(s) - E_delay set manually, not carried over, to avoid double counting
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 #' @param n_particles number of particles to use
@@ -66,8 +66,9 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 
   pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,vaccine_efficacy,start_SEIRV,dt)
 
-  #Carrying forward delay from previous run as opposed to setting values manually causes errors (double counting)
-  if(mode_start==2){pars$E_delay0=start_SEIRV$E_delay} else {pars$E_delay0=rep(0,nd1*N_age)}
+  #Carrying forward delay from previous run may cause errors
+  #if(mode_start==2){pars$E_delay0=start_SEIRV$E_delay} else {pars$E_delay0=rep(0,nd1*N_age)}
+  pars$E_delay0=rep(0,nd1*N_age)
   pars$I_delay0=rep(0,nd2*N_age)
 
   x <- SEIRVModelDelay$new(pars,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
@@ -100,10 +101,11 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 #' @details Accepts epidemiological + population parameters and model settings; runs delay/reactive SEIRV model
 #' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
 #' values, infection numbers and total force of infection values. This version of the model differs from the standard
-#' one in taking two sets of input vaccination data, one the default one and one applied after one or more cases have
-#' been reported (as well as using delay instead of rate for incubation, infectious period etc.. Case reporting is governed
-#' by an additional parameter p_rep which can also change after one or more cases have been reported in order to reflect changes
-#' in surveillance.
+#' one in simulating an emergency vaccination campaign applied when an outbreak is declared (as well as using delay
+#' instead of rate for incubation, infectious period etc.). Case reporting is governed by an additional parameter
+#' p_rep which can also change after a reported outbreak is triggered in order to reflect changes in surveillance.
+#' An outbreak is declared when the number of reported cases or the infected fraction of the population exceed
+#' supplied thresholds.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
@@ -116,7 +118,7 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination
 #'  If mode_start=0, only vaccinated individuals
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-#'  If mode_start=2, use SEIRV + E_delay input in list from previous run(s) - E_delay set manually, not carried over, to avoid double counting
+#'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param vaccine_efficacy Proportional vaccine efficacy
 #' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 #' @param n_particles number of particles to use
@@ -127,7 +129,7 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
 #'   after emergency conditions triggered (2nd value)
 #' @param case_threshold Threshold total no. reported cases to trigger emergency conditions
 #' @param cluster_threshold Threshold current infectious fraction to trigger emergency conditions
-#' @param vacc_rate_cam Vaccination rate by age group during emergency vaccination campaign
+#' @param vacc_cov_cam Target vaccination coverage by age group during emergency campaign
 #' @param t_cam Duration in days of emergency vaccination campaign
 #' '
 #' @export
@@ -136,7 +138,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
                                      years_data = c(1940:1941), start_SEIRV = list(), year0 = 1940, mode_start = 0,
                                      vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE,
                                      response_delay = 56.0, p_rep = c(0.0,0.0), case_threshold = Inf,
-                                     cluster_threshold = Inf, vacc_rate_cam = c(), t_cam = 0) {
+                                     cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0) {
 
   #TODO Add assert_that functions
   assert_that(length(FOI_spillover)==1,msg="Spillover FOI must be singular value")
@@ -144,7 +146,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
 
   n_nv=9 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
-  assert_that(length(vacc_rate_cam)==N_age)
+  assert_that(length(vacc_cov_cam)==N_age)
   nd1 <- (t_incubation+t_latent)/dt
   nd2 <- t_infectious/dt
   nd <- nd1 + nd2
@@ -158,20 +160,21 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
   n_years=length(pop_data[,1])-1
   inv_365=1.0/365.0
   pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_daily=pars1$vacc_rate_daily,
-             vacc_rate_cam=vacc_rate_cam, t_cam=t_cam,N_age=pars1$N_age,
+             vacc_cov_cam=vacc_cov_cam, t_cam=t_cam,N_age=pars1$N_age,
              S_0=pars1$S_0,E_0=pars1$E_0,I_0=pars1$I_0,R_0=pars1$R_0,V_0=pars1$V_0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
              p_rep=p_rep,case_threshold=case_threshold,cluster_threshold=cluster_threshold)
 
-  #NB carrying forward delay from previous run as opposed to setting values manually causes errors (double counting)
-  if(mode_start==2){pars2$E_delay0=start_SEIRV$E_delay} else {pars2$E_delay0=rep(0,nd1*N_age)}
+  #Carrying forward delay from previous run may cause errors
+  #if(mode_start==2){pars2$E_delay0=start_SEIRV$E_delay} else {pars2$E_delay0=rep(0,nd1*N_age)}
+  pars2$E_delay0=rep(0,nd1*N_age)
   pars2$I_delay0=rep(0,nd2*N_age)
 
   #Check that there is no overlap between emergency campaign and other vaccination
   #(Not yet possible to adjust vaccine rates on the fly to deal with overlap)
   for(i in 1:N_age){
-    if(vacc_rate_cam[i]>0){assert_that(all(pars2$vacc_rate_daily[i,]==0))}
+    if(vacc_cov_cam[i]>0){assert_that(all(pars2$vacc_rate_daily[i,]==0))}
   }
 
   x <- SEIRVModelDelayReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
@@ -208,9 +211,10 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
 #' @details Accepts epidemiological + population parameters and model settings; runs reactive SEIRV model
 #' for one region over a specified time period for a number of particles/threads and outputs time-dependent SEIRV
 #' values, infection numbers and total force of infection values. This version of the model differs from the standard
-#' one in taking two sets of input vaccination data, one the default one and one applied after one or more cases have
-#' been reported. Case reporting is governed by an additional parameter p_rep which can also change after one or more
-#' cases have been reported in order to reflect changes in surveillance.
+#' one in simulating an emergency vaccination campaign applied when an outbreak is declared. Case reporting is
+#' governed by an additional parameter p_rep which can also change after a reported outbreak is triggered in order
+#' to reflect changes in surveillance. An outbreak is declared when the number of reported cases or the infected
+#' fraction of the population exceed supplied thresholds.
 #'
 #' @param FOI_spillover Force of infection due to spillover from sylvatic reservoir
 #' @param R0 Basic reproduction number for urban spread of infection
@@ -234,7 +238,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
 #'   after emergency conditions triggered (2nd value)
 #' @param case_threshold Threshold total no. reported cases to trigger emergency conditions
 #' @param cluster_threshold Threshold current infectious fraction to trigger emergency conditions
-#' @param vacc_rate_cam Vaccination rate by age group during emergency vaccination campaign
+#' @param vacc_cov_cam Target vaccination coverage by age group during emergency vaccination campaign
 #' @param t_cam Duration in days of emergency vaccination campaign
 #' '
 #' @export
@@ -243,7 +247,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
                                years_data = c(1940:1941), start_SEIRV = list(), year0 = 1940, mode_start = 0,
                                vaccine_efficacy = 1.0, dt = 1.0, n_particles = 1, n_threads = 1, deterministic = FALSE,
                                response_delay = 56.0, p_rep = c(0.0,0.0), case_threshold = Inf,
-                               cluster_threshold = Inf, vacc_rate_cam = c(), t_cam = 0) {
+                               cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0) {
 
   #TODO Add assert_that functions
   assert_that(length(FOI_spillover)==1,msg="Spillover FOI must be singular value")
@@ -254,7 +258,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
   n_years=length(pop_data[,1])-1
   inv_365=1.0/365.0
   pars2=list(FOI_spillover=pars1$FOI_spillover,R0=pars1$R0,vacc_rate_daily=pars1$vacc_rate_daily,
-             vacc_rate_cam=vacc_rate_cam, t_cam=t_cam,N_age=pars1$N_age,
+             vacc_cov_cam=vacc_cov_cam, t_cam=t_cam,N_age=pars1$N_age,
              S_0=pars1$S_0,E_0=pars1$E_0,I_0=pars1$I_0,R_0=pars1$R_0,V_0=pars1$V_0,
              dP1_all=pars1$dP1_all,dP2_all=pars1$dP2_all,n_years=pars1$n_years,year0=pars1$year0,vaccine_efficacy=pars1$vaccine_efficacy,
              dt=pars1$dt,t_incubation=pars1$t_incubation,t_latent=pars1$t_latent,t_infectious=pars1$t_infectious,response_delay=response_delay,
@@ -262,7 +266,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
 
   n_nv=9 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
-  assert_that(length(vacc_rate_cam)==N_age)
+  assert_that(length(vacc_cov_cam)==N_age)
   n_data_pts=(6*N_age)+n_nv #Number of data values per time point in output
   step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
   step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
@@ -271,7 +275,7 @@ Model_Run_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(), 
   #Check that there is no overlap between emergency campaign and other vaccination
   #(Not yet possible to adjust vaccine rates on the fly to deal with overlap)
   for(i in 1:N_age){
-    if(vacc_rate_cam[i]>0){assert_that(all(pars2$vacc_rate_daily[i,]==0))}
+    if(vacc_cov_cam[i]>0){assert_that(all(pars2$vacc_rate_daily[i,]==0))}
   }
 
   x <- SEIRVModelReactive$new(pars=pars2,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
