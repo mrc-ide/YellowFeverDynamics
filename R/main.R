@@ -9,7 +9,14 @@ t_infectious <- 5 #Time cases remain infectious
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @importFrom assertthat assert_that
 #' @import dde
-#' @importFrom stats cov dexp dnbinom prop.test rbinom runif
+#' @importFrom graphics axis matplot par
+#' @importFrom mvtnorm rmvnorm
+#' @import parallel
+#' @importFrom R.utils fileAccess
+#' @importFrom stats cov dexp dnbinom prop.test rbinom runif dnorm
+#' @importFrom tgp lhs
+#' @importFrom truncdist dtrunc
+#' @importFrom utils write.csv
 #' @import YEP
 #------------------------------------------------
 # unload DLL when package is unloaded
@@ -550,4 +557,55 @@ Model_Run_VarFR <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(),po
   }
 
   return(output_data)
+}
+
+#-------------------------------------------------------------------------------
+#' @title create_param_labels2
+#'
+#' @description Apply names to the parameters in a set used for data matching and parameter fitting
+#'
+#' @details Takes in input list and environmental data along with names of additional parameters (vaccine efficacy
+#' and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
+#'
+#' @param type Type of parameter set (FOI only, FOI+R0, FOI and/or R0 coefficients associated with environmental
+#'   covariates); choose from "FOI", "FOI+R0", "FOI enviro", "FOI+R0 enviro"
+#' @param input_data List of population and vaccination data for multiple regions (created using data input creation
+#' code and usually loaded from RDS file)
+#' @param enviro_data Environmental data frame, containing only relevant environmental variables
+#' @param extra_estimated_params Vector of strings listing variable parameters besides ones determining FOI/R0 (may include
+#' vaccine efficacy and/or infection/death reporting probabilities and/or Brazil FOI adjustment factor)
+#'
+#' @export
+#'
+create_param_labels2 <- function(type = "FOI", input_data = list(), enviro_data = NULL, extra_estimated_params = c("vacc_eff")){
+
+  assert_that(type %in% c("FOI", "FOI+R0", "FOI enviro", "FOI+R0 enviro"))
+  assert_that(input_data_check(input_data), msg = paste("Input data must be in standard format",
+                                                        " (see https://mrc-ide.github.io/YEP/articles/CGuideAInputs.html)"))
+
+  n_extra = length(extra_estimated_params)
+
+  if(type %in% c("FOI", "FOI+R0")){
+    regions = input_data$region_labels
+    n_regions = length(regions)
+    if(type == "FOI"){n_params = n_regions+n_extra} else {n_params = (2*n_regions)+n_extra}
+    param_names = rep("", n_params)
+    for(i in 1:n_regions){
+      param_names[i] = paste("FOI_", regions[i], sep = "")
+      if(type == "FOI+R0"){param_names[i+n_regions] = paste("R0_", regions[i], sep = "")}
+    }
+  } else {
+    assert_that(is.data.frame(enviro_data)) #TODO - msg
+    env_vars = colnames(enviro_data)[c(2:ncol(enviro_data))]
+    n_env_vars = length(env_vars)
+    if(type == "FOI enviro"){n_params = n_env_vars+n_extra} else {n_params = (2*n_env_vars)+n_extra}
+    param_names = rep("", n_params)
+    for(i in 1:n_env_vars){
+      param_names[i] = paste("FOI_", env_vars[i], sep = "")
+      if(type == "FOI+R0 enviro"){param_names[i+n_env_vars] = paste("R0_", env_vars[i], sep = "")}
+    }
+  }
+  if(n_extra>0){param_names[(n_params-n_extra+1):n_params] = extra_estimated_params}
+
+  return(param_names)
 }

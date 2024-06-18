@@ -1,7 +1,7 @@
 Package: YellowFeverDynamics
 Type: Package
 Title: Yellow Fever Outbreak Dynamic Model
-Version: 0.1.0
+Version: 1.0.0
 Authors@R: person("Keith", "Fraser", email = "keith.fraser@imperial.ac.uk", role = c("aut", "cre"))
 Maintainers@R: person("Keith", "Fraser", email = "keith.fraser@imperial.ac.uk", role = c("aut", "cre"))
 Description: A package for running a dynamic, stochastic SEIRV model of yellow fever, creating input data and processing output data. The package can also be used to fit values of epidemiological parameters of the model to different types of data on yellow fever burden in one or more regions.
@@ -16,7 +16,12 @@ LinkingTo:
 Imports:
     assertthat,
     dde,
+    mvtnorm,
+    parallel,
+    R.utils,
     stats,
+    tgp,
+    truncdist,
     YEP
 Suggests: 
     knitr,
