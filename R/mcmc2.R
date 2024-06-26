@@ -239,7 +239,7 @@ single_posterior_calc2 <- function(log_params_prop = c(),input_data = list(),obs
     regions = input_data$region_labels
     n_regions = length(regions)
 
-    FOI_R0_data = mcmc_FOI_R0_setup(consts$type,consts$prior_settings,regions,log_params_prop,
+    FOI_R0_data = mcmc_FOI_R0_setup2(consts$type,consts$prior_settings,regions,log_params_prop,
                                     consts$enviro_data,consts$R0_fixed_values)
     FOI_values = FOI_R0_data$FOI_values
 
@@ -416,7 +416,7 @@ param_prop_setup <- function(log_params = c(),chain_cov = 1,adapt = 0){
   return(log_params_prop)
 }
 #-------------------------------------------------------------------------------
-#' @title mcmc_FOI_R0_setup
+#' @title mcmc_FOI_R0_setup2
 #'
 #' @description Set up FOI and R0 values and calculate some prior probability values for MCMC calculation
 #'
@@ -434,7 +434,7 @@ param_prop_setup <- function(log_params = c(),chain_cov = 1,adapt = 0){
 #' '
 #' @export
 #'
-mcmc_FOI_R0_setup <- function(type = "",prior_settings = list(type = "zero"),regions = "",log_params_prop = c(),enviro_data = list(),
+mcmc_FOI_R0_setup2 <- function(type = "",prior_settings = list(type = "zero"),regions = "",log_params_prop = c(),enviro_data = list(),
                               R0_fixed_values = c()){
 
   n_regions = length(regions)
@@ -446,7 +446,7 @@ mcmc_FOI_R0_setup <- function(type = "",prior_settings = list(type = "zero"),reg
     enviro_coeffs = exp(log_params_prop[c(1:n_values)])
 
     for(i in 1:n_regions){
-      model_params = param_calc_enviro(enviro_coeffs,
+      model_params = param_calc_enviro2(enviro_coeffs,
                                        as.numeric(enviro_data[enviro_data$region ==regions[i],1+c(1:n_env_vars)]))
       FOI_values[i] = model_params$FOI
       if(type =="FOI+R0 enviro"){R0_values[i] = model_params$R0} else {R0_values[i] = R0_fixed_values[i]}

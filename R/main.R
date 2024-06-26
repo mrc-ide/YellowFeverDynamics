@@ -609,3 +609,30 @@ create_param_labels2 <- function(type = "FOI", input_data = list(), enviro_data 
 
   return(param_names)
 }
+#-------------------------------------------------------------------------------
+#' @title param_calc_enviro2
+#'
+#' @description Parameter calculation from environmental covariates
+#'
+#' @details Takes in set of coefficients of environmental covariates and covariate values and calculates values of
+#'   spillover force of infection and reproduction number.
+#'
+#' @param enviro_coeffs Values of environmental coefficients
+#' @param enviro_covar_values Values of environmental covariates
+#' '
+#' @export
+#'
+param_calc_enviro2 <- function(enviro_coeffs = c(), enviro_covar_values = c()){
+
+  assert_that(all(enviro_coeffs >= 0), msg = "All environmental coefficients must have positive values")
+  n_env_vars = length(enviro_covar_values)
+  assert_that(length(enviro_coeffs) %in% c(n_env_vars, 2*n_env_vars), msg = "Wrong number of environmental coefficients")
+
+  output = list(FOI = NA, R0 = NA)
+  output$FOI = sum(enviro_coeffs[c(1:n_env_vars)]*enviro_covar_values)
+  if(length(enviro_coeffs) == 2*n_env_vars){
+    output$R0 = sum(enviro_coeffs[c(1:n_env_vars)+n_env_vars]*enviro_covar_values)
+  }
+
+  return(output)
+}
