@@ -31,13 +31,20 @@
 #' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
 #' @param output_frame Flag indicating whether to output a complete data frame of results in template format (if TRUE)
 #'   or calculated values only (if FALSE)
+#' @param mode_time Type of time dependence of FOI_spillover and R0 to be used: If mode_time=0, no time
+#'   variation (identical to Model_Run())
+#'   If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
+#'   If mode_time=2, FOI/R0 vary with monthly seasonality without inter-annual variation (number of values = 12)
+#'   If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/dt)
+#'   If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12.number of years to consider)
+#'   If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider)
 #' '
 #' @export
 #'
 Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_values = c(),sero_template = NULL,case_template = NULL,
                                    vaccine_efficacy = 1.0, p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe = 1.0,
                                    p_rep_death = 1.0,mode_start = 1,start_SEIRV = NULL, dt = 1.0,n_reps = 1, deterministic = FALSE,
-                                   output_frame=FALSE){
+                                   mode_time = 1, output_frame=FALSE){
 
   assert_that(input_data_check(input_data),msg=paste("Input data must be in standard format",
                                                      " (see https://mrc-ide.github.io/YEP/articles/CGuideAInputs.html)"))
@@ -116,7 +123,7 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
                                    start_SEIRV=start_SEIRV[[n_region]],output_type = output_types[n_region],
                                    year0 = input_data$years_labels[1],mode_start = mode_start,
                                    vaccine_efficacy = vaccine_efficacy, dt = dt, n_particles = n_reps,n_threads = n_reps,
-                                   deterministic = deterministic)
+                                   deterministic = deterministic, mode_time = mode_time)
     #cat("\n\t\tFinished modelling region ",n_region)
     t_pts=length(model_output$year)
 

@@ -20,6 +20,7 @@ Generate_Dataset_VarFR(
   dt = 1,
   n_reps = 1,
   deterministic = FALSE,
+  mode_time = 1,
   output_frame = FALSE
 )
 }
@@ -59,9 +60,17 @@ If mode_start=3, shift some non-vaccinated individuals into recovered to give he
 
 \item{deterministic}{TRUE/FALSE - set model to run in deterministic mode if TRUE}
 
-\item{output_frame}{Flag indicating whether to output a complete data frame of results in template format (if TRUE)
-  or calculated values only (if FALSE)
+\item{mode_time}{Type of time dependence of FOI_spillover and R0 to be used: If mode_time=0, no time
+  variation (identical to Model_Run())
+  If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
+  If mode_time=2, FOI/R0 vary with monthly seasonality without inter-annual variation (number of values = 12)
+  If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/dt)
+  If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12.number of years to consider)
+  If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider)
 '}
+
+\item{output_frame}{Flag indicating whether to output a complete data frame of results in template format (if TRUE)
+or calculated values only (if FALSE)}
 }
 \description{
 Generate annual serological and/or case/death data with annually varying FOI/R0
