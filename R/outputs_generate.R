@@ -29,8 +29,6 @@
 #' @param dt Time increment in days to use in model (should be either 1.0, 2.5 or 5.0 days)
 #' @param n_reps number of stochastic repetitions
 #' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
-#' @param output_frame Flag indicating whether to output a complete data frame of results in template format (if TRUE)
-#'   or calculated values only (if FALSE)
 #' @param mode_time Type of time dependence of FOI_spillover and R0 to be used: If mode_time=0, no time
 #'   variation (identical to Model_Run())
 #'   If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
@@ -38,13 +36,17 @@
 #'   If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/dt)
 #'   If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12.number of years to consider)
 #'   If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider)
+#' @param mode_parallel TRUE/FALSE - set model to run in parallel using cluster if TRUE
+#' @param cluster Cluster of threads to use if mode_parallel=TRUE
+#' @param output_frame Flag indicating whether to output a complete data frame of results in template format (if TRUE)
+#'   or calculated values only (if FALSE)
 #' '
 #' @export
 #'
 Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_values = c(),sero_template = NULL,case_template = NULL,
                                    vaccine_efficacy = 1.0, p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe = 1.0,
                                    p_rep_death = 1.0,mode_start = 1,start_SEIRV = NULL, dt = 1.0,n_reps = 1, deterministic = FALSE,
-                                   mode_time = 1, output_frame=FALSE){
+                                   mode_time = 1, mode_parallel = FALSE, cluster = NULL, output_frame=FALSE){
 
   assert_that(input_data_check(input_data),msg=paste("Input data must be in standard format",
                                                      " (see https://mrc-ide.github.io/YEP/articles/CGuideAInputs.html)"))
@@ -60,6 +62,8 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
     assert_that(p_rep_severe>=0.0 && p_rep_severe<=1.0,msg="Severe infection reporting probability must be between 0-1")
     assert_that(p_rep_death>=0.0 && p_rep_death<=1.0,msg="Fatal infection reporting probability must be between 0-1")
   }
+  assert_that(is.logical(mode_parallel))
+  if(mode_parallel){assert_that(is.null(cluster)==FALSE)}
 
   #Prune input data based on regions
   regions=regions_breakdown(c(sero_template$region,case_template$region))
@@ -112,19 +116,39 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
     } else {output_types[n_region]="sero"}
   }
 
+  if(mode_parallel){
+    vacc_data_subsets=pop_data_subsets=years_data_sets=list() #TODO - change input data?
+    for(n_region in 1:n_regions){
+      vacc_data_subsets[[n_region]]=input_data$vacc_data[n_region,,]
+      pop_data_subsets[[n_region]]=input_data$pop_data[n_region,,]
+      years_data_sets[[n_region]]=c(year_data_begin[n_region]:year_end[n_region])
+    }
+    if(is.null(start_SEIRV)){start_SEIRV=rep(NA,n_regions)}
+    model_output_all=clusterMap(cl = cluster,fun = Model_Run, FOI_spillover = FOI_values, R0 = R0_values,
+                                vacc_data = vacc_data_subsets,pop_data = pop_data_subsets,
+                                years_data = years_data_sets, start_SEIRV = start_SEIRV, output_type = output_types,
+                                MoreArgs=list(year0 = input_data$years_labels[1],mode_start = mode_start,
+                                              vaccine_efficacy = vaccine_efficacy, dt = dt, n_particles = n_reps,
+                                              n_threads = 1 ,deterministic = deterministic))
+  }
+
   #Save relevant output data from each region
   for(n_region in 1:n_regions){
 
-    #Run model
-    #cat("\n\t\tBeginning modelling region ",input_data$region_labels[n_region])
-    model_output = Model_Run_VarFR(FOI_spillover = FOI_values[n_region,],R0 = R0_values[n_region,],
-                                   vacc_data = input_data$vacc_data[n_region,,],pop_data = input_data$pop_data[n_region,,],
-                                   years_data = c(year_data_begin[n_region]:year_end[n_region]),
-                                   start_SEIRV=start_SEIRV[[n_region]],output_type = output_types[n_region],
-                                   year0 = input_data$years_labels[1],mode_start = mode_start,
-                                   vaccine_efficacy = vaccine_efficacy, dt = dt, n_particles = n_reps,n_threads = n_reps,
-                                   deterministic = deterministic, mode_time = mode_time)
-    #cat("\n\t\tFinished modelling region ",n_region)
+    #Run model if not using parallelization
+    if(mode_parallel==FALSE){
+      #cat("\n\t\tBeginning modelling region ",input_data$region_labels[n_region])
+      model_output = Model_Run_VarFR(FOI_spillover = FOI_values[n_region,],R0 = R0_values[n_region,],
+                                     vacc_data = input_data$vacc_data[n_region,,],pop_data = input_data$pop_data[n_region,,],
+                                     years_data = c(year_data_begin[n_region]:year_end[n_region]),
+                                     start_SEIRV=start_SEIRV[[n_region]],output_type = output_types[n_region],
+                                     year0 = input_data$years_labels[1],mode_start = mode_start,
+                                     vaccine_efficacy = vaccine_efficacy, dt = dt, n_particles = n_reps,n_threads = n_reps,
+                                     deterministic = deterministic, mode_time = mode_time)
+      #cat("\n\t\tFinished modelling region ",n_region)
+    } else {
+      model_output = model_output_all[[n_region]]
+    }
     t_pts=length(model_output$year)
 
     #Compile case data if needed

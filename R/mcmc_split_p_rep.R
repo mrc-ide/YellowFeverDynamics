@@ -387,35 +387,6 @@ mcmc_checks2 <- function(log_params_ini = c(),n_regions = 1,type = NULL,prior_se
   return(NULL)
 }
 #-------------------------------------------------------------------------------
-#' @title param_prop_setup
-#'
-#' @description Set up proposed new log parameter values for next step in chain
-#'
-#' @details Takes in current values of parameter set used for Markov Chain Monte Carlo fitting and proposes new values
-#' from multivariate normal distribution where the existing values form the mean and the standard deviation is
-#' based on the chain covariance or (if the flag "adapt" is set to 1) a flat value based on the number of parameters.
-#'
-#' @param log_params Previous log parameter values used as input
-#' @param chain_cov Covariance calculated from previous steps in chain
-#' @param adapt 0/1 flag indicating which type of calculation to use for proposition value
-#' '
-#' @export
-#'
-param_prop_setup <- function(log_params = c(),chain_cov = 1,adapt = 0){
-
-  n_params = length(log_params)
-  if (adapt ==1) {
-    sigma = (2.38 ^ 2) * chain_cov / n_params #'optimal' scaling of chain covariance
-    log_params_prop_a = rmvnorm(n = 1, mean = log_params, sigma = sigma)
-  } else {
-    sigma = ((1e-2) ^ 2) * diag(n_params) / n_params #this is an inital proposal covariance, see [Mckinley et al 2014]
-    log_params_prop_a = rmvnorm(n = 1, mean = log_params, sigma = sigma)
-  }
-  log_params_prop = log_params_prop_a[1,]
-
-  return(log_params_prop)
-}
-#-------------------------------------------------------------------------------
 #' @title mcmc_FOI_R0_setup2
 #'
 #' @description Set up FOI and R0 values and calculate some prior probability values for MCMC calculation
