@@ -519,16 +519,27 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
   return(best_fit_results)
 }
 #-------------------------------------------------------------------------------
-#Function to calculate variable FOI/R0 - TBC
-calc_var_FOI_R0 <- function(coeffs = c(), enviro_data_const = data.frame(), var_covariate = "temp_suit_mean", var_covar_values = list()){
+#' @title calc_var_FOI_R0
+#'
+#' @description TBA
+#'
+#' @details TBA
+#'
+#' @param coeffs TBA
+#' @param enviro_data_const TBA
+#' @param enviro_data_var TBA
+#' '
+#' @export
+#'
+calc_var_FOI_R0 <- function(coeffs = c(), enviro_data_const = data.frame(), enviro_data_var = list()){
   n_regions=nrow(enviro_data_const)
-  n_pts=dim(var_covar_values)[1]
+  n_pts=dim(enviro_data_var)[1]
   n_covars=length(coeffs)
   covar_names=colnames(enviro_data_const)[c(1:n_covars)+1]
   #TODO - Add assertthat checks
 
   coeffs_const_covars=coeffs[covar_names != var_covariate]
-  const_covar_values=enviro_data_const[,c(1:ncol(enviro_data_const))[colnames(enviro_data_const) %in% c("region",var_covariate)==FALSE]]
+  const_covar_values=enviro_data_const[,c(2:ncol(enviro_data_const))]
   base_output_values=t(as.matrix(coeffs_const_covars)) %*% t(as.matrix(const_covar_values))
 
   coeff_var_covar=coeffs[covar_names == var_covariate]
