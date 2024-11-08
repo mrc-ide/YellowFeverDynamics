@@ -47,7 +47,7 @@
 #' @param dt time increment in days (must be 1 or 5)
 #' @param n_reps Number of times to repeat calculations to get average likelihood at each iteration
 #' @param enviro_data_const Data frame of values of constant environmental covariates (columns) by region (rows)
-#' @param enviro_data_var Array of values of time-varying environmental covariates (TBA)
+#' @param enviro_data_var List containing values of time-varying environmental covariates (TBA)
 #' @param p_severe_inf Probability of an infection being severe
 #' @param p_death_severe_inf Probability of a severe infection resulting in death
 #' @param add_values List of parameters in addition to those governing FOI/R0, either giving a fixed value or giving NA to
@@ -82,8 +82,8 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
   n_regions = length(regions)
   assert_that(all(regions %in% enviro_data_const$region),msg="Environmental data must be available for all regions in observed data")
   enviro_data_const = subset(enviro_data_const, enviro_data_const$region %in% regions)
-  assert_that(all(regions %in% enviro_data_var$region),msg="Environmental data must be available for all regions in observed data")
-  enviro_data_var = subset(enviro_data_var, enviro_data_var$region %in% regions)
+  assert_that(all(regions==enviro_data_var$regions),msg="Environmental data must be available for all regions in observed data")
+  #enviro_data_var = subset(enviro_data_var, enviro_data_var$region %in% regions) #TBA
 
   #Get names of additional parameters to be estimated
   extra_estimated_params = c()
@@ -92,7 +92,7 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
   }
 
   #Label parameters according to order and fitting type
-  param_names = create_param_labels(enviro_data, extra_estimated_params)
+  param_names = create_param_labels_VarFR(enviro_data_const, enviro_data_var, extra_estimated_params)
   names(log_params_ini) = param_names
 
   #Run checks on inputs
@@ -354,12 +354,13 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
   # Get names of environmental covariates
   assert_that(is.null(enviro_data_const) == FALSE, msg="Constant environmental data required")
   assert_that(is.null(enviro_data_var) == FALSE, msg="Variable environmental data required")
-  env_vars = names(enviro_data_const[c(2:ncol(enviro_data_const))]) #TBC
+  env_vars = c(names(enviro_data_const[c(2:ncol(enviro_data_const))]),enviro_data_var$env_vars) #TBC
   n_env_vars = length(env_vars)
 
   # Check that total number of parameters is correct; check parameters named in correct order (TBA); all should be correct if parameter
   # names created using create_param_labels
-  assert_that(n_params == (2*n_env_vars) + length(extra_estimated_params),
+  if(is.null(extra_estimated_params)){n_extra_params=0}else{n_extra_params=length(extra_estimated_params)}
+  assert_that(n_params == (2*n_env_vars) + n_extra_params,
               msg="Length of initial parameter vector must equal twice number of environmental covariates +
               number of additional estimated parameters")
   for(i in 1:n_env_vars){
@@ -368,7 +369,7 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
                 msg="R0 coefficients must follow FOI coefficients in initial parameter vector")
   }
   if(length(extra_estimated_params)>0){
-    assert_that(all(param_names[(2*n_env_vars)+c(1:length(extra_estimated_params))] == extra_estimated_params),
+    assert_that(all(param_names[(2*n_env_vars)+c(1:n_extra_params)] == extra_estimated_params),
                 msg="Initial parameter vector must end with additional estimated parameters")
   }
 
@@ -551,4 +552,36 @@ calc_var_FOI_R0 <- function(coeffs = c(), enviro_data_const = data.frame(), envi
   }
 
   return(total_output_values)
+}
+#-------------------------------------------------------------------------------
+#' @title create_param_labels_VarFR
+#'
+#' @description Apply names to the parameters in a set used for data matching and parameter fitting
+#'
+#' @details Takes in environmental covariate data along with names of additional parameters (vaccine efficacy
+#' and reporting probabilities) and generates list of names for parameter set to use as input for fitting functions
+#'
+#' @param enviro_data_const TBA
+#' @param enviro_data_var TBA
+#' @param extra_estimated_params Vector of strings listing variable parameters besides ones determining FOI/R0 (may include
+#' vaccine efficacy and/or infection/death reporting probabilities and/or Brazil FOI adjustment factor)
+#'
+#' @export
+#'
+create_param_labels_VarFR <- function(enviro_data_const = NULL, enviro_data_var=list(), extra_estimated_params = c("vacc_eff")){
+
+  #TODO - Assert_that functions
+
+  if(is.null()){n_extra=0}else{n_extra = length(extra_estimated_params)}
+  env_vars = c(names(enviro_data_const[c(2:ncol(enviro_data_const))]),enviro_data_var$env_vars) #TBC
+  n_env_vars = length(env_vars)
+  n_params = (2*n_env_vars)+n_extra
+  param_names = rep("", n_params)
+  for(i in 1:n_env_vars){
+    param_names[i] = paste("FOI_", env_vars[i], sep = "")
+    param_names[i+n_env_vars] = paste("R0_", env_vars[i], sep = "")
+  }
+  if(n_extra>0){param_names[(n_params-n_extra+1):n_params] = extra_estimated_params}
+
+  return(param_names)
 }
