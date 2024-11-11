@@ -250,12 +250,13 @@ single_posterior_calc_VarFR <- function(log_params_prop = c(), input_data = list
     regions = input_data$region_labels
     n_regions = length(regions)
 
-    #TODO - CALCULATE FOI AND R0 VALUES FROM CONSTANT AND VARIABLE ENVIRONMENTAL DATA - CURRENT CALCULATIONS ARE FOR FIXED ENVIRONMENTAL DATA
+    #TODO - CALCULATE FOI AND R0 VALUES FROM CONSTANT AND VARIABLE ENVIRONMENTAL DATA
     {
-      n_env_vars = ncol(consts$enviro_data)-1
-      enviro_coeffs = exp(log_params_prop[c(1:(2*n_env_vars))])
-      FOI_values=as.numeric(colSums(enviro_coeffs[c(1:n_env_vars)]*t(consts$enviro_data[,1 + c(1:n_env_vars)])))
-      R0_values=as.numeric(colSums(enviro_coeffs[c(1:n_env_vars) + n_env_vars]*t(consts$enviro_data[,1 + c(1:n_env_vars)])))
+      # n_env_vars = ncol(consts$enviro_data)-1
+      # enviro_coeffs = exp(log_params_prop[c(1:(2*n_env_vars))])
+      # FOI_values=as.numeric(colSums(enviro_coeffs[c(1:n_env_vars)]*t(consts$enviro_data[,1 + c(1:n_env_vars)])))
+      # R0_values=as.numeric(colSums(enviro_coeffs[c(1:n_env_vars) + n_env_vars]*t(consts$enviro_data[,1 + c(1:n_env_vars)])))
+      values=calc_var_FOI_R0(coeffs=exp(log_params_prop),enviro_data_const=enviro_data_const,enviro_data_var=enviro_data_var)
     }
 
     for(n_region in 1:n_regions){if(substr(regions[n_region], 1, 3) == "BRA"){FOI_values[n_region] = FOI_values[n_region]*m_FOI_Brazil}}
@@ -532,26 +533,28 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
 #' '
 #' @export
 #'
-calc_var_FOI_R0 <- function(coeffs = c(), enviro_data_const = data.frame(), enviro_data_var = list()){
+calc_var_FOI_R0 <- function(coeffs = c(), enviro_data_const = data.frame(), enviro_data_var = list()){ #TBC
   n_regions=nrow(enviro_data_const)
-  n_pts=dim(enviro_data_var)[1]
-  n_covars=length(coeffs)
-  covar_names=colnames(enviro_data_const)[c(1:n_covars)+1]
+  n_pts=dim(enviro_data_var$values)[3]
+  const_covars=colnames(enviro_data_const)[c(2:ncol(enviro_data_const))]
+  var_covars=enviro_data_var$env_vars
+  covar_names=c(const_covars,var_covars)
   #TODO - Add assertthat checks
 
-  coeffs_const_covars=coeffs[covar_names != var_covariate]
-  const_covar_values=enviro_data_const[,c(2:ncol(enviro_data_const))]
-  base_output_values=t(as.matrix(coeffs_const_covars)) %*% t(as.matrix(const_covar_values))
-
-  coeff_var_covar=coeffs[covar_names == var_covariate]
-  var_output_values=t(coeff_var_covar*var_covar_values)
-
-  total_output_values=var_output_values
-  for(i in 1:n_pts){
-    total_output_values[,i]=total_output_values[,i]+base_output_values
-  }
-
-  return(total_output_values)
+  # coeffs_const_covars=coeffs[covar_names != var_covars]
+  # const_covar_values=enviro_data_const[,c(2:ncol(enviro_data_const))]
+  # base_output_values=t(as.matrix(coeffs_const_covars)) %*% t(as.matrix(const_covar_values))
+  #
+  # coeff_var_covar=coeffs[covar_names == var_covars]
+  # var_output_values=t(coeff_var_covar*var_covar_values)
+  #
+  # total_output_values=var_output_values
+  # for(i in 1:n_pts){
+  #   total_output_values[,i]=total_output_values[,i]+base_output_values
+  # }
+#
+#   return(total_output_values)
+  return(NULL)
 }
 #-------------------------------------------------------------------------------
 #' @title create_param_labels_VarFR
@@ -572,7 +575,7 @@ create_param_labels_VarFR <- function(enviro_data_const = NULL, enviro_data_var=
 
   #TODO - Assert_that functions
 
-  if(is.null()){n_extra=0}else{n_extra = length(extra_estimated_params)}
+  if(is.null(extra_estimated_params)){n_extra=0}else{n_extra = length(extra_estimated_params)}
   env_vars = c(names(enviro_data_const[c(2:ncol(enviro_data_const))]),enviro_data_var$env_vars) #TBC
   n_env_vars = length(env_vars)
   n_params = (2*n_env_vars)+n_extra
