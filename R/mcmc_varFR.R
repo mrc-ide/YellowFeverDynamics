@@ -11,11 +11,11 @@
 #' @param log_params_ini Initial values of parameters to be estimated. These should always be the log() values of the
 #'   actual parameters, ordered as follows: \cr
 #'   1) A number of environmental coefficients used to calculate spillover force of infection values from environmental
-#'   covariates equal to the number of environmental covariates listed in the enviro_data frame. Values should be in the
-#'   order of the columns in the environmental data frame. \cr
+#'   covariates equal to the total number of environmental covariates. Values should be in the
+#'   order of the columns in enviro_data_const and then the covariates in enviro_data_var. \cr
 #'   2) A number of environmental coefficients used to calculate basic reproduction number
-#'   values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
-#'   frame. Values should be in the order of the columns in the environmental data frame. \cr
+#'   values from environmental covariates equal to the total number of environmental covariates.
+#'   Values should be in the order of the columns in enviro_data_const and then the covariates in enviro_data_var. \cr
 #'   3) Values of the additional parameters (reported vaccination effectiveness vaccine_efficacy, severe case reporting
 #'   probability p_rep_severe, and fatal case reporting probability p_rep_death, and Brazil spillover FOI multiplier m_FOI_Brazil);
 #'   if these are to be estimated, in the order vaccine_efficacy->p_rep_severe->p_rep_death->m_FOI_Brazil. If these parameters
@@ -99,6 +99,16 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
   checks <- mcmc_checks_VarFR(log_params_ini, n_regions, prior_settings, enviro_data_const, enviro_data_var, add_values, extra_estimated_params)
   if(prior_settings$type == "flat"){names(prior_settings$param_min_limits) = names(prior_settings$param_max_limits) = param_names}
 
+  #Designate constant and variable covariates
+  const_covars=colnames(enviro_data_const)[c(2:ncol(enviro_data_const))]
+  var_covars=enviro_data_var$env_vars
+  covar_names=c(const_covars,var_covars)
+  n_env_vars=length(covar_names)
+  i_FOI_const = c(1:n_env_vars)[covar_names %in% const_covars]
+  i_FOI_var = c(1:n_env_vars)[covar_names %in% var_covars]
+  i_R0_const = i_FOI_const + n_env_vars
+  i_R0_var = i_FOI_var + n_env_vars
+
   #MCMC setup
   chain = chain_prop = posterior_current = posterior_prop = flag_accept = chain_cov_all = NULL
   n_params = length(log_params_ini)
@@ -117,12 +127,14 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
 
     #Calculate likelihood using single_posterior_calc function
     posterior_value_prop = single_posterior_calc_VarFR(log_params_prop, input_data, obs_sero_data, obs_case_data,
-                                                       mode_start = mode_start, prior_settings = prior_settings, dt = dt, n_reps = n_reps,
+                                                       mode_start=mode_start,prior_settings=prior_settings,dt=dt,n_reps=n_reps,
                                                        enviro_data_const=enviro_data_const, enviro_data_var=enviro_data_var,
                                                        p_severe_inf = p_severe_inf, p_death_severe_inf=p_death_severe_inf,
                                                        add_values = add_values, extra_estimated_params = extra_estimated_params,
                                                        deterministic = deterministic, mode_time = mode_time,
-                                                       mode_parallel = mode_parallel, cluster = cluster)
+                                                       mode_parallel = mode_parallel, cluster = cluster,
+                                                       i_FOI_const = i_FOI_const, i_FOI_var = i_FOI_var,
+                                                       i_R0_const = i_R0_const, i_R0_var = i_R0_var)
     gc() #Clear garbage to prevent memory creep
 
     if(is.finite(posterior_value_prop) == FALSE) {
@@ -199,7 +211,7 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
 #'   deaths
 #' @param ... = Constant parameters/flags/etc. loaded to or determined by mcmc() and mcmc_prelim_fit, including mode_start,
 #'  prior_settings, dt, n_reps, enviro_data, p_severe_inf, p_death_severe_inf, add_values list, extra_estimated_params,
-#'  deterministic, mode_time, mode_parallel, cluster
+#'  deterministic, mode_time, mode_parallel, cluster, i_FOI_const, i_FOI_var, i_R0_const, i_R0_var
 #'
 #' @export
 #'
@@ -250,21 +262,20 @@ single_posterior_calc_VarFR <- function(log_params_prop = c(), input_data = list
     regions = input_data$region_labels
     n_regions = length(regions)
 
-    #TODO - CALCULATE FOI AND R0 VALUES FROM CONSTANT AND VARIABLE ENVIRONMENTAL DATA
+    #CALCULATE FOI AND R0 VALUES FROM CONSTANT AND VARIABLE ENVIRONMENTAL DATA
     {
-      # n_env_vars = ncol(consts$enviro_data)-1
-      # enviro_coeffs = exp(log_params_prop[c(1:(2*n_env_vars))])
-      # FOI_values=as.numeric(colSums(enviro_coeffs[c(1:n_env_vars)]*t(consts$enviro_data[,1 + c(1:n_env_vars)])))
-      # R0_values=as.numeric(colSums(enviro_coeffs[c(1:n_env_vars) + n_env_vars]*t(consts$enviro_data[,1 + c(1:n_env_vars)])))
-      values=calc_var_FOI_R0(coeffs=exp(log_params_prop),enviro_data_const=enviro_data_const,enviro_data_var=enviro_data_var)
+      FOI_values=calc_var_epi(coeffs_const=exp(log_params_prop[consts$i_FOI_const]),coeffs_var=exp(log_params_prop[consts$i_FOI_var]),
+                              enviro_data_const=consts$enviro_data_const,enviro_data_var=consts$enviro_data_var)
+      R0_values=calc_var_epi(coeffs_const=exp(log_params_prop[consts$i_R0_const]),coeffs_var=exp(log_params_prop[consts$i_R0_var]),
+                             enviro_data_const=consts$enviro_data_const,enviro_data_var=consts$enviro_data_var)
     }
 
     for(n_region in 1:n_regions){if(substr(regions[n_region], 1, 3) == "BRA"){FOI_values[n_region] = FOI_values[n_region]*m_FOI_Brazil}}
-    if(consts$prior_settings$type == "norm"){
-      prior_like = prior_like  +
-        sum(log(dtrunc(R0_values, "norm", a = 0, b = Inf, mean = consts$prior_settings$R0_mean, sd = consts$prior_settings$R0_sd)))  +
-        sum(log(dtrunc(FOI_values, "norm", a = 0, b = 1, mean = consts$prior_settings$FOI_mean, sd = consts$prior_settings$FOI_sd)))
-    }
+    # if(consts$prior_settings$type == "norm"){ #TBC - Apply prior to mean FOI/R0 over time for each region?
+    #   prior_like = prior_like  +
+    #     sum(log(dtrunc(R0_values, "norm", a = 0, b = Inf, mean = consts$prior_settings$R0_mean, sd = consts$prior_settings$R0_sd)))  +
+    #     sum(log(dtrunc(FOI_values, "norm", a = 0, b = 1, mean = consts$prior_settings$FOI_mean, sd = consts$prior_settings$FOI_sd)))
+    # }
   }
 
   ### If prior finite, evaluate likelihood ###
@@ -308,8 +319,8 @@ single_posterior_calc_VarFR <- function(log_params_prop = c(), input_data = list
 #'  documentation for MCMC() function for more details)
 #' @param n_regions Number of regions
 #' @param prior_settings List containing settings for priors; see documentation for MCMC() function for more details)
-#' @param enviro_data_const TBA
-#' @param enviro_data_var TBA
+#' @param enviro_data_const Data frame of values of constant environmental covariates (columns) by region (rows)
+#' @param enviro_data_var List containing values of time-varying environmental covariates (TBA)
 #' @param add_values List of parameters in addition to those governing FOI/R0, either giving a fixed value or giving NA to
 #'   indicate that they are part of the parameter set to be estimated \cr
 #'  vaccine_efficacy Vaccine efficacy (proportion of reported vaccinations causing immunity) (must be present) \cr
@@ -344,12 +355,15 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
 
   # Check additional values
   add_value_names = names(add_values)
-  assert_that("vaccine_efficacy" %in% add_value_names, msg="Reported vaccination effectiveness vaccine_efficacy must be included in add_values")
-  assert_that(all(extra_estimated_params %in% add_value_names),msg="Additional parameters to be estimated must be included in add_values")
+  assert_that("vaccine_efficacy" %in% add_value_names,
+              msg="Reported vaccination effectiveness vaccine_efficacy must be included in add_values")
+  assert_that(all(extra_estimated_params %in% add_value_names),
+              sg="Additional parameters to be estimated must be included in add_values")
   for(var_name in add_value_names){
     if(var_name %in% extra_estimated_params){
       assert_that(is.na(add_values[[var_name]]),msg="Additional parameters to be estimated must be set to NA in add_values")
-    } else {assert_that(add_values[[var_name]] <= 1.0 && add_values[[var_name]] >= 0.0, msg="Fixed additional parameters must be in range 0-1")}
+    } else {assert_that(add_values[[var_name]] <= 1.0 && add_values[[var_name]] >= 0.0,
+                        msg="Fixed additional parameters must be in range 0-1")}
   }
 
   # Get names of environmental covariates
@@ -358,8 +372,8 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
   env_vars = c(names(enviro_data_const[c(2:ncol(enviro_data_const))]),enviro_data_var$env_vars) #TBC
   n_env_vars = length(env_vars)
 
-  # Check that total number of parameters is correct; check parameters named in correct order (TBA); all should be correct if parameter
-  # names created using create_param_labels
+  # Check that total number of parameters is correct; check parameters named in correct order (TBA); all should be correct if
+  # parameter names created using create_param_labels
   if(is.null(extra_estimated_params)){n_extra_params=0}else{n_extra_params=length(extra_estimated_params)}
   assert_that(n_params == (2*n_env_vars) + n_extra_params,
               msg="Length of initial parameter vector must equal twice number of environmental covariates +
@@ -412,7 +426,8 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
 #'   + R0_mean + R0_sd (mean + standard deviation of computed R0, single values) \cr
 #' @param dt time increment in days (must be 1 or 5)
 #' @param n_reps Number of repetitions
-#' @param enviro_data Data frame of values of environmental covariates (columns) by region (rows)
+#' @param enviro_data_const Data frame of values of constant environmental covariates (columns) by region (rows)
+#' @param enviro_data_var List containing values of time-varying environmental covariates (TBA)
 #' @param p_severe_inf Probability of an infection being severe
 #' @param p_death_severe_inf Probability of a severe infection resulting in death
 #' @param add_values List of parameters in addition to those governing FOI/R0, either giving a fixed value or giving NA to
@@ -422,6 +437,7 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
 #'  p_rep_death Probability of observation of death \cr
 #'  m_FOI_Brazil Multiplier of spillover FOI for Brazil regions (only relevant if regions in Brazil to be considered)
 #' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
+#' @param mode_time TBA
 #' @param mode_parallel TRUE/FALSE - indicate whether to use parallel processing on supplied cluster for speed
 #' @param cluster Cluster of threads to use if mode_parallel = TRUE
 #' @param plot_graphs TRUE/FALSE - plot graphs of evolving parameter space
@@ -430,10 +446,11 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
 #'
 mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds = 1, log_params_min = NULL,
                                   log_params_max = NULL, input_data = list(), obs_sero_data = list(), obs_case_data = list(),
-                                  mode_start = 0, prior_settings = list(type = "zero"), dt = 1.0, n_reps = 1, enviro_data = list(),
+                                  mode_start = 0, prior_settings = list(type = "zero"), dt = 1.0, n_reps = 1,
+                                  enviro_data_const = list(), enviro_data_var=list(),
                                   p_severe_inf = 0.12, p_death_severe_inf = 0.39,
-                                  add_values = list(vaccine_efficacy = 1.0, p_rep_severe = 1.0, p_rep_death = 1.0, m_FOI_Brazil = 1.0),
-                                  deterministic = TRUE, mode_parallel = FALSE, cluster = NULL, plot_graphs = FALSE){
+                                  add_values = list(vaccine_efficacy = 1.0,p_rep_severe = 1.0,p_rep_death = 1.0,m_FOI_Brazil = 1.0),
+                                  deterministic = TRUE, mode_time=0, mode_parallel = FALSE, cluster = NULL, plot_graphs = FALSE){
 
   #TODO - Add assertthat functions
   assert_that(mode_start %in% c(0, 1, 3), msg = "mode_start must have value 0, 1 or 3")
@@ -450,16 +467,22 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
   for(var_name in add_value_names){
     if(is.na(add_values[[var_name]]) == TRUE){extra_estimated_params = append(extra_estimated_params, var_name)}
   }
-  param_names = create_param_labels(enviro_data, extra_estimated_params)
+  param_names = create_param_labels_VarFR(enviro_data_const, enviro_data_var, extra_estimated_params)
 
   #TODO - Additional assert_that checks
-  # input_data = input_data_process(input_data, obs_sero_data, obs_case_data)
-  # regions = names(table(input_data$region_labels)) #Regions in new processed input data list
-  # n_regions = length(regions)
-  # assert_that(all(regions %in% enviro_data$region),msg="Environmental data must be available for all regions in observed data")
-  # enviro_data = subset(enviro_data, enviro_data$region %in% regions)
+
   assert_that(length(param_names) == n_params)
   names(log_params_min) = names(log_params_max) = param_names
+
+  #Designate constant and variable covariates
+  const_covars=colnames(enviro_data_const)[c(2:ncol(enviro_data_const))]
+  var_covars=enviro_data_var$env_vars
+  covar_names=c(const_covars,var_covars)
+  n_env_vars=length(covar_names)
+  i_FOI_const = c(1:n_env_vars)[covar_names %in% const_covars]
+  i_FOI_var = c(1:n_env_vars)[covar_names %in% var_covars]
+  i_R0_const = i_FOI_const + n_env_vars
+  i_R0_var = i_FOI_var + n_env_vars
 
   if(plot_graphs){
     xlabels = param_names
@@ -482,10 +505,14 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
 
       names(log_params_prop) = param_names
       posterior_value = single_posterior_calc_VarFR(log_params_prop, input_data, obs_sero_data, obs_case_data,
-                                                    mode_start = mode_start, prior_settings = prior_settings, dt = dt, n_reps = n_reps,
-                                                    enviro_data = enviro_data, p_severe_inf = p_severe_inf, p_death_severe_inf=p_death_severe_inf,
+                                                    mode_start=mode_start,prior_settings=prior_settings,dt=dt,n_reps=n_reps,
+                                                    enviro_data_const=enviro_data_const, enviro_data_var=enviro_data_var,
+                                                    p_severe_inf = p_severe_inf, p_death_severe_inf=p_death_severe_inf,
                                                     add_values = add_values, extra_estimated_params = extra_estimated_params,
-                                                    deterministic = deterministic, mode_parallel = mode_parallel, cluster = cluster)
+                                                    deterministic = deterministic, mode_time = mode_time,
+                                                    mode_parallel = mode_parallel, cluster = cluster,
+                                                    i_FOI_const = i_FOI_const, i_FOI_var = i_FOI_var,
+                                                    i_R0_const = i_R0_const, i_R0_var = i_R0_var)
       gc() #Clear garbage to prevent memory creep
       results <- rbind(results, c(set, exp(log_params_prop), posterior_value))
       if(set == 1){colnames(results) = c("set", param_names, "posterior")}
@@ -521,42 +548,6 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
   return(best_fit_results)
 }
 #-------------------------------------------------------------------------------
-#' @title calc_var_FOI_R0
-#'
-#' @description TBA
-#'
-#' @details TBA
-#'
-#' @param coeffs TBA
-#' @param enviro_data_const TBA
-#' @param enviro_data_var TBA
-#' '
-#' @export
-#'
-calc_var_FOI_R0 <- function(coeffs = c(), enviro_data_const = data.frame(), enviro_data_var = list()){ #TBC
-  n_regions=nrow(enviro_data_const)
-  n_pts=dim(enviro_data_var$values)[3]
-  const_covars=colnames(enviro_data_const)[c(2:ncol(enviro_data_const))]
-  var_covars=enviro_data_var$env_vars
-  covar_names=c(const_covars,var_covars)
-  #TODO - Add assertthat checks
-
-  # coeffs_const_covars=coeffs[covar_names != var_covars]
-  # const_covar_values=enviro_data_const[,c(2:ncol(enviro_data_const))]
-  # base_output_values=t(as.matrix(coeffs_const_covars)) %*% t(as.matrix(const_covar_values))
-  #
-  # coeff_var_covar=coeffs[covar_names == var_covars]
-  # var_output_values=t(coeff_var_covar*var_covar_values)
-  #
-  # total_output_values=var_output_values
-  # for(i in 1:n_pts){
-  #   total_output_values[,i]=total_output_values[,i]+base_output_values
-  # }
-#
-#   return(total_output_values)
-  return(NULL)
-}
-#-------------------------------------------------------------------------------
 #' @title create_param_labels_VarFR
 #'
 #' @description Apply names to the parameters in a set used for data matching and parameter fitting
@@ -587,4 +578,33 @@ create_param_labels_VarFR <- function(enviro_data_const = NULL, enviro_data_var=
   if(n_extra>0){param_names[(n_params-n_extra+1):n_params] = extra_estimated_params}
 
   return(param_names)
+}
+#-------------------------------------------------------------------------------
+#' @title calc_var_epi
+#'
+#' @description Calculate time-varying FOI_spillover or R0 values from environmental covariates and coefficients
+#'
+#' @details TBA
+#'
+#' @param coeffs_const TBA
+#' @param coeffs_var TBA
+#' @param enviro_data_const TBA
+#' @param enviro_data_var TBA
+#' '
+#' @export
+#'
+calc_var_epi <- function(coeffs_const = c(), coeffs_var = c(), enviro_data_const = data.frame(), enviro_data_var = list()){
+  n_pts=dim(enviro_data_var$values)[3]
+  #TODO - Add assertthat checks
+  #TODO - Ensure function works if only variable or only constant covariates
+
+  base_output_values=as.numeric(colSums(coeffs_const*t(enviro_data_const[,c(2:ncol(enviro_data_const))])))
+  var_output_values=colSums(coeffs_var*enviro_data_var$values)
+
+  total_output_values=array(NA,dim=dim(var_output_values))
+  for(i in 1:n_pts){
+    total_output_values[,i]=var_output_values[,i]+base_output_values
+  }
+
+  return(total_output_values)
 }

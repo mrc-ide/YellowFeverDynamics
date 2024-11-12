@@ -23,9 +23,9 @@ documentation for MCMC() function for more details)}
 
 \item{prior_settings}{List containing settings for priors; see documentation for MCMC() function for more details)}
 
-\item{enviro_data_const}{TBA}
+\item{enviro_data_const}{Data frame of values of constant environmental covariates (columns) by region (rows)}
 
-\item{enviro_data_var}{TBA}
+\item{enviro_data_var}{List containing values of time-varying environmental covariates (TBA)}
 
 \item{add_values}{List of parameters in addition to those governing FOI/R0, either giving a fixed value or giving NA to
  indicate that they are part of the parameter set to be estimated \cr

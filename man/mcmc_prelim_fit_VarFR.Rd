@@ -17,12 +17,14 @@ mcmc_prelim_fit_VarFR(
   prior_settings = list(type = "zero"),
   dt = 1,
   n_reps = 1,
-  enviro_data = list(),
+  enviro_data_const = list(),
+  enviro_data_var = list(),
   p_severe_inf = 0.12,
   p_death_severe_inf = 0.39,
   add_values = list(vaccine_efficacy = 1, p_rep_severe = 1, p_rep_death = 1, m_FOI_Brazil
     = 1),
   deterministic = TRUE,
+  mode_time = 0,
   mode_parallel = FALSE,
   cluster = NULL,
   plot_graphs = FALSE
@@ -67,7 +69,9 @@ If type = "norm", prior probability is given by dnorm calculation on parameter v
 
 \item{n_reps}{Number of repetitions}
 
-\item{enviro_data}{Data frame of values of environmental covariates (columns) by region (rows)}
+\item{enviro_data_const}{Data frame of values of constant environmental covariates (columns) by region (rows)}
+
+\item{enviro_data_var}{List containing values of time-varying environmental covariates (TBA)}
 
 \item{p_severe_inf}{Probability of an infection being severe}
 
@@ -81,6 +85,8 @@ p_rep_death Probability of observation of death \cr
 m_FOI_Brazil Multiplier of spillover FOI for Brazil regions (only relevant if regions in Brazil to be considered)}
 
 \item{deterministic}{TRUE/FALSE - set model to run in deterministic mode if TRUE}
+
+\item{mode_time}{TBA}
 
 \item{mode_parallel}{TRUE/FALSE - indicate whether to use parallel processing on supplied cluster for speed}
 

@@ -31,11 +31,11 @@ MCMC_VarFR(
 \item{log_params_ini}{Initial values of parameters to be estimated. These should always be the log() values of the
 actual parameters, ordered as follows: \cr
 1) A number of environmental coefficients used to calculate spillover force of infection values from environmental
-covariates equal to the number of environmental covariates listed in the enviro_data frame. Values should be in the
-order of the columns in the environmental data frame. \cr
+covariates equal to the total number of environmental covariates. Values should be in the
+order of the columns in enviro_data_const and then the covariates in enviro_data_var. \cr
 2) A number of environmental coefficients used to calculate basic reproduction number
-values from environmental covariates equal to the number of environmental covariates listed in the enviro_data
-frame. Values should be in the order of the columns in the environmental data frame. \cr
+values from environmental covariates equal to the total number of environmental covariates.
+Values should be in the order of the columns in enviro_data_const and then the covariates in enviro_data_var. \cr
 3) Values of the additional parameters (reported vaccination effectiveness vaccine_efficacy, severe case reporting
 probability p_rep_severe, and fatal case reporting probability p_rep_death, and Brazil spillover FOI multiplier m_FOI_Brazil);
 if these are to be estimated, in the order vaccine_efficacy->p_rep_severe->p_rep_death->m_FOI_Brazil. If these parameters
@@ -78,7 +78,7 @@ on vectors of values in prior_settings: \cr
 
 \item{enviro_data_const}{Data frame of values of constant environmental covariates (columns) by region (rows)}
 
-\item{enviro_data_var}{Array of values of time-varying environmental covariates (TBA)}
+\item{enviro_data_var}{List containing values of time-varying environmental covariates (TBA)}
 
 \item{p_severe_inf}{Probability of an infection being severe}
 

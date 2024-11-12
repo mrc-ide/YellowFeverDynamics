@@ -27,7 +27,7 @@ deaths}
 
 \item{...}{= Constant parameters/flags/etc. loaded to or determined by mcmc() and mcmc_prelim_fit, including mode_start,
 prior_settings, dt, n_reps, enviro_data, p_severe_inf, p_death_severe_inf, add_values list, extra_estimated_params,
-deterministic, mode_time, mode_parallel, cluster}
+deterministic, mode_time, mode_parallel, cluster, i_FOI_const, i_FOI_var, i_R0_const, i_R0_var}
 }
 \description{
 Function which calculates and outputs posterior likelihood of observing simulated data
