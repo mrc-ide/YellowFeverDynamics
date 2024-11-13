@@ -271,11 +271,11 @@ single_posterior_calc_VarFR <- function(log_params_prop = c(), input_data = list
     }
 
     for(n_region in 1:n_regions){if(substr(regions[n_region], 1, 3) == "BRA"){FOI_values[n_region] = FOI_values[n_region]*m_FOI_Brazil}}
-    # if(consts$prior_settings$type == "norm"){ #TBC - Apply prior to mean FOI/R0 over time for each region?
-    #   prior_like = prior_like  +
-    #     sum(log(dtrunc(R0_values, "norm", a = 0, b = Inf, mean = consts$prior_settings$R0_mean, sd = consts$prior_settings$R0_sd)))  +
-    #     sum(log(dtrunc(FOI_values, "norm", a = 0, b = 1, mean = consts$prior_settings$FOI_mean, sd = consts$prior_settings$FOI_sd)))
-    # }
+    if(consts$prior_settings$type == "norm"){ #TBC - Apply prior to mean FOI/R0 over time for each region?
+      prior_like = prior_like  +
+        sum(log(dtrunc(rowMeans(R0_values), "norm", a = 0, b = Inf, mean = consts$prior_settings$R0_mean, sd = consts$prior_settings$R0_sd)))  +
+        sum(log(dtrunc(rowMeans(FOI_values), "norm", a = 0, b = 1, mean = consts$prior_settings$FOI_mean, sd = consts$prior_settings$FOI_sd)))
+    }
   }
 
   ### If prior finite, evaluate likelihood ###
@@ -334,7 +334,7 @@ single_posterior_calc_VarFR <- function(log_params_prop = c(), input_data = list
 mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_settings = list(type = "zero"),
                               enviro_data_const = list(), enviro_data_var = list(),
                               add_values = list(vaccine_efficacy = 1.0, p_rep_severe = 1.0, p_rep_death = 1.0, m_FOI_Brazil = 1.0),
-                              extra_estimated_params = list()){
+                              extra_estimated_params = c()){
 
   param_names = names(log_params_ini)
   n_params = length(log_params_ini)
@@ -357,8 +357,6 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
   add_value_names = names(add_values)
   assert_that("vaccine_efficacy" %in% add_value_names,
               msg="Reported vaccination effectiveness vaccine_efficacy must be included in add_values")
-  assert_that(all(extra_estimated_params %in% add_value_names),
-              sg="Additional parameters to be estimated must be included in add_values")
   for(var_name in add_value_names){
     if(var_name %in% extra_estimated_params){
       assert_that(is.na(add_values[[var_name]]),msg="Additional parameters to be estimated must be set to NA in add_values")

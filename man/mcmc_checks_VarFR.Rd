@@ -12,7 +12,7 @@ mcmc_checks_VarFR(
   enviro_data_var = list(),
   add_values = list(vaccine_efficacy = 1, p_rep_severe = 1, p_rep_death = 1, m_FOI_Brazil
     = 1),
-  extra_estimated_params = list()
+  extra_estimated_params = c()
 )
 }
 \arguments{
