@@ -27,7 +27,7 @@
 #'  If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
 #'  If mode_start=2, use SEIRV input in list from previous run(s)
 #' @param vaccine_efficacy Proportional vaccine efficacy
-#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param time_inc Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 #' @param n_reps Number of repetitions (used to set number of particles and threads)
 #' @param division Number of particles to run in one go (up to 20)
 #' '
@@ -35,7 +35,7 @@
 #'
 Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),years_data = c(1940:1941),
                                       start_SEIRV = list(), output_type = "full", year0 = 1940, mode_start = 0,
-                                      vaccine_efficacy = 1.0, dt = 1.0, n_reps=1, division=10) {
+                                      vaccine_efficacy = 1.0, time_inc = 1.0, n_reps=1, division=10) {
 
   assert_that(division<=20)
   n_particles0=min(division,n_reps)
@@ -49,12 +49,12 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
 
   n_nv=3 #Number of non-vector outputs
   N_age=length(pop_data[1,]) #Number of age groups
-  nd1 <- (t_incubation+t_latent)/dt
-  nd2 <- t_infectious/dt
+  nd1 <- (t_incubation+t_latent)/time_inc
+  nd2 <- t_infectious/time_inc
   nd=nd1+nd2
   n_data_pts=((6+nd1+nd2)*N_age)+n_nv #Number of data values per time point in output
-  step_begin=((years_data[1]-year0)*(365/dt)) #Step at which data starts being saved for final output
-  step_end=((max(years_data)+1-year0)*(365/dt))-1 #Step at which to end
+  step_begin=((years_data[1]-year0)*(365/time_inc)) #Step at which data starts being saved for final output
+  step_end=((max(years_data)+1-year0)*(365/time_inc))-1 #Step at which to end
   t_pts_out=step_end-step_begin+1 #Number of time points in final output data
 
   if(output_type=="full"){
@@ -86,7 +86,7 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
     if(div==1){n_p0=0}else{n_p0=sum(n_particles_list[c(1:(div-1))])}
 
     x <- SEIRVModelDelay$new(pars=parameter_setup(FOI_spillover,R0,vacc_data,pop_data,year0,years_data,mode_start,
-                                                  vaccine_efficacy,start_SEIRV,dt),
+                                                  vaccine_efficacy,start_SEIRV,time_inc),
                              time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = FALSE)
 
     x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
@@ -100,7 +100,7 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
       dimensions=c(N_age,n_particles,t_pts_out)
       output_data$day=x_res[1,1,]
       output_data$year=x_res[2,1,]
-      output_data$FOI_total[n_p_values,]=array(x_res[3,,]/dt,dim=c(n_particles,t_pts_out))
+      output_data$FOI_total[n_p_values,]=array(x_res[3,,]/time_inc,dim=c(n_particles,t_pts_out))
       output_data$S[,n_p_values,]=array(x_res[c((1+n_nv):(N_age+n_nv)),,],dim=dimensions)
       output_data$E[,n_p_values,]=array(x_res[c((N_age+1+n_nv):((2*N_age)+n_nv)),,],dim=dimensions)
       output_data$I[,n_p_values,]=array(x_res[c((((2+nd1)*N_age)+1+n_nv):(((3+nd1)*N_age)+n_nv)),,],dim=dimensions)
@@ -179,7 +179,7 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
 #'  If mode_start=2, use SEIRV input (including E_delay and I_delay if version = "Delay" or "DelayReactive") in list from
 #'  previous run(s)
 #' @param vaccine_efficacy Proportional vaccine efficacy
-#' @param dt Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param time_inc Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 #' @param n_particles number of particles to use
 #' @param n_threads number of threads to use
 #' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
@@ -196,7 +196,7 @@ Delay_Model_Run_Many_Reps <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = l
 #'
 Model_Versions_Run <- function(version = "Basic", FOI_spillover = 0.0,R0 = 1.0,vacc_data = list(),pop_data = list(),
                                years_data = c(1940:1941),start_SEIRV = list(), year0 = 1940, mode_start = 0,
-                               vaccine_efficacy = 1.0, dt = 1.0, n_particles=1, n_threads=1, deterministic = FALSE,
+                               vaccine_efficacy = 1.0, time_inc = 1.0, n_particles=1, n_threads=1, deterministic = FALSE,
                                response_delay = 56.0, p_rep = c(0.0,0.0), case_threshold = Inf, cluster_threshold = Inf,
                                vacc_rate_cam=c(),t_cam=0){
 
@@ -204,15 +204,15 @@ Model_Versions_Run <- function(version = "Basic", FOI_spillover = 0.0,R0 = 1.0,v
 
   if(version=="Basic"){
     output <- YEP::Model_Run(FOI_spillover, R0, vacc_data, pop_data, years_data, start_SEIRV, "full", year0, mode_start,
-                             vaccine_efficacy, dt, n_particles, n_threads, deterministic)
+                             vaccine_efficacy, time_inc, n_particles, n_threads, deterministic)
   }
   if(version=="Delay"){
     output <- Model_Run_Delay(FOI_spillover, R0, vacc_data, pop_data, years_data, start_SEIRV, year0, mode_start,
-                              vaccine_efficacy, dt, n_particles, n_threads, deterministic)
+                              vaccine_efficacy, time_inc, n_particles, n_threads, deterministic)
   }
   if(version=="Reactive"){
     output <- Model_Run_Reactive(FOI_spillover, R0, vacc_data, vacc_rate_cam, t_cam, pop_data, years_data, start_SEIRV,
-                                 year0, mode_start, vaccine_efficacy, dt, n_particles, n_threads, deterministic, p_rep,
+                                 year0, mode_start, vaccine_efficacy, time_inc, n_particles, n_threads, deterministic, p_rep,
                                  case_threshold, cluster_threshold)
   }
 

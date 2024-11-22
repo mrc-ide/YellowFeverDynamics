@@ -44,7 +44,7 @@
 #'   + FOI_mean + FOI_sd (mean + standard deviation of computed FOI, single values)  \cr
 #'   + R0_mean + R0_sd (mean + standard deviation of computed R0, single values) \cr
 #'   + param_min_limits and param_max_limits (lower and upper limits applied to truncated normal distributions)
-#' @param dt time increment in days (must be 1 or 5)
+#' @param time_inc time increment in days (must be 1 or 5)
 #' @param n_reps Number of times to repeat calculations to get average likelihood at each iteration
 #' @param enviro_data_const Data frame of values of constant environmental covariates (columns) by region (rows)
 #' @param enviro_data_var List containing values of time-varying environmental covariates (TBA)
@@ -64,7 +64,7 @@
 #' @export
 #'
 MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NULL, obs_case_data = NULL, filename_prefix = "Chain",
-                       Niter = 1, mode_start = 0, prior_settings = list(type = "zero"), dt = 1.0, n_reps = 1,
+                       Niter = 1, mode_start = 0, prior_settings = list(type = "zero"), time_inc = 1.0, n_reps = 1,
                        enviro_data_const = list(), enviro_data_var = list(), p_severe_inf = 0.12, p_death_severe_inf = 0.39,
                        add_values = list(vaccine_efficacy = 1.0, p_rep_severe = 1.0, p_rep_death = 1.0, m_FOI_Brazil = 1.0),
                        deterministic = FALSE, mode_time = 1, mode_parallel = FALSE, cluster = NULL){
@@ -127,7 +127,7 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
 
     #Calculate likelihood using single_posterior_calc function
     posterior_value_prop = single_posterior_calc_VarFR(log_params_prop, input_data, obs_sero_data, obs_case_data,
-                                                       mode_start=mode_start,prior_settings=prior_settings,dt=dt,n_reps=n_reps,
+                                                       mode_start=mode_start,prior_settings=prior_settings,time_inc=time_inc,n_reps=n_reps,
                                                        enviro_data_const=enviro_data_const, enviro_data_var=enviro_data_var,
                                                        p_severe_inf = p_severe_inf, p_death_severe_inf=p_death_severe_inf,
                                                        add_values = add_values, extra_estimated_params = extra_estimated_params,
@@ -210,7 +210,7 @@ MCMC_VarFR <- function(log_params_ini = c(), input_data = list(), obs_sero_data 
 #' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
 #'   deaths
 #' @param ... = Constant parameters/flags/etc. loaded to or determined by mcmc() and mcmc_prelim_fit, including mode_start,
-#'  prior_settings, dt, n_reps, enviro_data, p_severe_inf, p_death_severe_inf, add_values list, extra_estimated_params,
+#'  prior_settings, time_inc, n_reps, enviro_data, p_severe_inf, p_death_severe_inf, add_values list, extra_estimated_params,
 #'  deterministic, mode_time, mode_parallel, cluster, i_FOI_const, i_FOI_var, i_R0_const, i_R0_var
 #'
 #' @export
@@ -284,7 +284,7 @@ single_posterior_calc_VarFR <- function(log_params_prop = c(), input_data = list
     #Generate modelled data over all regions
     dataset <- Generate_Dataset_VarFR(input_data, FOI_values, R0_values, obs_sero_data, obs_case_data, vaccine_efficacy,
                                       consts$p_severe_inf, consts$p_death_severe_inf, p_rep_severe, p_rep_death,
-                                      consts$mode_start, start_SEIRV = NULL, consts$dt, consts$n_reps, consts$deterministic,
+                                      consts$mode_start, start_SEIRV = NULL, consts$time_inc, consts$n_reps, consts$deterministic,
                                       consts$mode_time, consts$mode_parallel, consts$cluster)
 
     #Likelihood of observing serological data
@@ -422,7 +422,7 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
 #'   parameters and to actual values of additional parameters) \cr
 #'   + FOI_mean + FOI_sd (mean + standard deviation of computed FOI, single values)  \cr
 #'   + R0_mean + R0_sd (mean + standard deviation of computed R0, single values) \cr
-#' @param dt time increment in days (must be 1 or 5)
+#' @param time_inc time increment in days (must be 1 or 5)
 #' @param n_reps Number of repetitions
 #' @param enviro_data_const Data frame of values of constant environmental covariates (columns) by region (rows)
 #' @param enviro_data_var List containing values of time-varying environmental covariates (TBA)
@@ -444,7 +444,7 @@ mcmc_checks_VarFR <- function(log_params_ini = c(), n_regions = 1, prior_setting
 #'
 mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds = 1, log_params_min = NULL,
                                   log_params_max = NULL, input_data = list(), obs_sero_data = list(), obs_case_data = list(),
-                                  mode_start = 0, prior_settings = list(type = "zero"), dt = 1.0, n_reps = 1,
+                                  mode_start = 0, prior_settings = list(type = "zero"), time_inc = 1.0, n_reps = 1,
                                   enviro_data_const = list(), enviro_data_var=list(),
                                   p_severe_inf = 0.12, p_death_severe_inf = 0.39,
                                   add_values = list(vaccine_efficacy = 1.0,p_rep_severe = 1.0,p_rep_death = 1.0,m_FOI_Brazil = 1.0),
@@ -503,7 +503,7 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
 
       names(log_params_prop) = param_names
       posterior_value = single_posterior_calc_VarFR(log_params_prop, input_data, obs_sero_data, obs_case_data,
-                                                    mode_start=mode_start,prior_settings=prior_settings,dt=dt,n_reps=n_reps,
+                                                    mode_start=mode_start,prior_settings=prior_settings,time_inc=time_inc,n_reps=n_reps,
                                                     enviro_data_const=enviro_data_const, enviro_data_var=enviro_data_var,
                                                     p_severe_inf = p_severe_inf, p_death_severe_inf=p_death_severe_inf,
                                                     add_values = add_values, extra_estimated_params = extra_estimated_params,

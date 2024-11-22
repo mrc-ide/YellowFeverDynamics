@@ -15,7 +15,7 @@ Model_Run_VarFR(
   year0 = 1940,
   mode_start = 0,
   vaccine_efficacy = 1,
-  dt = 1,
+  time_inc = 1,
   n_particles = 1,
   n_threads = 1,
   deterministic = FALSE,
@@ -46,13 +46,15 @@ Model_Run_VarFR(
 \item{year0}{First year in population/vaccination data}
 
 \item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination
-If mode_start=0, only vaccinated individuals
-If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-If mode_start=2, use SEIRV input in list from previous run(s)}
+If mode_start = 0, only vaccinated individuals
+If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (uniform by age,
+R0 based only)
+If mode_start = 2, use SEIRV input in list from previous run(s)
+If mode_start = 3, shift some non-vaccinated individuals into recovered to give herd immunity (stratified by age)}
 
 \item{vaccine_efficacy}{Proportional vaccine efficacy}
 
-\item{dt}{Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)}
+\item{time_inc}{Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)}
 
 \item{n_particles}{number of particles to use}
 
@@ -64,9 +66,9 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
  If mode_time=0, no time variation (identical to Model_Run())
  If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
  If mode_time=2, FOI/R0 vary with monthly seasonality without inter-annual variation (number of values = 12)
- If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/dt)
+ If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/time_inc)
  If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12*number of years to consider)
- If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider)
+ If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/time_inc)*number of years to consider)
 '}
 }
 \description{

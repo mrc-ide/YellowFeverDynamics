@@ -1,22 +1,22 @@
-# Version of SEIRV_Model where FOI and R0 vary annually
+# Version of SEIRV_Model where FOI and R0 vary at each time point
 
 
 
 
 
-dt <- user() #Time increment in days
-initial(time) <- 0 #Initial value of time in days
-update(time) <- time + dt
+time_inc <- parameter() #Time increment in days
+initial(day) <- time_inc #Initial value of time in days
+update(day) <- day + time_inc
 
 #Parameters---------------------------------------------------------------------
-t_incubation <- user() #Length in days of yellow fever incubation period in mosquito vectors
-t_latent <- user() #Length in days of latent period in humans exposed to yellow fever
-t_infectious <- user() #Length of infectious period in humans with yellow fever
-FOI_spillover[] <- user() #Spillover force of infection (per day) at each time point
-R0[] <- user() #Basic reproduction number for human-human transmission at each time point
-N_age <- user() #Number of age categories
-vacc_rate_daily[,] <- user() #Daily rate of vaccination by age and year
-vaccine_efficacy <- user() #Proportion of vaccinations which successfully protect the recipient
+t_incubation <- parameter() #Length in days of yellow fever incubation period in mosquito vectors
+t_latent <- parameter() #Length in days of latent period in humans exposed to yellow fever
+t_infectious <- parameter() #Length of infectious period in humans with yellow fever
+FOI_spillover <- parameter() #Spillover force of infection (per day) at each time point
+R0 <- parameter() #Basic reproduction number for human-human transmission at each time point
+N_age <- parameter() #Number of age categories
+vacc_rate_daily <- parameter() #Daily rate of vaccination by age and year
+vaccine_efficacy <- parameter() #Proportion of vaccinations which successfully protect the recipient
 
 
 
@@ -25,36 +25,36 @@ vaccine_efficacy <- user() #Proportion of vaccinations which successfully protec
 
 
 #Initial conditions-------------------------------------------------------------
-year0 <- user()  #Starting year
-S_0[] <- user() #Susceptible population by age group at start
-E_0[] <- user() #Exposed population by age group at start
+year0 <- parameter()  #Starting year
+S_0 <- parameter() #Susceptible population by age group at start
+E_0 <- parameter() #Exposed population by age group at start
 
-I_0[] <- user() #Infectious population by age group at start
+I_0 <- parameter() #Infectious population by age group at start
 
-R_0[] <- user() #Recovered population by age group at start
-V_0[] <- user() #Vaccinated population by age group at start
-dP1_all[,] <- user() #Daily increase in number of people by age group (people arriving in group due to age etc.)
-dP2_all[,] <- user() #Daily decrease in number of people by age group (people leaving group due to age etc.)
-n_years <- user() #Number of years for which model to be run
-n_t_pts <- user() #Total number of time points
+R_0 <- parameter() #Recovered population by age group at start
+V_0 <- parameter() #Vaccinated population by age group at start
+dP1_all <- parameter() #Daily increase in number of people by age group (people arriving in group due to age etc.)
+dP2_all <- parameter() #Daily decrease in number of people by age group (people leaving group due to age etc.)
+n_years <- parameter() #Number of years for which model to be run
+n_t_pts <- parameter() #Total number of time points
 Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
-rate1 <- dt/(t_incubation+t_latent)
-rate2 <- dt/t_infectious
+rate1 <- time_inc/(t_incubation+t_latent) # Rate of transfer from E to I
+rate2 <- time_inc/t_infectious # Rate of transfer from I to R
 
 
 
 
+t_pt <- day/time_inc #Number of time points passed
+beta <- (R0[t_pt]*time_inc)/t_infectious #Daily exposure rate
+FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover[t_pt]*time_inc)) #Total force of infection
 
-beta <- (R0[step+1]*dt)/t_infectious #Daily exposure rate
-FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover[step+1]*dt)) #Total force of infection
+year_i <- floor(day/365)+1 #Number of years since start, as integer
 
-year_i <- floor(((step+1)*dt)/365) + 1 #Number of years since start, as integer
+dP1[1:N_age] <- dP1_all[i, year_i]*time_inc #Increase in population by age group over 1 time increment
+dP2[1:N_age] <- dP2_all[i, year_i]*time_inc #Decrease in population by age group over 1 time increment
 
-dP1[1:N_age] <- dP1_all[i, as.integer(year_i)]*dt #Increase in population by age group over 1 time increment
-dP2[1:N_age] <- dP2_all[i, as.integer(year_i)]*dt #Decrease in population by age group over 1 time increment
-
-E_new[1:N_age] <- rbinom(as.integer(S[i]), FOI_sum) #New exposed individuals by age group
+E_new[1:N_age] <- Binomial(as.integer(S[i]), FOI_sum) #New exposed individuals by age group
 
 I_new[1:N_age] <- E[i]*rate1     #New infectious individuals by age group
 
@@ -66,7 +66,7 @@ P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
 
-vacc_rate[1:N_age] <- vacc_rate_daily[i,as.integer(year_i)]*vaccine_efficacy*dt*P[i] #Total no. vaccinations by age
+vacc_rate[1:N_age] <- vacc_rate_daily[i,year_i]*vaccine_efficacy*time_inc*P[i] #Total no. vaccinations by age
 
 
 
@@ -98,7 +98,7 @@ update(C[1:N_age]) <- I_new[i]
 
 
 #Initial values-----------------------------------------------------------------
-initial(year) <- year0-1
+initial(year) <- year0
 initial(FOI_total) <- FOI_spillover[1]
 
 

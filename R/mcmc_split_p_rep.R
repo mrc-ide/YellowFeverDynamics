@@ -45,7 +45,7 @@
 #'  If mode_start = 0, only vaccinated individuals
 #'  If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (uniform by age, R0 based only)
 #'  If mode_start = 3, shift some non-vaccinated individuals into recovered to give herd immunity (stratified by age)
-#' @param dt time increment in days (must be 1 or 5)
+#' @param time_inc time increment in days (must be 1 or 5)
 #' @param n_reps Number of times to repeat calculations to get average likelihood at each step
 #' @param enviro_data Data frame containing values of environmental covariates; set to NULL if not in use
 #' @param R0_fixed_values Values of R0 to use if only FOI is subject to fitting (i.e. type set to "FOI" or "FOI
@@ -70,7 +70,7 @@
 #' @export
 #'
 MCMC2 <- function(log_params_ini = c(),input_data = list(),obs_sero_data = NULL,obs_case_data = NULL,filename_prefix = "Chain",
-                  Niter = 1,type = NULL,mode_start = 0,prior_settings = list(type = "zero"),dt = 1.0,n_reps = 1,enviro_data = NULL,
+                  Niter = 1,type = NULL,mode_start = 0,prior_settings = list(type = "zero"),time_inc = 1.0,n_reps = 1,enviro_data = NULL,
                   R0_fixed_values = NULL,p_severe_inf = 0.12,p_death_severe_inf = 0.39,
                   add_values = list(vaccine_efficacy = 1.0,p_rep_severe = 1.0,p_rep_death = 1.0,m_FOI_Brazil = 1.0),
                   deterministic = FALSE,mode_parallel = FALSE,cluster = NULL){
@@ -105,7 +105,7 @@ MCMC2 <- function(log_params_ini = c(),input_data = list(),obs_sero_data = NULL,
   if(prior_settings$type =="flat"){names(prior_settings$log_params_min) = names(prior_settings$log_params_max) = param_names}
 
   #Set up list of invariant parameter values to supply to other functions
-  consts = list(type = type,mode_start = mode_start,prior_settings = prior_settings,dt = dt,n_reps = n_reps,enviro_data = enviro_data,
+  consts = list(type = type,mode_start = mode_start,prior_settings = prior_settings,time_inc = time_inc,n_reps = n_reps,enviro_data = enviro_data,
                 R0_fixed_values = R0_fixed_values,p_severe_inf = p_severe_inf,p_death_severe_inf = p_death_severe_inf,
                 add_values = add_values,extra_estimated_params = extra_estimated_params,
                 deterministic = deterministic,mode_parallel = mode_parallel,cluster = cluster)
@@ -207,7 +207,7 @@ MCMC2 <- function(log_params_ini = c(),input_data = list(),obs_sero_data = NULL,
 #' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no. cases/no.
 #'   deaths
 #' @param consts = List of constant parameters/flags/etc. loaded to mcmc() (type,
-#'   mode_start,prior_settings,dt,n_reps,enviro_data,R0_fixed_values,p_severe_inf,
+#'   mode_start,prior_settings,time_inc,n_reps,enviro_data,R0_fixed_values,p_severe_inf,
 #'   p_death_severe_inf,add_values list,extra_estimated_params,deterministic, mode_parallel, cluster)
 #'
 #' @export
@@ -261,13 +261,13 @@ single_posterior_calc2 <- function(log_params_prop = c(),input_data = list(),obs
     if("p_rep_severe" %in% names(consts$add_values)){
       dataset <- Generate_Dataset(input_data,FOI_values,R0_values,obs_sero_data,obs_case_data,vaccine_efficacy,
                                   consts$p_severe_inf,consts$p_death_severe_inf,p_rep_severe,p_rep_death,
-                                  consts$mode_start,start_SEIRV = NULL,consts$dt,consts$n_reps,consts$deterministic,
+                                  consts$mode_start,start_SEIRV = NULL,consts$time_inc,consts$n_reps,consts$deterministic,
                                   consts$mode_parallel,consts$cluster)
     } else {
       dataset <- Generate_Dataset2(input_data,FOI_values,R0_values,obs_sero_data,obs_case_data,vaccine_efficacy,
                                    consts$p_severe_inf,consts$p_death_severe_inf,
                                    p_rep_severe_af,p_rep_death_af,p_rep_severe_sa,p_rep_death_sa,
-                                   consts$mode_start,start_SEIRV = NULL,consts$dt,consts$n_reps,consts$deterministic,
+                                   consts$mode_start,start_SEIRV = NULL,consts$time_inc,consts$n_reps,consts$deterministic,
                                    consts$mode_parallel,consts$cluster)
 
     }
@@ -483,7 +483,7 @@ mcmc_FOI_R0_setup2 <- function(type = "",prior_settings = list(type = "zero"),re
 #'  If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (uniform by age, R0 based only)
 #'  If mode_start = 3, shift some non-vaccinated individuals into recovered to give herd immunity (stratified by age)
 #' @param prior_settings TBA
-#' @param dt time increment in days (must be 1 or 5)
+#' @param time_inc time increment in days (must be 1 or 5)
 #' @param n_reps Number of repetitions
 #' @param enviro_data Values of environmental variables (if in use)
 #' @param R0_fixed_values Values of R0 to use if type set to "FOI" or "FOI enviro"
@@ -508,7 +508,7 @@ mcmc_FOI_R0_setup2 <- function(type = "",prior_settings = list(type = "zero"),re
 #'
 mcmc_prelim_fit2 <- function(n_iterations = 1,n_param_sets = 1,n_bounds = 1,type = NULL,log_params_min = NULL,
                              log_params_max = NULL,input_data = list(),obs_sero_data = list(),obs_case_data = list(),
-                             mode_start = 0,prior_settings = list(type = "zero"),dt = 1.0,n_reps = 1,enviro_data = NULL,R0_fixed_values = c(),
+                             mode_start = 0,prior_settings = list(type = "zero"),time_inc = 1.0,n_reps = 1,enviro_data = NULL,R0_fixed_values = c(),
                              p_severe_inf = 0.12, p_death_severe_inf = 0.39,
                              add_values = list(vaccine_efficacy = 1.0,p_rep_severe = 1.0,p_rep_death = 1.0,m_FOI_Brazil = 1.0),
                              deterministic = TRUE,mode_parallel = FALSE,cluster = NULL){
@@ -544,7 +544,7 @@ mcmc_prelim_fit2 <- function(n_iterations = 1,n_param_sets = 1,n_bounds = 1,type
     all_param_sets <- lhs(n = n_param_sets,rect = cbind(log_params_min,log_params_max))
     results = data.frame()
     consts = list(type = type,mode_start = mode_start,prior_settings = prior_settings,
-                  dt = dt,n_reps = n_reps,enviro_data = enviro_data,R0_fixed_values = R0_fixed_values,
+                  time_inc = time_inc,n_reps = n_reps,enviro_data = enviro_data,R0_fixed_values = R0_fixed_values,
                   p_severe_inf = p_severe_inf, p_death_severe_inf = p_death_severe_inf,add_values = add_values,
                   deterministic = deterministic,mode_parallel = mode_parallel,cluster = cluster)
 
