@@ -34,7 +34,7 @@ get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, 
   year0=min(years_data)
   t_pts=length(years_data)
   n_years=length(table(years_data))
-  dt=(n_years*365.0)/t_pts
+  time_inc=(n_years*365.0)/t_pts
 
   pt_severe_infs=pt_rep_cases=pt_deaths=pt_rep_deaths=rep(0,t_pts)
   annual_rep_cases=annual_rep_deaths=annual_outbreaks=annual_occurrence=rep(0,n_years)
@@ -57,17 +57,17 @@ get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, 
         obs_deaths=append(obs_deaths,pt_rep_deaths[i],after=length(obs_deaths))
         severe_infs=append(severe_infs,pt_severe_infs[i],after=length(severe_infs))
         deaths=append(deaths,pt_deaths[i],after=length(deaths))
-        start_days=append(start_days,i*dt,after=length(start_days))
+        start_days=append(start_days,i*time_inc,after=length(start_days))
         caseless_days=0
       }
     } else {
       severe_infs[n_outbreaks]=severe_infs[n_outbreaks]+pt_severe_infs[i]
       deaths[n_outbreaks]=deaths[n_outbreaks]+pt_deaths[i]
       if(pt_rep_cases[i]==0){
-        caseless_days=caseless_days+dt
+        caseless_days=caseless_days+time_inc
         if(caseless_days>max_case_interval){
           flag_outbreak=0
-          end_days=append(end_days,i*dt,after=length(end_days))
+          end_days=append(end_days,i*time_inc,after=length(end_days))
         }
       } else {
         caseless_days=0
@@ -94,7 +94,7 @@ get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, 
                                               end_day=end_days,start_year=start_years,end_year=end_years))
 
   if(flag_additional_output){
-    outbreak_data$rep_pts=data.frame(day=c(1:t_pts)*dt,severe_infs=pt_severe_infs,deaths=pt_deaths,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths)
+    outbreak_data$rep_pts=data.frame(day=c(1:t_pts)*time_inc,severe_infs=pt_severe_infs,deaths=pt_deaths,rep_cases=pt_rep_cases,rep_deaths=pt_rep_deaths)
     outbreak_data$rep_annual=data.frame(year=as.numeric(names(table(years_data))),rep_cases=annual_rep_cases,rep_deaths=annual_rep_deaths)
   }
 

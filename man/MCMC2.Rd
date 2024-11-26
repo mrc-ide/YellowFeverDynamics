@@ -14,7 +14,7 @@ MCMC2(
   type = NULL,
   mode_start = 0,
   prior_settings = list(type = "zero"),
-  dt = 1,
+  time_inc = 1,
   n_reps = 1,
   enviro_data = NULL,
   R0_fixed_values = NULL,
@@ -75,7 +75,7 @@ If type = "norm", prior probability is given by dnorm calculation on parameter v
  in prior_settings; norm_params_mean and norm_params_sd (mean and standard deviation values applied to log FOI/R0
  parameters and to actual values of additional parameters) + R0_mean + R0_sd (mean + standard deviation of computed R0, single values)}
 
-\item{dt}{time increment in days (must be 1 or 5)}
+\item{time_inc}{time increment in days (must be 1 or 5)}
 
 \item{n_reps}{Number of times to repeat calculations to get average likelihood at each step}
 

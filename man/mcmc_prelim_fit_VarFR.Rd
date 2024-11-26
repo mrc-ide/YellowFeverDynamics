@@ -15,7 +15,7 @@ mcmc_prelim_fit_VarFR(
   obs_case_data = list(),
   mode_start = 0,
   prior_settings = list(type = "zero"),
-  dt = 1,
+  time_inc = 1,
   n_reps = 1,
   enviro_data_const = list(),
   enviro_data_var = list(),
@@ -65,7 +65,7 @@ If type = "norm", prior probability is given by dnorm calculation on parameter v
  + FOI_mean + FOI_sd (mean + standard deviation of computed FOI, single values)  \cr
  + R0_mean + R0_sd (mean + standard deviation of computed R0, single values) \cr}
 
-\item{dt}{time increment in days (must be 1 or 5)}
+\item{time_inc}{time increment in days (must be 1 or 5)}
 
 \item{n_reps}{Number of repetitions}
 

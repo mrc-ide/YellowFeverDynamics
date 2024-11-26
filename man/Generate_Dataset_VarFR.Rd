@@ -17,7 +17,7 @@ Generate_Dataset_VarFR(
   p_rep_death = 1,
   mode_start = 1,
   start_SEIRV = NULL,
-  dt = 1,
+  time_inc = 1,
   n_reps = 1,
   deterministic = FALSE,
   mode_time = 1,
@@ -56,7 +56,7 @@ If mode_start=3, shift some non-vaccinated individuals into recovered to give he
 
 \item{start_SEIRV}{SEIRV data from end of a previous run to use as input (list of datasets, one per region)}
 
-\item{dt}{Time increment in days to use in model (should be either 1.0, 2.5 or 5.0 days)}
+\item{time_inc}{Time increment in days to use in model (should be either 1.0, 2.5 or 5.0 days)}
 
 \item{n_reps}{number of stochastic repetitions}
 
@@ -66,9 +66,9 @@ If mode_start=3, shift some non-vaccinated individuals into recovered to give he
 variation (identical to Model_Run())
 If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
 If mode_time=2, FOI/R0 vary with monthly seasonality without inter-annual variation (number of values = 12)
-If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/dt)
+If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/time_inc)
 If mode_time=4, FOI/R0 vary annually with monthly seasonality (number of values = 12.number of years to consider)
-If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt)*number of years to consider)}
+If mode_time=5, FOI/R0 vary annually with daily seasonality (number of values = (365/time_inc)*number of years to consider)}
 
 \item{mode_parallel}{TRUE/FALSE - set model to run in parallel using cluster if TRUE}
 

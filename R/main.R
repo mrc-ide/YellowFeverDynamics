@@ -78,8 +78,8 @@ Model_Run_Delay <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), p
   #if(mode_start==2){pars$E_delay0=start_SEIRV$E_delay} else {pars$E_delay0=rep(0,nd1*N_age)}
   pars$np_E_delay=nd1*N_age
   pars$np_I_delay=nd2*N_age
-  pars2$E_delay0=rep(0,pars$np_E_delay)
-  pars2$I_delay0=rep(0,pars$np_I_delay)
+  pars$E_delay0=rep(0,pars$np_E_delay)
+  pars$I_delay0=rep(0,pars$np_I_delay)
 
   #x <- SEIRVModelDelay$new(pars,time = 0, n_particles = n_particles, n_threads = n_threads, deterministic = deterministic)
   # x_res <- array(NA, dim = c(n_data_pts, n_particles, t_pts_out))
@@ -183,10 +183,10 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = 0.0,R0 = 1.0,vacc_data = li
 
   #Carrying forward delay from previous run may cause errors
   #if(mode_start==2){pars2$E_delay0=start_SEIRV$E_delay} else {pars2$E_delay0=rep(0,nd1*N_age)}
-  pars$np_E_delay=nd1*N_age
-  pars$np_I_delay=nd2*N_age
-  pars2$E_delay0=rep(0,pars$np_E_delay)
-  pars2$I_delay0=rep(0,pars$np_I_delay)
+  pars2$np_E_delay=nd1*N_age
+  pars2$np_I_delay=nd2*N_age
+  pars2$E_delay0=rep(0,pars2$np_E_delay)
+  pars2$I_delay0=rep(0,pars2$np_I_delay)
 
   #Check that there is no overlap between emergency campaign and other vaccination
   #(Not yet possible to adjust vaccine rates on the fly to deal with overlap)

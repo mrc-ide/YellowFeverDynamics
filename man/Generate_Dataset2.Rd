@@ -19,7 +19,7 @@ Generate_Dataset2(
   p_rep_death_sa = 1,
   mode_start = 1,
   start_SEIRV = NULL,
-  dt = 1,
+  time_inc = 1,
   n_reps = 1,
   deterministic = FALSE,
   mode_parallel = FALSE,
@@ -65,7 +65,7 @@ If mode_start=3, shift some non-vaccinated individuals into recovered to give he
 
 \item{start_SEIRV}{SEIRV data from end of a previous run to use as input (list of datasets, one per region)}
 
-\item{dt}{Time increment in days to use in model (should be either 1.0, 2.5 or 5.0 days)}
+\item{time_inc}{Time increment in days to use in model (should be either 1.0, 2.5 or 5.0 days)}
 
 \item{n_reps}{number of stochastic repetitions}
 

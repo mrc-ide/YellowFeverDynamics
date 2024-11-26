@@ -1,258 +1,103 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/404.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/A1Introduction.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/A2Installation.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleBModelRunReactive.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCModelRunSplitInfection.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleDModelRunVarFR.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleEOutbreakModelling.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/BasicModelOD.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Basic_Model_Run.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/calc_like0.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/cases_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_data_generate.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_data_generate_deterministic.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_data_generate_varFR.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_match_graphs.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/convert_model_output_combine_by_age.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/convert_model_output_tidy.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_input_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_map.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_param_labels.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/data_match_multi.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/data_match_single.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/deaths_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Delay_Model_Run_Many_Reps.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/display_multichain_progress.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/FullModelOD.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Full_Model_Run.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Full_Model_Run_Deterministic.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Full_Model_Run_VarFR.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Generate_Dataset.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_datasets_multichain.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_enviro_coeff_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_enviro_coeff_multichain.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_FOI_R0_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_FOI_R0_multichain.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_params.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_probs_multichain.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_outbreak_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_outbreak_data_multi.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Infection_Split_Model_Run.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/input_data_check.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/input_data_process.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/input_data_truncate.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/map_shapes_load.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_checks.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_FOI_R0_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_prelim_fit.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC_step.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay_Reactive.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Reactive.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Split.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_VarFR.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Versions_Run.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/outbreak_risk_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/outbreak_risk_generate.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup2.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup_react.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup_varFR.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/param_calc_enviro.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/param_prop_setup.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_mcmc_enviro_coeff_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_mcmc_FOI_R0_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_mcmc_prob_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_model_output.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Reactive_Model_Run.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_calculate.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_calculate2.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_compare.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_compare_multiparticle.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_match_graphs.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/single_like_calc.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/total_burden_estimate.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/total_burden_estimate_varFR.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/truncate_mcmc_data.html</loc>
-  </url>
-  <url>
-    <loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/YellowFeverDynamics.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/404.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/A1Introduction.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/A2Installation.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleBModelRunReactive.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCModelRunSplitInfection.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleDModelRunVarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleEOutbreakModelling.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/index.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/authors.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/index.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/LICENSE-text.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/BasicModelOD.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Basic_Model_Run.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/calc_like0.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/calc_var_epi.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/cases_compare.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_data_generate.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_data_generate_deterministic.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_data_generate_varFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/case_match_graphs.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/convert_model_output_combine_by_age.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/convert_model_output_tidy.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_input_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_map.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_param_labels.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_param_labels2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/create_param_labels_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/data_match_multi.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/data_match_single.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/deaths_compare.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Delay_Model_Run_Many_Reps.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/display_multichain_progress.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/FullModelOD.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Full_Model_Run.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Full_Model_Run_Deterministic.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Full_Model_Run_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Generate_Dataset.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Generate_Dataset2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Generate_Dataset_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_datasets_multichain.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_enviro_coeff_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_enviro_coeff_multichain.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_FOI_R0_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_FOI_R0_multichain.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_params.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_mcmc_probs_multichain.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_outbreak_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/get_outbreak_data_multi.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/index.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Infection_Split_Model_Run.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/input_data_check.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/input_data_process.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/input_data_truncate.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/map_shapes_load.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_checks.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_checks2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_checks_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_FOI_R0_setup.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_FOI_R0_setup2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_prelim_fit.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_prelim_fit2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/mcmc_prelim_fit_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC_step.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay_Reactive.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Reactive.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Split.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Versions_Run.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/outbreak_risk_compare.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/outbreak_risk_generate.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup_react.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/parameter_setup_varFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/param_calc_enviro.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/param_calc_enviro2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/param_prop_setup.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_mcmc_enviro_coeff_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_mcmc_FOI_R0_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_mcmc_prob_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/plot_model_output.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Reactive_Model_Run.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_calculate.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_calculate2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_compare.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_compare_multiparticle.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/sero_match_graphs.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/single_like_calc.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/single_posterior_calc2.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/single_posterior_calc_VarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/total_burden_estimate.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/total_burden_estimate_varFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/truncate_mcmc_data.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/YellowFeverDynamics.html</loc></url>
 </urlset>
+

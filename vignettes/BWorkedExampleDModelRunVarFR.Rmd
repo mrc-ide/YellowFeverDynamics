@@ -32,6 +32,8 @@ FOI_spillover <- rep(1.0e-8, length(input_data$years_labels)-1)
 R0 <- rep(1.5, length(input_data$years_labels)-1)
 # Year(s) for which data is to be output
 years_data <- c(2010:2018)
+#TBA
+output_type <- "full"
 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
 # used here and hence set to NULL)
 start_SEIRV <- NULL           
@@ -51,7 +53,7 @@ mode_start <- 1
 # successfully providing immunity (i.e. moving vaccinated individual to group V)
 vaccine_efficacy <- 1.0       
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
-dt <- 1.0            
+time_inc <- 1.0            
 # Number of particles to run
 n_particles <- 1
 # Number of threads to run
@@ -59,14 +61,16 @@ n_threads <- 1
 # True/false flag indicating whether or not to run model in deterministic mode
 # (so that binomial calculations give average instead of randomized output)
 deterministic <- FALSE
+#TBA
+mode_time=1
 ```
 
 We run Model_Run_VarFR() as shown:
 
 ```{r,eval=FALSE}
 test1 <- Model_Run_VarFR(FOI_spillover, R0, vacc_data, pop_data, years_data,
-                   start_SEIRV, year0, mode_start, vaccine_efficacy, 
-                   dt, n_particles, n_threads, deterministic)
+                   start_SEIRV, output_type, year0, mode_start, vaccine_efficacy, 
+                   time_inc, n_particles, n_threads, deterministic, mode_time)
 ```
 
 As with YEP::Model_Run(), we can plot the output:

@@ -19,10 +19,10 @@ This worked example demonstrates how to set up and run the reactive version of t
 The inputs for the Model_Run_Reactive() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that (as with the other alternate versions in this package) there is no variable output type - the function always outputs detailed SEIRV data for every time point and age group (equivalent to setting output_type="full" in Model_Run()). There are also several additional inputs governing the detection of a significant yellow fever outbreak and the resulting response.
 
 ```{r,eval=FALSE}
-#library(YellowFeverDynamics)
+library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
-                                   "/inst/exdata/input_data_example.Rds", sep = ""))
-vacc_data <- input_data$vacc_data[1, , ]
+                                   "/exdata/input_data_example.Rds", sep = ""))
+vacc_data <- input_data$vacc_data[1, , ]*0
 pop_data <- input_data$pop_data[1, , ]  
 # Force of infection due to spillover from sylvatic reservoir
 FOI_spillover <- 1.0e-7 
@@ -49,7 +49,7 @@ mode_start <- 1
 # successfully providing immunity (i.e. moving vaccinated individual to group V)
 vaccine_efficacy <- 1.0       
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
-dt <- 1.0            
+time_inc <- 1.0            
 # Number of particles to run
 n_particles <- 1
 # Number of threads to run
@@ -67,8 +67,8 @@ p_rep <- c(1,1)
 case_threshold <- 1.0
 # Threshold current infectious fraction to trigger emergency conditions
 cluster_threshold <- Inf
-# Vaccination rate by age group during emergency vaccination campaign
-vacc_rate_cam <- c(0,rep(0.01,60),rep(0,40))
+# Vaccination coverage by age group of emergency vaccination campaign
+vacc_cov_cam <- c(0,rep(0.8,60),rep(0,40))
 # Duration in days of emergency vaccination campaign
 t_cam <- 60
 ```
@@ -77,9 +77,9 @@ We run Model_Run_Reactive() as shown:
 
 ```{r,eval=FALSE}
 test1 <- Model_Run_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
-                   start_SEIRV, year0, mode_start, vaccine_efficacy, dt, 
+                   start_SEIRV, year0, mode_start, vaccine_efficacy, time_inc, 
                    n_particles, n_threads, deterministic, response_delay, p_rep, 
-                   case_threshold, cluster_threshold, vacc_rate_cam, t_cam)
+                   case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
 ```
 
 As with YEP::Model_Run(), we can plot the output, including the application of the emergency vaccination campaign when the first case is reported:
@@ -94,7 +94,7 @@ An alternative version of the reactive model exists which combines emergency res
 
 ```{r,eval=FALSE}
 test2 <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
-                   start_SEIRV, year0, mode_start, vaccine_efficacy, dt, 
+                   start_SEIRV, year0, mode_start, vaccine_efficacy, time_inc, 
                    n_particles, n_threads, deterministic, response_delay, p_rep, 
-                   case_threshold, cluster_threshold, vacc_rate_cam, t_cam)
+                   case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
 ```

@@ -26,7 +26,7 @@ positives}
 deaths}
 
 \item{consts}{= List of constant parameters/flags/etc. loaded to mcmc() (type,
-mode_start,prior_settings,dt,n_reps,enviro_data,R0_fixed_values,p_severe_inf,
+mode_start,prior_settings,time_inc,n_reps,enviro_data,R0_fixed_values,p_severe_inf,
 p_death_severe_inf,add_values list,extra_estimated_params,deterministic, mode_parallel, cluster)}
 }
 \description{

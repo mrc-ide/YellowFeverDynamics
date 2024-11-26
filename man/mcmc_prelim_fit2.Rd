@@ -16,7 +16,7 @@ mcmc_prelim_fit2(
   obs_case_data = list(),
   mode_start = 0,
   prior_settings = list(type = "zero"),
-  dt = 1,
+  time_inc = 1,
   n_reps = 1,
   enviro_data = NULL,
   R0_fixed_values = c(),
@@ -60,7 +60,7 @@ If mode_start = 3, shift some non-vaccinated individuals into recovered to give 
 
 \item{prior_settings}{TBA}
 
-\item{dt}{time increment in days (must be 1 or 5)}
+\item{time_inc}{time increment in days (must be 1 or 5)}
 
 \item{n_reps}{Number of repetitions}
 

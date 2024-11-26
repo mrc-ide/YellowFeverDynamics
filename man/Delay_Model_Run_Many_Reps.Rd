@@ -15,7 +15,7 @@ Delay_Model_Run_Many_Reps(
   year0 = 1940,
   mode_start = 0,
   vaccine_efficacy = 1,
-  dt = 1,
+  time_inc = 1,
   n_reps = 1,
   division = 10
 )
@@ -50,7 +50,7 @@ If mode_start=2, use SEIRV input in list from previous run(s)}
 
 \item{vaccine_efficacy}{Proportional vaccine efficacy}
 
-\item{dt}{Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)}
+\item{time_inc}{Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)}
 
 \item{n_reps}{Number of repetitions (used to set number of particles and threads)}
 
