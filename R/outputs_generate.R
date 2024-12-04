@@ -30,7 +30,7 @@
 #' @param n_reps number of stochastic repetitions
 #' @param deterministic TRUE/FALSE - set model to run in deterministic mode if TRUE
 #' @param mode_time Type of time dependence of FOI_spillover and R0 to be used: If mode_time=0, no time
-#'   variation (identical to Model_Run())
+#'   variation
 #'   If mode_time=1, FOI/R0 vary annually without seasonality (number of values = number of years to consider)
 #'   If mode_time=2, FOI/R0 vary with monthly seasonality without inter-annual variation (number of values = 12)
 #'   If mode_time=3, FOI/R0 vary with daily seasonality without inter-annual variation (number of values = 365/time_inc)
@@ -47,6 +47,7 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
                                    vaccine_efficacy = 1.0, p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe = 1.0,
                                    p_rep_death = 1.0,mode_start = 1,start_SEIRV = NULL, time_inc = 1.0,n_reps = 1, deterministic = FALSE,
                                    mode_time = 1, mode_parallel = FALSE, cluster = NULL, output_frame=FALSE){
+
 
   assert_that(input_data_check(input_data),msg=paste("Input data must be in standard format",
                                                      " (see https://mrc-ide.github.io/YEP/articles/CGuideAInputs.html)"))
@@ -124,12 +125,12 @@ Generate_Dataset_VarFR <- function(input_data = list(),FOI_values = c(),R0_value
       years_data_sets[[n_region]]=c(year_data_begin[n_region]:year_end[n_region])
     }
     if(is.null(start_SEIRV)){start_SEIRV=rep(NA,n_regions)}
-    model_output_all=clusterMap(cl = cluster,fun = Model_Run, FOI_spillover = FOI_values, R0 = R0_values,
+    model_output_all=clusterMap(cl = cluster,fun = Model_Run_Var_FR, FOI_spillover = FOI_values, R0 = R0_values,
                                 vacc_data = vacc_data_subsets,pop_data = pop_data_subsets,
                                 years_data = years_data_sets, start_SEIRV = start_SEIRV, output_type = output_types,
                                 MoreArgs=list(year0 = input_data$years_labels[1],mode_start = mode_start,
                                               vaccine_efficacy = vaccine_efficacy, time_inc = time_inc, n_particles = n_reps,
-                                              n_threads = 1 ,deterministic = deterministic))
+                                              n_threads = 1 ,deterministic = deterministic, mode_time = mode_time))
   }
 
   #Save relevant output data from each region

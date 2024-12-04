@@ -560,7 +560,8 @@ mcmc_prelim_fit_VarFR <- function(n_iterations = 1, n_param_sets = 1, n_bounds =
 #'
 #' @export
 #'
-create_param_labels_VarFR <- function(enviro_data_const = NULL, enviro_data_var=list(), extra_estimated_params = c("vacc_eff")){
+create_param_labels_VarFR <- function(enviro_data_const = NULL, enviro_data_var=list(),
+                                      extra_estimated_params = c("vacc_eff")){
 
   #TODO - Assert_that functions
 
