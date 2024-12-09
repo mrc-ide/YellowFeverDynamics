@@ -1,0 +1,97 @@
+---
+title: "Worked Example 4 - Detailed Outbreak Modelling"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Worked Example 4 - Detailed Outbreak Modelling}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This worked example demonstrates how the package can be used to model yellow fever outbreaks in detail, with outputs including outbreak dates, numbers of reported cases, and actual numbers of severe and fatal infections during the outbreak period. See [Worked Example 2 - Outbreak Risk Calculation]() in the documentation for the YEP package for a description of how annual outbreak risk can be estimated by running the standard version of the model for a large number of repetitions and assessing whether any cases are reported in a given year for each repetition.
+
+An "outbreak" is defined as taking place whenever a case of yellow fever is reported, and lasts as long as the time interval between new reported cases remains less than a defined number of days. Note that for a high yellow fever burden and/or reporting rate, modelled cases may appear continuously rather than being divided into discrete outbreaks; the methods described here are aimed primarily at modelling situations where reported cases are relatively rare and can be divided into discrete outbreaks.
+
+The reporting of yellow fever cases is governed by the probability of an infection which causes severe but non-fatal symptoms being reported (p_rep_severe) and the probability of a fatal infection being reported (p_rep_death). It is assumed that infections not leading to severe or fatal symptoms are not reported. The proportion of infections which cause severe symptoms is given by the quantity p_severe_inf, and the proportion of severe infections which lead to death is given by the quantity p_death_severe_inf. These have values of 0.12 and 0.39 respectively within the package, based on [Servadio et al](https://doi.org/10.1186/s12879-021-06535-4).
+
+As described elsewhere, we obtain data on the number of new infectious individuals (C) at each time point during a modelled period from the results of running one of the versions of the model; in the example below, the standard version of the model is run using the YEP::Model_Run() function.
+
+```{r,eval=FALSE}
+set.seed(1)
+#library(YellowFeverDynamics)
+input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
+                                   "/inst/exdata/input_data_example.Rds", sep = ""))
+model_data <- YEP::Model_Run(FOI_spillover = 1.0e-8, R0 = 1.0, vacc_data = input_data$vacc_data[1,,], 
+                             pop_data = input_data$pop_data[1,,], years_data = c(1990:2000),
+                             start_SEIRV = NULL, output_type = "case_alt2", year0 = input_data$years_labels[1], 
+                             mode_start = 1, vaccine_efficacy = 1.0, time_inc = 1.0, 
+                             n_particles = 5, n_threads = 1, deterministic = FALSE)
+```
+
+We process results using the get_outbreak_data() function to produce information on all outbreaks and reported cases during the modelled time period.
+
+```{r,eval=FALSE}
+# Vector of data points showing number of new cases at each time point
+case_data = model_data$C[1,]
+# Matching vector indicating the year for each time point
+year_data = model_data$year
+# Probability of an infection causing severe symptoms
+p_severe_inf = 0.12
+# Probability of a severe infection causing death
+p_death_severe_inf = 0.39
+# Probability of a case with severe but non-fatal symptoms being reported
+p_rep_severe = 0.1 
+# Probability of a fatal case being reported
+p_rep_death = 0.2 
+# Maximum number of days between reported cases permitted before outbreak declared over
+max_case_interval=10
+outbreak_data <- get_outbreak_data(case_data,year_data,p_severe_inf, p_death_severe_inf,
+                                   p_rep_severe,p_rep_death,max_case_interval, 
+                                   flag_additional_output = TRUE)
+```
+
+By default, get_outbreak_data() produces a list containing the number of outbreaks by year (annual_outbreaks), binary data showing whether or not one or more outbreaks (annual_occurrence), data on each individual outbreak (outbreak_list - number of reported cases and deaths, actual number of severe infections and deaths, start and end days and years).
+
+```{r,eval=FALSE}
+outbreak_data$outbreak_list
+```
+
+If flag_additional_output is set to TRUE, get_outbreak_data() outputs additional information summarizing annual reported cases and deaths (rep_annual) and severe infections, deaths, reported cases and reported deaths for each time point (rep_pts):
+
+```{r,eval=FALSE}
+outbreak_data$rep_annual
+```
+
+```{r,eval=FALSE}
+head(outbreak_data$rep_pts,10)
+```
+
+The get_outbreak_data() function accepts a single set of infection data; if working with an output dataset containing multiple particles, the get_outbreak_data_multi() function can be used to streamline the extraction of data on outbreaks over all the particles.
+
+```{r,eval=FALSE}
+outbreak_data_multi <- get_outbreak_data_multi(model_data$C,year_data,p_severe_inf, p_death_severe_inf,
+                                   p_rep_severe,p_rep_death,max_case_interval)
+```
+
+The outbreak_data_multi() function outputs a list of outbreaks giving the repetition for which each occurred:
+
+```{r,eval=FALSE}
+head(outbreak_data_multi$outbreak_list_all,10)
+```
+It also outputs a 2-dimensional array of the number of annual outbreaks across all repetitions (dimensions = number of repetitions * number of years):
+
+```{r,eval=FALSE}
+outbreak_data_multi$annual_outbreaks_all
+```
+
+It also outputs a list of values of the probability of one or more outbreaks in each year, based on the results:
+
+```{r,eval=FALSE}
+outbreak_data_multi$annual_outbreak_probs
+```

@@ -1,5 +1,5 @@
 # SEIRV model with functionality to split infections into sylvatic and urban
-
+# TODO - adjust for time varying FOI/R0
 
 
 

@@ -1,5 +1,5 @@
 # SEIRV model with rates of E->I and I->R transfer replaced by fixed delay time
-
+# TODO - adjust for time varying FOI/R0
 
 
 

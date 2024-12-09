@@ -1,5 +1,5 @@
-# SEIRV model with reactive functionality using delay approach (TBA)
-
+# SEIRV model with reactive functionality using delay approach
+# TODO - adjust for time varying FOI/R0
 
 
 

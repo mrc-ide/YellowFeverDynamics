@@ -76,7 +76,7 @@ t_cam <- 60
 We run Model_Run_Reactive() as shown:
 
 ```{r,eval=FALSE}
-test1 <- Model_Run_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
+test1 <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
                    start_SEIRV, year0, mode_start, vaccine_efficacy, time_inc, 
                    n_particles, n_threads, deterministic, response_delay, p_rep, 
                    case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
