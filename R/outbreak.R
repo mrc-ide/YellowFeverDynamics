@@ -4,7 +4,7 @@
 #'
 #' @description Generate outbreak data from model output
 #'
-#' @details Takes in case (infection) data output by Full_Model_OD() or case_data_generate(), uses severe and fatal
+#' @details Takes in case (infection) data output by YEP::Model_Run(), uses severe and fatal
 #' infection rates and reporting probabilities to calculate the number of reported cases, and outputs a list of
 #' reported outbreaks. An outbreak is assumed to be reported when one or more cases is reported, and continues until
 #' no new cases have been reported for 10 days.
@@ -107,7 +107,7 @@ get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, 
 #'
 #' @details [TBA]
 #'
-#' @param case_data Vector of cases by time point and repetition summed over age
+#' @param case_data Array of cases by time point and repetition summed over age
 #' @param years_data Vector of year values corresponding to case data
 #' @param p_severe_inf Probability of an infection being severe
 #' @param p_death_severe_inf Probability of a severe infection resulting in death
@@ -117,7 +117,7 @@ get_outbreak_data <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, 
 #'
 #' @export
 #'
-get_outbreak_data_multi <- function(case_data=c(),years_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
+get_outbreak_data_multi <- function(case_data=list(),years_data=c(),p_severe_inf = 0.12, p_death_severe_inf = 0.39, p_rep_severe=1.0,p_rep_death=1.0,
                               max_case_interval=10){
   assert_that(length(dim(case_data))==2)
   #TODO - Additional assert_that functions

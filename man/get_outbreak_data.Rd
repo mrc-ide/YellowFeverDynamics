@@ -36,7 +36,7 @@ get_outbreak_data(
 Generate outbreak data from model output
 }
 \details{
-Takes in case (infection) data output by Full_Model_OD() or case_data_generate(), uses severe and fatal
+Takes in case (infection) data output by YEP::Model_Run(), uses severe and fatal
 infection rates and reporting probabilities to calculate the number of reported cases, and outputs a list of
 reported outbreaks. An outbreak is assumed to be reported when one or more cases is reported, and continues until
 no new cases have been reported for 10 days.

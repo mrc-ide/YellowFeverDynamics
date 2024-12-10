@@ -5,7 +5,7 @@
 \title{get_outbreak_data_multi}
 \usage{
 get_outbreak_data_multi(
-  case_data = c(),
+  case_data = list(),
   years_data = c(),
   p_severe_inf = 0.12,
   p_death_severe_inf = 0.39,
@@ -15,7 +15,7 @@ get_outbreak_data_multi(
 )
 }
 \arguments{
-\item{case_data}{Vector of cases by time point and repetition summed over age}
+\item{case_data}{Array of cases by time point and repetition summed over age}
 
 \item{years_data}{Vector of year values corresponding to case data}
 
