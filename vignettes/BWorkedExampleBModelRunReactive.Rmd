@@ -41,7 +41,7 @@ year0 <- input_data$years_labels[1]
 # vaccination
 # If mode_start = 0, only vaccinated individuals are immune (R = 0)
 # If mode_start = 1, shift some non-vaccinated individuals into recovered to 
-# give herd immunity (R = 1 - 1/R0)
+# give herd immunity (stratified by age)
 # If mode_start = 2, use SEIRV input in list from previous run(s), set using
 # start_SEIRV variable
 mode_start <- 1  

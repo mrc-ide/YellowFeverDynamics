@@ -21,9 +21,10 @@ Model_Run_Split(
 )
 }
 \arguments{
-\item{FOI_spillover}{Force of infection due to spillover from sylvatic reservoir}
+\item{FOI_spillover}{Vector of values of force of infection due to spillover from sylvatic reservoir
+(size depends on mode_time)}
 
-\item{R0}{Basic reproduction number for urban spread of infection}
+\item{R0}{Vector of values of basic reproduction number for urban spread of infection (size depends on mode_time)}
 
 \item{vacc_data}{Projected vaccination-based immunity (assuming vaccine_efficacy=1) by age group and year}
 
@@ -35,10 +36,10 @@ Model_Run_Split(
 
 \item{year0}{First year in population/vaccination data}
 
-\item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination
-If mode_start=0, only vaccinated individuals
-If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-If mode_start=2, use SEIRV input in list from previous run(s)}
+\item{mode_start}{Flag indicating how to set initial population immunity level in addition to vaccination \cr
+If mode_start = 0, only vaccinated individuals \cr
+If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (stratified by age) \cr
+If mode_start = 2, use SEIRV input in list from previous run(s) \cr}
 
 \item{vaccine_efficacy}{Proportional vaccine efficacy}
 
