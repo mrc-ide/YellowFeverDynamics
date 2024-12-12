@@ -12,8 +12,8 @@ update(day) <- day + time_inc
 t_incubation <- parameter() #Length in days of yellow fever incubation period in mosquito vectors
 t_latent <- parameter() #Length in days of latent period in humans exposed to yellow dever
 t_infectious <- parameter() #Length of infectious period in humans with yellow fever
-FOI_spillover <- parameter() #Spillover force of infection (per day)
-R0 <- parameter() #Basic reproduction number for human-human transmission
+FOI_spillover <- parameter() #Spillover force of infection (per day) at each time point
+R0 <- parameter() #Basic reproduction number for human-human transmission at each time point
 N_age <- parameter() #Number of age categories
 vacc_rate_daily <- parameter() #Daily rate of vaccination by age and year
 vaccine_efficacy <- parameter() #Proportion of vaccinations which successfully protect the recipient
@@ -36,7 +36,7 @@ V_0 <- parameter() #Vaccinated population by age group at start
 dP1_all <- parameter() #Daily increase in number of people by age group (people arriving in group due to age etc.)
 dP2_all <- parameter() #Daily decrease in number of people by age group (people leaving group due to age etc.)
 n_years <- parameter() #Number of years for which model to be run
-
+n_t_pts <- parameter() #Total number of time points
 Pmin <- 1.0e-99 #Minimum population setting to avoid negative numbers
 FOI_max <- 1.0 #Upper threshold for total force of infection to avoid more infections than people in a group
 rate1 <- time_inc/(t_incubation+t_latent)
@@ -46,8 +46,9 @@ rate2 <- time_inc/t_infectious
 
 
 
-beta <- (R0*time_inc)/t_infectious #Daily exposure rate
-FOI_sylv_cur <- min(FOI_max,FOI_spillover*time_inc)
+t_pt <- day/time_inc #Number of time points passed
+beta <- (R0[t_pt]*time_inc)/t_infectious #Daily exposure rate
+FOI_sylv_cur <- min(FOI_max,FOI_spillover[t_pt]*time_inc)
 FOI_urb_cur <- min(FOI_max,beta*((sum(I_sylv)+sum(I_urb))/P_tot))
 year_i <- floor(day/365)+1 #Number of years since start, as integer
 
@@ -98,8 +99,8 @@ update(C_sylv[1:N_age]) <- I_new_sylv[i]
 update(C_urb[1:N_age]) <- I_new_urb[i]
 
 #Initial values-----------------------------------------------------------------
-initial(year) <- year0-1
-initial(FOI_sylv) <- FOI_spillover
+initial(year) <- year0
+initial(FOI_sylv) <- FOI_spillover[1]
 initial(FOI_urb) <- 0
 
 
@@ -151,6 +152,8 @@ dim(V_0) <- N_age
 dim(dP1_all) <- c(N_age, n_years)
 dim(dP2_all) <- c(N_age, n_years)
 dim(vacc_rate_daily) <- c(N_age, n_years)
+dim(FOI_spillover) <- n_t_pts
+dim(R0) <- n_t_pts
 
 
 

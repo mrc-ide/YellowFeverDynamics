@@ -29,7 +29,7 @@
 #'   positives
 #' @param obs_case_data Annual reported case/death data for comparison, by region and year, in format no.
 #'   cases/no. deaths
-#' @param filename_prefix Prefix of names for output files; function outputs a CSV file every 10,000 iterations with a
+#' @param filename_prefix Prefix of names for output files; function outputs a CSV file every 10, 000 iterations with a
 #'   name in the format: "(filename_prefix)XX.csv", e.g. Chain00.csv
 #' @param Niter Total number of iterations to run
 #' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination \cr
@@ -90,7 +90,7 @@ MCMC2 <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NUL
 
   assert_that(is.logical(deterministic))
   assert_that(mode_start %in% c(0, 1, 3), msg = "mode_start must have value 0, 1 or 3")
-  assert_that(all(c("p_rep_severe_af","p_rep_severe_sa","p_rep_death_af","p_rep_death_sa") %in% names(add_values)),
+  assert_that(all(c("p_rep_severe_af", "p_rep_severe_sa", "p_rep_death_af", "p_rep_death_sa") %in% names(add_values)),
               msg = "Reporting probabilities required for case data")
 
   #Process input data to check that all regions with sero and/or case data supplied are present, remove
@@ -105,7 +105,7 @@ MCMC2 <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NUL
   assert_that(enviro_data_var_check(enviro_data_var))
   assert_that(all(regions %in% enviro_data_var$regions),
               msg = "Time-variant environmental data must be available for all regions in observed data")
-  enviro_data_var = enviro_data_var_truncate(enviro_data_var,regions)
+  enviro_data_var = enviro_data_var_truncate(enviro_data_var, regions)
 
   #Get names of additional parameters to be estimated
   extra_estimated_params = c()
@@ -127,7 +127,7 @@ MCMC2 <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NUL
   #Designate constant and variable covariates
   const_covars = colnames(enviro_data_const)[c(2:ncol(enviro_data_const))]
   var_covars = enviro_data_var$env_vars
-  covar_names = c(const_covars,var_covars)
+  covar_names = c(const_covars, var_covars)
   n_env_vars = length(covar_names)
   i_FOI_const = c(1:n_env_vars)[covar_names %in% const_covars]
   i_FOI_var = c(1:n_env_vars)[covar_names %in% var_covars]
@@ -152,7 +152,7 @@ MCMC2 <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NUL
 
     #Calculate likelihood using single_posterior_calc2 function
     posterior_value_prop = single_posterior_calc2(log_params_prop, input_data, obs_sero_data, obs_case_data,
-                                                 mode_start = mode_start,prior_settings = prior_settings,time_inc = time_inc,
+                                                 mode_start = mode_start, prior_settings = prior_settings, time_inc = time_inc,
                                                  n_reps = n_reps, enviro_data_const = enviro_data_const,
                                                  enviro_data_var = enviro_data_var, p_severe_inf = p_severe_inf,
                                                  p_death_severe_inf = p_death_severe_inf, add_values = add_values,
@@ -196,14 +196,14 @@ MCMC2 <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NUL
       colnames(chain_cov_all) = "chain_cov_all"
     }
 
-    #Output chain to file every 10 iterations; start new file every 10,000 iterations
+    #Output chain to file every 10 iterations; start new file every 10, 000 iterations
     if (iter %% 10 == 0){
       if (iter %% 10000 == 10){fileIndex = (iter-10)/10000}
-      if(fileIndex >=  10){fn = paste0(filename_prefix,fileIndex,".csv")}else{fn = paste0(filename_prefix,"0",fileIndex,".csv")}
+      if(fileIndex >=  10){fn = paste0(filename_prefix, fileIndex, ".csv")}else{fn = paste0(filename_prefix, "0", fileIndex, ".csv")}
       if(file.exists(fn) == FALSE){file.create(fn)}
       lines = min(((fileIndex*10000) + 1), iter):iter
 
-      data_out <- cbind(posterior_current, posterior_prop, exp(chain), flag_accept, exp(chain_prop), chain_cov_all)[lines,]
+      data_out <- cbind(posterior_current, posterior_prop, exp(chain), flag_accept, exp(chain_prop), chain_cov_all)[lines, ]
       if(fileAccess(fn, 2) == 0){write.csv(data_out, fn, row.names = FALSE)}
     }
 
@@ -241,7 +241,7 @@ MCMC2 <- function(log_params_ini = c(), input_data = list(), obs_sero_data = NUL
 #'
 #' @export
 #'
-single_posterior_calc2 <- function(log_params_prop = c(),input_data = list(),obs_sero_data = NULL,obs_case_data = NULL,...){
+single_posterior_calc2 <- function(log_params_prop = c(), input_data = list(), obs_sero_data = NULL, obs_case_data = NULL, ...){
 
   consts = list(...)
 
@@ -288,13 +288,13 @@ single_posterior_calc2 <- function(log_params_prop = c(),input_data = list(),obs
 
     FOI_values = epi_param_calc(coeffs_const = exp(log_params_prop[consts$i_FOI_const]),
                               coeffs_var = exp(log_params_prop[consts$i_FOI_var]),
-                              enviro_data_const = consts$enviro_data_const,enviro_data_var = consts$enviro_data_var)
+                              enviro_data_const = consts$enviro_data_const, enviro_data_var = consts$enviro_data_var)
     R0_values = epi_param_calc(coeffs_const = exp(log_params_prop[consts$i_R0_const]),
                              coeffs_var = exp(log_params_prop[consts$i_R0_var]),
-                             enviro_data_const = consts$enviro_data_const,enviro_data_var = consts$enviro_data_var)
+                             enviro_data_const = consts$enviro_data_const, enviro_data_var = consts$enviro_data_var)
 
     for(n_region in 1:n_regions){
-      if(substr(regions[n_region],1,3) == "BRA"){FOI_values[n_region] = FOI_values[n_region]*m_FOI_Brazil}
+      if(substr(regions[n_region], 1, 3) == "BRA"){FOI_values[n_region] = FOI_values[n_region]*m_FOI_Brazil}
       }
     if(consts$prior_settings$type == "norm"){
       prior_like = prior_like  +
@@ -310,10 +310,10 @@ single_posterior_calc2 <- function(log_params_prop = c(),input_data = list(),obs
 
     #Generate modelled data over all regions
     dataset <- Generate_Dataset2(FOI_values, R0_values, input_data, obs_sero_data, obs_case_data, vaccine_efficacy,
-                                consts$time_inc,consts$mode_start, start_SEIRV = NULL, consts$mode_time, consts$n_reps,
+                                consts$time_inc, consts$mode_start, start_SEIRV = NULL, consts$mode_time, consts$n_reps,
                                 consts$deterministic, consts$p_severe_inf, consts$p_death_severe_inf,
                                 p_rep_severe_af, p_rep_severe_sa, p_rep_death_af, p_rep_death_sa,
-                                consts$mode_parallel, consts$cluster,output_frame = FALSE)
+                                consts$mode_parallel, consts$cluster, output_frame = FALSE)
 
     #Likelihood of observing serological data
     if(is.null(obs_sero_data) == FALSE){
@@ -426,7 +426,7 @@ mcmc_prelim_fit2 <- function(n_iterations = 1, n_param_sets = 1, n_bounds = 1, l
   #Designate constant and variable covariates
   const_covars = colnames(enviro_data_const)[c(2:ncol(enviro_data_const))]
   var_covars = enviro_data_var$env_vars
-  covar_names = c(const_covars,var_covars)
+  covar_names = c(const_covars, var_covars)
   n_env_vars = length(covar_names)
   i_FOI_const = c(1:n_env_vars)[covar_names %in% const_covars]
   i_FOI_var = c(1:n_env_vars)[covar_names %in% var_covars]
@@ -454,7 +454,7 @@ mcmc_prelim_fit2 <- function(n_iterations = 1, n_param_sets = 1, n_bounds = 1, l
 
       names(log_params_prop) = param_names
       posterior_value = single_posterior_calc2(log_params_prop, input_data, obs_sero_data, obs_case_data,
-                                              mode_start = mode_start,prior_settings = prior_settings,time_inc = time_inc,
+                                              mode_start = mode_start, prior_settings = prior_settings, time_inc = time_inc,
                                               n_reps = n_reps,
                                               enviro_data_const = enviro_data_const, enviro_data_var = enviro_data_var,
                                               p_severe_inf = p_severe_inf, p_death_severe_inf = p_death_severe_inf,
@@ -518,7 +518,7 @@ create_param_labels <- function(enviro_data_const = NULL, enviro_data_var = list
   #TODO - Assert_that functions
 
   if(is.null(extra_estimated_params)){n_extra = 0}else{n_extra = length(extra_estimated_params)}
-  covar_names = c(names(enviro_data_const[c(2:ncol(enviro_data_const))]),enviro_data_var$env_vars) #TBC
+  covar_names = c(names(enviro_data_const[c(2:ncol(enviro_data_const))]), enviro_data_var$env_vars) #TBC
   n_env_vars = length(covar_names)
   n_params = (2*n_env_vars)+n_extra
   param_names = rep("", n_params)
@@ -578,82 +578,82 @@ create_param_labels <- function(enviro_data_const = NULL, enviro_data_var = list
 #' '
 #' @export
 #'
-Generate_Dataset2 <- function(FOI_values = c(),R0_values = c(),input_data = list(),sero_template = NULL,case_template = NULL,
+Generate_Dataset2 <- function(FOI_values = c(), R0_values = c(), input_data = list(), sero_template = NULL, case_template = NULL,
                               vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = NULL, mode_time = 0,
-                              n_reps = 1,deterministic = FALSE, p_severe_inf = 0.12, p_death_severe_inf = 0.39,
-                              p_rep_severe_af = 1.0,p_rep_severe_sa = 1.0,p_rep_death_af = 1.0,p_rep_death_sa = 1.0,
-                              mode_parallel = FALSE,cluster = NULL,output_frame = FALSE){
+                              n_reps = 1, deterministic = FALSE, p_severe_inf = 0.12, p_death_severe_inf = 0.39,
+                              p_rep_severe_af = 1.0, p_rep_severe_sa = 1.0, p_rep_death_af = 1.0, p_rep_death_sa = 1.0,
+                              mode_parallel = FALSE, cluster = NULL, output_frame = FALSE){
 
-  assert_that(input_data_check(input_data),msg = paste("Input data must be in standard format",
+  assert_that(input_data_check(input_data), msg = paste("Input data must be in standard format",
                                                        " (see https://mrc-ide.github.io/YEP/articles/CGuideAInputs.html)"))
-  assert_that(any(is.null(sero_template) == FALSE,is.null(case_template) == FALSE),msg = "Need at least one template")
+  assert_that(any(is.null(sero_template) == FALSE, is.null(case_template) == FALSE), msg = "Need at least one template")
   if(is.null(sero_template) == FALSE){
-    assert_that(all(c("region","year","age_min","age_max","samples","vc_factor") %in% names(sero_template)))
+    assert_that(all(c("region", "year", "age_min", "age_max", "samples", "vc_factor") %in% names(sero_template)))
   }
   if(is.null(case_template) == FALSE){
-    assert_that(all(c("region","year") %in% names(case_template)))
-    assert_that(p_severe_inf >= 0.0 && p_severe_inf <= 1.0,msg = "Severe infection rate must be between 0-1")
+    assert_that(all(c("region", "year") %in% names(case_template)))
+    assert_that(p_severe_inf >= 0.0 && p_severe_inf <= 1.0, msg = "Severe infection rate must be between 0-1")
     assert_that(p_death_severe_inf >= 0.0 && p_death_severe_inf <= 1.0,
                 msg = "Fatality rate of severe infections must be between 0-1")
-    assert_that(p_rep_severe_af >= 0.0 && p_rep_severe_af <= 1.0,msg = "Severe infection reporting probability must be between 0-1")
-    assert_that(p_rep_severe_sa >= 0.0 && p_rep_severe_sa <= 1.0,msg = "Severe infection reporting probability must be between 0-1")
-    assert_that(p_rep_death_af >= 0.0 && p_rep_death_af <= 1.0,msg = "Fatal infection reporting probability must be between 0-1")
-    assert_that(p_rep_death_sa >= 0.0 && p_rep_death_sa <= 1.0,msg = "Fatal infection reporting probability must be between 0-1")
+    assert_that(p_rep_severe_af >= 0.0 && p_rep_severe_af <= 1.0, msg = "Severe infection reporting probability must be between 0-1")
+    assert_that(p_rep_severe_sa >= 0.0 && p_rep_severe_sa <= 1.0, msg = "Severe infection reporting probability must be between 0-1")
+    assert_that(p_rep_death_af >= 0.0 && p_rep_death_af <= 1.0, msg = "Fatal infection reporting probability must be between 0-1")
+    assert_that(p_rep_death_sa >= 0.0 && p_rep_death_sa <= 1.0, msg = "Fatal infection reporting probability must be between 0-1")
   }
   assert_that(is.logical(mode_parallel))
   if(mode_parallel){assert_that(is.null(cluster) == FALSE)}
 
   #Prune input data based on regions
-  regions = regions_breakdown(c(sero_template$region,case_template$region))
-  input_data = input_data_truncate(input_data,regions)
+  regions = regions_breakdown(c(sero_template$region, case_template$region))
+  input_data = input_data_truncate(input_data, regions)
   n_regions = length(input_data$region_labels)
 
   #Cross-reference templates with input regions
   if(is.null(sero_template) == FALSE){
-    xref_sero = template_region_xref(sero_template,input_data$region_labels)
+    xref_sero = template_region_xref(sero_template, input_data$region_labels)
     sero_line_list = xref_sero$line_list
   } else {
-    xref_sero = data.frame(year_data_begin = rep(Inf,n_regions),year_end = rep(-Inf,n_regions))
-    sero_line_list = rep(NA,n_regions)
+    xref_sero = data.frame(year_data_begin = rep(Inf, n_regions), year_end = rep(-Inf, n_regions))
+    sero_line_list = rep(NA, n_regions)
   }
   if(is.null(case_template) == FALSE){
-    xref_case = template_region_xref(case_template,input_data$region_labels)
+    xref_case = template_region_xref(case_template, input_data$region_labels)
     case_line_list = xref_case$line_list
   } else {
-    xref_case = data.frame(year_data_begin = rep(Inf,n_regions),year_end = rep(-Inf,n_regions))
-    case_line_list = rep(NA,n_regions)
+    xref_case = data.frame(year_data_begin = rep(Inf, n_regions), year_end = rep(-Inf, n_regions))
+    case_line_list = rep(NA, n_regions)
   }
-  year_data_begin = year_end = rep(NA,length(input_data$region_labels))
+  year_data_begin = year_end = rep(NA, length(input_data$region_labels))
   for(i in 1:length(year_data_begin)){
-    year_data_begin[i] = min(xref_sero$year_data_begin[i],xref_case$year_data_begin[i])
-    year_end[i] = max(xref_sero$year_end[i],xref_case$year_end[i])
+    year_data_begin[i] = min(xref_sero$year_data_begin[i], xref_case$year_data_begin[i])
+    year_end[i] = max(xref_sero$year_end[i], xref_case$year_end[i])
   }
 
-  assert_that(length(dim(FOI_values)) == 2,msg = "FOI_values must be 2-D array")
-  assert_that(length(dim(R0_values)) == 2,msg = "R0_values must be 2-D array")
-  assert_that(dim(FOI_values)[1] == n_regions,msg = "1st dimension of FOI_values must match number of regions to be modelled")
-  assert_that(dim(R0_values)[1] == n_regions,msg = "1st dimension of R0_values must match number of regions to be modelled")
+  assert_that(length(dim(FOI_values)) == 2, msg = "FOI_values must be 2-D array")
+  assert_that(length(dim(R0_values)) == 2, msg = "R0_values must be 2-D array")
+  assert_that(dim(FOI_values)[1] == n_regions, msg = "1st dimension of FOI_values must match number of regions to be modelled")
+  assert_that(dim(R0_values)[1] == n_regions, msg = "1st dimension of R0_values must match number of regions to be modelled")
   if(mode_start == 2){assert_that(length(start_SEIRV) == n_regions,
                                   msg = "Number of start_SEIRV datasets must match number of regions")}
 
   #Set up data structures to take modelled data corresponding to observed data
   if(is.null(sero_template)){model_sero_data = NULL} else {
-    blank = rep(0,nrow(sero_template))
-    model_sero_data = data.frame(samples = blank,positives = blank,sero = blank)
+    blank = rep(0, nrow(sero_template))
+    model_sero_data = data.frame(samples = blank, positives = blank, sero = blank)
   }
   if(is.null(case_template)){
     model_case_values = model_death_values = NA
   } else {
-    model_case_values = model_death_values = rep(0,nrow(case_template))
-    country_list_af=c("AGO","BDI","BEN","BFA","CAF","CIV","CMR","COD","COG","ERI","ETH","GAB","GHA","GIN","GMB","GNB","GNQ",
-                      "KEN","LBR","MLI","MRT","NER","NGA","RWA","SDN","SEN","SLE","SOM","SSD","TCD","TGO","TZA","UGA","ZMB")
-    country_list_sa=c("ARG","BOL","BRA","COL","ECU","GUF","GUY","PER","PRY","SUR","VEN")
-    countries=substr(regions,1,3)
-    assert_that(all(countries %in% c(country_list_af,country_list_sa)))
+    model_case_values = model_death_values = rep(0, nrow(case_template))
+    country_list_af=c("AGO", "BDI", "BEN", "BFA", "CAF", "CIV", "CMR", "COD", "COG", "ERI", "ETH", "GAB", "GHA", "GIN", "GMB", "GNB", "GNQ",
+                      "KEN", "LBR", "MLI", "MRT", "NER", "NGA", "RWA", "SDN", "SEN", "SLE", "SOM", "SSD", "TCD", "TGO", "TZA", "UGA", "ZMB")
+    country_list_sa=c("ARG", "BOL", "BRA", "COL", "ECU", "GUF", "GUY", "PER", "PRY", "SUR", "VEN")
+    countries=substr(regions, 1, 3)
+    assert_that(all(countries %in% c(country_list_af, country_list_sa)))
   }
 
   #Set up vector of output types to get from model
-  output_types = rep(NA,n_regions)
+  output_types = rep(NA, n_regions)
   for(n_region in 1:n_regions){
     if(is.na(case_line_list[[n_region]][1]) == FALSE){
       if(is.na(sero_line_list[[n_region]][1]) == FALSE){ output_types[n_region] = "case+sero"}else{output_types[n_region] = "case"}
@@ -665,17 +665,17 @@ Generate_Dataset2 <- function(FOI_values = c(),R0_values = c(),input_data = list
   if(mode_parallel){
     vacc_data_subsets = pop_data_subsets = years_data_sets = list() #TODO - change input data?
     for(n_region in 1:n_regions){
-      vacc_data_subsets[[n_region]] = input_data$vacc_data[n_region,,]
-      pop_data_subsets[[n_region]] = input_data$pop_data[n_region,,]
+      vacc_data_subsets[[n_region]] = input_data$vacc_data[n_region, , ]
+      pop_data_subsets[[n_region]] = input_data$pop_data[n_region, , ]
       years_data_sets[[n_region]] = c(year_data_begin[n_region]:year_end[n_region])
     }
-    if(is.null(start_SEIRV)){start_SEIRV = rep(NA,n_regions)}
-    model_output_all = clusterMap(cl = cluster,fun = Model_Run, FOI_spillover = FOI_values, R0 = R0_values,
-                                  vacc_data = vacc_data_subsets,pop_data = pop_data_subsets,
+    if(is.null(start_SEIRV)){start_SEIRV = rep(NA, n_regions)}
+    model_output_all = clusterMap(cl = cluster, fun = Model_Run, FOI_spillover = FOI_values, R0 = R0_values,
+                                  vacc_data = vacc_data_subsets, pop_data = pop_data_subsets,
                                   years_data = years_data_sets, start_SEIRV = start_SEIRV, output_type = output_types,
-                                  MoreArgs = list(year0 = input_data$years_labels[1],vaccine_efficacy = vaccine_efficacy,
-                                                  time_inc = time_inc,mode_start = mode_start,mode_time = mode_time,
-                                                  n_particles = n_reps, n_threads = 1 ,deterministic = deterministic))
+                                  MoreArgs = list(year0 = input_data$years_labels[1], vaccine_efficacy = vaccine_efficacy,
+                                                  time_inc = time_inc, mode_start = mode_start, mode_time = mode_time,
+                                                  n_particles = n_reps, n_threads = 1 , deterministic = deterministic))
   }
 
   #Save relevant output data from each region
@@ -683,12 +683,12 @@ Generate_Dataset2 <- function(FOI_values = c(),R0_values = c(),input_data = list
 
     #Run model if not using parallelization
     if(mode_parallel == FALSE){
-      model_output = Model_Run(FOI_spillover = FOI_values[n_region,],R0 = R0_values[n_region,],
-                               vacc_data = input_data$vacc_data[n_region,,],pop_data = input_data$pop_data[n_region,,],
+      model_output = Model_Run(FOI_spillover = FOI_values[n_region, ], R0 = R0_values[n_region, ],
+                               vacc_data = input_data$vacc_data[n_region, , ], pop_data = input_data$pop_data[n_region, , ],
                                years_data = c(year_data_begin[n_region]:year_end[n_region]), year0 = input_data$years_labels[1],
                                vaccine_efficacy = vaccine_efficacy, time_inc = time_inc, output_type = output_types[n_region],
-                               mode_start = mode_start, start_SEIRV = start_SEIRV[[n_region]],mode_time = mode_time,
-                               n_particles = n_reps,n_threads = n_reps, deterministic = deterministic)
+                               mode_start = mode_start, start_SEIRV = start_SEIRV[[n_region]], mode_time = mode_time,
+                               n_particles = n_reps, n_threads = n_reps, deterministic = deterministic)
     } else {
       model_output = model_output_all[[n_region]]
     }
@@ -709,20 +709,20 @@ Generate_Dataset2 <- function(FOI_values = c(),R0_values = c(),input_data = list
       n_lines = length(case_line_list_region)
 
       for(n_rep in 1:n_reps){
-        rep_cases = rep_deaths = rep(0,n_lines)
+        rep_cases = rep_deaths = rep(0, n_lines)
         for(n_line in 1:n_lines){
           pts = c(1:t_pts)[model_output$year == years_case[n_line]]
-          infs = sum(model_output$C[n_rep,pts])
+          infs = sum(model_output$C[n_rep, pts])
           if(deterministic){
             severe_infs = floor(infs)*p_severe_inf
             deaths = severe_infs*p_death_severe_inf
             rep_deaths[n_line] = round(deaths*p_rep_death)
             rep_cases[n_line] = rep_deaths[n_line]+round((severe_infs-deaths)*p_rep_severe)
           } else {
-            severe_infs = rbinom(1,floor(infs),p_severe_inf)
-            deaths = rbinom(1,severe_infs,p_death_severe_inf)
-            rep_deaths[n_line] = rbinom(1,deaths,p_rep_death)
-            rep_cases[n_line] = rep_deaths[n_line]+rbinom(1,floor(severe_infs-deaths),p_rep_severe)
+            severe_infs = rbinom(1, floor(infs), p_severe_inf)
+            deaths = rbinom(1, severe_infs, p_death_severe_inf)
+            rep_deaths[n_line] = rbinom(1, deaths, p_rep_death)
+            rep_cases[n_line] = rep_deaths[n_line]+rbinom(1, floor(severe_infs-deaths), p_rep_severe)
           }
         }
         model_case_values[case_line_list_region] = model_case_values[case_line_list_region]+rep_cases
@@ -734,7 +734,7 @@ Generate_Dataset2 <- function(FOI_values = c(),R0_values = c(),input_data = list
     if(is.na(sero_line_list[[n_region]][1]) == FALSE){
       sero_line_list_region = sero_line_list[[n_region]]
       for(n_rep in 1:n_reps){
-        sero_results = sero_calculate2(sero_template[sero_line_list_region,],model_output,n_rep)
+        sero_results = sero_calculate2(sero_template[sero_line_list_region, ], model_output, n_rep)
         model_sero_data$samples[sero_line_list_region] = model_sero_data$samples[sero_line_list_region]+sero_results$samples
         model_sero_data$positives[sero_line_list_region] = model_sero_data$positives[sero_line_list_region] +
           sero_results$positives
@@ -749,14 +749,14 @@ Generate_Dataset2 <- function(FOI_values = c(),R0_values = c(),input_data = list
   }
 
   if(output_frame) { #Output complete frames of data
-    return(list(model_sero_data = data.frame(region = sero_template$region,year = sero_template$year,
-                                             age_min = sero_template$age_min,age_max = sero_template$age_max,
+    return(list(model_sero_data = data.frame(region = sero_template$region, year = sero_template$year,
+                                             age_min = sero_template$age_min, age_max = sero_template$age_max,
                                              samples = sero_template$samples,
                                              positives = sero_template$samples*model_sero_data$sero),
-                model_case_data = data.frame(region = case_template$region,year = case_template$year,
-                                             cases = model_case_values,deaths = model_death_values)))
+                model_case_data = data.frame(region = case_template$region, year = case_template$year,
+                                             cases = model_case_values, deaths = model_death_values)))
   } else { #Minimal output for MCMC
-    return(list(model_sero_values = model_sero_data$sero,model_case_values = model_case_values,
+    return(list(model_sero_values = model_sero_data$sero, model_case_values = model_case_values,
                 model_death_values = model_death_values))
   }
 }

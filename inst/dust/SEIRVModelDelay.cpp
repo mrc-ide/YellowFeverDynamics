@@ -4,8 +4,8 @@
 // [[dust2::time_type(discrete)]]
 // [[dust2::parameter(time_inc, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(t_infectious, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
-// [[dust2::parameter(FOI_spillover, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
-// [[dust2::parameter(R0, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
+// [[dust2::parameter(FOI_spillover, type = "real_type", rank = 1, required = TRUE, constant = FALSE)]]
+// [[dust2::parameter(R0, type = "real_type", rank = 1, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(N_age, type = "int", rank = 0, required = TRUE, constant = TRUE)]]
 // [[dust2::parameter(vacc_rate_daily, type = "real_type", rank = 2, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(vaccine_efficacy, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
@@ -20,6 +20,7 @@
 // [[dust2::parameter(dP1_all, type = "real_type", rank = 2, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(dP2_all, type = "real_type", rank = 2, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(n_years, type = "int", rank = 0, required = TRUE, constant = TRUE)]]
+// [[dust2::parameter(n_t_pts, type = "int", rank = 0, required = TRUE, constant = TRUE)]]
 // [[dust2::parameter(np_E_delay, type = "int", rank = 0, required = TRUE, constant = TRUE)]]
 // [[dust2::parameter(np_I_delay, type = "int", rank = 0, required = TRUE, constant = TRUE)]]
 class SEIRVModelDelay {
@@ -65,22 +66,24 @@ public:
       dust2::array::dimensions<2> dP1_all;
       dust2::array::dimensions<2> dP2_all;
       dust2::array::dimensions<2> vacc_rate_daily;
+      dust2::array::dimensions<1> FOI_spillover;
+      dust2::array::dimensions<1> R0;
     } dim;
     real_type time_inc;
     real_type t_infectious;
-    real_type FOI_spillover;
-    real_type R0;
     int N_age;
     real_type vaccine_efficacy;
     real_type year0;
     int n_years;
+    int n_t_pts;
     real_type Pmin;
     real_type FOI_max;
     int np_E_delay;
     int np_I_delay;
     real_type di1;
     real_type di2;
-    real_type beta;
+    std::vector<real_type> FOI_spillover;
+    std::vector<real_type> R0;
     std::vector<real_type> vacc_rate_daily;
     std::vector<real_type> S_0;
     std::vector<real_type> E_0;
@@ -112,19 +115,17 @@ public:
     shared_state::dim_type dim;
     const real_type time_inc = dust2::r::read_real(parameters, "time_inc");
     const real_type t_infectious = dust2::r::read_real(parameters, "t_infectious");
-    const real_type FOI_spillover = dust2::r::read_real(parameters, "FOI_spillover");
-    const real_type R0 = dust2::r::read_real(parameters, "R0");
     const int N_age = dust2::r::read_int(parameters, "N_age");
     const real_type vaccine_efficacy = dust2::r::read_real(parameters, "vaccine_efficacy");
     const real_type year0 = dust2::r::read_real(parameters, "year0");
     const int n_years = dust2::r::read_int(parameters, "n_years");
+    const int n_t_pts = dust2::r::read_int(parameters, "n_t_pts");
     const real_type Pmin = static_cast<real_type>(1e-99);
     const real_type FOI_max = 1;
     const int np_E_delay = dust2::r::read_int(parameters, "np_E_delay");
     const int np_I_delay = dust2::r::read_int(parameters, "np_I_delay");
     const real_type di1 = np_E_delay - N_age;
     const real_type di2 = np_I_delay - N_age;
-    const real_type beta = (R0 * time_inc) / t_infectious;
     dim.S.set({static_cast<size_t>(N_age)});
     dim.E.set({static_cast<size_t>(N_age)});
     dim.E_delay.set({static_cast<size_t>(np_E_delay)});
@@ -153,6 +154,12 @@ public:
     dim.dP1_all.set({static_cast<size_t>(N_age), static_cast<size_t>(n_years)});
     dim.dP2_all.set({static_cast<size_t>(N_age), static_cast<size_t>(n_years)});
     dim.vacc_rate_daily.set({static_cast<size_t>(N_age), static_cast<size_t>(n_years)});
+    dim.FOI_spillover.set({static_cast<size_t>(n_t_pts)});
+    dim.R0.set({static_cast<size_t>(n_t_pts)});
+    std::vector<real_type> FOI_spillover(dim.FOI_spillover.size);
+    dust2::r::read_real_array(parameters, dim.FOI_spillover, FOI_spillover.data(), "FOI_spillover", true);
+    std::vector<real_type> R0(dim.R0.size);
+    dust2::r::read_real_array(parameters, dim.R0, R0.data(), "R0", true);
     std::vector<real_type> vacc_rate_daily(dim.vacc_rate_daily.size);
     dust2::r::read_real_array(parameters, dim.vacc_rate_daily, vacc_rate_daily.data(), "vacc_rate_daily", true);
     std::vector<real_type> S_0(dim.S_0.size);
@@ -188,7 +195,7 @@ public:
       {"C", std::vector<size_t>(dim.C.dim.begin(), dim.C.dim.end())}
     };
     odin.packing.state.copy_offset(odin.offset.state.begin());
-    return shared_state{odin, dim, time_inc, t_infectious, FOI_spillover, R0, N_age, vaccine_efficacy, year0, n_years, Pmin, FOI_max, np_E_delay, np_I_delay, di1, di2, beta, vacc_rate_daily, S_0, E_0, E_delay0, I_0, I_delay0, R_0, V_0, dP1_all, dP2_all};
+    return shared_state{odin, dim, time_inc, t_infectious, N_age, vaccine_efficacy, year0, n_years, n_t_pts, Pmin, FOI_max, np_E_delay, np_I_delay, di1, di2, FOI_spillover, R0, vacc_rate_daily, S_0, E_0, E_delay0, I_0, I_delay0, R_0, V_0, dP1_all, dP2_all};
   }
   static internal_state build_internal(const shared_state& shared) {
     std::vector<real_type> I_new(shared.dim.I_new.size);
@@ -206,11 +213,10 @@ public:
   static void update_shared(cpp11::list parameters, shared_state& shared) {
     shared.time_inc = dust2::r::read_real(parameters, "time_inc", shared.time_inc);
     shared.t_infectious = dust2::r::read_real(parameters, "t_infectious", shared.t_infectious);
-    shared.FOI_spillover = dust2::r::read_real(parameters, "FOI_spillover", shared.FOI_spillover);
-    shared.R0 = dust2::r::read_real(parameters, "R0", shared.R0);
     shared.vaccine_efficacy = dust2::r::read_real(parameters, "vaccine_efficacy", shared.vaccine_efficacy);
     shared.year0 = dust2::r::read_real(parameters, "year0", shared.year0);
-    shared.beta = (shared.R0 * shared.time_inc) / shared.t_infectious;
+    dust2::r::read_real_array(parameters, shared.dim.FOI_spillover, shared.FOI_spillover.data(), "FOI_spillover", false);
+    dust2::r::read_real_array(parameters, shared.dim.R0, shared.R0.data(), "R0", false);
     dust2::r::read_real_array(parameters, shared.dim.vacc_rate_daily, shared.vacc_rate_daily.data(), "vacc_rate_daily", false);
     dust2::r::read_real_array(parameters, shared.dim.S_0, shared.S_0.data(), "S_0", false);
     dust2::r::read_real_array(parameters, shared.dim.E_0, shared.E_0.data(), "E_0", false);
@@ -226,8 +232,8 @@ public:
   }
   static void initial(real_type time, const shared_state& shared, internal_state& internal, rng_state_type& rng_state, real_type* state) {
     state[0] = shared.time_inc;
-    state[1] = shared.year0 - 1;
-    state[2] = shared.FOI_spillover;
+    state[1] = shared.year0;
+    state[2] = shared.FOI_spillover[0];
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
       state[i - 1 + 3] = shared.S_0[i - 1];
     }
@@ -263,6 +269,7 @@ public:
     const auto * R = state + shared.odin.offset.state[8];
     const auto * V = state + shared.odin.offset.state[9];
     const real_type year_i = monty::math::floor(day / 365) + 1;
+    const real_type t_pt = day / shared.time_inc;
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
       internal.I_new[i - 1] = E_delay[static_cast<int>(i + shared.di1) - 1];
     }
@@ -272,6 +279,7 @@ public:
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
       internal.P_nV[i - 1] = S[i - 1] + R[i - 1];
     }
+    const real_type beta = (shared.R0[t_pt - 1] * shared.time_inc) / shared.t_infectious;
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
       internal.dP1[i - 1] = shared.dP1_all[i - 1 + (year_i - 1) * shared.dim.dP1_all.mult[1]] * shared.time_inc;
     }
@@ -291,7 +299,7 @@ public:
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
       internal.vacc_rate[i - 1] = shared.vacc_rate_daily[i - 1 + (year_i - 1) * shared.dim.vacc_rate_daily.mult[1]] * shared.vaccine_efficacy * shared.time_inc * internal.P[i - 1];
     }
-    const real_type FOI_sum = monty::math::min(shared.FOI_max, shared.beta * (dust2::array::sum<real_type>(I, shared.dim.I) / P_tot) + (shared.FOI_spillover * shared.time_inc));
+    const real_type FOI_sum = monty::math::min(shared.FOI_max, beta * (dust2::array::sum<real_type>(I, shared.dim.I) / P_tot) + (shared.FOI_spillover[t_pt - 1] * shared.time_inc));
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
       internal.E_new[i - 1] = monty::random::binomial<real_type>(rng_state, static_cast<int>(S[i - 1]), FOI_sum);
     }
