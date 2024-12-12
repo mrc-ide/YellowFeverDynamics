@@ -64,8 +64,8 @@ t_infectious <- 5 #Time cases remain infectious
 #' @export
 #'
 Model_Run_Delay <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), pop_data = list(), years_data = c(1940:1941),
-                            year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(), mode_time = 0,
-                            n_particles = 1, n_threads = 1, deterministic = FALSE) {
+                            year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(),
+                            mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
   #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
@@ -264,8 +264,8 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = c(), R0 = c(), vacc_data = 
 #' @export
 #'
 Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), pop_data = list(), years_data = c(1940:1941),
-                            year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(), mode_time = 0,
-                            n_particles = 1, n_threads = 1, deterministic = FALSE) {
+                            year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(),
+                            mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
   #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
@@ -275,8 +275,9 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
   step_end = ((max(years_data) + 1 - year0) * (365/time_inc)) - 1 #Step at which to end
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
-  x <- dust_system_create(SEIRVModelSplitInfection, pars = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
-                                                                           vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time),
+  x <- dust_system_create(SEIRVModelSplitInfection,
+                          pars = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy,
+                                                 time_inc, mode_start, start_SEIRV, mode_time),
                           n_particles = n_particles, n_threads = n_threads, time = 0, dt = 1,
                           deterministic = deterministic, preserve_particle_dimension = TRUE)
   index = dust_unpack_index(x)
@@ -284,8 +285,9 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
   x_res <- dust_system_simulate(x, c(step_begin:step_end))
 
   dimensions = c(N_age, n_particles, t_pts_out)
-  output_data = list(day = x_res[1, 1, ], year = x_res[2, 1, ], FOI_sylvatic = array(x_res[3, , ]/time_inc, dim = c(n_particles, t_pts_out)),
-                   FOI_urban = array(x_res[4, , ]/time_inc, dim = c(n_particles, t_pts_out)))
+  output_data = list(day = x_res[1, 1, ], year = x_res[2, 1, ],
+                     FOI_sylvatic = array(x_res[3, , ]/time_inc, dim = c(n_particles, t_pts_out)),
+                     FOI_urban = array(x_res[4, , ]/time_inc, dim = c(n_particles, t_pts_out)))
   output_data$S = array(x_res[index$S, , ], dim = dimensions)
   output_data$E_sylvatic = array(x_res[index$E_sylvatic, , ], dim = dimensions)
   output_data$E_urban = array(x_res[index$E_urban, , ], dim = dimensions)
@@ -307,8 +309,6 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
 #' for one region over a specified time period for a number of repetitions and outputs time-dependent SEIRV
 #' values, infection numbers and/or total force of infection values. Variation of Model_Run_Delay() used for
 #' running a large number of repetitions (>20).
-#'
-#' #TODO: Harmonize order of variables between model running, dataset generation, and MCMC functions
 #'
 #' @param FOI_spillover Vector of values of force of infection due to spillover from sylvatic reservoir
 #'   (size depends on mode_time)
@@ -337,9 +337,10 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
 #' '
 #' @export
 #'
-Model_Run_Delay_Many_Reps <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), pop_data = list(), years_data = c(1940:1941),
-                                      year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(), mode_time = 0,
-                                      n_reps = 1, division = 10, deterministic = FALSE) {
+Model_Run_Delay_Many_Reps <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), pop_data = list(),
+                                      years_data = c(1940:1941), year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0,
+                                      mode_start = 1, start_SEIRV = list(), mode_time = 0, n_reps = 1, division = 10,
+                                      deterministic = FALSE) {
 
   assert_that(division <=   20, msg = "Number of particles run at once must be 20 or less")
   n_particles0 = min(division, n_reps)
@@ -372,7 +373,7 @@ Model_Run_Delay_Many_Reps <- function(FOI_spillover = c(), R0 = c(), vacc_data =
   for(div in 1:n_divs){
     n_particles = n_particles_list[div]
 
-    x <- dust_system_create(SEIRV_ModelDelay, pars = pars, n_particles = n_particles, n_threads = n_threads, time = 0, dt = 1,
+    x <- dust_system_create(SEIRVModelDelay, pars = pars, n_particles = n_particles, n_threads = n_threads, time = 0, dt = 1,
                             deterministic = FALSE, preserve_particle_dimension = TRUE)
     dust_system_set_state_initial(x)
     x_res <- dust_system_simulate(x, times = c(step_begin:step_end))
@@ -400,4 +401,75 @@ Model_Run_Delay_Many_Reps <- function(FOI_spillover = c(), R0 = c(), vacc_data =
   }
 
   return(output_data)
+}
+#-------------------------------------------------------------------------------
+#' @title Model_Versions_Run
+#'
+#' @description TBA
+#'
+#' @details TBA
+#'
+#' @param version Model version to use; choose from "Basic", "Delay", "Reactive" or "Split"
+#' @param FOI_spillover Vector of values of force of infection due to spillover from sylvatic reservoir
+#'   (size depends on mode_time)
+#' @param R0 Vector of values of basic reproduction number for urban spread of infection (size depends on mode_time)
+#' @param vacc_data Projected vaccination-based immunity (assuming vaccine_efficacy = 1) by age group and year
+#' @param pop_data Population by age group and year
+#' @param years_data Incremental vector of years denoting years for which to save data
+#' @param year0 First year in population/vaccination data
+#' @param vaccine_efficacy Proportional vaccine efficacy
+#' @param time_inc Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
+#' @param mode_start Flag indicating how to set initial population immunity level in addition to vaccination \cr
+#'  If mode_start = 0, only vaccinated individuals \cr
+#'  If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (stratified by age) \cr
+#'  If mode_start = 2, use SEIRV input in list from previous run(s) \cr
+#' @param start_SEIRV SEIRV data from end of a previous run to use as input (if mode_start = 2)
+#' @param mode_time Type of time dependence of FOI_spillover and R0 to be used: \cr
+#'  If mode_time = 0, no time variation (constant values)\cr
+#'  If mode_time = 1, FOI/R0 vary annually without seasonality (number of values = number of years to consider) \cr
+#'  If mode_time = 2, FOI/R0 vary with monthly seasonality without inter - annual variation (number of values = 12) \cr
+#'  If mode_time = 3, FOI/R0 vary with daily seasonality without inter - annual variation (number of values = 365/dt) \cr
+#'  If mode_time = 4, FOI/R0 vary annually with monthly seasonality (number of values = 12 * number of years to consider) \cr
+#'  If mode_time = 5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt) * number of years to consider)
+#' @param n_particles number of particles to use
+#' @param n_threads number of threads to use
+#' @param deterministic TRUE/FALSE  -  set model to run in deterministic mode if TRUE
+#' @param response_delay (Reactive version only) Delay time in days between a threshold being reached and emergency conditions
+#'   coming into effect
+#' @param p_rep (Reactive version only) Probabilities of an infection being reported as a case before emergency conditions triggered
+#'   (1st value) or after emergency conditions triggered (2nd value)
+#' @param case_threshold (Reactive version only) Threshold total no. reported cases to trigger emergency conditions
+#' @param cluster_threshold (Reactive version only) Threshold current infectious fraction to trigger emergency conditions
+#' @param vacc_cov_cam (Reactive version only) Target vaccination coverage by age group during emergency campaign
+#' @param t_cam (Reactive version only) Duration in days of emergency vaccination campaign
+#' '
+#' @export
+#'
+Model_Versions_Run <- function(version = "Basic", FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), pop_data = list(),
+                               years_data = c(1940:1941), year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0,
+                               mode_start = 0, start_SEIRV = list(), mode_time = 0, n_particles = 1, n_threads = 1,
+                               deterministic = FALSE, response_delay = 56.0, p_rep = c(0.0, 0.0), case_threshold = Inf,
+                               cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0){
+
+  assert_that(version %in% c("Basic", "Delay", "Reactive", "Split"))
+
+  if(version=="Basic"){
+    output <- YEP::Model_Run(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy, time_inc,
+                             output_type = "full", mode_start, start_SEIRV, mode_time, n_particles, n_threads, deterministic)
+  }
+  if(version=="Delay"){
+    output <- Model_Run_Delay(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy, time_inc,
+                              mode_start, start_SEIRV, mode_time, n_particles, n_threads, deterministic)
+  }
+  if(version=="Reactive"){
+    output <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy, time_inc,
+                                       mode_start, start_SEIRV, mode_time, n_particles, n_threads, deterministic,
+                                       response_delay, p_rep, case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
+  }
+  if(version=="Split"){
+    output <- Model_Run_Split(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy, time_inc,
+                              mode_start, start_SEIRV, mode_time, n_particles, n_threads, deterministic)
+  }
+
+  return(output)
 }

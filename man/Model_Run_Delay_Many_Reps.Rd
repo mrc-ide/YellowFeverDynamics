@@ -69,6 +69,4 @@ Accepts epidemiological + population parameters and model settings; runs delay v
 for one region over a specified time period for a number of repetitions and outputs time-dependent SEIRV
 values, infection numbers and/or total force of infection values. Variation of Model_Run_Delay() used for
 running a large number of repetitions (>20).
-
-#TODO: Harmonize order of variables between model running, dataset generation, and MCMC functions
 }
