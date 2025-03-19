@@ -32,30 +32,32 @@ FOI_spillover <- 1.0e-8
 R0 <- 1.5             
 # Year(s) for which data is to be output
 years_data <- c(2000)
-# SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
-# used here and hence set to NULL)
-start_SEIRV <- NULL           
 # First year in population/vaccination data (here taken from the input data set; 
 # if the population and vaccination data is set manually, this similarly needs 
 # to be set manually)
 year0 <- input_data$years_labels[1]
-# Flag indicating how to set initial population immunity level in addition to
-# vaccination
-# If mode_start = 0, only vaccinated individuals are immune (R = 0)
-# If mode_start = 1, shift some non-vaccinated individuals into recovered to 
-# give herd immunity (stratified by age)
-# If mode_start = 2, use SEIRV input in list from previous run(s), set using
-# start_SEIRV variable
-mode_start <- 1  
 # Proportional vaccine efficacy (from 0 to 1); probability of vaccination 
 # successfully providing immunity (i.e. moving vaccinated individual to group V)
-vaccine_efficacy <- 1.0       
+vaccine_efficacy <- 1.0      
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
-dt <- 1.0            
+time_inc <- 1.0     
+# Type of data to output
+#'   "full" = SEIRVC + FOI for all steps and ages
+#'   "case" = annual total new infections (C) summed across all ages
+#'   "sero" = annual SEIRV
+#'   "case+sero" = annual SEIRVC, cases summed across all ages
+#'   "case_alt" = annual total new infections not combined by age
+#'   "case_alt2" = total new infections combined by age for all steps
+mode_start <- 1           
+# SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
+# used here and hence set to NULL)
+start_SEIRV <- NULL   
+# Type of time variation of FOI_spillover and R0; here set to 0 for constant values
+mode_time <- 0
 # Number of particles to run
 n_particles <- 10     
 # Number of threads to run
-n_threads <- 1  
+n_threads <- 1   
 # True/false flag indicating whether or not to run model in deterministic mode
 # (so that binomial calculations give average instead of randomized output)
 deterministic <- FALSE
@@ -64,9 +66,9 @@ deterministic <- FALSE
 We run Model_Run_Split() as shown:
 
 ```{r,eval=FALSE}
-test1 <- Model_Run_Split(FOI_spillover, R0, vacc_data, pop_data, years_data,
-                   start_SEIRV, year0, mode_start, vaccine_efficacy, 
-                   dt, n_particles, n_threads, deterministic)
+test1 <- Model_Run_Split(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+                         vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time, 
+                         n_particles, n_threads, deterministic)
 ```
 
 As with YEP::Model_Run(), we can plot the output:

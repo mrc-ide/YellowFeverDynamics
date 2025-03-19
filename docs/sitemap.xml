@@ -6,6 +6,7 @@
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleBModelRunReactive.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleCModelRunSplitInfection.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleDModelRunVarFR.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleDOutbreakModelling.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleEOutbreakModelling.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/articles/index.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/authors.html</loc></url>
@@ -68,6 +69,7 @@
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC_step.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/MCMC_VarFR.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay.html</loc></url>
+<url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay_Many_Reps.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Delay_Reactive.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Reactive.html</loc></url>
 <url><loc>https://mrc-ide.github.io/YellowFeverDynamics/reference/Model_Run_Split.html</loc></url>

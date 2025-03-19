@@ -36,8 +36,7 @@
     <li><a class="dropdown-item" href="../articles/BWorkedExampleAModelRunDelay.html">Worked Example 1 - Running Time Delay Model</a></li>
     <li><a class="dropdown-item" href="../articles/BWorkedExampleBModelRunReactive.html">Worked Example 2 - Running Reactive Model</a></li>
     <li><a class="dropdown-item" href="../articles/BWorkedExampleCModelRunSplitInfection.html">Worked Example 3 - Running Split Infection Model</a></li>
-    <li><a class="dropdown-item" href="../articles/BWorkedExampleDModelRunVarFR.html">Worked Example 4 - Running Variable Burden Model</a></li>
-    <li><a class="dropdown-item" href="../articles/BWorkedExampleEOutbreakModelling.html">Worked Example 5 - Detailed Outbreak Modelling</a></li>
+    <li><a class="dropdown-item" href="../articles/BWorkedExampleDOutbreakModelling.html">Worked Example 4 - Detailed Outbreak Modelling</a></li>
   </ul>
 </li>
       </ul>
@@ -93,32 +92,34 @@ always outputs detailed SEIRV data for every time point and age group
 <span>                                   <span class="st">"/exdata/input_data_example.Rds"</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span>  </span>
-<span><span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
-<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-8</span>             </span>
-<span><span class="co"># Basic reproduction number for urban spread of infection</span></span>
-<span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">1.5</span>             </span>
+<span><span class="co"># Force of infection due to spillover from sylvatic reservoir (here fixed over time)</span></span>
+<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-8</span>           </span>
+<span><span class="co"># Basic reproduction number for urban spread of infection (here fixed over time)</span></span>
+<span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">1.2</span></span>
 <span><span class="co"># Year(s) for which data is to be output</span></span>
-<span><span class="va">years_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2000</span><span class="op">)</span></span>
-<span><span class="co"># SEIRV data from end of a previous run to use as input (if mode_start = 2; not </span></span>
-<span><span class="co"># used here and hence set to NULL)</span></span>
-<span><span class="va">start_SEIRV</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>           </span>
+<span><span class="va">years_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1995</span><span class="op">:</span><span class="fl">2000</span><span class="op">)</span>         </span>
 <span><span class="co"># First year in population/vaccination data (here taken from the input data set; </span></span>
 <span><span class="co"># if the population and vaccination data is set manually, this similarly needs </span></span>
 <span><span class="co"># to be set manually)</span></span>
 <span><span class="va">year0</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">years_labels</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
-<span><span class="co"># Flag indicating how to set initial population immunity level in addition to</span></span>
-<span><span class="co"># vaccination</span></span>
-<span><span class="co"># If mode_start = 0, only vaccinated individuals are immune (R = 0)</span></span>
-<span><span class="co"># If mode_start = 1, shift some non-vaccinated individuals into recovered to </span></span>
-<span><span class="co"># give herd immunity (R = 1 - 1/R0)</span></span>
-<span><span class="co"># If mode_start = 2, use SEIRV input in list from previous run(s), set using</span></span>
-<span><span class="co"># start_SEIRV variable</span></span>
-<span><span class="va">mode_start</span> <span class="op">&lt;-</span> <span class="fl">1</span>  </span>
 <span><span class="co"># Proportional vaccine efficacy (from 0 to 1); probability of vaccination </span></span>
 <span><span class="co"># successfully providing immunity (i.e. moving vaccinated individual to group V)</span></span>
-<span><span class="va">vaccine_efficacy</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>       </span>
+<span><span class="va">vaccine_efficacy</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>      </span>
 <span><span class="co"># Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)</span></span>
-<span><span class="va">time_inc</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>            </span>
+<span><span class="va">time_inc</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>     </span>
+<span><span class="co"># Type of data to output</span></span>
+<span><span class="co">#'   "full" = SEIRVC + FOI for all steps and ages</span></span>
+<span><span class="co">#'   "case" = annual total new infections (C) summed across all ages</span></span>
+<span><span class="co">#'   "sero" = annual SEIRV</span></span>
+<span><span class="co">#'   "case+sero" = annual SEIRVC, cases summed across all ages</span></span>
+<span><span class="co">#'   "case_alt" = annual total new infections not combined by age</span></span>
+<span><span class="co">#'   "case_alt2" = total new infections combined by age for all steps</span></span>
+<span><span class="va">mode_start</span> <span class="op">&lt;-</span> <span class="fl">1</span>           </span>
+<span><span class="co"># SEIRV data from end of a previous run to use as input (if mode_start = 2; not </span></span>
+<span><span class="co"># used here and hence set to NULL)</span></span>
+<span><span class="va">start_SEIRV</span> <span class="op">&lt;-</span> <span class="cn">NULL</span>   </span>
+<span><span class="co"># Type of time variation of FOI_spillover and R0; here set to 0 for constant values</span></span>
+<span><span class="va">mode_time</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="co"># Number of particles to run</span></span>
 <span><span class="va">n_particles</span> <span class="op">&lt;-</span> <span class="fl">10</span>     </span>
 <span><span class="co"># Number of threads to run</span></span>
@@ -128,9 +129,9 @@ always outputs detailed SEIRV data for every time point and age group
 <span><span class="va">deterministic</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></code></pre></div>
 <p>We run Model_Run_Delay() as shown:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Delay.html">Model_Run_Delay</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>,</span>
-<span>                   <span class="va">start_SEIRV</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">vaccine_efficacy</span>, </span>
-<span>                   <span class="va">time_inc</span>, <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Delay.html">Model_Run_Delay</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>, <span class="va">year0</span>,</span>
+<span>                         <span class="va">vaccine_efficacy</span>, <span class="va">time_inc</span>, <span class="va">mode_start</span>, <span class="va">start_SEIRV</span>, <span class="va">mode_time</span>, </span>
+<span>                         <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span><span class="op">)</span></span></code></pre></div>
 <p>As with YEP::Model_Run(), we can plot the output:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YEPaux</span><span class="op">)</span></span>

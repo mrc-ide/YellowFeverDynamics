@@ -23,8 +23,7 @@
     <li><a class="dropdown-item" href="../articles/BWorkedExampleAModelRunDelay.html">Worked Example 1 - Running Time Delay Model</a></li>
     <li><a class="dropdown-item" href="../articles/BWorkedExampleBModelRunReactive.html">Worked Example 2 - Running Reactive Model</a></li>
     <li><a class="dropdown-item" href="../articles/BWorkedExampleCModelRunSplitInfection.html">Worked Example 3 - Running Split Infection Model</a></li>
-    <li><a class="dropdown-item" href="../articles/BWorkedExampleDModelRunVarFR.html">Worked Example 4 - Running Variable Burden Model</a></li>
-    <li><a class="dropdown-item" href="../articles/BWorkedExampleEOutbreakModelling.html">Worked Example 5 - Detailed Outbreak Modelling</a></li>
+    <li><a class="dropdown-item" href="../articles/BWorkedExampleDOutbreakModelling.html">Worked Example 4 - Detailed Outbreak Modelling</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -54,11 +53,12 @@
 <span>  vacc_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  pop_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  years_data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1940</span><span class="op">:</span><span class="fl">1941</span><span class="op">)</span>,</span>
-<span>  start_SEIRV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  year0 <span class="op">=</span> <span class="fl">1940</span>,</span>
-<span>  mode_start <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  vaccine_efficacy <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  time_inc <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  mode_start <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  start_SEIRV <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mode_time <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  n_particles <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n_threads <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  deterministic <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -66,7 +66,7 @@
 <span>  p_rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  case_threshold <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  cluster_threshold <span class="op">=</span> <span class="cn">Inf</span>,</span>
-<span>  vacc_rate_cam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  vacc_cov_cam <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  t_cam <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -76,19 +76,20 @@
 
 
 <dl><dt id="arg-version">version<a class="anchor" aria-label="anchor" href="#arg-version"></a></dt>
-<dd><p>Version of model to use: "Basic", "Delay", "DelayReactive", "Reactive", "Split", "VarFR"</p></dd>
+<dd><p>Model version to use; choose from "Basic", "Delay", "Reactive" or "Split"</p></dd>
 
 
 <dt id="arg-foi-spillover">FOI_spillover<a class="anchor" aria-label="anchor" href="#arg-foi-spillover"></a></dt>
-<dd><p>Force of infection due to spillover from sylvatic reservoir (single value unless version = "VarFR")</p></dd>
+<dd><p>Vector of values of force of infection due to spillover from sylvatic reservoir
+(size depends on mode_time)</p></dd>
 
 
 <dt id="arg-r-">R0<a class="anchor" aria-label="anchor" href="#arg-r-"></a></dt>
-<dd><p>Basic reproduction number for urban spread of infection (single value unless version = "VarFR")</p></dd>
+<dd><p>Vector of values of basic reproduction number for urban spread of infection (size depends on mode_time)</p></dd>
 
 
 <dt id="arg-vacc-data">vacc_data<a class="anchor" aria-label="anchor" href="#arg-vacc-data"></a></dt>
-<dd><p>Projected vaccination-based immunity (assuming vaccine_efficacy=1) by age group and year</p></dd>
+<dd><p>Projected vaccination-based immunity (assuming vaccine_efficacy = 1) by age group and year</p></dd>
 
 
 <dt id="arg-pop-data">pop_data<a class="anchor" aria-label="anchor" href="#arg-pop-data"></a></dt>
@@ -99,20 +100,8 @@
 <dd><p>Incremental vector of years denoting years for which to save data</p></dd>
 
 
-<dt id="arg-start-seirv">start_SEIRV<a class="anchor" aria-label="anchor" href="#arg-start-seirv"></a></dt>
-<dd><p>SEIRV data from end of a previous run to use as input</p></dd>
-
-
 <dt id="arg-year-">year0<a class="anchor" aria-label="anchor" href="#arg-year-"></a></dt>
 <dd><p>First year in population/vaccination data</p></dd>
-
-
-<dt id="arg-mode-start">mode_start<a class="anchor" aria-label="anchor" href="#arg-mode-start"></a></dt>
-<dd><p>Flag indicating how to set initial population immunity level in addition to vaccination
-If mode_start=0, only vaccinated individuals
-If mode_start=1, shift some non-vaccinated individuals into recovered to give herd immunity
-If mode_start=2, use SEIRV input (including E_delay and I_delay if version = "Delay" or "DelayReactive") in list from
-previous run(s)</p></dd>
 
 
 <dt id="arg-vaccine-efficacy">vaccine_efficacy<a class="anchor" aria-label="anchor" href="#arg-vaccine-efficacy"></a></dt>
@@ -121,6 +110,27 @@ previous run(s)</p></dd>
 
 <dt id="arg-time-inc">time_inc<a class="anchor" aria-label="anchor" href="#arg-time-inc"></a></dt>
 <dd><p>Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)</p></dd>
+
+
+<dt id="arg-mode-start">mode_start<a class="anchor" aria-label="anchor" href="#arg-mode-start"></a></dt>
+<dd><p>Flag indicating how to set initial population immunity level in addition to vaccination <br>
+If mode_start = 0, only vaccinated individuals <br>
+If mode_start = 1, shift some non-vaccinated individuals into recovered to give herd immunity (stratified by age) <br>
+If mode_start = 2, use SEIRV input in list from previous run(s) <br></p></dd>
+
+
+<dt id="arg-start-seirv">start_SEIRV<a class="anchor" aria-label="anchor" href="#arg-start-seirv"></a></dt>
+<dd><p>SEIRV data from end of a previous run to use as input (if mode_start = 2)</p></dd>
+
+
+<dt id="arg-mode-time">mode_time<a class="anchor" aria-label="anchor" href="#arg-mode-time"></a></dt>
+<dd><p>Type of time dependence of FOI_spillover and R0 to be used: <br>
+If mode_time = 0, no time variation (constant values)<br>
+If mode_time = 1, FOI/R0 vary annually without seasonality (number of values = number of years to consider) <br>
+If mode_time = 2, FOI/R0 vary with monthly seasonality without inter - annual variation (number of values = 12) <br>
+If mode_time = 3, FOI/R0 vary with daily seasonality without inter - annual variation (number of values = 365/dt) <br>
+If mode_time = 4, FOI/R0 vary annually with monthly seasonality (number of values = 12 * number of years to consider) <br>
+If mode_time = 5, FOI/R0 vary annually with daily seasonality (number of values = (365/dt) * number of years to consider)</p></dd>
 
 
 <dt id="arg-n-particles">n_particles<a class="anchor" aria-label="anchor" href="#arg-n-particles"></a></dt>
@@ -132,33 +142,33 @@ previous run(s)</p></dd>
 
 
 <dt id="arg-deterministic">deterministic<a class="anchor" aria-label="anchor" href="#arg-deterministic"></a></dt>
-<dd><p>TRUE/FALSE - set model to run in deterministic mode if TRUE</p></dd>
+<dd><p>TRUE/FALSE  -  set model to run in deterministic mode if TRUE</p></dd>
 
 
 <dt id="arg-response-delay">response_delay<a class="anchor" aria-label="anchor" href="#arg-response-delay"></a></dt>
-<dd><p>(Reactive versions) Delay time in days between a threshold being reached and emergency conditions
+<dd><p>(Reactive version only) Delay time in days between a threshold being reached and emergency conditions
 coming into effect</p></dd>
 
 
 <dt id="arg-p-rep">p_rep<a class="anchor" aria-label="anchor" href="#arg-p-rep"></a></dt>
-<dd><p>(Reactive versions) Probabilities of an infection being reported as a case before emergency conditions
-triggered (1st value) or after emergency conditions triggered (2nd value)</p></dd>
+<dd><p>(Reactive version only) Probabilities of an infection being reported as a case before emergency conditions triggered
+(1st value) or after emergency conditions triggered (2nd value)</p></dd>
 
 
 <dt id="arg-case-threshold">case_threshold<a class="anchor" aria-label="anchor" href="#arg-case-threshold"></a></dt>
-<dd><p>(Reactive versions) Threshold total no. reported cases to trigger emergency conditions</p></dd>
+<dd><p>(Reactive version only) Threshold total no. reported cases to trigger emergency conditions</p></dd>
 
 
 <dt id="arg-cluster-threshold">cluster_threshold<a class="anchor" aria-label="anchor" href="#arg-cluster-threshold"></a></dt>
-<dd><p>(Reactive versions) Threshold current infectious fraction to trigger emergency conditions</p></dd>
+<dd><p>(Reactive version only) Threshold current infectious fraction to trigger emergency conditions</p></dd>
 
 
-<dt id="arg-vacc-rate-cam">vacc_rate_cam<a class="anchor" aria-label="anchor" href="#arg-vacc-rate-cam"></a></dt>
-<dd><p>(Reactive versions) Vaccination rate by age group during emergency vaccination campaign</p></dd>
+<dt id="arg-vacc-cov-cam">vacc_cov_cam<a class="anchor" aria-label="anchor" href="#arg-vacc-cov-cam"></a></dt>
+<dd><p>(Reactive version only) Target vaccination coverage by age group during emergency campaign</p></dd>
 
 
 <dt id="arg-t-cam">t_cam<a class="anchor" aria-label="anchor" href="#arg-t-cam"></a></dt>
-<dd><p>(Reactive versions) Duration in days of emergency vaccination campaign
+<dd><p>(Reactive version only) Duration in days of emergency vaccination campaign
 '</p></dd>
 
 </dl></div>

@@ -183,8 +183,9 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = c(), R0 = c(), vacc_data = 
                S_0 = pars1$S_0, E_0 = pars1$E_0, I_0 = pars1$I_0, R_0 = pars1$R_0, V_0 = pars1$V_0,
                dP1_all = pars1$dP1_all, dP2_all = pars1$dP2_all, n_years = pars1$n_years, year0 = pars1$year0,
                vaccine_efficacy = pars1$vaccine_efficacy, time_inc = pars1$time_inc, t_incubation = pars1$t_incubation,
-               t_latent = pars1$t_latent, t_infectious = pars1$t_infectious, response_delay = response_delay,
-               p_rep = p_rep, case_threshold = case_threshold, cluster_threshold = cluster_threshold)
+               t_latent = pars1$t_latent, t_infectious = pars1$t_infectious, n_t_pts = pars1$n_t_pts,
+               response_delay = response_delay, p_rep = p_rep, case_threshold = case_threshold,
+               cluster_threshold = cluster_threshold)
 
   #Carrying forward delay from previous run may cause errors
   #if(mode_start == 2){pars2$E_delay0 = start_SEIRV$E_delay} else {pars2$E_delay0 = rep(0, nd1 * N_age)}
@@ -289,18 +290,19 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
                      FOI_sylvatic = array(x_res[3, , ]/time_inc, dim = c(n_particles, t_pts_out)),
                      FOI_urban = array(x_res[4, , ]/time_inc, dim = c(n_particles, t_pts_out)))
   output_data$S = array(x_res[index$S, , ], dim = dimensions)
-  output_data$E_sylvatic = array(x_res[index$E_sylvatic, , ], dim = dimensions)
-  output_data$E_urban = array(x_res[index$E_urban, , ], dim = dimensions)
-  output_data$I_sylvatic = array(x_res[index$I_sylvatic, , ], dim = dimensions)
-  output_data$I_urban = array(x_res[index$I_urban, , ], dim = dimensions)
+  output_data$E_sylvatic = array(x_res[index$E_sylv, , ], dim = dimensions)
+  output_data$E_urban = array(x_res[index$E_urb, , ], dim = dimensions)
+  output_data$I_sylvatic = array(x_res[index$I_sylv, , ], dim = dimensions)
+  output_data$I_urban = array(x_res[index$I_urb, , ], dim = dimensions)
   output_data$R = array(x_res[index$R, , ], dim = dimensions)
   output_data$V = array(x_res[index$V, , ], dim = dimensions)
-  output_data$C_sylvatic = array(x_res[index$C_sylvatic, , ], dim = dimensions)
-  output_data$C_urban = array(x_res[index$C_urban, , ], dim = dimensions)
+  output_data$C_sylvatic = array(x_res[index$C_sylv, , ], dim = dimensions)
+  output_data$C_urban = array(x_res[index$C_urb, , ], dim = dimensions)
 
   return(output_data)
 }
 #-------------------------------------------------------------------------------
+# TODO - Adjust possible output format
 #' @title Model_Run_Delay_Many_Reps
 #'
 #' @description Run delay SEIRV model for single region for large number of repetitions

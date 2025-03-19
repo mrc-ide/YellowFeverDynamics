@@ -24,13 +24,13 @@ As described elsewhere, we obtain data on the number of new infectious individua
 
 ```{r,eval=FALSE}
 set.seed(1)
-#library(YellowFeverDynamics)
+library(YellowFeverDynamics)
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
-                                   "/inst/exdata/input_data_example.Rds", sep = ""))
+                                   "/exdata/input_data_example.Rds", sep = ""))
 model_data <- YEP::Model_Run(FOI_spillover = 1.0e-8, R0 = 1.0, vacc_data = input_data$vacc_data[1,,], 
                              pop_data = input_data$pop_data[1,,], years_data = c(1990:2000),
-                             start_SEIRV = NULL, output_type = "case_alt2", year0 = input_data$years_labels[1], 
-                             mode_start = 1, vaccine_efficacy = 1.0, time_inc = 1.0, 
+                             year0 = input_data$years_labels[1], vaccine_efficacy = 1.0, time_inc = 1.0, 
+                             output_type = "case_alt2", mode_start = 1, start_SEIRV = NULL, mode_time=0,
                              n_particles = 5, n_threads = 1, deterministic = FALSE)
 ```
 

@@ -23,8 +23,7 @@
     <li><a class="dropdown-item" href="../articles/BWorkedExampleAModelRunDelay.html">Worked Example 1 - Running Time Delay Model</a></li>
     <li><a class="dropdown-item" href="../articles/BWorkedExampleBModelRunReactive.html">Worked Example 2 - Running Reactive Model</a></li>
     <li><a class="dropdown-item" href="../articles/BWorkedExampleCModelRunSplitInfection.html">Worked Example 3 - Running Split Infection Model</a></li>
-    <li><a class="dropdown-item" href="../articles/BWorkedExampleDModelRunVarFR.html">Worked Example 4 - Running Variable Burden Model</a></li>
-    <li><a class="dropdown-item" href="../articles/BWorkedExampleEOutbreakModelling.html">Worked Example 5 - Detailed Outbreak Modelling</a></li>
+    <li><a class="dropdown-item" href="../articles/BWorkedExampleDOutbreakModelling.html">Worked Example 4 - Detailed Outbreak Modelling</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -97,7 +96,7 @@
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Takes in case (infection) data output by Full_Model_OD() or case_data_generate(), uses severe and fatal
+    <p>Takes in case (infection) data output by YEP::Model_Run(), uses severe and fatal
 infection rates and reporting probabilities to calculate the number of reported cases, and outputs a list of
 reported outbreaks. An outbreak is assumed to be reported when one or more cases is reported, and continues until
 no new cases have been reported for 10 days.</p>
