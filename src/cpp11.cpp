@@ -5,6 +5,90 @@
 #include "cpp11/declarations.hpp"
 #include <R_ext/Visibility.h>
 
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_alloc(cpp11::list r_pars, cpp11::sexp r_time, cpp11::list r_time_control, cpp11::sexp r_n_particles, cpp11::sexp r_n_groups, cpp11::sexp r_seed, cpp11::sexp r_deterministic, cpp11::sexp r_n_threads);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_alloc(SEXP r_pars, SEXP r_time, SEXP r_time_control, SEXP r_n_particles, SEXP r_n_groups, SEXP r_seed, SEXP r_deterministic, SEXP r_n_threads) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_alloc(cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_pars), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_time_control), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_particles), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_groups), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_seed), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_deterministic), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_n_threads)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_run_to_time(cpp11::sexp ptr, cpp11::sexp r_time);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_run_to_time(SEXP ptr, SEXP r_time) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_run_to_time(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_state(cpp11::sexp ptr, cpp11::sexp r_index_state, cpp11::sexp r_index_particle, cpp11::sexp r_index_group, bool preserve_particle_dimension, bool preserve_group_dimension);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_state(SEXP ptr, SEXP r_index_state, SEXP r_index_particle, SEXP r_index_group, SEXP preserve_particle_dimension, SEXP preserve_group_dimension) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_state(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index_state), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index_particle), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index_group), cpp11::as_cpp<cpp11::decay_t<bool>>(preserve_particle_dimension), cpp11::as_cpp<cpp11::decay_t<bool>>(preserve_group_dimension)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_time(cpp11::sexp ptr);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_time(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_time(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_set_state_initial(cpp11::sexp ptr);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_state_initial(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_set_state_initial(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_set_state(cpp11::sexp ptr, cpp11::list r_state);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_state(SEXP ptr, SEXP r_state) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_set_state(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(r_state)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_reorder(cpp11::sexp ptr, cpp11::integers r_index);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_reorder(SEXP ptr, SEXP r_index) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_reorder(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::integers>>(r_index)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_rng_state(cpp11::sexp ptr);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_rng_state(SEXP ptr) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_rng_state(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_set_rng_state(cpp11::sexp ptr, cpp11::sexp r_rng_state);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_rng_state(SEXP ptr, SEXP r_rng_state) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_set_rng_state(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_rng_state)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_set_time(cpp11::sexp ptr, cpp11::sexp r_time);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_time(SEXP ptr, SEXP r_time) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_set_time(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_time)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_update_pars(cpp11::sexp ptr, cpp11::list pars);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_update_pars(SEXP ptr, SEXP pars) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_update_pars(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::list>>(pars)));
+  END_CPP11
+}
+// SEIRModelVtrack.cpp
+SEXP dust2_system_SEIRModelVtrack_simulate(cpp11::sexp ptr, cpp11::sexp r_times, cpp11::sexp r_index_state, bool preserve_particle_dimension, bool preserve_group_dimension);
+extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRModelVtrack_simulate(SEXP ptr, SEXP r_times, SEXP r_index_state, SEXP preserve_particle_dimension, SEXP preserve_group_dimension) {
+  BEGIN_CPP11
+    return cpp11::as_sexp(dust2_system_SEIRModelVtrack_simulate(cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(ptr), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_times), cpp11::as_cpp<cpp11::decay_t<cpp11::sexp>>(r_index_state), cpp11::as_cpp<cpp11::decay_t<bool>>(preserve_particle_dimension), cpp11::as_cpp<cpp11::decay_t<bool>>(preserve_group_dimension)));
+  END_CPP11
+}
 // SEIRVModelDelay.cpp
 SEXP dust2_system_SEIRVModelDelay_alloc(cpp11::list r_pars, cpp11::sexp r_time, cpp11::list r_time_control, cpp11::sexp r_n_particles, cpp11::sexp r_n_groups, cpp11::sexp r_seed, cpp11::sexp r_deterministic, cpp11::sexp r_n_threads);
 extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRVModelDelay_alloc(SEXP r_pars, SEXP r_time, SEXP r_time_control, SEXP r_n_particles, SEXP r_n_groups, SEXP r_seed, SEXP r_deterministic, SEXP r_n_threads) {
@@ -260,6 +344,18 @@ extern "C" SEXP _YellowFeverDynamics_dust2_system_SEIRVModelSplitInfection_simul
 
 extern "C" {
 static const R_CallMethodDef CallEntries[] = {
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_alloc",                      (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_alloc,                      8},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_reorder",                    (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_reorder,                    2},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_rng_state",                  (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_rng_state,                  1},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_run_to_time",                (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_run_to_time,                2},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_rng_state",              (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_rng_state,              2},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_state",                  (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_state,                  2},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_state_initial",          (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_state_initial,          1},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_time",                   (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_set_time,                   2},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_simulate",                   (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_simulate,                   5},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_state",                      (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_state,                      6},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_time",                       (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_time,                       1},
+    {"_YellowFeverDynamics_dust2_system_SEIRModelVtrack_update_pars",                (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRModelVtrack_update_pars,                2},
     {"_YellowFeverDynamics_dust2_system_SEIRVModelDelayReactive_alloc",              (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRVModelDelayReactive_alloc,              8},
     {"_YellowFeverDynamics_dust2_system_SEIRVModelDelayReactive_reorder",            (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRVModelDelayReactive_reorder,            2},
     {"_YellowFeverDynamics_dust2_system_SEIRVModelDelayReactive_rng_state",          (DL_FUNC) &_YellowFeverDynamics_dust2_system_SEIRVModelDelayReactive_rng_state,          1},
