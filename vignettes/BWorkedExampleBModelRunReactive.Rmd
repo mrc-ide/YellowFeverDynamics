@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 This worked example demonstrates how to set up and run the reactive version of the standard yellow fever dynamic model presented in the [YEP package](https://mrc-ide.github.io/YEP/index.html). The reactive version differs from the standard version (which is described in [this worked example](https://mrc-ide.github.io/YEP/articles/BWorkedExampleAModelRun.html)) in including provision for an emergency response to reported cases and/or high burden levels. This version of the model can be used, for example, to evaluate the optimum emergency or preventive measures to prevent large outbreaks.
 
-The inputs for the Model_Run_Reactive() function, which runs this version of the model, are the same as for the Model_Run function in the YEP package, except that (as with the other alternate versions in this package) there is no variable output type - the function always outputs detailed SEIRV data for every time point and age group (equivalent to setting output_type="full" in Model_Run()). There are also several additional inputs governing the detection of a significant yellow fever outbreak and the resulting response.
+The inputs for the Model_Run_Delay_Reactive() function, which runs this version of the model, are the same as for the Model_Run_Delay function detailed in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html), with several additional inputs governing the detection of a significant yellow fever outbreak and the resulting response.
 
 ```{r,eval=FALSE}
 library(YellowFeverDynamics)
@@ -39,13 +39,6 @@ year0 <- input_data$years_labels[1]
 vaccine_efficacy <- 1.0      
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 time_inc <- 1.0     
-# Type of data to output
-#'   "full" = SEIRVC + FOI for all steps and ages
-#'   "case" = annual total new infections (C) summed across all ages
-#'   "sero" = annual SEIRV
-#'   "case+sero" = annual SEIRVC, cases summed across all ages
-#'   "case_alt" = annual total new infections not combined by age
-#'   "case_alt2" = total new infections combined by age for all steps
 mode_start <- 1           
 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
 # used here and hence set to NULL)
@@ -90,13 +83,4 @@ As with YEP::Model_Run(), we can plot the output, including the application of t
 library(YEPaux)
 plot <- plot_model_output(test1)
 print(plot)
-```
-
-An alternative version of the reactive model exists which combines emergency response with the time delay approach described in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html):
-
-```{r,eval=FALSE}
-test2 <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data,
-                   start_SEIRV, year0, mode_start, vaccine_efficacy, time_inc, 
-                   n_particles, n_threads, deterministic, response_delay, p_rep, 
-                   case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
 ```
