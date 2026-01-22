@@ -1,0 +1,6 @@
+To do list for YellowFeverDynamics V0.3:
+
+-Update odin models to versions of the YEP odin model
+-Update model-run R functions to fit new odin models, by copying the style of Model_Run in YEP
+-Update vignettes
+-TBC
