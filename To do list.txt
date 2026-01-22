@@ -1,0 +1,8 @@
+To do list for YellowFeverDynamics Version 0.2:
+
+(NB this version is not intended to be updated in line with YEP version 0.3, so for example the odin models should not be updated to run multiple regions at once like YEP 0.3's odin models.)
+
+-Change parameter setup to avoid conflicts with YEP versions; put a copy of the parameter setup from YEP 0.2 into main.R for YellowFeverDynamics 0.2's model-run functions to use.
+-Check for other direct dependencies on YEP and try to eliminate or fix
+-Update vignettes
+-TBA?
