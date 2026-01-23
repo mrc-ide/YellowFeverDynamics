@@ -19,9 +19,10 @@ This worked example demonstrates how to set up and run the reactive version of t
 The inputs for the Model_Run_Delay_Reactive() function, which runs this version of the model, are the same as for the Model_Run_Delay function detailed in [Worked Example 1](https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html), with several additional inputs governing the detection of a significant yellow fever outbreak and the resulting response.
 
 ```{r,eval=FALSE}
-library(YellowFeverDynamics)
+#library(YellowFeverDynamics)
+devtools::load_all()
 input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"), 
-                                   "/exdata/input_data_example.Rds", sep = ""))
+                                   "/inst/exdata/input_data_example.Rds", sep = ""))
 vacc_data <- input_data$vacc_data[1, , ]*0
 pop_data <- input_data$pop_data[1, , ]  
 # Force of infection due to spillover from sylvatic reservoir
@@ -80,7 +81,8 @@ test1 <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_
 As with YEP::Model_Run(), we can plot the output, including the application of the emergency vaccination campaign when the first case is reported:
 
 ```{r,eval=FALSE}
-library(YEPaux)
-plot <- plot_model_output(test1)
-print(plot)
+# library(YEPaux)
+# plot <- plot_model_output(test1)
+# print(plot)
+matplot(x=test1$day,y=t(test1$C_rep_total), type="l",xlab="Day",ylab="Reported cases (cumulative)")
 ```
