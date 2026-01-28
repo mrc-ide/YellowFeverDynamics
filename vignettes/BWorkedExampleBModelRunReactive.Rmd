@@ -25,7 +25,7 @@ input_data <- readRDS(file = paste(path.package("YellowFeverDynamics"),
 vacc_data <- input_data$vacc_data[1, , ]*0
 pop_data <- input_data$pop_data[1, , ]  
 # Force of infection due to spillover from sylvatic reservoir
-FOI_spillover <- 1.0e-7 
+FOI_spillover <- 1.0e-8 
 # Basic reproduction number for urban spread of infection
 R0 <- 1.0             
 # Year(s) for which data is to be output
@@ -46,7 +46,7 @@ start_SEIRV <- NULL
 # Type of time variation of FOI_spillover and R0; here set to 0 for constant values
 mode_time <- 0
 # Number of particles to run
-n_particles <- 10     
+n_particles <- 1   
 # Number of threads to run
 n_threads <- 1   
 # True/false flag indicating whether or not to run model in deterministic mode
@@ -71,16 +71,15 @@ t_cam <- 60
 We run Model_Run_Reactive() as shown:
 
 ```{r,eval=FALSE}
+set.seed(1)
 test1 <- Model_Run_Delay_Reactive(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                                   vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time, 
-                                  n_particles, n_threads, deterministic,
-                                  response_delay, p_rep, case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
+                                  n_particles, n_threads, deterministic, response_delay, p_rep,
+                                  case_threshold, cluster_threshold, vacc_cov_cam, t_cam)
 ```
 
-As with YEP::Model_Run(), we can plot the output, including the application of the emergency vaccination campaign when the first case is reported:
+We can plot the output, including the application of the emergency vaccination campaign when the first case is reported:
 
 ```{r,eval=FALSE}
-library(YEPaux)
-plot <- plot_model_output(test1)
-print(plot)
+matplot(x=test1$day,y=t(test1$C_rep_total), type="l",xlab="Day",ylab="Reported cases (cumulative)")
 ```

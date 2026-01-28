@@ -8,6 +8,7 @@ t_infectious <- 5 #Time cases remain infectious
 # The following commands ensure that package dependencies are listed in the NAMESPACE file.
 #' @useDynLib YellowFeverDynamics, .registration = TRUE
 #' @importFrom assertthat assert_that
+#' @importFrom data.table between
 #' @import dde
 #' @import dust2
 #' @importFrom graphics axis matplot par
@@ -15,11 +16,11 @@ t_infectious <- 5 #Time cases remain infectious
 #' @import odin2
 #' @import parallel
 #' @importFrom R.utils fileAccess
-#' @importFrom stats cov dexp dnbinom prop.test rbinom runif dnorm
+#' @importFrom stats cov dexp dnbinom nlm prop.test rbinom runif dnorm
 #' @importFrom tgp lhs
 #' @importFrom truncdist dtrunc
 #' @importFrom utils write.csv
-#' @import YEP
+# @import YEP
 #-------------------------------------------------------------------------------
 # unload DLL when package is unloaded
 #' @noRd
@@ -67,7 +68,7 @@ Model_Run_Delay <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
                             year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(),
                             mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
-  #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup)
+  #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup_old)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
 
   N_age = length(pop_data[1, ]) #Number of age groups
@@ -77,7 +78,7 @@ Model_Run_Delay <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
   step_end = ((max(years_data) + 1 - year0) * (365/time_inc)) - 1 #Step at which to end
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
-  pars = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+  pars = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                          vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time)
 
   #Carrying forward delay from previous run may cause errors
@@ -162,7 +163,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = c(), R0 = c(), vacc_data = 
                                      response_delay = 56.0, p_rep = c(0.0, 0.0), case_threshold = Inf,
                                      cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0) {
 
-  #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup)
+  #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup_old)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
 
   N_age = length(pop_data[1, ]) #Number of age groups
@@ -174,7 +175,7 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = c(), R0 = c(), vacc_data = 
   step_end = ((max(years_data) + 1 - year0) * (365/time_inc)) - 1 #Step at which to end
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
-  pars1 = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+  pars1 = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                           vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time)
   n_years = length(pop_data[, 1]) - 1
   inv_365 = 1.0/365.0
@@ -268,7 +269,7 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
                             year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(),
                             mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
-  #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup)
+  #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup_old)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
 
   N_age = length(pop_data[1, ]) #Number of age groups
@@ -277,7 +278,7 @@ Model_Run_Split <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
   x <- dust_system_create(SEIRVModelSplitInfection,
-                          pars = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy,
+                          pars = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy,
                                                  time_inc, mode_start, start_SEIRV, mode_time),
                           n_particles = n_particles, n_threads = n_threads, time = 0, dt = 1,
                           deterministic = deterministic, preserve_particle_dimension = TRUE)
@@ -366,7 +367,7 @@ Model_Run_Delay_Many_Reps <- function(FOI_spillover = c(), R0 = c(), vacc_data =
                      S = array(NA, dim), E = array(NA, dim), I = array(NA, dim),
                      R = array(NA, dim), V = array(NA, dim), C = array(NA, dim))
 
-  pars = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+  pars = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                          vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time)
   pars$np_E_delay = nd1 * N_age
   pars$np_I_delay = nd2 * N_age
@@ -445,7 +446,7 @@ Model_Run_VTrack <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), 
                       year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 0,
                       start_SEIRV = list(), mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE) {
 
-  #TODO Add assert_that functions (NB  -  Some checks carried out in parameter_setup)
+  #TODO Add assert_that functions (NB  -  Some checks carried out in parameter_setup_old)
   assert_that(n_particles <= 20, msg = "Number of particles must be 20 or less")
 
   N_age = length(pop_data[1, ]) #Number of age groups
@@ -453,7 +454,7 @@ Model_Run_VTrack <- function(FOI_spillover = 0.0, R0 = 1.0, vacc_data = list(), 
   step_end = ((max(years_data) + 1 - year0)*(365/time_inc)) - 1 #Step at which to end
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
-  pars = parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+  pars = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                          vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time)
   pars2=pars
   pars2$S_0=pars2$E_0=pars2$I_0=pars2$R_0=array(0,dim=c(N_age,2))
@@ -531,12 +532,8 @@ Model_Versions_Run <- function(version = "Basic", FOI_spillover = 0.0, R0 = 1.0,
                                deterministic = FALSE, response_delay = 56.0, p_rep = c(0.0, 0.0), case_threshold = Inf,
                                cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0){
 
-  assert_that(version %in% c("Basic", "Delay", "Reactive", "Split"))
+  assert_that(version %in% c("Delay", "Reactive", "Split"))
 
-  if(version=="Basic"){
-    output <- YEP::Model_Run(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy, time_inc,
-                             output_type = "full", mode_start, start_SEIRV, mode_time, n_particles, n_threads, deterministic)
-  }
   if(version=="Delay"){
     output <- Model_Run_Delay(FOI_spillover, R0, vacc_data, pop_data, years_data, year0, vaccine_efficacy, time_inc,
                               mode_start, start_SEIRV, mode_time, n_particles, n_threads, deterministic)

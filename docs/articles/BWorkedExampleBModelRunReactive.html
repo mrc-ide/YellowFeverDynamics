@@ -18,7 +18,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">YellowFeverDynamics</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,14 +74,11 @@ worked example</a>) in including provision for an emergency response to
 reported cases and/or high burden levels. This version of the model can
 be used, for example, to evaluate the optimum emergency or preventive
 measures to prevent large outbreaks.</p>
-<p>The inputs for the Model_Run_Reactive() function, which runs this
-version of the model, are the same as for the Model_Run function in the
-YEP package, except that (as with the other alternate versions in this
-package) there is no variable output type - the function always outputs
-detailed SEIRV data for every time point and age group (equivalent to
-setting output_type=“full” in Model_Run()). There are also several
-additional inputs governing the detection of a significant yellow fever
-outbreak and the resulting response.</p>
+<p>The inputs for the Model_Run_Delay_Reactive() function, which runs
+this version of the model, are the same as for the Model_Run_Delay
+function detailed in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html">Worked
+Example 1</a>, with several additional inputs governing the detection of
+a significant yellow fever outbreak and the resulting response.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://mrc-ide.github.io/YellowFeverDynamics/">YellowFeverDynamics</a></span><span class="op">)</span></span>
 <span><span class="va">input_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readRDS.html" class="external-link">readRDS</a></span><span class="op">(</span>file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/find.package.html" class="external-link">path.package</a></span><span class="op">(</span><span class="st">"YellowFeverDynamics"</span><span class="op">)</span>, </span>
@@ -89,7 +86,7 @@ outbreak and the resulting response.</p>
 <span><span class="va">vacc_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">vacc_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span><span class="op">*</span><span class="fl">0</span></span>
 <span><span class="va">pop_data</span> <span class="op">&lt;-</span> <span class="va">input_data</span><span class="op">$</span><span class="va">pop_data</span><span class="op">[</span><span class="fl">1</span>, , <span class="op">]</span>  </span>
 <span><span class="co"># Force of infection due to spillover from sylvatic reservoir</span></span>
-<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-7</span> </span>
+<span><span class="va">FOI_spillover</span> <span class="op">&lt;-</span> <span class="fl">1.0e-8</span> </span>
 <span><span class="co"># Basic reproduction number for urban spread of infection</span></span>
 <span><span class="va">R0</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>             </span>
 <span><span class="co"># Year(s) for which data is to be output</span></span>
@@ -103,13 +100,6 @@ outbreak and the resulting response.</p>
 <span><span class="va">vaccine_efficacy</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>      </span>
 <span><span class="co"># Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)</span></span>
 <span><span class="va">time_inc</span> <span class="op">&lt;-</span> <span class="fl">1.0</span>     </span>
-<span><span class="co"># Type of data to output</span></span>
-<span><span class="co">#'   "full" = SEIRVC + FOI for all steps and ages</span></span>
-<span><span class="co">#'   "case" = annual total new infections (C) summed across all ages</span></span>
-<span><span class="co">#'   "sero" = annual SEIRV</span></span>
-<span><span class="co">#'   "case+sero" = annual SEIRVC, cases summed across all ages</span></span>
-<span><span class="co">#'   "case_alt" = annual total new infections not combined by age</span></span>
-<span><span class="co">#'   "case_alt2" = total new infections combined by age for all steps</span></span>
 <span><span class="va">mode_start</span> <span class="op">&lt;-</span> <span class="fl">1</span>           </span>
 <span><span class="co"># SEIRV data from end of a previous run to use as input (if mode_start = 2; not </span></span>
 <span><span class="co"># used here and hence set to NULL)</span></span>
@@ -117,7 +107,7 @@ outbreak and the resulting response.</p>
 <span><span class="co"># Type of time variation of FOI_spillover and R0; here set to 0 for constant values</span></span>
 <span><span class="va">mode_time</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="co"># Number of particles to run</span></span>
-<span><span class="va">n_particles</span> <span class="op">&lt;-</span> <span class="fl">10</span>     </span>
+<span><span class="va">n_particles</span> <span class="op">&lt;-</span> <span class="fl">1</span>   </span>
 <span><span class="co"># Number of threads to run</span></span>
 <span><span class="va">n_threads</span> <span class="op">&lt;-</span> <span class="fl">1</span>   </span>
 <span><span class="co"># True/false flag indicating whether or not to run model in deterministic mode</span></span>
@@ -139,25 +129,15 @@ outbreak and the resulting response.</p>
 <span><span class="va">t_cam</span> <span class="op">&lt;-</span> <span class="fl">60</span></span></code></pre></div>
 <p>We run Model_Run_Reactive() as shown:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Delay_Reactive.html">Model_Run_Delay_Reactive</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>, <span class="va">year0</span>,</span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">test1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Delay_Reactive.html">Model_Run_Delay_Reactive</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>, <span class="va">year0</span>,</span>
 <span>                                  <span class="va">vaccine_efficacy</span>, <span class="va">time_inc</span>, <span class="va">mode_start</span>, <span class="va">start_SEIRV</span>, <span class="va">mode_time</span>, </span>
-<span>                                  <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span>,</span>
-<span>                                  <span class="va">response_delay</span>, <span class="va">p_rep</span>, <span class="va">case_threshold</span>, <span class="va">cluster_threshold</span>, <span class="va">vacc_cov_cam</span>, <span class="va">t_cam</span><span class="op">)</span></span></code></pre></div>
-<p>As with YEP::Model_Run(), we can plot the output, including the
-application of the emergency vaccination campaign when the first case is
-reported:</p>
+<span>                                  <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span>, <span class="va">response_delay</span>, <span class="va">p_rep</span>,</span>
+<span>                                  <span class="va">case_threshold</span>, <span class="va">cluster_threshold</span>, <span class="va">vacc_cov_cam</span>, <span class="va">t_cam</span><span class="op">)</span></span></code></pre></div>
+<p>We can plot the output, including the application of the emergency
+vaccination campaign when the first case is reported:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">YEPaux</span><span class="op">)</span></span>
-<span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/YEPaux/man/plot_model_output.html" class="external-link">plot_model_output</a></span><span class="op">(</span><span class="va">test1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span></code></pre></div>
-<p>An alternative version of the reactive model exists which combines
-emergency response with the time delay approach described in <a href="https://mrc-ide.github.io/YellowFeverDynamics/articles/BWorkedExampleAModelRunDelay.html">Worked
-Example 1</a>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">test2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/Model_Run_Delay_Reactive.html">Model_Run_Delay_Reactive</a></span><span class="op">(</span><span class="va">FOI_spillover</span>, <span class="va">R0</span>, <span class="va">vacc_data</span>, <span class="va">pop_data</span>, <span class="va">years_data</span>,</span>
-<span>                   <span class="va">start_SEIRV</span>, <span class="va">year0</span>, <span class="va">mode_start</span>, <span class="va">vaccine_efficacy</span>, <span class="va">time_inc</span>, </span>
-<span>                   <span class="va">n_particles</span>, <span class="va">n_threads</span>, <span class="va">deterministic</span>, <span class="va">response_delay</span>, <span class="va">p_rep</span>, </span>
-<span>                   <span class="va">case_threshold</span>, <span class="va">cluster_threshold</span>, <span class="va">vacc_cov_cam</span>, <span class="va">t_cam</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">test1</span><span class="op">$</span><span class="va">day</span>,y<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">test1</span><span class="op">$</span><span class="va">C_rep_total</span><span class="op">)</span>, type<span class="op">=</span><span class="st">"l"</span>,xlab<span class="op">=</span><span class="st">"Day"</span>,ylab<span class="op">=</span><span class="st">"Reported cases (cumulative)"</span><span class="op">)</span></span></code></pre></div>
   </main>
 </div>
 
@@ -168,7 +148,7 @@ Example 1</a>:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

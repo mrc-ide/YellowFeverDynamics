@@ -23,7 +23,7 @@ install.packages("devtools")
 With devtools installed, run:
 
 ```{r,eval=FALSE}
-devtools::install_github("mrc-ide/YellowFeverDynamics")
+devtools::install_github("mrc-ide/YellowFeverDynamics",ref="Version-0.2")
 ```
 
 To check that the package loads, run:
