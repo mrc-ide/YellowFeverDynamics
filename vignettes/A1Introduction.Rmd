@@ -14,8 +14,6 @@ knitr::opts_chunk$set(
 )
 ```
 
-The YellowFeverDynamics package is a supplement to the [YEP package](https://mrc-ide.github.io/YEP/index.html), used for running alternate versions of the standard SEIRV yellow fever transmission model contained in that package, and [TBA].
+This version (0.2) of the YellowFeverDynamics package is a supplement to version 0.2 of the [YEP package](https://mrc-ide.github.io/YEP/index.html), used for running alternate versions of the standard SEIRV yellow fever transmission model contained in that package for specific tasks.
 
-Please see the documentation for YEP for details of the standard model and functions contained in that package.
-
-[TBC]
+Please see the documentation for YEP for details of the standard model.
