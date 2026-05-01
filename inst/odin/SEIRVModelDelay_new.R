@@ -1,6 +1,6 @@
 # SEIRV model with rates of E->I and I->R transfer replaced by fixed delay time
 # Updated based on YEP version 0.3 - time-varying epi parameters, multiple regions
-
+# TODO - test
 
 #Parameters---------------------------------------------------------------------
 time_inc <- parameter() #Time increment in days
@@ -48,6 +48,8 @@ np_I_delay <- parameter()
 di1 <- np_E_delay-N_age
 di2 <- np_I_delay-N_age
 
+
+
 t_pt <- day/time_inc #Number of time points passed
 beta[1:n_regions] <- (R0[i, t_pt]*time_inc)/t_infectious #Daily exposure rate
 FOI_sum[1:n_regions] <-  min(FOI_max, beta[i]*(sum(I[i,])/P_tot[i]) + (FOI_spillover[i, t_pt]*time_inc)) #Total force of infection
@@ -72,10 +74,20 @@ inv_P[1:n_regions,1:N_age] <- 1.0/P[i,j]
 
 vacc_rate[1:n_regions,1:N_age] <- vacc_rate_daily[i,j,year_i]*vaccine_efficacy*time_inc*P[i,j] #Total no. vaccinations by age
 
+
+
+
+
+
 #Updates to output values at each time increment--------------------------------
 update(day) <- day + time_inc
 update(year) <- year_i + year0 - 1
 update(FOI_total[1:n_regions]) <- FOI_sum[i]
+
+
+
+
+
 
 update(S[1:n_regions,1]) <- max(Pmin, S[i,1] - E_new[i,1] - vacc_rate[i,1]*S[i,1]*inv_P_nV[i,1] + dP1[i,1] - (dP2[i,1]*S[i,1]*inv_P[i,1]))
 update(S[1:n_regions,2:N_age]) <- max(Pmin, S[i,j] - E_new[i,j] - vacc_rate[i,j]*S[i,j]*inv_P_nV[i,j] + (dP1[i,j]*S[i,j-1]*inv_P[i,j-1]) - (dP2[i,j]*S[i,j]*inv_P[i,j]))
@@ -114,6 +126,12 @@ update(C[1:n_regions,1:N_age]) <- I_new[i,j]
 initial(day) <- time_inc
 initial(year) <- year0
 initial(FOI_total[1:n_regions]) <- FOI_spillover[i,1]
+
+
+
+
+
+
 initial(S[1:n_regions,1:N_age]) <- S_0[i,j]
 initial(E[1:n_regions,1:N_age]) <- E_0[i,j]
 initial(E_delay[1:n_regions,1:np_E_delay]) <- E_delay0[i,j]
@@ -172,3 +190,6 @@ dim(dP2_all) <- c(n_regions, N_age, n_years)
 dim(vacc_rate_daily) <- c(n_regions, N_age, n_years)
 dim(FOI_spillover) <- c(n_regions, n_t_pts)
 dim(R0) <- c(n_regions, n_t_pts)
+
+
+

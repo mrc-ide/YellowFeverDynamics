@@ -1,6 +1,9 @@
 To do list for YellowFeverDynamics V0.3:
 
--Update odin models to versions of the YEP odin model
+-Update odin models to versions of the YEP odin model (NB: copy main YEP model and adapt)
 -Update model-run R functions to fit new odin models, by copying the style of Model_Run in YEP
+  -Models with Odin code and model run function completed and tested: None
+  -Models with Odin code and model run function completed but not yet tested: Delay
+  -Models to complete and test: Vtrack, DelayReactive, SplitInfection
 -Update vignettes
 -TBC

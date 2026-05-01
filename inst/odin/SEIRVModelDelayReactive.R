@@ -1,5 +1,5 @@
 # SEIRV model with reactive functionality using delay approach
-# TODO - adjust for time varying FOI/R0
+# New version for multiple regions in preparation
 
 
 
@@ -49,17 +49,18 @@ rate4 <- time_inc/t_cam
 t_pt <- day/time_inc #Number of time points passed
 beta <- (R0[t_pt]*time_inc)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover[t_pt]*time_inc)) #Total force of infection
-
 year_i <- floor(day/365)+1 #Number of years since start, as integer
+
 
 dP1[1:N_age] <- dP1_all[i, year_i]*time_inc #Increase in population by age group over 1 time increment
 dP2[1:N_age] <- dP2_all[i, year_i]*time_inc #Decrease in population by age group over 1 time increment
-
 E_new[1:N_age] <- Binomial(as.integer(S[i]), FOI_sum) #New exposed individuals by age group
-
 I_new[1:N_age] <- E_delay[as.integer(i+di1)]     #New infectious individuals by age group
-
 R_new[1:N_age] <- I_delay[as.integer(i+di2)]     #New recovered individuals by age group
+
+
+
+
 
 P_nV[1:N_age] <- S[i] + R[i] #Total vaccine-targetable population by age group
 inv_P_nV[1:N_age] <- 1.0/P_nV[i]
@@ -75,6 +76,7 @@ F_I_total <- sum(I)/P_tot #Total no. currently infectious people as fraction of 
 cluster_flag <- if(F_I_total>=cluster_threshold) 1 else 0
 
 #Updates to output values at each time increment--------------------------------
+
 update(year) <- year_i + year0 - 1
 update(FOI_total) <- FOI_sum
 update(C_rep_total) <- C_rep_total + C_rep_new #Running total reported cases across all ages
@@ -99,6 +101,7 @@ update(C[1:N_age]) <- I_new[i]
 #update(C_rep[1:N_age]) <- C_rep_new[i]
 
 #Initial values-----------------------------------------------------------------
+
 initial(year) <- year0
 initial(FOI_total) <- FOI_spillover[1]
 initial(C_rep_total) <- 0
@@ -118,6 +121,8 @@ initial(C[1:N_age]) <- 0
 #initial(C_rep[1:N_age]) <- 0
 
 #Dimensions---------------------------------------------------------------------
+
+
 dim(S) <- N_age
 dim(E) <- N_age
 dim(E_delay) <- np_E_delay
@@ -132,7 +137,6 @@ dim(dP2)<-N_age
 dim(E_new) <- N_age
 dim(I_new) <- N_age
 dim(R_new) <- N_age
-
 
 
 

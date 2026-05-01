@@ -33,6 +33,23 @@ SEIRVModelDelay <- structure(
     has_compare = FALSE,
     has_adjoint = FALSE),
   default_dt = 1)
+SEIRVModelDelay_new <- structure(
+  function() get("SEIRVModelDelay_new"),
+  class = "dust_system_generator",
+  name = "SEIRVModelDelay_new",
+  package = "YellowFeverDynamics",
+  path = NULL,
+  parameters = data.frame(
+    name = c("time_inc", "n_regions", "t_infectious", "FOI_spillover", "R0", "N_age", "vacc_rate_daily", "vaccine_efficacy", "year0", "S_0", "E_0", "E_delay0", "I_0", "I_delay0", "R_0", "V_0", "dP1_all", "dP2_all", "n_years", "n_t_pts", "np_E_delay", "np_I_delay"),
+    type = c("real_type", "int", "real_type", "real_type", "real_type", "int", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "real_type", "int", "int", "int", "int"),
+    constant = c(FALSE, TRUE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, TRUE, TRUE, TRUE, TRUE),
+    required = c(TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE),
+    rank = c(0L, 0L, 0L, 2L, 2L, 0L, 3L, 0L, 0L, 2L, 2L, 2L, 2L, 2L, 2L, 2L, 3L, 3L, 0L, 0L, 0L, 0L)),
+  properties = list(
+    time_type = "discrete",
+    has_compare = FALSE,
+    has_adjoint = FALSE),
+  default_dt = 1)
 SEIRVModelDelayReactive <- structure(
   function() get("SEIRVModelDelayReactive"),
   class = "dust_system_generator",
