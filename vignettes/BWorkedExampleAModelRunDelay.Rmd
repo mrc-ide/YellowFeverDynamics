@@ -41,13 +41,7 @@ year0 <- input_data$years_labels[1]
 vaccine_efficacy <- 1.0      
 # Time increment in days to use in model (should be 1.0, 2.5 or 5.0 days)
 time_inc <- 1.0     
-# Type of data to output
-#'   "full" = SEIRVC + FOI for all steps and ages
-#'   "case" = annual total new infections (C) summed across all ages
-#'   "sero" = annual SEIRV
-#'   "case+sero" = annual SEIRVC, cases summed across all ages
-#'   "case_alt" = annual total new infections not combined by age
-#'   "case_alt2" = total new infections combined by age for all steps
+#TBA
 mode_start <- 1           
 # SEIRV data from end of a previous run to use as input (if mode_start = 2; not 
 # used here and hence set to NULL)
