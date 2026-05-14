@@ -72,11 +72,8 @@ inv_P_nV[1:n_regions,1:N_age] <- 1.0/P_nV[i,j]
 P[1:n_regions,1:N_age] <- P_nV[i,j] + V[i,j] #Total population by age group (excluding E+I)
 P_tot[1:n_regions] <- sum(P[i, ]) #Total overall population (excluding E+I)
 inv_P[1:n_regions,1:N_age] <- 1.0/P[i,j]
-#Multiplying by flag3 works but is inefficient
-vacc_rate_cam[1:n_regions,1:N_age] <- flag3[i]*vacc_cov_cam[i,j]*inv_t_cam*(1.0 - (V[i,j]*inv_P[i,j]))
-vacc_rate[1:n_regions,1:N_age] <- (vacc_rate_daily[i,j,year_i] + (flag3[i]*vacc_rate_cam[i,j]*ceiling(1-flag4[i])))*vaccine_efficacy*time_inc*P[i,j]
-# vacc_rate_cam[1:n_regions,1:N_age] <- if(flag3[i]>0) 0 else vacc_cov_cam[i,j]*inv_t_cam*(1.0 - (V[i,j]*inv_P[i,j]))
-# vacc_rate[1:n_regions,1:N_age] <- (vacc_rate_daily[i,j,year_i] + (if(flag3[i]==0) 0 else vacc_rate_cam[i,j]*ceiling(1-flag4[i])))*vaccine_efficacy*time_inc*P[i,j]
+vacc_rate_cam[1:n_regions,1:N_age] <- if(flag3[i]==0) 0 else vacc_cov_cam[i,j]*inv_t_cam*(1.0 - (V[i,j]*inv_P[i,j]))
+vacc_rate[1:n_regions,1:N_age] <- (vacc_rate_daily[i,j,year_i] + (if(flag3[i]==0) 0 else vacc_rate_cam[i,j]*ceiling(1-flag4[i])))*vaccine_efficacy*time_inc*P[i,j]
 case_flag[1:n_regions] <- if(C_rep_total[i] >= case_threshold) 1 else 0
 p_rep_cur[1:n_regions] <- if(flag3[i]==1) p_rep[2] else p_rep[1]
 C_rep_new[1:n_regions] <- Binomial(as.integer(sum(I_new[i,])),p_rep_cur[i]) #Daily new reported cases across all ages
