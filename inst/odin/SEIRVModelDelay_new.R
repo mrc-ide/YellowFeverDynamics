@@ -50,6 +50,7 @@ di2 <- np_I_delay-N_age
 
 
 
+
 t_pt <- day/time_inc #Number of time points passed
 beta[1:n_regions] <- (R0[i, t_pt]*time_inc)/t_infectious #Daily exposure rate
 FOI_sum[1:n_regions] <-  min(FOI_max, beta[i]*(sum(I[i,])/P_tot[i]) + (FOI_spillover[i, t_pt]*time_inc)) #Total force of infection
@@ -154,6 +155,12 @@ initial(C[1:n_regions,1:N_age]) <- 0
 #Dimensions---------------------------------------------------------------------
 #Updated values
 dim(FOI_total) <- n_regions
+
+
+
+
+
+
 dim(S) <- c(n_regions, N_age)
 dim(E) <- c(n_regions, N_age)
 dim(E_delay) <- c(n_regions,np_E_delay)
@@ -162,6 +169,12 @@ dim(I_delay) <- c(n_regions,np_I_delay)
 dim(R) <- c(n_regions, N_age)
 dim(V) <- c(n_regions, N_age)
 dim(C) <- c(n_regions, N_age)
+
+
+
+
+
+
 
 dim(beta) <- n_regions
 dim(FOI_sum) <- n_regions
@@ -178,6 +191,13 @@ dim(P_tot) <- n_regions
 dim(inv_P) <- c(n_regions, N_age)
 dim(vacc_rate) <- c(n_regions, N_age)
 
+
+
+
+
+
+
+
 dim(S_0) <- c(n_regions, N_age)
 dim(E_0) <- c(n_regions, N_age)
 dim(E_delay0) <- c(n_regions,np_E_delay)
@@ -190,6 +210,5 @@ dim(dP2_all) <- c(n_regions, N_age, n_years)
 dim(vacc_rate_daily) <- c(n_regions, N_age, n_years)
 dim(FOI_spillover) <- c(n_regions, n_t_pts)
 dim(R0) <- c(n_regions, n_t_pts)
-
 
 

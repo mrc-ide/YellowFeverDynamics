@@ -170,6 +170,12 @@ dim(R) <- c(n_regions, N_age)
 dim(V) <- c(n_regions, N_age)
 dim(C) <- c(n_regions, N_age)
 
+
+
+
+
+
+
 dim(beta) <- n_regions
 dim(FOI_sum) <- n_regions
 dim(dP1) <- c(n_regions, N_age)
