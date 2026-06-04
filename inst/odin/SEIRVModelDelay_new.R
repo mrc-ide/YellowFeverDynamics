@@ -176,6 +176,11 @@ dim(C) <- c(n_regions, N_age)
 
 
 
+
+
+
+
+#Calculated values
 dim(beta) <- n_regions
 dim(FOI_sum) <- n_regions
 dim(dP1) <- c(n_regions, N_age)
@@ -184,15 +189,18 @@ dim(E_new) <- c(n_regions, N_age)
 dim(I_new) <- c(n_regions, N_age)
 dim(R_new) <- c(n_regions, N_age)
 
+
+
+
 dim(P_nV) <- c(n_regions, N_age)
 dim(inv_P_nV) <- c(n_regions, N_age)
 dim(P) <- c(n_regions, N_age)
 dim(P_tot) <- n_regions
 dim(inv_P) <- c(n_regions, N_age)
+
 dim(vacc_rate) <- c(n_regions, N_age)
 
-
-
+#Inputs
 
 
 

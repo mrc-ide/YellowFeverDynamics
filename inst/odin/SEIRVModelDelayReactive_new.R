@@ -176,6 +176,11 @@ dim(C) <- c(n_regions, N_age)
 
 
 
+
+
+
+
+#Calculated values
 dim(beta) <- n_regions
 dim(FOI_sum) <- n_regions
 dim(dP1) <- c(n_regions, N_age)
@@ -183,6 +188,9 @@ dim(dP2) <- c(n_regions, N_age)
 dim(E_new) <- c(n_regions, N_age)
 dim(I_new) <- c(n_regions, N_age)
 dim(R_new) <- c(n_regions, N_age)
+
+
+
 
 dim(P_nV) <- c(n_regions, N_age)
 dim(inv_P_nV) <- c(n_regions, N_age)
@@ -197,7 +205,7 @@ dim(C_rep_new) <- n_regions
 dim(F_I_total) <- n_regions
 dim(cluster_flag) <- n_regions
 
-
+#Inputs
 dim(S_0) <- c(n_regions, N_age)
 dim(E_0) <- c(n_regions, N_age)
 dim(E_delay0) <- c(n_regions,np_E_delay)
