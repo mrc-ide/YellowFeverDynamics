@@ -126,6 +126,7 @@ Model_Run_Delay_New <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(
 #' @param cluster_threshold Threshold current infectious fraction to trigger emergency conditions
 #' @param vacc_cov_cam Target vaccination coverage by age group during emergency campaign
 #' @param t_cam Duration in days of emergency vaccination campaign
+#' @param min_cam_start_day Earliest day after start of model run that emergency campaign can be triggered
 #' @param seed Random seed (set to NULL if not to be used)
 #'
 #' @export
@@ -134,7 +135,8 @@ Model_Run_Delay_Reactive_New <- function(FOI_spillover = c(), R0 = c(), vacc_dat
                                 year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(),
                                 mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE,
                                 response_delay = 56.0, p_rep = c(0.0, 0.0), case_threshold = Inf,
-                                cluster_threshold = Inf, vacc_cov_cam = list(), t_cam = 0, seed = NULL) {
+                                cluster_threshold = Inf, vacc_cov_cam = list(), t_cam = 0,
+                                min_cam_start_day = 0, seed = NULL) {
 
   #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup_old)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
@@ -162,7 +164,7 @@ Model_Run_Delay_Reactive_New <- function(FOI_spillover = c(), R0 = c(), vacc_dat
   pars$p_rep = p_rep
   pars$case_threshold = case_threshold
   pars$cluster_threshold = cluster_threshold
-
+  pars$min_cam_start_day = min_cam_start_day
   #Check that there is no overlap between emergency campaign and other vaccination
   #(Not yet possible to adjust vaccine rates on the fly to deal with overlap)
   #TBC

@@ -19,7 +19,7 @@ case_threshold <- parameter() #Threshold total no. reported cases to trigger out
 cluster_threshold <- parameter()  #Threshold current infectious fraction to trigger cluster flag 1
 vacc_cov_cam <- parameter() #TBA
 t_cam <- parameter() #TBA
-
+min_cam_start_day <- parameter() #TBA
 
 
 
@@ -72,7 +72,8 @@ inv_P_nV[1:n_regions,1:N_age] <- 1.0/P_nV[i,j]
 P[1:n_regions,1:N_age] <- P_nV[i,j] + V[i,j] #Total population by age group (excluding E+I)
 P_tot[1:n_regions] <- sum(P[i, ]) #Total overall population (excluding E+I)
 inv_P[1:n_regions,1:N_age] <- 1.0/P[i,j]
-vacc_rate_cam[1:n_regions,1:N_age] <- if(flag3[i]==0) 0 else vacc_cov_cam[i,j]*inv_t_cam*(1.0 - (V[i,j]*inv_P[i,j]))
+#TODO add provision for minimum number of days since start before campaign can start
+vacc_rate_cam[1:n_regions,1:N_age] <- if(flag3[i]==0) 0 else if(day<min_cam_start_day) 0 else vacc_cov_cam[i,j]*inv_t_cam*(1.0 - (V[i,j]*inv_P[i,j]))
 vacc_rate[1:n_regions,1:N_age] <- (vacc_rate_daily[i,j,year_i] + (if(flag3[i]==0) 0 else vacc_rate_cam[i,j]*ceiling(1-flag4[i])))*vaccine_efficacy*time_inc*P[i,j]
 case_flag[1:n_regions] <- if(C_rep_total[i] >= case_threshold) 1 else 0
 p_rep_cur[1:n_regions] <- if(flag3[i]==1) p_rep[2] else p_rep[1]
@@ -87,7 +88,7 @@ update(FOI_total[1:n_regions]) <- FOI_sum[i]
 update(C_rep_total[1:n_regions]) <- C_rep_total[i] + C_rep_new[i] #Running total reported cases across all ages
 update(flag1[1:n_regions]) <- min(one,flag1[i] + (case_flag[i]*rate3)) #case flag with delay (converted to integer on use)
 update(flag2[1:n_regions]) <- min(one,flag2[i] + (cluster_flag[i]*rate3)) #cluster flag with delay (converted to integer on use)
-update(flag3[1:n_regions]) <- if(flag1[i]==1) 1 else (if(flag2[i]==1) 1 else 0) #0 = No emergency (flags 1+2 not tripped); 1 = emergency (flag 1 and/or 2 tripped)
+update(flag3[1:n_regions]) <- if(flag1[i]==1) 1 else (if(flag2[i]==1) 1 else 0) #0 = flags 1+2 not tripped; 1 = flag 1 and/or 2 tripped
 update(flag4[1:n_regions]) <- if(flag3[i]==0) 0 else min(one,flag4[i]+rate4)
 update(report_rate[1:n_regions]) <- p_rep_cur[i]
 update(S[1:n_regions,1]) <- max(Pmin, S[i,1] - E_new[i,1] - vacc_rate[i,1]*S[i,1]*inv_P_nV[i,1] + dP1[i,1] - (dP2[i,1]*S[i,1]*inv_P[i,1]))

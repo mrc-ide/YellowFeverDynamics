@@ -4,6 +4,7 @@ export(Model_Run_Delay)
 export(Model_Run_Delay_Many_Reps)
 export(Model_Run_Delay_New)
 export(Model_Run_Delay_Reactive)
+export(Model_Run_Delay_Reactive_New)
 export(Model_Run_Split)
 export(Model_Run_VTrack)
 export(Model_Versions_Run)
@@ -18,18 +19,22 @@ import(parallel)
 importFrom(R.utils,fileAccess)
 importFrom(assertthat,assert_that)
 importFrom(data.table,between)
-importFrom(graphics,axis)
-importFrom(graphics,matplot)
-importFrom(graphics,par)
+importFrom(graphics,
+  axis,
+  matplot,
+  par
+)
 importFrom(mvtnorm,rmvnorm)
-importFrom(stats,cov)
-importFrom(stats,dexp)
-importFrom(stats,dnbinom)
-importFrom(stats,dnorm)
-importFrom(stats,nlm)
-importFrom(stats,prop.test)
-importFrom(stats,rbinom)
-importFrom(stats,runif)
+importFrom(stats,
+  cov,
+  dexp,
+  dnbinom,
+  dnorm,
+  nlm,
+  prop.test,
+  rbinom,
+  runif
+)
 importFrom(tgp,lhs)
 importFrom(truncdist,dtrunc)
 importFrom(utils,write.csv)

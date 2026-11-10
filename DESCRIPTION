@@ -36,4 +36,4 @@ Remotes:
     mrc-ide/YEP
 VignetteBuilder: knitr
 URL: https://mrc-ide.github.io/YellowFeverDynamics/
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.1
