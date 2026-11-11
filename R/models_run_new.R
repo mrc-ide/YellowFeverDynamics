@@ -52,7 +52,7 @@ Model_Run_Delay_New <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(
   step_end = ((max(years_data) + 1 - year0) * (365/time_inc)) - 1 #Step at which to end
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
-  pars = YEP::parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+  pars = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                          vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time)
 
   #Carrying forward delay from previous run may cause errors
@@ -149,7 +149,7 @@ Model_Run_Delay_Reactive_New <- function(FOI_spillover = c(), R0 = c(), vacc_dat
   step_end = ((max(years_data) + 1 - year0) * (365/time_inc)) - 1 #Step at which to end
   t_pts_out = step_end - step_begin + 1 #Number of time points in final output data
 
-  pars = YEP::parameter_setup(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
+  pars = parameter_setup_old(FOI_spillover, R0, vacc_data, pop_data, years_data, year0,
                               vaccine_efficacy, time_inc, mode_start, start_SEIRV, mode_time)
 
   #Carrying forward delay from previous run may cause errors

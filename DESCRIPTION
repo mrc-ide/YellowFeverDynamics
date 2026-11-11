@@ -24,15 +24,13 @@ Imports:
     R.utils,
     stats,
     tgp,
-    truncdist,
-    YEP
+    truncdist
 Suggests: 
     knitr,
     rmarkdown
 Remotes:
     mrc-ide/dust2,
-    mrc-ide/odin2,
-    mrc-ide/YEP
+    mrc-ide/odin2
 VignetteBuilder: knitr
 URL: https://mrc-ide.github.io/YellowFeverDynamics/
 Config/roxygen2/version: 8.1.1
