@@ -28,8 +28,7 @@ Imports:
     YEP
 Suggests: 
     knitr,
-    rmarkdown,
-SystemRequirements: C++
+    rmarkdown
 Remotes:
     mrc-ide/dust2,
     mrc-ide/odin2,
