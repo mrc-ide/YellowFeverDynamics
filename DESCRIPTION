@@ -27,7 +27,8 @@ Imports:
     truncdist
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    YEP
 Remotes:
     mrc-ide/dust2,
     mrc-ide/odin2

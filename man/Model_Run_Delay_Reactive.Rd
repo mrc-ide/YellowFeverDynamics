@@ -24,7 +24,8 @@ Model_Run_Delay_Reactive(
   case_threshold = Inf,
   cluster_threshold = Inf,
   vacc_cov_cam = c(),
-  t_cam = 0
+  t_cam = 0,
+  min_cam_start_day = 0
 )
 }
 \arguments{
@@ -77,7 +78,9 @@ after emergency conditions triggered (2nd value)}
 
 \item{vacc_cov_cam}{Target vaccination coverage by age group during emergency campaign}
 
-\item{t_cam}{Duration in days of emergency vaccination campaign
+\item{t_cam}{Duration in days of emergency vaccination campaign}
+
+\item{min_cam_start_day}{Earliest day after start of model run that emergency campaign can be triggered
 '}
 }
 \description{

@@ -15,6 +15,7 @@
 // [[dust2::parameter(cluster_threshold, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(vacc_cov_cam, type = "real_type", rank = 1, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(t_cam, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
+// [[dust2::parameter(min_cam_start_day, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(year0, type = "real_type", rank = 0, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(S_0, type = "real_type", rank = 1, required = TRUE, constant = FALSE)]]
 // [[dust2::parameter(E_0, type = "real_type", rank = 1, required = TRUE, constant = FALSE)]]
@@ -86,6 +87,7 @@ public:
     real_type case_threshold;
     real_type cluster_threshold;
     real_type t_cam;
+    real_type min_cam_start_day;
     real_type year0;
     int n_years;
     int n_t_pts;
@@ -98,7 +100,7 @@ public:
     real_type di1;
     real_type di2;
     real_type rate3;
-    real_type rate4;
+    real_type inv_t_cam;
     std::vector<real_type> FOI_spillover;
     std::vector<real_type> R0;
     std::vector<real_type> vacc_rate_daily;
@@ -112,6 +114,7 @@ public:
     std::vector<real_type> V_0;
     std::vector<real_type> dP1_all;
     std::vector<real_type> dP2_all;
+    real_type rate4;
   };
   struct internal_state {
     std::vector<real_type> I_new;
@@ -140,6 +143,7 @@ public:
     const real_type case_threshold = dust2::r::read_real(parameters, "case_threshold");
     const real_type cluster_threshold = dust2::r::read_real(parameters, "cluster_threshold");
     const real_type t_cam = dust2::r::read_real(parameters, "t_cam");
+    const real_type min_cam_start_day = dust2::r::read_real(parameters, "min_cam_start_day");
     const real_type year0 = dust2::r::read_real(parameters, "year0");
     const int n_years = dust2::r::read_int(parameters, "n_years");
     const int n_t_pts = dust2::r::read_int(parameters, "n_t_pts");
@@ -154,7 +158,7 @@ public:
     const real_type di1 = np_E_delay - N_age;
     const real_type di2 = np_I_delay - N_age;
     const real_type rate3 = time_inc / response_delay;
-    const real_type rate4 = time_inc / t_cam;
+    const real_type inv_t_cam = 1 / t_cam;
     dim.S.set({static_cast<size_t>(N_age)});
     dim.E.set({static_cast<size_t>(N_age)});
     dim.E_delay.set({static_cast<size_t>(np_E_delay)});
@@ -213,6 +217,7 @@ public:
     dust2::r::read_real_array(parameters, dim.dP1_all, dP1_all.data(), "dP1_all", true);
     std::vector<real_type> dP2_all(dim.dP2_all.size);
     dust2::r::read_real_array(parameters, dim.dP2_all, dP2_all.data(), "dP2_all", true);
+    const real_type rate4 = time_inc * inv_t_cam;
     shared_state::odin_internals_type odin;
     odin.packing.state = dust2::packing{
       {"day", {}},
@@ -234,7 +239,7 @@ public:
       {"C", std::vector<size_t>(dim.C.dim.begin(), dim.C.dim.end())}
     };
     odin.packing.state.copy_offset(odin.offset.state.begin());
-    return shared_state{odin, dim, time_inc, t_infectious, N_age, vaccine_efficacy, response_delay, case_threshold, cluster_threshold, t_cam, year0, n_years, n_t_pts, Pmin, FOI_max, np_E_delay, np_I_delay, one, p_rep, di1, di2, rate3, rate4, FOI_spillover, R0, vacc_rate_daily, vacc_cov_cam, S_0, E_0, E_delay0, I_0, I_delay0, R_0, V_0, dP1_all, dP2_all};
+    return shared_state{odin, dim, time_inc, t_infectious, N_age, vaccine_efficacy, response_delay, case_threshold, cluster_threshold, t_cam, min_cam_start_day, year0, n_years, n_t_pts, Pmin, FOI_max, np_E_delay, np_I_delay, one, p_rep, di1, di2, rate3, inv_t_cam, FOI_spillover, R0, vacc_rate_daily, vacc_cov_cam, S_0, E_0, E_delay0, I_0, I_delay0, R_0, V_0, dP1_all, dP2_all, rate4};
   }
   static internal_state build_internal(const shared_state& shared) {
     std::vector<real_type> I_new(shared.dim.I_new.size);
@@ -258,10 +263,11 @@ public:
     shared.case_threshold = dust2::r::read_real(parameters, "case_threshold", shared.case_threshold);
     shared.cluster_threshold = dust2::r::read_real(parameters, "cluster_threshold", shared.cluster_threshold);
     shared.t_cam = dust2::r::read_real(parameters, "t_cam", shared.t_cam);
+    shared.min_cam_start_day = dust2::r::read_real(parameters, "min_cam_start_day", shared.min_cam_start_day);
     shared.year0 = dust2::r::read_real(parameters, "year0", shared.year0);
     dust2::r::read_real_array(parameters, shared.dim.p_rep, shared.p_rep.data(), "p_rep", false);
     shared.rate3 = shared.time_inc / shared.response_delay;
-    shared.rate4 = shared.time_inc / shared.t_cam;
+    shared.inv_t_cam = 1 / shared.t_cam;
     dust2::r::read_real_array(parameters, shared.dim.FOI_spillover, shared.FOI_spillover.data(), "FOI_spillover", false);
     dust2::r::read_real_array(parameters, shared.dim.R0, shared.R0.data(), "R0", false);
     dust2::r::read_real_array(parameters, shared.dim.vacc_rate_daily, shared.vacc_rate_daily.data(), "vacc_rate_daily", false);
@@ -275,6 +281,7 @@ public:
     dust2::r::read_real_array(parameters, shared.dim.V_0, shared.V_0.data(), "V_0", false);
     dust2::r::read_real_array(parameters, shared.dim.dP1_all, shared.dP1_all.data(), "dP1_all", false);
     dust2::r::read_real_array(parameters, shared.dim.dP2_all, shared.dP2_all.data(), "dP2_all", false);
+    shared.rate4 = shared.time_inc * shared.inv_t_cam;
   }
   static void update_internal(const shared_state& shared, internal_state& internal) {
   }
@@ -360,7 +367,7 @@ public:
     }
     const real_type FOI_sum = monty::math::min<real_type>(shared.FOI_max, beta * (dust2::array::sum<real_type>(I, shared.dim.I) / P_tot) + (shared.FOI_spillover[t_pt - 1] * shared.time_inc));
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {
-      internal.vacc_rate_cam[i - 1] = (flag3 == 0 ? 0 : (shared.vacc_cov_cam[i - 1] * (1 - (V[i - 1] * internal.inv_P[i - 1]))) / shared.t_cam);
+      internal.vacc_rate_cam[i - 1] = (flag3 == 0 ? 0 : (day < shared.min_cam_start_day ? 0 : shared.vacc_cov_cam[i - 1] * shared.inv_t_cam * (1 - (V[i - 1] * internal.inv_P[i - 1]))));
     }
     const real_type F_I_total = dust2::array::sum<real_type>(I, shared.dim.I) / P_tot;
     for (size_t i = 1; i <= static_cast<size_t>(shared.N_age); ++i) {

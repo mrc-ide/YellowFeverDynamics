@@ -23,7 +23,7 @@ case_threshold <- parameter() #Threshold total no. reported cases to trigger out
 cluster_threshold <- parameter()  #Threshold current infectious fraction to trigger cluster flag 1
 vacc_cov_cam <- parameter() #TBA
 t_cam <- parameter() #TBA
-
+min_cam_start_day <- parameter() #TBA
 #Initial conditions-------------------------------------------------------------
 year0 <- parameter()  #Starting year
 S_0 <- parameter() #Susceptible population by age group at start
@@ -45,11 +45,16 @@ di1 <- np_E_delay-N_age
 di2 <- np_I_delay-N_age
 one <- 1
 rate3 <- time_inc/response_delay
-rate4 <- time_inc/t_cam
+inv_t_cam <- 1.0/t_cam
+rate4 <- time_inc*inv_t_cam
 t_pt <- day/time_inc #Number of time points passed
 beta <- (R0[t_pt]*time_inc)/t_infectious #Daily exposure rate
 FOI_sum <-  min(FOI_max,beta*(sum(I)/P_tot) + (FOI_spillover[t_pt]*time_inc)) #Total force of infection
 year_i <- floor(day/365)+1 #Number of years since start, as integer
+
+
+
+
 
 
 dP1[1:N_age] <- dP1_all[i, year_i]*time_inc #Increase in population by age group over 1 time increment
@@ -67,7 +72,7 @@ inv_P_nV[1:N_age] <- 1.0/P_nV[i]
 P[1:N_age] <- P_nV[i] + V[i] #Total population by age group (excluding E+I)
 P_tot <- sum(P) #Total overall population (excluding E+I)
 inv_P[1:N_age] <- 1.0/P[i]
-vacc_rate_cam[1:N_age] <- if(flag3==0) 0 else (vacc_cov_cam[i]*(1.0 - (V[i]*inv_P[i])))/t_cam
+vacc_rate_cam[1:N_age] <- if(flag3==0) 0 else if(day<min_cam_start_day) 0 else vacc_cov_cam[i]*inv_t_cam*(1.0 - (V[i]*inv_P[i]))
 vacc_rate[1:N_age] <- (vacc_rate_daily[i,year_i] + (if(flag3==0) 0 else vacc_rate_cam[i]*ceiling(1-flag4)))*vaccine_efficacy*time_inc*P[i]
 case_flag <- if(C_rep_total >= case_threshold) 1 else 0
 p_rep_cur <- if(flag3==1) p_rep[2] else p_rep[1]

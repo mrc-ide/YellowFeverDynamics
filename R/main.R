@@ -30,7 +30,7 @@ t_infectious <- 5 #Time cases remain infectious
 #' @importFrom tgp lhs
 #' @importFrom truncdist dtrunc
 #' @importFrom utils write.csv
-# @import YEP
+# @importFrom YEP parameter_setup
 #-------------------------------------------------------------------------------
 # unload DLL when package is unloaded
 #' @noRd
@@ -164,6 +164,7 @@ Model_Run_Delay <- function(FOI_spillover = c(), R0 = c(), vacc_data = list(), p
 #' @param cluster_threshold Threshold current infectious fraction to trigger emergency conditions
 #' @param vacc_cov_cam Target vaccination coverage by age group during emergency campaign
 #' @param t_cam Duration in days of emergency vaccination campaign
+#' @param min_cam_start_day Earliest day after start of model run that emergency campaign can be triggered
 #' '
 #' @export
 #'
@@ -171,7 +172,8 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = c(), R0 = c(), vacc_data = 
                                      year0 = 1940, vaccine_efficacy = 1.0, time_inc = 1.0, mode_start = 1, start_SEIRV = list(),
                                      mode_time = 0, n_particles = 1, n_threads = 1, deterministic = FALSE,
                                      response_delay = 56.0, p_rep = c(0.0, 0.0), case_threshold = Inf,
-                                     cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0) {
+                                     cluster_threshold = Inf, vacc_cov_cam = c(), t_cam = 0,
+                                     min_cam_start_day = 0) {
 
   #TODO Add assert_that functions (NB - Some checks carried out in parameter_setup_old)
   assert_that(n_particles <=  20, msg = "Number of particles must be 20 or less")
@@ -190,8 +192,8 @@ Model_Run_Delay_Reactive <- function(FOI_spillover = c(), R0 = c(), vacc_data = 
   n_years = length(pop_data[, 1]) - 1
   inv_365 = 1.0/365.0
   pars2 = list(FOI_spillover = pars1$FOI_spillover, R0 = pars1$R0, vacc_rate_daily = pars1$vacc_rate_daily,
-               vacc_cov_cam = vacc_cov_cam, t_cam = t_cam, N_age = pars1$N_age,
-               S_0 = pars1$S_0, E_0 = pars1$E_0, I_0 = pars1$I_0, R_0 = pars1$R_0, V_0 = pars1$V_0,
+               vacc_cov_cam = vacc_cov_cam, t_cam = t_cam, min_cam_start_day = min_cam_start_day,
+               N_age = pars1$N_age, S_0 = pars1$S_0, E_0 = pars1$E_0, I_0 = pars1$I_0, R_0 = pars1$R_0, V_0 = pars1$V_0,
                dP1_all = pars1$dP1_all, dP2_all = pars1$dP2_all, n_years = pars1$n_years, year0 = pars1$year0,
                vaccine_efficacy = pars1$vaccine_efficacy, time_inc = pars1$time_inc, t_incubation = pars1$t_incubation,
                t_latent = pars1$t_latent, t_infectious = pars1$t_infectious, n_t_pts = pars1$n_t_pts,
